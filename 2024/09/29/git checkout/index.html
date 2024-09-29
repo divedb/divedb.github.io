@@ -22,8 +22,10 @@
 <meta name="keywords" content="" />
 
 
-<meta name="description" content="汇编1. .comm and .localUnder The Hood : Unassigned Global Variables
-2. rsp16字节对齐问题12345678910111213..." />
+<meta name="description" content="git checkoutgit checkout是一个非常重要的git命令，常用于切换分支和恢复文件。以下是一些常见用法：
+1. 切换分支1git checkout branch-name
+
+切..." />
 
 
 <meta name="robots" content="all" />
@@ -148,7 +150,7 @@
     
     <span class="categories-meta fa-wrap">
         <i class="fa fa-folder-open-o"></i>
-        <a class="category-link" href="/categories/assembly/">assembly</a>
+        <a class="category-link" href="/categories/git/">git</a>
     </span>
     
     
@@ -174,11 +176,50 @@
     </div>
     
     <div class="post-body post-content">
-        <h2 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h2><h6 id="1-comm-and-local"><a href="#1-comm-and-local" class="headerlink" title="1. .comm and .local"></a>1. <code>.comm</code> and <code>.local</code></h6><p><a target="_blank" rel="noopener" href="https://dev.to/yjdoc2/under-the-hood-unassigned-global-variables-1edd">Under The Hood : Unassigned Global Variables</a></p>
-<h6 id="2-rsp16字节对齐问题"><a href="#2-rsp16字节对齐问题" class="headerlink" title="2. rsp16字节对齐问题"></a>2. <code>rsp</code>16字节对齐问题</h6><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Not make sense when char is included</span></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  sub rsp, 8\n&quot;;</span></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  mov rax, 0\n&quot;;</span></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  push rbp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  mov  rbp, rsp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  and rsp, 0xFFFFFFFFFFFFFFF0\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  call &quot;</span> &lt;&lt; node-&gt;<span class="built_in">func_name</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  mov  rsp, rbp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  pop rbp\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  add rsp, 8\n&quot;;</span></span><br></pre></td></tr></table></figure>
+        <h2 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a><code>git checkout</code></h2><p><code>git checkout</code>是一个非常重要的<code>git</code>命令，常用于<strong>切换分支</strong>和<strong>恢复文件</strong>。以下是一些常见用法：</p>
+<h4 id="1-切换分支"><a href="#1-切换分支" class="headerlink" title="1. 切换分支"></a>1. 切换分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout branch-name</span><br></pre></td></tr></table></figure>
 
-<p><code>gcc (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609</code>可以pass</p>
-<p><code>gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0</code>不可以</p>
+<p>切换到指定的分支<code>branch-name</code>。</p>
+<h4 id="2-创建新分支并切换"><a href="#2-创建新分支并切换" class="headerlink" title="2. 创建新分支并切换"></a>2. 创建新分支并切换</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b new-branch-name</span><br></pre></td></tr></table></figure>
+
+<p>创建一个新的分支<code>new-branch-name</code>并切换到该分支。</p>
+<h4 id="3-恢复文件到某个提交"><a href="#3-恢复文件到某个提交" class="headerlink" title="3. 恢复文件到某个提交"></a>3. 恢复文件到某个提交</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout commit-hash -- path/to/file</span><br></pre></td></tr></table></figure>
+
+<p>将指定的文件恢复到某个提交（<code>commit-hash</code>）的状态。</p>
+<h4 id="4-恢复整个工作区"><a href="#4-恢复整个工作区" class="headerlink" title="4. 恢复整个工作区"></a>4. 恢复整个工作区</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- .</span><br></pre></td></tr></table></figure>
+
+<p>将当前工作区的所有文件恢复到上次提交的状态。</p>
+<h4 id="5-切换到最近的分支"><a href="#5-切换到最近的分支" class="headerlink" title="5. 切换到最近的分支"></a>5. 切换到最近的分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -</span><br></pre></td></tr></table></figure>
+
+<p>切换回上一个分支。</p>
+<h4 id="6-查看某个提交的内容"><a href="#6-查看某个提交的内容" class="headerlink" title="6. 查看某个提交的内容"></a>6. 查看某个提交的内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout commit-hash</span><br></pre></td></tr></table></figure>
+
+<p>查看某个提交的状态，但注意这会让你进入“游离 HEAD”状态。</p>
+<p><code>git checkout</code>到特定的提交而不是分支时，<code>HEAD</code>指针指向某个提交，但不指向任何分支。此时处于一种特殊的状态，称为“游离 HEAD”状态。</p>
+<p><strong>Example</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">A</span> -- <span class="selector-tag">B</span> -- C (master)</span><br><span class="line">          ^</span><br><span class="line">         HEAD</span><br></pre></td></tr></table></figure>
+
+<p>在上图中，<code>HEAD</code>指向分支 <code>master</code> 的最新提交 <code>C</code>。</p>
+<p>游离<code>HEAD</code>状态:</p>
+<p>​	使用 <code>git checkout commit-hash</code>切换到某个具体提交，例如 <code>B</code>，图示变为：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">A</span> -- <span class="selector-tag">B</span> -- C (master)</span><br><span class="line">     ^</span><br><span class="line">    HEAD (游离状态)</span><br></pre></td></tr></table></figure>
+
+<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ul>
+<li><strong>没有分支</strong>：HEAD 不再指向任何分支，因此在此状态下进行的提交不会被记录到任何分支上。</li>
+<li><strong>提交的后果</strong>：如果你在这个状态下进行了提交，Git 会创建一个新的提交，但你需要手动将其移动到某个分支上，否则它将孤立。</li>
+</ul>
+<h5 id="如何回到正常状态"><a href="#如何回到正常状态" class="headerlink" title="如何回到正常状态"></a>如何回到正常状态</h5><ul>
+<li><p><strong>切换回分支</strong>：使用<code>git checkout branch-name</code>回到某个分支。</p>
+</li>
+<li><p>创建新分支</p>
+<ul>
+<li>如果希望保留当前的更改，可以创建一个新分支：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b new-branch-name</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=GN36mrrM12k">Using Git: What is a “Detached HEAD”?</a></li>
+</ol>
 
     </div>
     
@@ -197,17 +238,11 @@
 </article>
 <div class="article-nav prev-next-wrap clearfix">
     
-    <a href="/2024/09/29/Leetcode%20432/" class="pre-post btn btn-default" title=''>
-        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-        <span class="hidden-xs">
-            </span>
-    </a>
     
-    
-    <a href="/2024/09/13/hello-world/" class="next-post btn btn-default" title='Hello World'>
+    <a href="/2024/09/29/Leetcode%20432/" class="next-post btn btn-default" title=''>
         <span class="hidden-lg">下一篇</span>
         <span class="hidden-xs">
-            Hello World</span><i class="fa fa-angle-right fa-fw"></i>
+            </span><i class="fa fa-angle-right fa-fw"></i>
     </a>
     
 </div>
@@ -241,7 +276,7 @@
             Table of Contents
         </h3>
         
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96"><span class="toc-text">汇编</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#1-comm-and-local"><span class="toc-text">1. .comm and .local</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#2-rsp16%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E9%97%AE%E9%A2%98"><span class="toc-text">2. rsp16字节对齐问题</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#git-checkout"><span class="toc-text">git checkout</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%87%E6%8D%A2%E5%88%86%E6%94%AF"><span class="toc-text">1. 切换分支</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E6%96%B0%E5%88%86%E6%94%AF%E5%B9%B6%E5%88%87%E6%8D%A2"><span class="toc-text">2. 创建新分支并切换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%81%A2%E5%A4%8D%E6%96%87%E4%BB%B6%E5%88%B0%E6%9F%90%E4%B8%AA%E6%8F%90%E4%BA%A4"><span class="toc-text">3. 恢复文件到某个提交</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%81%A2%E5%A4%8D%E6%95%B4%E4%B8%AA%E5%B7%A5%E4%BD%9C%E5%8C%BA"><span class="toc-text">4. 恢复整个工作区</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E5%88%87%E6%8D%A2%E5%88%B0%E6%9C%80%E8%BF%91%E7%9A%84%E5%88%86%E6%94%AF"><span class="toc-text">5. 切换到最近的分支</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E6%9F%A5%E7%9C%8B%E6%9F%90%E4%B8%AA%E6%8F%90%E4%BA%A4%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-text">6. 查看某个提交的内容</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%9B%9E%E5%88%B0%E6%AD%A3%E5%B8%B8%E7%8A%B6%E6%80%81"><span class="toc-text">如何回到正常状态</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></li></ol></li></ol>
         
     </div>
 </aside>
