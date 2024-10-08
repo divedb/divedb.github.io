@@ -22,7 +22,8 @@
 <meta name="keywords" content="" />
 
 
-<meta name="description" content="" />
+<meta name="description" content="汇编1. .comm and .localUnder The Hood : Unassigned Global Variables
+2. rsp16字节对齐问题12345678910111213..." />
 
 
 <meta name="robots" content="all" />
@@ -32,8 +33,6 @@
     <!--Title-->
 
 <title>
-    
-    categories |
     
     Hexo
 </title>
@@ -136,159 +135,110 @@
     <section class="content-wrap">
         <div class="container">
             <div class="row">
-                <main class="col-md-8 main-content ">
-                    <div>
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="">
+            
+            NO Title!
+            
+        </h1>
+        <div class="post-meta">
     
-    <article class="post">
-        <h1 class="post-head">共计
-            3个分类</h1>
-        <div class="post-body">
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/assembly/">assembly</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
             
-            <li class="post-items">
-                <a href="/categories/assembly/" title="assembly" target="_blank">
-                    assembly
-                </a>
-            </li>
-            
-            <li class="post-items">
-                <a href="/categories/leetcode/" title="leetcode" target="_blank">
-                    leetcode
-                </a>
-            </li>
-            
-            <li class="post-items">
-                <a href="/categories/probability-theory/" title="probability theory" target="_blank">
-                    probability theory
-                </a>
-            </li>
-            
-        </div>
-    </article>
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2024/09/29</span>
+    </span>
+    
     
 </div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h2 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h2><h6 id="1-comm-and-local"><a href="#1-comm-and-local" class="headerlink" title="1. .comm and .local"></a>1. <code>.comm</code> and <code>.local</code></h6><p><a target="_blank" rel="noopener" href="https://dev.to/yjdoc2/under-the-hood-unassigned-global-variables-1edd">Under The Hood : Unassigned Global Variables</a></p>
+<h6 id="2-rsp16字节对齐问题"><a href="#2-rsp16字节对齐问题" class="headerlink" title="2. rsp16字节对齐问题"></a>2. <code>rsp</code>16字节对齐问题</h6><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Not make sense when char is included</span></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  sub rsp, 8\n&quot;;</span></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  mov rax, 0\n&quot;;</span></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  push rbp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  mov  rbp, rsp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  and rsp, 0xFFFFFFFFFFFFFFF0\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  call &quot;</span> &lt;&lt; node-&gt;<span class="built_in">func_name</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  mov  rsp, rbp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  pop rbp\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  add rsp, 8\n&quot;;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>gcc (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609</code>可以pass</p>
+<p><code>gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0</code>不可以</p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/2024/09/29/leetcode/leetcode%20432/" class="pre-post btn btn-default" title=''>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            </span>
+    </a>
+    
+    
+</div>
+
+<div id="comments">
+    
+    
+<div class="utteranc">
+  
+  <script
+    src='https://utteranc.es/client.js'
+    repo='shenliyang/snippet-comment'
+    issue-term='pathname'
+    issue-number=''
+    theme='github-light'
+    label=''
+    crossorigin='anonymous'
+    async
+  ></script>
+</div>
+
+
+
+</div>
+
                 </main>
                 
-                    
-<aside class="col-md-4 sidebar">
-    
-    
-<div class="widget">
-    <h3 class="title">
-        Search
-    </h3>
-    <div id="search-form">
-        <div id="result-mask" class="hide"></div>
-        <div class="search-area">
-            
-            <input id="search-key" type="search" autocomplete="off" placeholder="Search What？">
-            <button type="button" class="search-form-submit" id="search-local">
-                localSearch</button>
-            
-            
-        </div>
-        <div id="result-wrap" class="hide">
-            <div id="search-result"></div>
-        </div>
-        <div class="hide">
-            <template id="search-tpl">
-                <div class="item">
-                    <a href="/{path}" title="{title}">
-                        <div class="title">{title}</div>
-                        <div class="content">{content}</div>
-                    </a>
-                </div>
-            </template>
-        </div>
-    </div>
-</div>
-
-    
-    
-<div class="widget">
-    <h3 class="title">
-        Notification
-    </h3>
-    <div class="notification">
-        <p>
-    主题下载：<a href="https://github.com/shenliyang/hexo-theme-snippet" title="fork me" target="_blank">Snippet主题</a> <br/>
-    主题使用：<a href="https://github.com/shenliyang/hexo-theme-snippet/blob/master/README.md#常见问题" title="" target="_blank">常见使用问题</a> <br/>
-    支持主题：<a target="_blank" rel="noopener" href="https://github.com/shenliyang/hexo-theme-snippet/stargazers">Star一下</a>
-</p>
-    </div>
-</div>
-
-    
-    
-<div class="widget">
-    <h3 class="title">
-        Social
-    </h3>
-    <div class="content social">
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            Table of Contents
+        </h3>
         
-        <a href="//github.com/shenliyang" rel="external nofollow" title="Github" target="_blank">
-            <i class="git fa fa-git"></i>
-        </a>
-        
-        <a href="mailto:snippet@aliyun.com" rel="external nofollow" title="邮箱" target="_blank">
-            <i class="envelope-o fa fa-envelope-o"></i>
-        </a>
-        
-        <a href="/" rel="external nofollow" title="联系QQ" target="_blank">
-            <i class="qq fa fa-qq"></i>
-        </a>
-        
-        <a href="/" rel="external nofollow" title="微信" target="_blank">
-            <i class="weixin fa fa-weixin"></i>
-        </a>
-        
-        <a href="/" rel="external nofollow" title="QQ群" target="_blank">
-            <i class="users fa fa-users"></i>
-        </a>
-        
-        <a href="/atom.xml" rel="external nofollow" title="RSS" target="_blank">
-            <i class="feed fa fa-feed"></i>
-        </a>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96"><span class="toc-text">汇编</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#1-comm-and-local"><span class="toc-text">1. .comm and .local</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#2-rsp16%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E9%97%AE%E9%A2%98"><span class="toc-text">2. rsp16字节对齐问题</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
         
     </div>
-</div>
-
-    
-    
-<div class="widget">
-    <h3 class="title">
-        Categories
-    </h3>
-    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/assembly/"><i class="fa" aria-hidden="true">assembly</i></a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode/"><i class="fa" aria-hidden="true">leetcode</i></a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/probability-theory/"><i class="fa" aria-hidden="true">probability theory</i></a><span class="category-list-count">1</span></li></ul>
-</div>
-
-    
-    
-<div class="widget">
-    <h3 class="title">
-        Archives
-    </h3>
-    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/"><i class="fa" aria-hidden="true">2024年10月</i></a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/"><i class="fa" aria-hidden="true">2024年09月</i></a><span class="archive-list-count">4</span></li></ul>
-</div>
-
-    
-    
-    
-    
-<div class="widget">
-    <h3 class="title">
-        Friends
-    </h3>
-    <div class="content friends-link">
-        
-        <a href="https://hexo.io/zh-cn/" class="fa" target="_blank">
-            Hexo官网</a>
-        
-    </div>
-</div>
-
-    
 </aside>
-
                 
             </div>
         </div>
@@ -325,10 +275,6 @@
         </div>
     </div>
 </div>
-
-
-<script src="/js/search.js?rev=@@hash.js"></script>
-
 
 
 

@@ -22,8 +22,11 @@
 <meta name="keywords" content="" />
 
 
-<meta name="description" content="汇编1. .comm and .localUnder The Hood : Unassigned Global Variables
-2. rsp16字节对齐问题12345678910111213..." />
+<meta name="description" content="三段论三段论是一种经典的逻辑推理形式，通常由三个部分组成：两个前提和一个结论。其基本结构是：
+
+大前提：一个普遍性的陈述。
+小前提：一个特定的陈述，通常涉及大前提中的某个类别或对象。
+结论：根据..." />
 
 
 <meta name="robots" content="all" />
@@ -148,7 +151,7 @@
     
     <span class="categories-meta fa-wrap">
         <i class="fa fa-folder-open-o"></i>
-        <a class="category-link" href="/categories/assembly/">assembly</a>
+        <a class="category-link" href="/categories/probability-theory/">probability theory</a>
     </span>
     
     
@@ -164,7 +167,7 @@
     <span class="fa-wrap">
         <i class="fa fa-clock-o"></i>
         <span class="date-meta">
-            2024/09/29</span>
+            2024/10/08</span>
     </span>
     
     
@@ -174,11 +177,18 @@
     </div>
     
     <div class="post-body post-content">
-        <h2 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h2><h6 id="1-comm-and-local"><a href="#1-comm-and-local" class="headerlink" title="1. .comm and .local"></a>1. <code>.comm</code> and <code>.local</code></h6><p><a target="_blank" rel="noopener" href="https://dev.to/yjdoc2/under-the-hood-unassigned-global-variables-1edd">Under The Hood : Unassigned Global Variables</a></p>
-<h6 id="2-rsp16字节对齐问题"><a href="#2-rsp16字节对齐问题" class="headerlink" title="2. rsp16字节对齐问题"></a>2. <code>rsp</code>16字节对齐问题</h6><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Not make sense when char is included</span></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  sub rsp, 8\n&quot;;</span></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  mov rax, 0\n&quot;;</span></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  push rbp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  mov  rbp, rsp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  and rsp, 0xFFFFFFFFFFFFFFF0\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  call &quot;</span> &lt;&lt; node-&gt;<span class="built_in">func_name</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  mov  rsp, rbp\n&quot;</span>;</span><br><span class="line">stream_ &lt;&lt; <span class="string">&quot;  pop rbp\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// stream_ &lt;&lt; &quot;  add rsp, 8\n&quot;;</span></span><br></pre></td></tr></table></figure>
-
-<p><code>gcc (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609</code>可以pass</p>
-<p><code>gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0</code>不可以</p>
+        <h2 id="三段论"><a href="#三段论" class="headerlink" title="三段论"></a>三段论</h2><p>三段论是一种经典的逻辑推理形式，通常由三个部分组成：两个前提和一个结论。其基本结构是：</p>
+<ol>
+<li><strong>大前提</strong>：一个普遍性的陈述。</li>
+<li><strong>小前提</strong>：一个特定的陈述，通常涉及大前提中的某个类别或对象。</li>
+<li><strong>结论</strong>：根据前提推导出的结果。</li>
+</ol>
+<p>例如：</p>
+<ul>
+<li>大前提：所有人都是凡人。</li>
+<li>小前提：苏格拉底是人。</li>
+<li>结论：苏格拉底是凡人。</li>
+</ul>
 
     </div>
     
@@ -197,17 +207,11 @@
 </article>
 <div class="article-nav prev-next-wrap clearfix">
     
-    <a href="/2024/09/29/Leetcode%20432/" class="pre-post btn btn-default" title=''>
-        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-        <span class="hidden-xs">
-            </span>
-    </a>
     
-    
-    <a href="/2024/09/13/hello-world/" class="next-post btn btn-default" title='Hello World'>
+    <a href="/2024/10/08/leetcode/leetcode%201963/" class="next-post btn btn-default" title=''>
         <span class="hidden-lg">下一篇</span>
         <span class="hidden-xs">
-            Hello World</span><i class="fa fa-angle-right fa-fw"></i>
+            </span><i class="fa fa-angle-right fa-fw"></i>
     </a>
     
 </div>
@@ -241,7 +245,7 @@
             Table of Contents
         </h3>
         
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96"><span class="toc-text">汇编</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#1-comm-and-local"><span class="toc-text">1. .comm and .local</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#2-rsp16%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E9%97%AE%E9%A2%98"><span class="toc-text">2. rsp16字节对齐问题</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E6%AE%B5%E8%AE%BA"><span class="toc-text">三段论</span></a></li></ol>
         
     </div>
 </aside>
