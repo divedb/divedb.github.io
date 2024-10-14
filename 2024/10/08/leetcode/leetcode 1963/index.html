@@ -1,179 +1,281 @@
-<!DOCTYPE HTML>
-<html lang="en">
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
 
 <head>
-    <!--Setting-->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-    <meta http-equiv="Cache-Control" content="no-siteapp">
-    <meta http-equiv="Cache-Control" content="no-transform">
-    <meta name="renderer" content="webkit|ie-comp|ie-stand">
-    <meta name="apple-mobile-web-app-capable" content="Hexo">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no,email=no,adress=no">
-    <meta name="browsermode" content="application">
-    <meta name="screen-orientation" content="portrait">
-    <meta name="theme-version" content="1.3.0">
-    <meta name="root" content="/">
-    <link rel="dns-prefetch" href="http://example.com">
-    <!--SEO-->
+  <meta charset="UTF-8">
 
-<meta name="keywords" content="" />
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="leetcode 19631. 题目要求You are given a 0-indexed string s of even length n. The string consists of exactly n &#x2F; 2 opening brackets &#39;[&#39; and n &#x2F; 2 closing brackets &#39;]&#39;. A string is called ba">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/10/08/leetcode/leetcode%201963/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="leetcode 19631. 题目要求You are given a 0-indexed string s of even length n. The string consists of exactly n &#x2F; 2 opening brackets &#39;[&#39; and n &#x2F; 2 closing brackets &#39;]&#39;. A string is called ba">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-08T05:02:00.499Z">
+<meta property="article:modified_time" content="2024-10-08T08:50:16.565Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Hexo</title>
 
-<meta name="description" content="leetcode 19631. 题目要求You are given a 0-indexed string s of even length n. The string consists of e..." />
-
-
-<meta name="robots" content="all" />
-<meta name="google" content="all" />
-<meta name="googlebot" content="all" />
-<meta name="verify" content="all" />
-    <!--Title-->
-
-<title>
-    
-    Hexo
-</title>
-
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-
-
-<link rel="icon" href="/favicon.ico">
-
-    
-
-
-<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
-<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
-<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
-
-    
-<div class="hide">
-    <script type="text/javascript">
-    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
-    </script>
-</div>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
 
 
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
 
-    
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
 
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
 <meta name="generator" content="Hexo 7.3.0"></head>
-<!--[if lte IE 8]>
-<style>
-    html{ font-size: 1em }
-</style>
-<![endif]-->
-<!--[if lte IE 9]>
-<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
-<![endif]-->
+
+
 <body>
-    <header class="main-header"  style="background-image:url(
-    https://hexo-theme-snippet-1251680922.cos.ap-beijing.myqcloud.com/img/banner.jpg)"
-     >
-    <div class="main-header-box">
-        <a class="header-avatar" href="/" title='John Doe'>
-            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
-        </a>
-        <div class="branding">
-            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
-            
-            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
-            
-        </div>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
     </div>
-</header>
-    <nav class="main-navigation">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
-                        <span class="sr-only"></span>
-                        <i class="fa fa-bars"></i>
-                    </span>
-                    <a class="navbar-brand" href="http://example.com">
-                        Hexo</a>
-                </div>
-                <div class="collapse navbar-collapse" id="main-menu">
-                    <ul class="menu">
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/"><i class="fa "></i>
-                                Home</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/categories/前端/"><i class="fa "></i>
-                                前端</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/categories/后端/"><i class="fa "></i>
-                                后端</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/categories/工具/"><i class="fa "></i>
-                                工具</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/archives/"><i class="fa "></i>
-                                时间轴</a>
-                        </li>
-                        
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </nav>
-    <section class="content-wrap">
-        <div class="container">
-            <div class="row">
-                <main class="col-md-8 main-content m-post">
-                    <p id="process"></p>
-<article class="post">
-    <div class="post-head">
-        <h1 id="">
-            
-            NO Title!
-            
-        </h1>
-        <div class="post-meta">
-    
-    <span class="categories-meta fa-wrap">
-        <i class="fa fa-folder-open-o"></i>
-        <a class="category-link" href="/categories/leetcode/">leetcode</a>
-    </span>
-    
-    
-    <span class="fa-wrap">
-        <i class="fa fa-tags"></i>
-        <span class="tags-meta">
-            
-        </span>
-    </span>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
     
     
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-08 13:02" pubdate>
+          October 8, 2024 pm
+        </time>
+      </span>
     
-    <span class="fa-wrap">
-        <i class="fa fa-clock-o"></i>
-        <span class="date-meta">
-            2024/10/08</span>
-    </span>
+  </div>
+
+  <div class="mt-1">
     
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          342 words
+        
+      </span>
     
-</div>
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
         
         
+        
+          3 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
     </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
     
-    <div class="post-body post-content">
-        <h2 id="leetcode-1963"><a href="#leetcode-1963" class="headerlink" title="leetcode 1963"></a>leetcode 1963</h2><h4 id="1-题目要求"><a href="#1-题目要求" class="headerlink" title="1. 题目要求"></a>1. 题目要求</h4><p>You are given a <strong>0-indexed</strong> string <code>s</code> of <strong>even</strong> length <code>n</code>. The string consists of <strong>exactly</strong> <code>n / 2</code> opening brackets <code>&#39;[&#39;</code> and <code>n / 2</code> closing brackets <code>&#39;]&#39;</code>.</p>
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="leetcode-1963"><a href="#leetcode-1963" class="headerlink" title="leetcode 1963"></a>leetcode 1963</h2><h4 id="1-题目要求"><a href="#1-题目要求" class="headerlink" title="1. 题目要求"></a>1. 题目要求</h4><p>You are given a <strong>0-indexed</strong> string <code>s</code> of <strong>even</strong> length <code>n</code>. The string consists of <strong>exactly</strong> <code>n / 2</code> opening brackets <code>&#39;[&#39;</code> and <code>n / 2</code> closing brackets <code>&#39;]&#39;</code>.</p>
 <p>A string is called <strong>balanced</strong> if and only if:</p>
 <ul>
 <li>It is the empty string, or</li>
@@ -183,13 +285,13 @@
 <p>You may swap the brackets at <strong>any</strong> two indices <strong>any</strong> number of times.</p>
 <p>Return <em>the <strong>minimum</strong> number of swaps to make</em> <code>s</code> <em><strong>balanced</strong></em>.</p>
 <p> <strong>Example 1:</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Input: s = <span class="string">&quot;][][&quot;</span></span><br><span class="line">Output: 1</span><br><span class="line">Explanation: You can make the string balanced by swapping index 0 with index 3.</span><br><span class="line">The resulting string is <span class="string">&quot;[[]]&quot;</span>.</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">Input: s = <span class="hljs-string">&quot;][][&quot;</span><br>Output: 1<br>Explanation: You can make the string balanced by swapping index 0 with index 3.<br>The resulting string is <span class="hljs-string">&quot;[[]]&quot;</span>.<br></code></pre></td></tr></table></figure>
 
 <p><strong>Example 2:</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Input: s = <span class="string">&quot;]]][[[&quot;</span></span><br><span class="line">Output: 2</span><br><span class="line">Explanation: You can <span class="keyword">do</span> the following to make the string balanced:</span><br><span class="line">- Swap index 0 with index 4. s = <span class="string">&quot;[]][][&quot;</span>.</span><br><span class="line">- Swap index 1 with index 5. s = <span class="string">&quot;[[][]]&quot;</span>.</span><br><span class="line">The resulting string is <span class="string">&quot;[[][]]&quot;</span>.</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">Input: s = <span class="hljs-string">&quot;]]][[[&quot;</span><br>Output: 2<br>Explanation: You can <span class="hljs-keyword">do</span> the following to make the string balanced:<br>- Swap index 0 with index 4. s = <span class="hljs-string">&quot;[]][][&quot;</span>.<br>- Swap index 1 with index 5. s = <span class="hljs-string">&quot;[[][]]&quot;</span>.<br>The resulting string is <span class="hljs-string">&quot;[[][]]&quot;</span>.<br></code></pre></td></tr></table></figure>
 
 <p><strong>Example 3:</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: s = <span class="string">&quot;[]&quot;</span></span><br><span class="line">Output: 0</span><br><span class="line">Explanation: The string is already balanced.</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">Input: s = <span class="hljs-string">&quot;[]&quot;</span><br>Output: 0<br>Explanation: The string is already balanced.<br></code></pre></td></tr></table></figure>
 
 <p> <strong>Constraints:</strong></p>
 <ul>
@@ -200,120 +302,372 @@
 <li>The number of opening brackets <code>&#39;[&#39;</code> equals <code>n / 2</code>, and the number of closing brackets <code>&#39;]&#39;</code> equals <code>n / 2</code>.</li>
 </ul>
 <h4 id="2-思路"><a href="#2-思路" class="headerlink" title="2. 思路"></a>2. 思路</h4><p>核心<code>]][[</code>是只需要一次交换，但如果当前是<code>]][[</code>是不能直接进行交换，还需要考虑后续的字符。考虑：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;[[[]]]][][]][[]]][[[&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-string">&quot;[[[]]]][][]][[]]][[[&quot;</span><br></code></pre></td></tr></table></figure>
 
-<h4 id="3-代码"><a href="#3-代码" class="headerlink" title="3. 代码"></a>3. 代码</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">minSwaps</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">    stack&lt;<span class="type">char</span>&gt; stack;</span><br><span class="line">    <span class="type">int</span> unbalanced = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">      <span class="type">char</span> ch = s[i];</span><br><span class="line">      <span class="comment">// If an opening bracket is encountered, push it in the stack.</span></span><br><span class="line">      <span class="keyword">if</span> (ch == <span class="string">&#x27;[&#x27;</span>)</span><br><span class="line">        stack.<span class="built_in">push</span>(ch);</span><br><span class="line">      <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// If the stack is not empty, pop it.</span></span><br><span class="line">        <span class="keyword">if</span> (!stack.<span class="built_in">empty</span>()) stack.<span class="built_in">pop</span>();</span><br><span class="line">        <span class="comment">// Otherwise increase the count of unbalanced brackets.</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">          unbalanced++;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> (unbalanced + <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="3-代码"><a href="#3-代码" class="headerlink" title="3. 代码"></a>3. 代码</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">minSwaps</span><span class="hljs-params">(string s)</span> </span>&#123;<br>    stack&lt;<span class="hljs-type">char</span>&gt; stack;<br>    <span class="hljs-type">int</span> unbalanced = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; s.<span class="hljs-built_in">size</span>(); i++) &#123;<br>      <span class="hljs-type">char</span> ch = s[i];<br>      <span class="hljs-comment">// If an opening bracket is encountered, push it in the stack.</span><br>      <span class="hljs-keyword">if</span> (ch == <span class="hljs-string">&#x27;[&#x27;</span>)<br>        stack.<span class="hljs-built_in">push</span>(ch);<br>      <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">// If the stack is not empty, pop it.</span><br>        <span class="hljs-keyword">if</span> (!stack.<span class="hljs-built_in">empty</span>()) stack.<span class="hljs-built_in">pop</span>();<br>        <span class="hljs-comment">// Otherwise increase the count of unbalanced brackets.</span><br>        <span class="hljs-keyword">else</span><br>          unbalanced++;<br>      &#125;<br>    &#125;<br>    <br>    <span class="hljs-keyword">return</span> (unbalanced + <span class="hljs-number">1</span>) / <span class="hljs-number">2</span>;<br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
 
 <p>考虑加1避免求余数</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">minSwaps</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> ans = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> closed = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> open = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果当前[数量比]多 后面一定会被抵消的</span></span><br><span class="line">    <span class="comment">// 错误思路</span></span><br><span class="line">    <span class="comment">// 1. 如果当前字符是 &#x27;]&#x27;</span></span><br><span class="line">    <span class="comment">//    如果有&#x27;[&#x27;剩余 直接匹配</span></span><br><span class="line">    <span class="comment">//    否则&#x27;]&#x27;数量加1</span></span><br><span class="line">    <span class="comment">// 2. 如果当前字符是 &#x27;[&#x27;</span></span><br><span class="line">    <span class="comment">//    如果已经有] 是没有办法直接交换的 考虑</span></span><br><span class="line">    <span class="comment">//          ][][</span></span><br><span class="line">    <span class="comment">//          ]][[</span></span><br><span class="line">    <span class="comment">//    [和]符号至少得有2个 使用一次交换</span></span><br><span class="line">    <span class="comment">//    将]][[转成[][]</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> c : s) &#123;</span><br><span class="line">      <span class="keyword">if</span> (c == <span class="string">&#x27;]&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (open &gt; <span class="number">0</span>) &#123;</span><br><span class="line">          open--;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          closed++;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          open++;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// case: ][[]</span></span><br><span class="line">    ans += closed/<span class="number">2</span> + (closed%<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">minSwaps</span><span class="hljs-params">(string s)</span> </span>&#123;<br>    <span class="hljs-type">int</span> ans = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> closed = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> open = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">// 如果当前[数量比]多 后面一定会被抵消的</span><br>    <span class="hljs-comment">// 错误思路</span><br>    <span class="hljs-comment">// 1. 如果当前字符是 &#x27;]&#x27;</span><br>    <span class="hljs-comment">//    如果有&#x27;[&#x27;剩余 直接匹配</span><br>    <span class="hljs-comment">//    否则&#x27;]&#x27;数量加1</span><br>    <span class="hljs-comment">// 2. 如果当前字符是 &#x27;[&#x27;</span><br>    <span class="hljs-comment">//    如果已经有] 是没有办法直接交换的 考虑</span><br>    <span class="hljs-comment">//          ][][</span><br>    <span class="hljs-comment">//          ]][[</span><br>    <span class="hljs-comment">//    [和]符号至少得有2个 使用一次交换</span><br>    <span class="hljs-comment">//    将]][[转成[][]</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> c : s) &#123;<br>      <span class="hljs-keyword">if</span> (c == <span class="hljs-string">&#x27;]&#x27;</span>) &#123;<br>        <span class="hljs-keyword">if</span> (open &gt; <span class="hljs-number">0</span>) &#123;<br>          open--;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>          closed++;<br>        &#125;<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>          open++;<br>      &#125;<br>    &#125;<br><br>    <span class="hljs-comment">// case: ][[]</span><br>    ans += closed/<span class="hljs-number">2</span> + (closed%<span class="hljs-number">2</span>);<br><br>    <span class="hljs-keyword">return</span> ans;<br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
 
 
-    </div>
-    
-    <div class="post-footer">
-        <div>
+                
+              </div>
             
-            转载声明：
-            商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
-            
-            
-        </div>
-        <div>
-            
-        </div>
-    </div>
-</article>
-<div class="article-nav prev-next-wrap clearfix">
-    
-    <a href="/2024/10/08/probability%20theory/syllogism/" class="pre-post btn btn-default" title=''>
-        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-        <span class="hidden-xs">
-            </span>
-    </a>
-    
-    
-    <a href="/2024/10/08/C++%20Grammar/" class="next-post btn btn-default" title=''>
-        <span class="hidden-lg">下一篇</span>
-        <span class="hidden-xs">
-            </span><i class="fa fa-angle-right fa-fw"></i>
-    </a>
-    
-</div>
-
-<div id="comments">
-    
-    
-<div class="utteranc">
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
   
-  <script
-    src='https://utteranc.es/client.js'
-    repo='shenliyang/snippet-comment'
-    issue-term='pathname'
-    issue-number=''
-    theme='github-light'
-    label=''
-    crossorigin='anonymous'
-    async
-  ></script>
-</div>
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
-
-
-</div>
-
-                </main>
-                
-                    <aside id="article-toc" role="navigation" class="col-md-4">
-    <div class="widget">
-        <h3 class="title">
-            Table of Contents
-        </h3>
-        
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#leetcode-1963"><span class="toc-text">leetcode 1963</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE%E8%A6%81%E6%B1%82"><span class="toc-text">1. 题目要求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%80%9D%E8%B7%AF"><span class="toc-text">2. 思路</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81"><span class="toc-text">3. 代码</span></a></li></ol></li></ol></li></ol>
-        
-    </div>
-</aside>
-                
-            </div>
-        </div>
-    </section>
-    <footer class="main-footer">
-    <div class="container">
-        <div class="row">
-        </div>
-    </div>
-</footer>
-<a id="back-to-top" class="icon-btn hide">
-    <i class="fa fa-chevron-up"></i>
-</a>
-    <div class="copyright">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="busuanzi">
+<span class="category-chains">
+  
+  
     
-</div>
-            </div>
-            <div class="col-sm-12">
-                <span>Copyright &copy;
-                    2017
-                    
-                </span> |
-                <span>
-                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
-                </span> |
-                <span>
-                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
-                </span>
-            </div>
-        </div>
+      <span class="category-chain">
+        
+  <a href="/categories/leetcode/" class="category-chain-item">leetcode</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
     </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>http://example.com/2024/10/08/leetcode/leetcode 1963/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>October 8, 2024</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/08/probability%20theory/syllogism/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/08/C++%20Grammar/" title="">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
 </div>
 
 
 
 
-<script src="/js/app.js?rev=@@hash.js"></script>
 
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
 </body>
 </html>

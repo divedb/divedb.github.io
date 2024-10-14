@@ -1,185 +1,309 @@
-<!DOCTYPE HTML>
-<html lang="en">
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
 
 <head>
-    <!--Setting-->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-    <meta http-equiv="Cache-Control" content="no-siteapp">
-    <meta http-equiv="Cache-Control" content="no-transform">
-    <meta name="renderer" content="webkit|ie-comp|ie-stand">
-    <meta name="apple-mobile-web-app-capable" content="Hexo">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no,email=no,adress=no">
-    <meta name="browsermode" content="application">
-    <meta name="screen-orientation" content="portrait">
-    <meta name="theme-version" content="1.3.0">
-    <meta name="root" content="/">
-    <link rel="dns-prefetch" href="http://example.com">
-    <!--SEO-->
+  <meta charset="UTF-8">
 
-<meta name="keywords" content="" />
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="C++ Grammar[stmt.stmt]123456789statement ::&#x3D; 		labeled-statement  | attribute-specifier-seq? expression-statement  | attribute-specifier-seq? compound-statement  | attribute-specifier-seq? selection-s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/10/08/C++%20Grammar/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="C++ Grammar[stmt.stmt]123456789statement ::&#x3D; 		labeled-statement  | attribute-specifier-seq? expression-statement  | attribute-specifier-seq? compound-statement  | attribute-specifier-seq? selection-s">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-08T03:41:33.220Z">
+<meta property="article:modified_time" content="2024-10-09T01:05:06.067Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Hexo</title>
 
-<meta name="description" content="C++ Grammar[dcl.typedef]1typedef-name ::= identifier
-
-[dcl.type]123456789101112131415type-specifi..." />
-
-
-<meta name="robots" content="all" />
-<meta name="google" content="all" />
-<meta name="googlebot" content="all" />
-<meta name="verify" content="all" />
-    <!--Title-->
-
-<title>
-    
-    Hexo
-</title>
-
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-
-
-<link rel="icon" href="/favicon.ico">
-
-    
-
-
-<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
-<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
-<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
-
-    
-<div class="hide">
-    <script type="text/javascript">
-    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
-    </script>
-</div>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
 
 
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
 
-    
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
 
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
 <meta name="generator" content="Hexo 7.3.0"></head>
-<!--[if lte IE 8]>
-<style>
-    html{ font-size: 1em }
-</style>
-<![endif]-->
-<!--[if lte IE 9]>
-<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
-<![endif]-->
+
+
 <body>
-    <header class="main-header"  style="background-image:url(
-    https://hexo-theme-snippet-1251680922.cos.ap-beijing.myqcloud.com/img/banner.jpg)"
-     >
-    <div class="main-header-box">
-        <a class="header-avatar" href="/" title='John Doe'>
-            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
-        </a>
-        <div class="branding">
-            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
-            
-            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
-            
-        </div>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
     </div>
-</header>
-    <nav class="main-navigation">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
-                        <span class="sr-only"></span>
-                        <i class="fa fa-bars"></i>
-                    </span>
-                    <a class="navbar-brand" href="http://example.com">
-                        Hexo</a>
-                </div>
-                <div class="collapse navbar-collapse" id="main-menu">
-                    <ul class="menu">
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/"><i class="fa "></i>
-                                Home</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/categories/前端/"><i class="fa "></i>
-                                前端</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/categories/后端/"><i class="fa "></i>
-                                后端</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/categories/工具/"><i class="fa "></i>
-                                工具</a>
-                        </li>
-                        
-                        <li role="presentation" class="text-center">
-                            <a href="/archives/"><i class="fa "></i>
-                                时间轴</a>
-                        </li>
-                        
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </nav>
-    <section class="content-wrap">
-        <div class="container">
-            <div class="row">
-                <main class="col-md-8 main-content m-post">
-                    <p id="process"></p>
-<article class="post">
-    <div class="post-head">
-        <h1 id="">
-            
-            NO Title!
-            
-        </h1>
-        <div class="post-meta">
-    
-    <span class="categories-meta fa-wrap">
-        <i class="fa fa-folder-open-o"></i>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
         
-    </span>
+          
+  <div class="mt-3">
     
     
-    <span class="fa-wrap">
-        <i class="fa fa-tags"></i>
-        <span class="tags-meta">
-            
-        </span>
-    </span>
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-08 11:41" pubdate>
+          October 8, 2024 am
+        </time>
+      </span>
     
+  </div>
+
+  <div class="mt-1">
     
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          627 words
+        
+      </span>
     
-    <span class="fa-wrap">
-        <i class="fa fa-clock-o"></i>
-        <span class="date-meta">
-            2024/10/08</span>
-    </span>
+
     
-    
-</div>
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
         
         
+        
+          6 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
     </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
     
-    <div class="post-body post-content">
-        <h2 id="C-Grammar"><a href="#C-Grammar" class="headerlink" title="C++ Grammar"></a>C++ Grammar</h2><h5 id="dcl-typedef"><a href="#dcl-typedef" class="headerlink" title="[dcl.typedef]"></a>[dcl.typedef]</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef-name ::= identifier</span><br></pre></td></tr></table></figure>
+      
 
-<h5 id="dcl-type"><a href="#dcl-type" class="headerlink" title="[dcl.type]"></a>[dcl.type]</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">type-specifier ::=</span><br><span class="line">		trailing-type-specifier</span><br><span class="line">	| class-specifier</span><br><span class="line">	| enum-specifier</span><br><span class="line">trailing-type-specifier ::=</span><br><span class="line">		simple-type-specifier</span><br><span class="line">	| elaborated-type-specifier</span><br><span class="line">	| typename-specifier</span><br><span class="line">	| cv-qualifier</span><br><span class="line">type-specifier-seq ::=</span><br><span class="line">		type-specifier attribute-specifier-seq?</span><br><span class="line">	| type-specifier type-specifier-seq</span><br><span class="line">trailing-type-specifier-seq ::=</span><br><span class="line">		trailing-type-specifier attribute-specifier-seq?</span><br><span class="line">	| trailing-type-specifier trailing-type-specifier-seq</span><br></pre></td></tr></table></figure>
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
 
-<h6 id="dcl-type-simple"><a href="#dcl-type-simple" class="headerlink" title="[dcl.type.simple]"></a>[dcl.type.simple]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">simple-type-specifier ::=</span><br><span class="line">		<span class="string">&quot;::&quot;</span>? nested-name-specifier? type-name</span><br><span class="line">	| <span class="string">&quot;::&quot;</span>? nested-name-specifier? <span class="string">&quot;template&quot;</span> simple-template-id</span><br><span class="line">	| <span class="string">&quot;char&quot;</span></span><br><span class="line">	| <span class="string">&quot;char16_t&quot;</span></span><br><span class="line">	| <span class="string">&quot;char32_t&quot;</span></span><br><span class="line">	| <span class="string">&quot;wchar_t&quot;</span></span><br><span class="line">	| <span class="string">&quot;bool&quot;</span></span><br><span class="line">	| <span class="string">&quot;short&quot;</span></span><br><span class="line">	| <span class="string">&quot;int&quot;</span></span><br><span class="line">	| <span class="string">&quot;long&quot;</span></span><br><span class="line">	| <span class="string">&quot;signed&quot;</span></span><br><span class="line">	| <span class="string">&quot;unsigned&quot;</span></span><br><span class="line">	| <span class="string">&quot;float&quot;</span></span><br><span class="line">	| <span class="string">&quot;double&quot;</span></span><br><span class="line">	| <span class="string">&quot;void&quot;</span></span><br><span class="line">	| <span class="string">&quot;auto&quot;</span></span><br><span class="line">	| decltype-specifier</span><br><span class="line">	</span><br><span class="line">type-name	::=</span><br><span class="line">		class-name</span><br><span class="line">	| enum-name</span><br><span class="line">	| typedef-name</span><br><span class="line">	| simple-template-id</span><br><span class="line"></span><br><span class="line">decltype-specifier ::= <span class="string">&quot;decltype&quot;</span> <span class="string">&quot;(&quot;</span> expression <span class="string">&quot;)&quot;</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="C-Grammar"><a href="#C-Grammar" class="headerlink" title="C++ Grammar"></a>C++ Grammar</h2><h6 id="stmt-stmt"><a href="#stmt-stmt" class="headerlink" title="[stmt.stmt]"></a>[stmt.stmt]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">statement ::= <br>		labeled-statement<br>  | attribute-specifier-seq? expression-statement<br>  | attribute-specifier-seq? compound-statement<br>  | attribute-specifier-seq? selection-statement<br>  | attribute-specifier-seq? iteration-statement<br>  | attribute-specifier-seq? jump-statement<br>  | declaration-statement<br>  | attribute-specifier-seq? try-block<br></code></pre></td></tr></table></figure>
+
+<h6 id="stmt-label"><a href="#stmt-label" class="headerlink" title="[stmt.label]"></a>[stmt.label]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">labeled-statement ::= <br>		attribute-specifier-seq? identifier <span class="hljs-string">&quot;:&quot;</span> statement<br>  | attribute-specifier-seq? <span class="hljs-string">&quot;case&quot;</span> constant-expression <span class="hljs-string">&quot;:&quot;</span> statement<br>  | attribute-specifier-seq? <span class="hljs-string">&quot;default&quot;</span> <span class="hljs-string">&quot;:&quot;</span> statement<br></code></pre></td></tr></table></figure>
+
+<h6 id="stmt-expr"><a href="#stmt-expr" class="headerlink" title="[stmt.expr]"></a>[stmt.expr]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">expression-statement ::= expression? <span class="hljs-string">&quot;;&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h6 id="stmt-block"><a href="#stmt-block" class="headerlink" title="[stmt.block]"></a>[stmt.block]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">compound-statement ::= <span class="hljs-string">&quot;&#123;&quot;</span> statement-seq? <span class="hljs-string">&quot;&#125;&quot;</span><br>statement-seq ::=<br>		statement <br>	| statement-seq statement<br></code></pre></td></tr></table></figure>
+
+<h6 id="stmt-select"><a href="#stmt-select" class="headerlink" title="[stmt.select]"></a>[stmt.select]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">selection-statement ::= <br>		<span class="hljs-string">&quot;if&quot;</span> <span class="hljs-string">&quot;(&quot;</span> condition <span class="hljs-string">&quot;)&quot;</span> statement<br>	| <span class="hljs-string">&quot;if&quot;</span> <span class="hljs-string">&quot;(&quot;</span> condition <span class="hljs-string">&quot;)&quot;</span> statement <span class="hljs-string">&quot;else&quot;</span> statement<br>  | <span class="hljs-string">&quot;switch&quot;</span> <span class="hljs-string">&quot;(&quot;</span> condition <span class="hljs-string">&quot;)&quot;</span> statement<br><br>condition ::= <br>		expression<br>  | attribute-specifier-seq? decl-specifier-seq declarator <span class="hljs-string">&quot;=&quot;</span> initializer-clause<br>  | attribute-specifier-seq? decl-specifier-seq declarator braced-init-list<br></code></pre></td></tr></table></figure>
+
+<h6 id="stmt-iter"><a href="#stmt-iter" class="headerlink" title="[stmt.iter]"></a>[stmt.iter]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">iteration-statement ::=<br>		<span class="hljs-string">&quot;while&quot;</span> <span class="hljs-string">&quot;(&quot;</span> condition <span class="hljs-string">&quot;)&quot;</span> statement<br>	| <span class="hljs-string">&quot;do&quot;</span> statement <span class="hljs-string">&quot;while&quot;</span> <span class="hljs-string">&quot;(&quot;</span> expression <span class="hljs-string">&quot;)&quot;</span> <span class="hljs-string">&quot;;&quot;</span><br>  | <span class="hljs-string">&quot;for&quot;</span> <span class="hljs-string">&quot;(&quot;</span> for-init-statement condition? <span class="hljs-string">&quot;;&quot;</span> expression? <span class="hljs-string">&quot;)&quot;</span> statement<br>  | <span class="hljs-string">&quot;for&quot;</span> <span class="hljs-string">&quot;(&quot;</span> for-range-declaration <span class="hljs-string">&quot;:&quot;</span> for-range-initializer <span class="hljs-string">&quot;)&quot;</span> statement<br><br>for-init-statement ::=<br>		expression-statement<br>	| simple-declaration<br><br>for-range-declaration ::= attribute-specifier-seq? type-specifier-seq declarator<br><br>for-range-initializer ::=<br>		expression<br>  | braced-init-list<br></code></pre></td></tr></table></figure>
+
+<h6 id="stmt-jump"><a href="#stmt-jump" class="headerlink" title="[stmt.jump]"></a>[stmt.jump]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">jump-statement ::= <br>		<span class="hljs-string">&quot;break&quot;</span> <span class="hljs-string">&quot;;&quot;</span><br>  | <span class="hljs-string">&quot;continue&quot;</span> <span class="hljs-string">&quot;;&quot;</span><br>  | <span class="hljs-string">&quot;return&quot;</span> expression? <span class="hljs-string">&quot;;&quot;</span><br>  | <span class="hljs-string">&quot;return&quot;</span> braced-init-list?<br>  | <span class="hljs-string">&quot;goto&quot;</span> identifier <span class="hljs-string">&quot;;&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h6 id="stmt-dcl"><a href="#stmt-dcl" class="headerlink" title="[stmt.dcl]"></a>[stmt.dcl]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">declaration-statement ::= block-declaration<br></code></pre></td></tr></table></figure>
+
+<h6 id="dcl-dcl"><a href="#dcl-dcl" class="headerlink" title="[dcl.dcl]"></a>[dcl.dcl]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs bash">declaration-seq ::= <br>		declaration<br>  | declaration-seq declaration<br><br>declaration ::=<br>		block-declaration<br>	| function-definition<br>  | template-declaration<br>  | explicit-instantiation<br>  | explicit-specialization<br>  | linkage-specialization<br>  | namespace-definition<br>  | empty-declaration<br>  | attribute-declaration<br>  <br>block-declaration ::=<br>		simple-declaration<br>	| asm-definition<br>	| namespace-alias-definition<br>	| using-declaration<br>	| using-directive<br>	| static_assert-declaration<br>	| alias-declaration<br>	| opaque-enum-declaration<br><br>alias-declaration ::=<br>	<span class="hljs-string">&quot;using&quot;</span> identifier <span class="hljs-string">&quot;=&quot;</span> type-id <span class="hljs-string">&quot;;&quot;</span><br><br>simple-declaration ::=<br>	attribute-specifier-seq? decl-specifier-seq? init-declarator-list? <span class="hljs-string">&quot;;&quot;</span><br><br>static_assert-declaration ::=<br>	<span class="hljs-string">&quot;static_assert&quot;</span> <span class="hljs-string">&quot;(&quot;</span> constant-expression <span class="hljs-string">&quot;,&quot;</span> string-literal <span class="hljs-string">&quot;)&quot;</span><br><br>empty-declaration ::=<br>	<span class="hljs-string">&quot;;&quot;</span><br>	<br>attribute-declaration ::=<br>	attribute-specifier-seq <span class="hljs-string">&quot;;&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h6 id="dcl-spec"><a href="#dcl-spec" class="headerlink" title="[dcl.spec]"></a>[dcl.spec]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">decl-specifier ::=<br>		storage-class-specifier<br>	| type-specifier<br>  | function-specifier<br>  | <span class="hljs-string">&quot;friend&quot;</span><br>  | <span class="hljs-string">&quot;typedef&quot;</span><br>  | <span class="hljs-string">&quot;constexpr&quot;</span><br>  <br>decl-specifier-seq ::=<br>		decl-specifier attribute-specifier-seq?<br>	| decl-specifier decl-specifier-seq<br></code></pre></td></tr></table></figure>
+
+<h6 id="dcl-stc"><a href="#dcl-stc" class="headerlink" title="[dcl.stc]"></a>[dcl.stc]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">storage-class-specifier ::=<br>		<span class="hljs-string">&quot;auto&quot;</span> (Removed)<br>	| <span class="hljs-string">&quot;register&quot;</span><br>  | <span class="hljs-string">&quot;static&quot;</span><br>  | <span class="hljs-string">&quot;thread_local&quot;</span><br>  | <span class="hljs-string">&quot;extern&quot;</span><br>  | <span class="hljs-string">&quot;mutable&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h6 id="dcl-fct-spec"><a href="#dcl-fct-spec" class="headerlink" title="[dcl.fct.spec]"></a>[dcl.fct.spec]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">function-specifier ::=<br>		<span class="hljs-string">&quot;inline&quot;</span><br>  | <span class="hljs-string">&quot;virtual&quot;</span><br>  | <span class="hljs-string">&quot;explicit&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h6 id="dcl-typedef"><a href="#dcl-typedef" class="headerlink" title="[dcl.typedef]"></a>[dcl.typedef]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">typedef-name ::= identifier<br></code></pre></td></tr></table></figure>
+
+<h6 id="dcl-type"><a href="#dcl-type" class="headerlink" title="[dcl.type]"></a>[dcl.type]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash">type-specifier ::=<br>		trailing-type-specifier<br>	| class-specifier<br>	| enum-specifier<br><br>trailing-type-specifier ::=<br>		simple-type-specifier<br>	| elaborated-type-specifier<br>	| typename-specifier<br>	| cv-qualifier<br><br>type-specifier-seq ::=<br>		type-specifier attribute-specifier-seq?<br>	| type-specifier type-specifier-seq<br><br>trailing-type-specifier-seq ::=<br>		trailing-type-specifier attribute-specifier-seq?<br>	| trailing-type-specifier trailing-type-specifier-seq<br></code></pre></td></tr></table></figure>
+
+<h6 id="dcl-type-simple"><a href="#dcl-type-simple" class="headerlink" title="[dcl.type.simple]"></a>[dcl.type.simple]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash">simple-type-specifier ::=<br>		<span class="hljs-string">&quot;::&quot;</span>? nested-name-specifier? type-name<br>	| <span class="hljs-string">&quot;::&quot;</span>? nested-name-specifier? <span class="hljs-string">&quot;template&quot;</span> simple-template-id<br>	| <span class="hljs-string">&quot;char&quot;</span><br>	| <span class="hljs-string">&quot;char16_t&quot;</span><br>	| <span class="hljs-string">&quot;char32_t&quot;</span><br>	| <span class="hljs-string">&quot;wchar_t&quot;</span><br>	| <span class="hljs-string">&quot;bool&quot;</span><br>	| <span class="hljs-string">&quot;short&quot;</span><br>	| <span class="hljs-string">&quot;int&quot;</span><br>	| <span class="hljs-string">&quot;long&quot;</span><br>	| <span class="hljs-string">&quot;signed&quot;</span><br>	| <span class="hljs-string">&quot;unsigned&quot;</span><br>	| <span class="hljs-string">&quot;float&quot;</span><br>	| <span class="hljs-string">&quot;double&quot;</span><br>	| <span class="hljs-string">&quot;void&quot;</span><br>	| <span class="hljs-string">&quot;auto&quot;</span><br>	| decltype-specifier<br>	<br>type-name	::=<br>		class-name<br>	| enum-name<br>	| typedef-name<br>	| simple-template-id<br><br>decltype-specifier ::= <span class="hljs-string">&quot;decltype&quot;</span> <span class="hljs-string">&quot;(&quot;</span> expression <span class="hljs-string">&quot;)&quot;</span><br></code></pre></td></tr></table></figure>
 
 <p><code>elaborated-type-specifier</code></p>
 <blockquote>
@@ -187,10 +311,10 @@
 </blockquote>
 <p>考虑</p>
 <p>情况1</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Foo</span> &#123; A, B &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">bar</span><span class="params">(Foo foo)</span></span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">baz</span><span class="params">(<span class="keyword">enum</span> Foo foo)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> Foo;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123; <span class="built_in">bar</span>(Foo::A); &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Foo</span> &#123; A, B &#125;;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">bar</span><span class="hljs-params">(Foo foo)</span></span>;<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">baz</span><span class="hljs-params">(<span class="hljs-keyword">enum</span> Foo foo)</span></span>;<br><br><span class="hljs-type">int</span> Foo;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-built_in">bar</span>(Foo::A); &#125;<br></code></pre></td></tr></table></figure>
 
 <p>情况2</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">Node</span>* Next; <span class="comment">// OK: lookup of Node finds the injected-class-name</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">Data</span>* Data; <span class="comment">// OK: declares type Data at global scope</span></span><br><span class="line">                     <span class="comment">// and also declares the data member Data</span></span><br><span class="line">  <span class="keyword">friend</span> <span class="keyword">class</span> ::List; <span class="comment">// error: cannot introduce a qualified name</span></span><br><span class="line">  <span class="keyword">enum</span> <span class="title class_">Kind</span>* kind; <span class="comment">// error: cannot introduce an enum</span></span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line">Data* p; <span class="comment">// OK: struct Data has been declared</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span> &#123;<br>  <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span>* Next; <span class="hljs-comment">// OK: lookup of Node finds the injected-class-name</span><br>  <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Data</span>* Data; <span class="hljs-comment">// OK: declares type Data at global scope</span><br>                     <span class="hljs-comment">// and also declares the data member Data</span><br>  <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> ::List; <span class="hljs-comment">// error: cannot introduce a qualified name</span><br>  <span class="hljs-keyword">enum</span> <span class="hljs-title class_">Kind</span>* kind; <span class="hljs-comment">// error: cannot introduce an enum</span><br>&#125;;<br> <br>Data* p; <span class="hljs-comment">// OK: struct Data has been declared</span><br></code></pre></td></tr></table></figure>
 
 
 
@@ -198,112 +322,343 @@
 <li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10902518/when-should-i-use-an-elaborated-type-specifier">When should I use an elaborated type specifier?</a></li>
 </ol>
 
-    </div>
-    
-    <div class="post-footer">
-        <div>
+                
+              </div>
             
-            转载声明：
-            商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
-            
-            
-        </div>
-        <div>
-            
-        </div>
-    </div>
-</article>
-<div class="article-nav prev-next-wrap clearfix">
-    
-    <a href="/2024/10/08/leetcode/leetcode%201963/" class="pre-post btn btn-default" title=''>
-        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-        <span class="hidden-xs">
-            </span>
-    </a>
-    
-    
-    <a href="/2024/10/07/leetcode/leetcode%202696/" class="next-post btn btn-default" title=''>
-        <span class="hidden-lg">下一篇</span>
-        <span class="hidden-xs">
-            </span><i class="fa fa-angle-right fa-fw"></i>
-    </a>
-    
-</div>
-
-<div id="comments">
-    
-    
-<div class="utteranc">
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
   
-  <script
-    src='https://utteranc.es/client.js'
-    repo='shenliyang/snippet-comment'
-    issue-term='pathname'
-    issue-number=''
-    theme='github-light'
-    label=''
-    crossorigin='anonymous'
-    async
-  ></script>
+  
 </div>
 
 
+              
+  
 
-</div>
-
-                </main>
-                
-                    <aside id="article-toc" role="navigation" class="col-md-4">
-    <div class="widget">
-        <h3 class="title">
-            Table of Contents
-        </h3>
-        
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#C-Grammar"><span class="toc-text">C++ Grammar</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#dcl-typedef"><span class="toc-text">[dcl.typedef]</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#dcl-type"><span class="toc-text">[dcl.type]</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#dcl-type-simple"><span class="toc-text">[dcl.type.simple]</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></li></ol></li></ol>
-        
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>http://example.com/2024/10/08/C++ Grammar/</div>
     </div>
-</aside>
-                
-            </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>John Doe</div>
         </div>
-    </section>
-    <footer class="main-footer">
-    <div class="container">
-        <div class="row">
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>October 8, 2024</div>
         </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
     </div>
-</footer>
-<a id="back-to-top" class="icon-btn hide">
-    <i class="fa fa-chevron-up"></i>
-</a>
-    <div class="copyright">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="busuanzi">
-    
-</div>
-            </div>
-            <div class="col-sm-12">
-                <span>Copyright &copy;
-                    2017
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
                     
-                </span> |
-                <span>
-                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
-                </span> |
-                <span>
-                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
-                </span>
+                    
+                      <a href="/2024/10/08/leetcode/leetcode%201963/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/07/leetcode/leetcode%202696/" title="">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
             </div>
+
+            
+          </article>
         </div>
+      </div>
     </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
 </div>
 
 
 
 
-<script src="/js/app.js?rev=@@hash.js"></script>
 
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
 </body>
 </html>

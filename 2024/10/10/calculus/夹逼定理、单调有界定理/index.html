@@ -1,0 +1,668 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="夹逼定理、单调有界定理1. 概念夹逼定理​	夹逼定理（Sandwich Theorem），也称为挤压定理或夹击定理，是数学分析中的一个重要定理，通常用于证明极限的存在。它的基本思想是：如果一个函数被两个其他函数夹住，并且这两个函数在某一点的极限相同，那么被夹住的函数在该点的极限也相同。 夹逼定理的正式表述：设$f(x)$、$g(x)$和$h(x)$是定义在某个区间上的函数，如果在某点$a$附近满足">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/10/10/calculus/%E5%A4%B9%E9%80%BC%E5%AE%9A%E7%90%86%E3%80%81%E5%8D%95%E8%B0%83%E6%9C%89%E7%95%8C%E5%AE%9A%E7%90%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="夹逼定理、单调有界定理1. 概念夹逼定理​	夹逼定理（Sandwich Theorem），也称为挤压定理或夹击定理，是数学分析中的一个重要定理，通常用于证明极限的存在。它的基本思想是：如果一个函数被两个其他函数夹住，并且这两个函数在某一点的极限相同，那么被夹住的函数在该点的极限也相同。 夹逼定理的正式表述：设$f(x)$、$g(x)$和$h(x)$是定义在某个区间上的函数，如果在某点$a$附近满足">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-10T07:33:33.341Z">
+<meta property="article:modified_time" content="2024-10-12T05:27:44.987Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-10 15:33" pubdate>
+          October 10, 2024 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="夹逼定理、单调有界定理"><a href="#夹逼定理、单调有界定理" class="headerlink" title="夹逼定理、单调有界定理"></a>夹逼定理、单调有界定理</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><h5 id="夹逼定理"><a href="#夹逼定理" class="headerlink" title="夹逼定理"></a>夹逼定理</h5><p>​	夹逼定理（Sandwich Theorem），也称为挤压定理或夹击定理，是数学分析中的一个重要定理，通常用于证明极限的存在。它的基本思想是：如果一个函数被两个其他函数夹住，并且这两个函数在某一点的极限相同，那么被夹住的函数在该点的极限也相同。</p>
+<h5 id="夹逼定理的正式表述："><a href="#夹逼定理的正式表述：" class="headerlink" title="夹逼定理的正式表述："></a>夹逼定理的正式表述：</h5><p>设$f(x)$、$g(x)$和$h(x)$是定义在某个区间上的函数，如果在某点$a$附近满足以下条件：</p>
+<ul>
+<li>$g(x) \le f(x) \le h(x)$对于所有$x$在$a$的某个邻域（除了可能在$a$处）</li>
+<li>$\lim_{x \to a}g(x) &#x3D; L$和$\lim_{x \to a}h(x) &#x3D; L$</li>
+</ul>
+<p>那么，$\lim_{x \to a}f(x) &#x3D; L$</p>
+<p>若一个数列有很多项相加或相乘，但是不能化简，不能用极限的四则运算，尝试用夹逼定理。</p>
+<h5 id="单调有界定理"><a href="#单调有界定理" class="headerlink" title="单调有界定理"></a>单调有界定理</h5><p>​	在数学分析中有7个命题是等价的。</p>
+<ul>
+<li>戴狄金分割原理</li>
+<li>确界原理</li>
+<li>单调有界定理</li>
+<li>聚点定理</li>
+<li>区间套定理</li>
+<li>有限覆盖定理</li>
+<li>柯西收敛准则</li>
+</ul>
+<p>若数列${a_n}$递增有上界（$a_1 \le a_2 \le a_3 \le \dots \le a_n$递增，$\exist$常数$M$，$\forall n \in N$，都有$a_n \le M$称为有上界），则${a_n}$收敛。</p>
+<h6 id="例题1"><a href="#例题1" class="headerlink" title="例题1"></a>例题1</h6><p>研究${(1+\frac{1}{n})^n}$的收敛性。</p>
+<p>证：</p>
+<p>辅助不等式</p>
+<p>设$a_1, a_2, \dots, a_n$均为正常数，则<br>$$<br>\frac{a_1+a_2+\dots+a_n}{n} \ge \sqrt[n]{a_1a_2 \dots a_n}<br>$$</p>
+<p>$$<br>\sqrt[n+1]{(1+\frac{1}{n})^n \cdot 1} \lt \frac{n(1+\frac{1}{n}) + 1}{n+1} &#x3D; 1 + \frac{1}{n+1} \<br>\Rightarrow<br>(1 + \frac{1}{n}) \lt (1 + \frac{1}{n+1})^{n+1}<br>$$<br>即$a_n \lt a_{n+1}$</p>
+<p>证明有界<br>$$<br>\begin{flalign*}<br>\sqrt[n]{\frac{1}{4}} &amp;&#x3D; \sqrt[n]{\frac{1}{2} \cdot \frac{1}{2} \cdot \underbrace{ 1 \ldots 1}_{n-2}} &lt; \frac{1+n-2}{n} &#x3D; \frac{n-1}{n} &#x3D; 1 - \frac{1}{n} &#x3D; \frac{n}{n+1} &amp;\<br>&amp;\Rightarrow \frac{1}{4} &lt; \left(\frac{n}{n+1}\right)^n \<br>&amp;\Rightarrow 4 &gt; \left(\frac{n+1}{n}\right)^n &amp;\<br>&amp;\Rightarrow a_n &lt; 4 &amp;<br>\end{flalign*}<br>$$</p>
+<h6 id="例题2"><a href="#例题2" class="headerlink" title="例题2"></a>例题2</h6><p>设$C \gt 0$么，证明${x_n}$收敛，并求$\lim_{n \to \infty}x_n$<br>$$<br>\begin{align*}<br>x_1 &amp;&#x3D; \sqrt{C}, \<br>x_2 &amp;&#x3D; \sqrt{C + \sqrt{C}}, \<br>x_3 &amp;&#x3D; \sqrt{C + \sqrt{C + \sqrt{C}}}, \<br>x_n &amp;&#x3D; \sqrt{C + \sqrt{C + \dots + \sqrt{C}}} \quad \text{(共 } n \text{ 层嵌套)}.<br>\end{align*}<br>$$<br>证法一：</p>
+<p>由条件可知：$x_{n+1} &#x3D; \sqrt{C + x_n}$<br>$$<br>\begin{flalign*}<br>x_{n+1} - x_n &amp;&#x3D; \sqrt{C + x_n} - x_n \<br>&amp; &#x3D; \frac{C + x_n - x^2_n}{\sqrt{C+x_n}+x_n} \<br>&amp; &#x3D; \frac{C + x_n - (C + x_{n-1})}{\sqrt{C+x_n}+x_n} \<br>&amp; &#x3D; \frac{x_n - x_{n-1}}{\sqrt{C+x_n}+x_n}<br>\end{flalign*}<br>$$<br>$\Rightarrow x_{n+1}-x_{n}$与$x_{n}-x_{n-1}$同号</p>
+<p>$\Rightarrow x_{n+1}-x_{n}$与$x_{2}-x_{1}$同号</p>
+<p>由$x_{2}-x_{1} &#x3D; \sqrt{C+\sqrt{C}} - \sqrt{C} \gt 0$</p>
+<p>$\Rightarrow x_{n+1}-x_{n} \gt 0$</p>
+<p>知${x_n}$是递增的。</p>
+<p>证明有上界</p>
+<p>$x_n \lt \sqrt{C+x_n} \Rightarrow x^2_n \lt C + x_n$</p>
+<p>由$x^2 - x - C &#x3D; 0$，则$x_{1,2} &#x3D; \frac{1 \pm \sqrt{1+4C}}{2}$</p>
+<p>知${x_n}$是有上界的。</p>
+<p>所以要${x_n}$是收敛的.</p>
+<h6 id="例题3"><a href="#例题3" class="headerlink" title="例题3"></a>例题3</h6><p>若$\lim_{n \to \infty}x_n &#x3D; a$，则$\lim_{n \to \infty}x_{n+m} &#x3D; a$</p>
+<p>证：</p>
+<p>给定条件$\lim_{n \to \infty}x_n &#x3D; a$，意味着：对于任意的$\epsilon \gt 0$，存在某个正整数$N$，使得当$n \ge N$时，满足<br>$$<br>|x_n - a| \lt \epsilon<br>$$<br>需要证明数列${x_{n+m}}$也收敛于$a$，即：对于任意的$\epsilon \gt 0$，存在某个正整数$N_1$，使得当$n \ge N_1$时，满足：<br>$$<br>|x_{n+m} - a| \lt \epsilon<br>$$<br>令$N_1 &#x3D; N-m$，则$n+m \gt N$可以满足条件。</p>
+<h5 id="子数列"><a href="#子数列" class="headerlink" title="子数列"></a>子数列</h5><p>定义：设{a_n}是一个给定的数列，从该数列中挑选出无限项按原来的顺序排成一无限列。</p>
+<p>$a_{n_1}, a_{n_2}, \ldots, a_{n_k}, \ldots,$称为${a_n}$的子数列，记作$a_{n_k}$。</p>
+<p>定理：数列${a_n}收敛的充要条件是$${a_n}$的任何一个子数列${a_{n_k}}$都收敛且极限相等。</p>
+<p><strong>算术-几何不等式</strong>（AM-GM不等式）的特例，它表明对于非负数$a_1, a_2, \ldots, a_n$，其算术平均值大于或等于几何平均值。</p>
+<p>证明方法1：归纳法</p>
+<p>基础情况（$n&#x3D;1$）</p>
+<p>当$n&#x3D;1$时，不等式显然成立：<br>$$<br>\frac{a_1}{1} &#x3D; a_1 \ge \sqrt[1]{a_1} &#x3D; a_1<br>$$<br>归纳假设</p>
+<p>假设对于某个$n&#x3D;k$的情况成立，即：<br>$$<br>\frac{a_1+a_2+\dots+a_k}{k} \ge \sqrt[k]{a_1a_2\dots a_k}<br>$$<br>归纳步骤</p>
+<p>们需要证明当$n&#x3D;k+1$时不等式仍然成立。考虑$a_1, a_2, \ldots, a_k, a_{k+1}$</p>
+<p>我们可以利用归纳假设和算术平均数与几何平均数的性质：<br>$$<br>\frac{a_1+a_2+\dots+a_k+a_{k+1}}{k+1} &#x3D; \frac{1}{k+1}((k \cdot \frac{a_1+a_2+\dots+a_k}{k})+a_{k+1})<br>$$<br>设<br>$$<br>A &#x3D; \frac{a_1+a_2+\dots+a_k}{k}<br>$$<br>根据等式（3），则<br>$$<br>\frac{a_1+a_2+\dots+a_k+a_{k+1}}{k+1} \ge \frac{k \cdot \sqrt[k]{a_1a_2\dots a_k} + a_{k+1}}{k+1}<br>$$<br>需要证明：<br>$$<br>\frac{k \cdot \sqrt[k]{a_1a_2\dots a_k} + a_{k+1}}{k+1} \ge \sqrt[k+1]{a_1a_2 \ldots a_ka_{k+1}}<br>$$<br>两边同乘$k+1$<br>$$<br>{k \cdot \sqrt[k]{a_1a_2\dots a_k} + a_{k+1}} \ge (k+1)\sqrt[k+1]{a_1a_2 \ldots a_ka_{k+1}}<br>$$<br>令<br>$$<br>x &#x3D; \sqrt[k]{a_1a_2 \ldots a_k} \<br>y &#x3D; a_{k+1}<br>$$<br>需要证明：<br>$$<br>k \cdot x + y \ge (k+1)\sqrt[k+1]{x^ky}<br>$$<br>泰勒公式</p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=3d6DsjIBzJ4">Taylor series | Chapter 11, Essence of calculus</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>http://example.com/2024/10/10/calculus/夹逼定理、单调有界定理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>October 10, 2024</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/10/linear%20algebra/%E9%80%86%E7%9F%A9%E9%98%B5/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/10/calculus/%E5%BE%AE%E7%A7%AF%E5%88%86%E4%B9%8B%E6%94%B6%E6%95%9B%E6%95%B0%E5%88%97%E7%9A%84%E6%80%A7%E8%B4%A8/" title="">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
