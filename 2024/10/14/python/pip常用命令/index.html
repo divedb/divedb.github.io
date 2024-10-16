@@ -19,22 +19,21 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="LU分解1. 概念​	LU分解（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。 定义如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：$$A &#x3D; LU$$ 2. 例题设矩阵$A$为：$$">
+    <meta name="description" content="pip常用命令1. pip showpip show命令来查看已安装模块的路径。例如，要查看 pip 自身的安装路径，可以运行以下命令： 1pip show pip  12345678910Name: pipVersion: 24.2Summary: The PyPA recommended tool for installing Python packages.Home-page: https:">
 <meta property="og:type" content="article">
-<meta property="og:title" content="矩阵LU分解">
-<meta property="og:url" content="http://example.com/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/index.html">
+<meta property="og:title" content="pip常用命令">
+<meta property="og:url" content="http://example.com/2024/10/14/python/pip%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="LU分解1. 概念​	LU分解（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。 定义如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：$$A &#x3D; LU$$ 2. 例题设矩阵$A$为：$$">
+<meta property="og:description" content="pip常用命令1. pip showpip show命令来查看已安装模块的路径。例如，要查看 pip 自身的安装路径，可以运行以下命令： 1pip show pip  12345678910Name: pipVersion: 24.2Summary: The PyPA recommended tool for installing Python packages.Home-page: https:">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-10-14T08:48:46.602Z">
-<meta property="article:modified_time" content="2024-10-14T11:43:00.540Z">
+<meta property="article:published_time" content="2024-10-14T14:14:22.458Z">
+<meta property="article:modified_time" content="2024-10-14T15:27:05.667Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="线性代数">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>矩阵LU分解 - Hexo</title>
+  <title>pip常用命令 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="矩阵LU分解"></span>
+            <span id="subtitle" data-typed-text="pip常用命令"></span>
           
         </div>
 
@@ -211,7 +210,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-10-14 16:48" pubdate>
+        <time datetime="2024-10-14 22:14" pubdate>
           October 14, 2024 pm
         </time>
       </span>
@@ -223,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          710 words
+          165 words
         
       </span>
     
@@ -234,7 +233,7 @@
         
         
         
-          6 mins
+          2 mins
         
       </span>
     
@@ -271,46 +270,19 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">矩阵LU分解</h1>
+            <h1 id="seo-header">pip常用命令</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="LU分解"><a href="#LU分解" class="headerlink" title="LU分解"></a>LU分解</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	<strong>LU分解</strong>（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。</p>
-<h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：<br>$$<br>A &#x3D; LU<br>$$</p>
-<h4 id="2-例题"><a href="#2-例题" class="headerlink" title="2. 例题"></a>2. 例题</h4><p>设矩阵$A$为：<br>$$<br>A &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$<br>我们希望找到$L$和$U$，使得$A&#x3D;LU$。</p>
-<p>首先初始化$U$为矩阵$A$，并将$L$初始化为单位矩阵：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; 0 &amp; 1 &amp; 0 \<br>1.25 &amp; 0 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>对第1行对系数进行消元，将第2、3、4行的首列元素消为0。</p>
-<ul>
-<li>$L_{21}&#x3D;\frac{U_{21}}{U_{11}}&#x3D;\frac{2}{4}&#x3D;0.5$</li>
-<li>$L_{21}&#x3D;\frac{U_{31}}{U_{11}}&#x3D;\frac{1}{4}&#x3D;0.25$</li>
-<li>$L_{41}&#x3D;\frac{U_{41}}{U_{11}}&#x3D;\frac{5}{4}&#x3D;1.25$</li>
-</ul>
-<p>使用这些系数对第2、3、4行进行变换，并更新$U$：</p>
-<ul>
-<li>$U_2 \Rightarrow U_2 - 0.5 \times U_1$</li>
-<li>$U_3 \Rightarrow U_3 - 0.25 \times U_1$</li>
-<li>$U_4 \Rightarrow U_4 - 1.25 \times U_1$</li>
-</ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 1.25 &amp; 4.25 &amp; -3.5 \<br>0 &amp; 0.25 &amp; 4.25 &amp; -1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：</p>
-<p>接下来对第2列进行消元，使$U$中第3、4行的第二列元素为0：</p>
-<ul>
-<li>$L_{32}&#x3D;\frac{U_{32}}{U_{22}}&#x3D;\frac{1.25}{-0.5}&#x3D;-2.5$</li>
-<li>$L_{42}&#x3D;\frac{U_{42}}{U_{22}}&#x3D;\frac{0.25}{-0.5}&#x3D;-0.5$</li>
-</ul>
-<p>进行行变换，更新$U$：</p>
-<ul>
-<li>$U_3 \Rightarrow U_3 + 2.5 \times U_2$</li>
-<li>$U_4 \Rightarrow U_4 + 0.5 \times U_2$</li>
-</ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 7 &amp; 1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$<br>最后，对第3列进行消元：</p>
-<ul>
-<li>$L_{43}&#x3D;\frac{U_{43}}{U_{33}}&#x3D;\frac{7}{18} \approx 0.389$</li>
-</ul>
-<p>进行行变换，更新$U$：</p>
-<p>$U_4 \to U_4 - 0.389 \times U_3$</p>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 0 &amp; -2.972<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0.389 &amp; 1<br>\end{pmatrix}<br>$$</p>
+                <h2 id="pip常用命令"><a href="#pip常用命令" class="headerlink" title="pip常用命令"></a>pip常用命令</h2><h4 id="1-pip-show"><a href="#1-pip-show" class="headerlink" title="1. pip show"></a>1. <code>pip show</code></h4><p><code>pip show</code>命令来查看已安装模块的路径。例如，要查看 <code>pip</code> 自身的安装路径，可以运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">pip show pip<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">Name: pip<br>Version: 24.2<br>Summary: The PyPA recommended tool <span class="hljs-keyword">for</span> installing Python packages.<br>Home-page: https://pip.pypa.io/<br>Author: <br>Author-email: The pip developers &lt;distutils-sig@python.org&gt;<br>License: MIT<br>Location: /home/gc/.local/lib/python3.10/site-packages<br>Requires: <br>Required-by:<br></code></pre></td></tr></table></figure>
+
+<p>类似命令<code>python -m site</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash">sys.path = [<br>    <span class="hljs-string">&#x27;/home/gc/Desktop&#x27;</span>,<br>    <span class="hljs-string">&#x27;/usr/lib/python2.7&#x27;</span>,<br>    <span class="hljs-string">&#x27;/usr/lib/python2.7/plat-x86_64-linux-gnu&#x27;</span>,<br>    <span class="hljs-string">&#x27;/usr/lib/python2.7/lib-tk&#x27;</span>,<br>    <span class="hljs-string">&#x27;/usr/lib/python2.7/lib-old&#x27;</span>,<br>    <span class="hljs-string">&#x27;/usr/lib/python2.7/lib-dynload&#x27;</span>,<br>    <span class="hljs-string">&#x27;/usr/local/lib/python2.7/dist-packages&#x27;</span>,<br>    <span class="hljs-string">&#x27;/usr/lib/python2.7/dist-packages&#x27;</span>,<br>]<br>USER_BASE: <span class="hljs-string">&#x27;/home/gc/.local&#x27;</span> (exists)<br>USER_SITE: <span class="hljs-string">&#x27;/home/gc/.local/lib/python2.7/site-packages&#x27;</span> (doesn<span class="hljs-string">&#x27;t exist)</span><br><span class="hljs-string">ENABLE_USER_SITE: True</span><br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
@@ -329,7 +301,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/linear-algebra/" class="category-chain-item">linear algebra</a>
+  <a href="/categories/python/" class="category-chain-item">python</a>
   
   
 
@@ -341,13 +313,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" class="print-no-link">#线性代数</a>
-      
-    </div>
-  
 </div>
 
 
@@ -356,8 +321,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>矩阵LU分解</div>
-      <div>http://example.com/2024/10/14/linear algebra/矩阵LU分解/</div>
+      <div>pip常用命令</div>
+      <div>http://example.com/2024/10/14/python/pip常用命令/</div>
     </div>
     <div class="license-meta">
       
@@ -401,9 +366,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/10/14/python/pip%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="pip常用命令">
+                      <a href="/2024/10/14/python/Python%E4%B8%AD%E8%B0%83%E7%94%A8C++/" title="Python中调用C++">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">pip常用命令</span>
+                        <span class="hidden-mobile">Python中调用C++</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -411,8 +376,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/10/14/calculus/%E6%B5%B7%E6%B6%85%E5%AE%9A%E7%90%86/" title="">
-                        <span class="hidden-mobile"></span>
+                      <a href="/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/" title="矩阵LU分解">
+                        <span class="hidden-mobile">矩阵LU分解</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -19,22 +19,21 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="LU分解1. 概念​	LU分解（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。 定义如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：$$A &#x3D; LU$$ 2. 例题设矩阵$A$为：$$">
+    <meta name="description" content="偏微分概念1. Gradient（梯度）​	Gradient是向量微积分中的一个重要概念，它描述了多变量函数的导数。梯度是一个向量，表示函数在各个自变量方向上的变化率。具体来说，它是多变量函数的偏导数的集合。 解释： 对于一个多元函数$f(x_1, x_2, \dots, x_n)$，梯度$\nabla f$是一个向量，由函数对每个变量的偏导数组成： $\nabla f(x_1, x_2, \do">
 <meta property="og:type" content="article">
-<meta property="og:title" content="矩阵LU分解">
-<meta property="og:url" content="http://example.com/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/index.html">
+<meta property="og:title" content="偏微分概念">
+<meta property="og:url" content="http://example.com/2024/10/15/calculus/%E5%81%8F%E5%BE%AE%E5%88%86%E6%A6%82%E5%BF%B5/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="LU分解1. 概念​	LU分解（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。 定义如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：$$A &#x3D; LU$$ 2. 例题设矩阵$A$为：$$">
+<meta property="og:description" content="偏微分概念1. Gradient（梯度）​	Gradient是向量微积分中的一个重要概念，它描述了多变量函数的导数。梯度是一个向量，表示函数在各个自变量方向上的变化率。具体来说，它是多变量函数的偏导数的集合。 解释： 对于一个多元函数$f(x_1, x_2, \dots, x_n)$，梯度$\nabla f$是一个向量，由函数对每个变量的偏导数组成： $\nabla f(x_1, x_2, \do">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-10-14T08:48:46.602Z">
-<meta property="article:modified_time" content="2024-10-14T11:43:00.540Z">
+<meta property="article:published_time" content="2024-10-15T07:43:05.862Z">
+<meta property="article:modified_time" content="2024-10-15T09:14:06.991Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="线性代数">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>矩阵LU分解 - Hexo</title>
+  <title>偏微分概念 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="矩阵LU分解"></span>
+            <span id="subtitle" data-typed-text="偏微分概念"></span>
           
         </div>
 
@@ -211,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-10-14 16:48" pubdate>
-          October 14, 2024 pm
+        <time datetime="2024-10-15 15:43" pubdate>
+          October 15, 2024 pm
         </time>
       </span>
     
@@ -223,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          710 words
+          1.4k words
         
       </span>
     
@@ -234,7 +233,7 @@
         
         
         
-          6 mins
+          12 mins
         
       </span>
     
@@ -271,46 +270,94 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">矩阵LU分解</h1>
+            <h1 id="seo-header">偏微分概念</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="LU分解"><a href="#LU分解" class="headerlink" title="LU分解"></a>LU分解</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	<strong>LU分解</strong>（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。</p>
-<h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：<br>$$<br>A &#x3D; LU<br>$$</p>
-<h4 id="2-例题"><a href="#2-例题" class="headerlink" title="2. 例题"></a>2. 例题</h4><p>设矩阵$A$为：<br>$$<br>A &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$<br>我们希望找到$L$和$U$，使得$A&#x3D;LU$。</p>
-<p>首先初始化$U$为矩阵$A$，并将$L$初始化为单位矩阵：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; 0 &amp; 1 &amp; 0 \<br>1.25 &amp; 0 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>对第1行对系数进行消元，将第2、3、4行的首列元素消为0。</p>
+                <h2 id="偏微分概念"><a href="#偏微分概念" class="headerlink" title="偏微分概念"></a>偏微分概念</h2><h4 id="1-Gradient（梯度）"><a href="#1-Gradient（梯度）" class="headerlink" title="1. Gradient（梯度）"></a>1. Gradient（梯度）</h4><p>​	<strong>Gradient</strong>是向量微积分中的一个重要概念，它描述了多变量函数的导数。梯度是一个向量，表示函数在各个自变量方向上的变化率。具体来说，它是多变量函数的<strong>偏导数</strong>的集合。</p>
+<p><strong>解释</strong>：</p>
+<p>对于一个多元函数$f(x_1, x_2, \dots, x_n)$，梯度$\nabla f$是一个向量，由函数对每个变量的偏导数组成：</p>
+<p>$\nabla f(x_1, x_2, \dots, x_n) &#x3D; \left( \frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \dots, \frac{\partial f}{\partial x_n} \right)$</p>
+<p>每个分量$\frac{\partial f}{\partial x_i}$表示函数$f$在变量$x_i$方向上的变化率（即对该变量的导数）。</p>
+<p><strong>举例</strong>：</p>
+<p>假设$f(x, y) &#x3D; x^2 + y^2$，则它的梯度为：</p>
+<p>$\nabla f(x, y) &#x3D; \left( \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right) &#x3D; \left( 2x, 2y \right)$</p>
+<p>这意味着函数$f$在$x$方向的变化率是$2x$，在$y$方向的变化率是$2y$。</p>
+<p>应用：</p>
 <ul>
-<li>$L_{21}&#x3D;\frac{U_{21}}{U_{11}}&#x3D;\frac{2}{4}&#x3D;0.5$</li>
-<li>$L_{21}&#x3D;\frac{U_{31}}{U_{11}}&#x3D;\frac{1}{4}&#x3D;0.25$</li>
-<li>$L_{41}&#x3D;\frac{U_{41}}{U_{11}}&#x3D;\frac{5}{4}&#x3D;1.25$</li>
+<li><strong>机器学习中的梯度下降</strong>： 在机器学习中的优化问题（如神经网络训练）中，梯度用于找到损失函数的最小值。通过计算损失函数的梯度，模型参数会沿着负梯度方向更新，逐步逼近最优解。这就是<strong>梯度下降法</strong>。</li>
 </ul>
-<p>使用这些系数对第2、3、4行进行变换，并更新$U$：</p>
+<h5 id="梯度下降算法步骤"><a href="#梯度下降算法步骤" class="headerlink" title="梯度下降算法步骤"></a>梯度下降算法步骤</h5><ol>
+<li><p><strong>初始化参数</strong>：随机或以某种方式初始化模型的参数（如权重和偏置）。</p>
+</li>
+<li><p><strong>计算损失</strong>：将输入数据通过模型进行预测，计算损失函数的值，表示模型预测和实际目标之间的差异。</p>
+</li>
+<li><p><strong>计算梯度</strong>：对每一个参数，计算损失函数相对于该参数的梯度，表示在当前参数值下，如何调整参数能使损失减小。</p>
+</li>
+<li><p><strong>更新参数</strong>：通过公式：</p>
+<p>$\theta &#x3D; \theta - \eta \nabla J(\theta)$</p>
+<p>其中，$\theta$是参数，$\eta$是学习率，$\nabla J(\theta)$是损失函数对参数的梯度。学习率控制每次更新的步长大小。</p>
+</li>
+<li><p><strong>重复迭代</strong>：重复步骤 2 到 4，直到损失函数收敛（达到最小值）或者满足其他终止条件（如达到设定的迭代次数）。</p>
+</li>
+</ol>
+<h5 id="梯度下降的类型"><a href="#梯度下降的类型" class="headerlink" title="梯度下降的类型"></a>梯度下降的类型</h5><p>梯度下降有几种常见的变体：</p>
+<ol>
+<li><strong>批量梯度下降（Batch Gradient Descent）</strong>：<ul>
+<li>每次更新参数时，使用整个训练集来计算梯度。</li>
+<li>优点：更新方向更加稳定。</li>
+<li>缺点：对于大数据集，计算梯度耗时。</li>
+</ul>
+</li>
+<li><strong>随机梯度下降（Stochastic Gradient Descent，SGD）</strong>：<ul>
+<li>每次更新参数时，使用一个训练样本来计算梯度。</li>
+<li>优点：计算更快，适合大数据集。</li>
+<li>缺点：更新方向可能不稳定，收敛过程中存在波动。</li>
+</ul>
+</li>
+<li><strong>小批量梯度下降（Mini-Batch Gradient Descent）</strong>：<ul>
+<li>每次更新参数时，使用一个小的训练样本子集来计算梯度。</li>
+<li>结合了批量梯度下降和随机梯度下降的优点，既提高了计算效率，又保持了更新的稳定性。</li>
+</ul>
+</li>
+</ol>
+<h5 id="学习率的重要性"><a href="#学习率的重要性" class="headerlink" title="学习率的重要性"></a>学习率的重要性</h5><ul>
+<li><strong>学习率过大</strong>：可能导致更新步长太大，跳过了最优解，无法收敛。</li>
+<li><strong>学习率过小</strong>：更新步长太小，训练过程非常慢，可能会陷入局部最小值。</li>
+</ul>
+<p>通常在实际使用中，选择一个合适的学习率非常重要，并且有时会采用学习率衰减的策略，即随着训练过程的进行逐渐减小学习率。</p>
+<h5 id="变种算法"><a href="#变种算法" class="headerlink" title="变种算法"></a>变种算法</h5><p>梯度下降算法有很多变种，比如：</p>
 <ul>
-<li>$U_2 \Rightarrow U_2 - 0.5 \times U_1$</li>
-<li>$U_3 \Rightarrow U_3 - 0.25 \times U_1$</li>
-<li>$U_4 \Rightarrow U_4 - 1.25 \times U_1$</li>
+<li><strong>Momentum</strong>：通过引入动量来加速梯度下降。</li>
+<li><strong>Adam</strong>（Adaptive Moment Estimation）：结合了动量和自适应学习率，表现优秀且广泛使用。</li>
 </ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 1.25 &amp; 4.25 &amp; -3.5 \<br>0 &amp; 0.25 &amp; 4.25 &amp; -1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：</p>
-<p>接下来对第2列进行消元，使$U$中第3、4行的第二列元素为0：</p>
+<h5 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h5><p>​	梯度下降用于深度学习模型的训练，尤其是神经网络的权重更新。通过反向传播算法，梯度被逐层计算，从输出层逐渐传递到输入层，使得网络的所有层都能通过梯度下降调整其参数。</p>
+<h4 id="2-反向传播"><a href="#2-反向传播" class="headerlink" title="2. 反向传播"></a>2. 反向传播</h4><p>​	<strong>反向传播（Backpropagation）</strong> 是一种用于训练人工神经网络的算法。它的主要目的是通过计算损失函数相对于每个权重的梯度，以更新网络的权重，从而最小化预测误差。以下是反向传播的主要步骤和概念：</p>
+<h5 id="1-前向传播（Forward-Pass）"><a href="#1-前向传播（Forward-Pass）" class="headerlink" title="1. 前向传播（Forward Pass）"></a>1. 前向传播（Forward Pass）</h5><ul>
+<li>输入数据通过网络层层传递，每一层都应用激活函数。最终产生模型的输出（预测值）。</li>
+<li>计算损失函数，通常是输出值与真实标签之间的差异（如均方误差、交叉熵等）。</li>
+</ul>
+<h5 id="2-反向传播（Backward-Pass）"><a href="#2-反向传播（Backward-Pass）" class="headerlink" title="2. 反向传播（Backward Pass）"></a>2. 反向传播（Backward Pass）</h5><ul>
+<li><p><strong>计算梯度</strong>：从输出层开始，计算损失函数对每个输出的梯度。然后，利用链式法则逐层向后计算每个神经元的梯度。这涉及到以下几个步骤：</p>
 <ul>
-<li>$L_{32}&#x3D;\frac{U_{32}}{U_{22}}&#x3D;\frac{1.25}{-0.5}&#x3D;-2.5$</li>
-<li>$L_{42}&#x3D;\frac{U_{42}}{U_{22}}&#x3D;\frac{0.25}{-0.5}&#x3D;-0.5$</li>
+<li>计算输出层的梯度。</li>
+<li>对于每一层，利用当前层的梯度和激活函数的导数，计算前一层的梯度。</li>
 </ul>
-<p>进行行变换，更新$U$：</p>
-<ul>
-<li>$U_3 \Rightarrow U_3 + 2.5 \times U_2$</li>
-<li>$U_4 \Rightarrow U_4 + 0.5 \times U_2$</li>
+</li>
+<li><p><strong>权重更新</strong>：使用计算出的梯度更新网络中的权重。常用的优化算法是梯度下降法（Gradient Descent），更新公式通常为：</p>
+<p>$w &#x3D; w - \eta \cdot \frac{\partial L}{\partial w}$</p>
+<p>其中$w$是权重，$\eta$是学习率，$L$是损失函数。</p>
+</li>
 </ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 7 &amp; 1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$<br>最后，对第3列进行消元：</p>
-<ul>
-<li>$L_{43}&#x3D;\frac{U_{43}}{U_{33}}&#x3D;\frac{7}{18} \approx 0.389$</li>
+<h5 id="3-重复训练"><a href="#3-重复训练" class="headerlink" title="3. 重复训练"></a>3. 重复训练</h5><ul>
+<li>通过多次前向传播和反向传播循环（通常称为“epochs”），模型不断调整权重，以提高准确性并减少损失。</li>
 </ul>
-<p>进行行变换，更新$U$：</p>
-<p>$U_4 \to U_4 - 0.389 \times U_3$</p>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 0 &amp; -2.972<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0.389 &amp; 1<br>\end{pmatrix}<br>$$</p>
+<h5 id="反向传播的关键点"><a href="#反向传播的关键点" class="headerlink" title="反向传播的关键点"></a>反向传播的关键点</h5><ul>
+<li><strong>链式法则</strong>：反向传播依赖于链式法则，用于计算复合函数的导数。</li>
+<li><strong>计算效率</strong>：反向传播算法通过逐层传播梯度，显著减少了计算量，提高了训练效率。</li>
+<li><strong>适用于深层网络</strong>：反向传播能够处理具有多个隐藏层的深层神经网络。</li>
+</ul>
 
                 
               </div>
@@ -329,7 +376,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/linear-algebra/" class="category-chain-item">linear algebra</a>
+  <a href="/categories/calculus/" class="category-chain-item">calculus</a>
   
   
 
@@ -341,13 +388,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" class="print-no-link">#线性代数</a>
-      
-    </div>
-  
 </div>
 
 
@@ -356,8 +396,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>矩阵LU分解</div>
-      <div>http://example.com/2024/10/14/linear algebra/矩阵LU分解/</div>
+      <div>偏微分概念</div>
+      <div>http://example.com/2024/10/15/calculus/偏微分概念/</div>
     </div>
     <div class="license-meta">
       
@@ -369,7 +409,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>October 14, 2024</div>
+          <div>October 15, 2024</div>
         </div>
       
       
@@ -401,9 +441,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/10/14/python/pip%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="pip常用命令">
+                      <a href="/2024/10/15/deeplearning/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="循环神经网络">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">pip常用命令</span>
+                        <span class="hidden-mobile">循环神经网络</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -411,8 +451,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/10/14/calculus/%E6%B5%B7%E6%B6%85%E5%AE%9A%E7%90%86/" title="">
-                        <span class="hidden-mobile"></span>
+                      <a href="/2024/10/15/probability%20theory/probability-measure/" title="probability measure">
+                        <span class="hidden-mobile">probability measure</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

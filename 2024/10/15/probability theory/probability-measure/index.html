@@ -19,22 +19,21 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="LU分解1. 概念​	LU分解（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。 定义如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：$$A &#x3D; LU$$ 2. 例题设矩阵$A$为：$$">
+    <meta name="description" content="Probability Measure1. 概念​	Probability measure is a mathematical concept used in probability theory to assign a numerical value to the likelihood of certain events occurring within a given sample space">
 <meta property="og:type" content="article">
-<meta property="og:title" content="矩阵LU分解">
-<meta property="og:url" content="http://example.com/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/index.html">
+<meta property="og:title" content="probability measure">
+<meta property="og:url" content="http://example.com/2024/10/15/probability%20theory/probability-measure/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="LU分解1. 概念​	LU分解（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。 定义如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：$$A &#x3D; LU$$ 2. 例题设矩阵$A$为：$$">
+<meta property="og:description" content="Probability Measure1. 概念​	Probability measure is a mathematical concept used in probability theory to assign a numerical value to the likelihood of certain events occurring within a given sample space">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-10-14T08:48:46.602Z">
-<meta property="article:modified_time" content="2024-10-14T11:43:00.540Z">
+<meta property="article:published_time" content="2024-10-15T03:55:46.618Z">
+<meta property="article:modified_time" content="2024-10-16T06:01:47.466Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="线性代数">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>矩阵LU分解 - Hexo</title>
+  <title>probability measure - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="矩阵LU分解"></span>
+            <span id="subtitle" data-typed-text="probability measure"></span>
           
         </div>
 
@@ -211,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-10-14 16:48" pubdate>
-          October 14, 2024 pm
+        <time datetime="2024-10-15 11:55" pubdate>
+          October 15, 2024 am
         </time>
       </span>
     
@@ -223,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          710 words
+          708 words
         
       </span>
     
@@ -271,47 +270,47 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">矩阵LU分解</h1>
+            <h1 id="seo-header">probability measure</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="LU分解"><a href="#LU分解" class="headerlink" title="LU分解"></a>LU分解</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	<strong>LU分解</strong>（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。</p>
-<h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：<br>$$<br>A &#x3D; LU<br>$$</p>
-<h4 id="2-例题"><a href="#2-例题" class="headerlink" title="2. 例题"></a>2. 例题</h4><p>设矩阵$A$为：<br>$$<br>A &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$<br>我们希望找到$L$和$U$，使得$A&#x3D;LU$。</p>
-<p>首先初始化$U$为矩阵$A$，并将$L$初始化为单位矩阵：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; 0 &amp; 1 &amp; 0 \<br>1.25 &amp; 0 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>对第1行对系数进行消元，将第2、3、4行的首列元素消为0。</p>
-<ul>
-<li>$L_{21}&#x3D;\frac{U_{21}}{U_{11}}&#x3D;\frac{2}{4}&#x3D;0.5$</li>
-<li>$L_{21}&#x3D;\frac{U_{31}}{U_{11}}&#x3D;\frac{1}{4}&#x3D;0.25$</li>
-<li>$L_{41}&#x3D;\frac{U_{41}}{U_{11}}&#x3D;\frac{5}{4}&#x3D;1.25$</li>
+                <h2 id="Probability-Measure"><a href="#Probability-Measure" class="headerlink" title="Probability Measure"></a>Probability Measure</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	<strong>Probability measure</strong> is a mathematical concept used in probability theory to assign a numerical value to the likelihood of certain events occurring within a given sample space. It formalizes the idea of measuring “how likely” an event is.</p>
+<h5 id="Key-components-of-a-probability-measure"><a href="#Key-components-of-a-probability-measure" class="headerlink" title="Key components of a probability measure:"></a>Key components of a probability measure:</h5><ol>
+<li><strong>Sample Space (Ω)</strong>: The set of all possible outcomes of a random experiment. For example, when flipping a coin, the sample space is ${\text{Heads}, \text{Tails} }$.</li>
+<li><strong>Events</strong>: <strong>Subsets</strong> of the sample space that we are interested in. An event can be a single outcome or a group of outcomes. For example, in rolling a die, the event of getting an even number is ${2, 4, 6}$.</li>
+<li><strong>Probability Measure (P)</strong>: A function that assigns a probability (a number between 0 and 1) to each event in the sample space. It satisfies three axioms (the <strong>Kolmogorov axioms</strong>):<ul>
+<li><strong>Non-negativity</strong>: For any event $A, P(A) \geq 0$.</li>
+<li><strong>Normalization</strong>: $P(\Omega) &#x3D; 1$, meaning that the probability of the entire sample space is 1.</li>
+<li><strong>Additivity</strong>: If $A_1, A_2, \dots$ are disjoint events (mutually exclusive), then $P(A_1 \cup A_2 \cup \dots) &#x3D; P(A_1) + P(A_2) + \dots$</li>
 </ul>
-<p>使用这些系数对第2、3、4行进行变换，并更新$U$：</p>
+</li>
+</ol>
+<p>例题：</p>
+<p>​	In a fair six-sided die roll, the sample space $\Omega &#x3D; {1, 2, 3, 4, 5, 6}$. A probability measure could be defined as:</p>
 <ul>
-<li>$U_2 \Rightarrow U_2 - 0.5 \times U_1$</li>
-<li>$U_3 \Rightarrow U_3 - 0.25 \times U_1$</li>
-<li>$U_4 \Rightarrow U_4 - 1.25 \times U_1$</li>
+<li>$P({1}) &#x3D; \frac{1}{6}, P({2}) &#x3D; \frac{1}{6}, \dots, P({6}) &#x3D; \frac{1}{6}$. In this case, each outcome has an equal probability of occurring, and the sum of the probabilities over all possible outcomes is 1.</li>
 </ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 1.25 &amp; 4.25 &amp; -3.5 \<br>0 &amp; 0.25 &amp; 4.25 &amp; -1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：</p>
-<p>接下来对第2列进行消元，使$U$中第3、4行的第二列元素为0：</p>
-<ul>
-<li>$L_{32}&#x3D;\frac{U_{32}}{U_{22}}&#x3D;\frac{1.25}{-0.5}&#x3D;-2.5$</li>
-<li>$L_{42}&#x3D;\frac{U_{42}}{U_{22}}&#x3D;\frac{0.25}{-0.5}&#x3D;-0.5$</li>
+<h4 id="2-Sigma-algebra的定义："><a href="#2-Sigma-algebra的定义：" class="headerlink" title="2. Sigma-algebra的定义："></a>2. Sigma-algebra的定义：</h4><p>​	假设$\Omega$是一个非空集合（通常称为<strong>样本空间</strong>），则一个 $\sigma$代数$\mathcal{F}$是该集合上的一个子集族，满足以下三个条件：</p>
+<ol>
+<li><strong>包含全集</strong>：$\Omega \in \mathcal{F}$。即整个样本空间是$\sigma$代数中的一个元素。</li>
+<li><strong>闭合于补集</strong>：如果$A \in \mathcal{F}$，则$A^c \in \mathcal{F}$，其中$A^c$表示事件$A$的补集。也就是说，$\sigma$代数中的每个事件的补集也必须在$\sigma$代数中。</li>
+<li><strong>闭合于可列并</strong>：如果$A_1, A_2, A_3, \dots \in \mathcal{F}$ 是$\sigma$代数中的一列事件，那么它们的并集$\bigcup_{n&#x3D;1}^{\infty} A_n \in \mathcal{F}$也必须在$\sigma$代数中。这意味着$\sigma$代数对于可数的并集运算是封闭的。</li>
+</ol>
+<h5 id="解释："><a href="#解释：" class="headerlink" title="解释："></a>解释：</h5><ul>
+<li><strong>事件</strong>：在概率论中，事件可以看作是样本空间$\Omega$的子集。$\sigma$代数就是一组我们可以分配概率的事件集。</li>
+<li><strong>闭合性</strong>：$\sigma$代数必须对补集操作和无限并集操作封闭，这样可以确保定义在这个代数上的测度（例如概率测度）有良好的性质，并且我们可以合理地处理复杂的事件。</li>
 </ul>
-<p>进行行变换，更新$U$：</p>
-<ul>
-<li>$U_3 \Rightarrow U_3 + 2.5 \times U_2$</li>
-<li>$U_4 \Rightarrow U_4 + 0.5 \times U_2$</li>
+<h5 id="示例："><a href="#示例：" class="headerlink" title="示例："></a>示例：</h5><ol>
+<li><strong>最小的$\sigma$代数</strong>：最简单的情况是$\Omega &#x3D; {1, 2, 3}$，最小的$\sigma$代数就是$\mathcal{F} &#x3D; {\emptyset, \Omega}$，仅包含空集和全集。</li>
+<li><strong>幂集</strong>：样本空间$\Omega &#x3D; {1, 2}$，它的幂集（即所有子集的集合）就是$\mathcal{F} &#x3D; {\emptyset, {1}, {2}, {1, 2}}$。幂集是一个$\sigma$代数，因为它满足上述三条条件。</li>
+<li><strong>Borel $\sigma$代数</strong>：在实数集合$\mathbb{R}$上，最常见的$\sigma$代数是<strong>Borel $\sigma$代数</strong>，它由所有的开区间$(a,b) \subseteq \mathbb{R}$ 生成。Borel $\sigma$代数包含了实数集的所有可以通过开区间构造出来的集合，也是定义概率测度和Lebesgue测度的重要工具。</li>
+</ol>
+<h5 id="重要性："><a href="#重要性：" class="headerlink" title="重要性："></a>重要性：</h5><ul>
+<li><strong>定义概率空间</strong>：在概率论中，样本空间$\Omega$上的$\sigma$代数$\mathcal{F}$和概率测度$P$一起构成了一个<strong>概率空间</strong>$(\Omega, \mathcal{F}, P)$，这允许我们对事件集分配概率。</li>
+<li><strong>可测性</strong>：$\sigma$代数是可测空间的基础，随机变量的定义依赖于$\sigma$代数。随机变量是可测函数，即它将样本空间$\Omega$映射到另一个空间的过程中，保持可测性结构。</li>
 </ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 7 &amp; 1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$<br>最后，对第3列进行消元：</p>
-<ul>
-<li>$L_{43}&#x3D;\frac{U_{43}}{U_{33}}&#x3D;\frac{7}{18} \approx 0.389$</li>
-</ul>
-<p>进行行变换，更新$U$：</p>
-<p>$U_4 \to U_4 - 0.389 \times U_3$</p>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 0 &amp; -2.972<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0.389 &amp; 1<br>\end{pmatrix}<br>$$</p>
-
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3>
                 
               </div>
             
@@ -329,7 +328,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/linear-algebra/" class="category-chain-item">linear algebra</a>
+  <a href="/categories/probability-theory/" class="category-chain-item">probability theory</a>
   
   
 
@@ -341,13 +340,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" class="print-no-link">#线性代数</a>
-      
-    </div>
-  
 </div>
 
 
@@ -356,8 +348,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>矩阵LU分解</div>
-      <div>http://example.com/2024/10/14/linear algebra/矩阵LU分解/</div>
+      <div>probability measure</div>
+      <div>http://example.com/2024/10/15/probability theory/probability-measure/</div>
     </div>
     <div class="license-meta">
       
@@ -369,7 +361,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>October 14, 2024</div>
+          <div>October 15, 2024</div>
         </div>
       
       
@@ -401,9 +393,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/10/14/python/pip%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="pip常用命令">
+                      <a href="/2024/10/15/calculus/%E5%81%8F%E5%BE%AE%E5%88%86%E6%A6%82%E5%BF%B5/" title="偏微分概念">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">pip常用命令</span>
+                        <span class="hidden-mobile">偏微分概念</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -411,8 +403,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/10/14/calculus/%E6%B5%B7%E6%B6%85%E5%AE%9A%E7%90%86/" title="">
-                        <span class="hidden-mobile"></span>
+                      <a href="/2024/10/14/python/Python%E4%B8%AD%E8%B0%83%E7%94%A8C++/" title="Python中调用C++">
+                        <span class="hidden-mobile">Python中调用C++</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
