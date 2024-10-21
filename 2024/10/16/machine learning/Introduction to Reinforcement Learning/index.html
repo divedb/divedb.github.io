@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Introduction to Reinforcement Learning1. 概念​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。 强化学习的基本要素包括：  智能体（Agent）: 在环境中做出决策的实体。 环境（Enviro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Reinforcement Learning">
+<meta property="og:url" content="http://example.com/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Introduction to Reinforcement Learning1. 概念​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。 强化学习的基本要素包括：  智能体（Agent）: 在环境中做出决策的实体。 环境（Enviro">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-16T06:04:37.956Z">
+<meta property="article:modified_time" content="2024-10-18T06:33:03.906Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Introduction to Reinforcement Learning - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Introduction to Reinforcement Learning"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-16 14:04" pubdate>
+          October 16, 2024 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.4k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          12 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Introduction to Reinforcement Learning</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="Introduction-to-Reinforcement-Learning"><a href="#Introduction-to-Reinforcement-Learning" class="headerlink" title="Introduction to Reinforcement Learning"></a>Introduction to Reinforcement Learning</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。</p>
+<p>强化学习的基本要素包括：</p>
+<ol>
+<li><strong>智能体（Agent）</strong>: 在环境中做出决策的实体。</li>
+<li><strong>环境（Environment）</strong>: 智能体与之交互的外部系统，包括状态、奖励和状态转移。</li>
+<li><strong>状态（State）</strong>: 环境在某一时刻的描述，智能体根据状态来做出决策。</li>
+<li><strong>动作（Action）</strong>: 智能体在某个状态下可以选择的操作。</li>
+<li><strong>奖励（Reward）</strong>: 智能体在执行某个动作后，环境给予的反馈信号，用于评估该动作的好坏。</li>
+<li><strong>策略（Policy）</strong>: 智能体选择动作的规则，可以是确定性的（给定状态下选择固定动作）或随机的（根据概率分布选择动作）。</li>
+<li><strong>价值函数（Value Function）</strong>: 用于评估在某个状态下的期望收益，帮助智能体判断哪个状态更有利。</li>
+</ol>
+<h4 id="2-State"><a href="#2-State" class="headerlink" title="2. State"></a>2. State</h4><ul>
+<li><p>Environment state</p>
+</li>
+<li><p>Agent state</p>
+</li>
+<li><p>Markov state</p>
+<ul>
+<li><p><strong>马尔可夫性</strong>：当前状态的未来状态只依赖于当前状态，而与过去的状态无关。换句话说，给定当前状态，未来的状态转移不受过去历史的影响。</p>
+</li>
+<li><p>在强化学习或随机过程的背景下，马尔可夫状态通常指的是系统的状态，该状态能够完整描述系统的未来演变。也就是说，知道当前状态后，未来状态的概率分布只与当前状态相关。</p>
+</li>
+</ul>
+<p>例子</p>
+<ul>
+<li>在棋类游戏中，当前的棋盘布局就是一个马尔可夫状态，因为下一步的可能棋盘布局仅依赖于当前的布局，而与之前的动作和状态无关。</li>
+<li>在天气预报中，如果当前状态是“晴天”，那么明天的天气只依赖于“晴天”的状态，而与之前的天气无关。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-Observability"><a href="#3-Observability" class="headerlink" title="3. Observability"></a>3. Observability</h4><h5 id="完全可观测性（Full-Observability）"><a href="#完全可观测性（Full-Observability）" class="headerlink" title="完全可观测性（Full Observability）"></a>完全可观测性（Full Observability）</h5><ul>
+<li><strong>定义</strong>：在完全可观测的系统中，所有的状态信息都可以被完全观测到。即，在每个时间点，系统的状态是完全可知的。</li>
+<li>特点<ul>
+<li>代理可以直接获得系统的当前状态信息。</li>
+<li>不需要任何额外的推理或估计。</li>
+</ul>
+</li>
+<li><strong>例子</strong>：在一个简单的棋类游戏中，玩家可以看到整个棋盘的状态，这就是一个完全可观测的环境。</li>
+</ul>
+<h5 id="部分可观测性（Partial-Observability）"><a href="#部分可观测性（Partial-Observability）" class="headerlink" title="部分可观测性（Partial Observability）"></a>部分可观测性（Partial Observability）</h5><ul>
+<li><strong>定义</strong>：在部分可观测的系统中，代理只能观察到系统状态的一部分信息，或可能存在噪声，使得状态无法完全确定。</li>
+<li>特点<ul>
+<li>代理必须依赖于观察到的信息来推测未观察到的状态。</li>
+<li>需要使用策略来处理不确定性，通常涉及状态估计或历史信息。</li>
+</ul>
+</li>
+<li><strong>例子</strong>：在机器人导航中，机器人可能只能感知周围的障碍物，而无法知道环境的完整布局。</li>
+</ul>
+<h5 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h5><ul>
+<li>在强化学习中，部分可观测环境通常需要使用<strong>部分可观测马尔可夫决策过程（POMDP）</strong>模型来处理，而完全可观测环境则可以简单地使用马尔可夫决策过程（MDP）模型。</li>
+</ul>
+<h4 id="4-Major-Components-of-an-RL-Agent"><a href="#4-Major-Components-of-an-RL-Agent" class="headerlink" title="4. Major Components of an RL Agent"></a>4. Major Components of an RL Agent</h4><ul>
+<li><p>An RL agent may include one or more of these components:</p>
+<ul>
+<li><p>Policy: agent’s behaviour function</p>
+</li>
+<li><p>Value function: how good is each state and&#x2F;or action</p>
+<p><strong>价值函数（Value Function）</strong>是强化学习中的一个核心概念，用于评估某一状态或状态-动作对的“价值”。它帮助代理（agent）决定在不同状态下采取哪些行动，以最大化长期回报。</p>
+<p>主要类型</p>
+<ol>
+<li><strong>状态价值函数（State Value Function, V(s)）</strong>：<ul>
+<li>定义：在给定状态$s$下，代理在该状态下所能获得的预期回报。</li>
+<li>表示为：$V(s) &#x3D; \mathbb{E}[R_t | S_t &#x3D; s]$，其中$R_t$是从时间$t$开始的累计回报。</li>
+</ul>
+</li>
+<li><strong>动作价值函数（Action Value Function, Q(s, a)）</strong>：<ul>
+<li>定义：在给定状态$s$和动作$a$下，代理执行该动作后所能获得的预期回报。</li>
+<li>表示为：$Q(s, a) &#x3D; \mathbb{E}[R_t | S_t &#x3D; s, A_t &#x3D; a]$。</li>
+</ul>
+</li>
+</ol>
+<p>在象棋中，假设当前状态是棋盘上某种特定的布局：</p>
+<ul>
+<li><strong>状态价值函数（V(s)）</strong>：如果在当前布局下，玩家有很高的胜算，比如能确保胜利或导致对手陷入绝境，状态价值函数$V(s)$可以被认为是正值，比如+100，表示这是一个有利的状态。</li>
+<li><strong>动作价值函数（Q(s, a)）</strong>：假设在该状态下，玩家选择了一步棋（比如移动某个棋子）但这一步棋导致了对手的反击，最终失败。此时，动作价值函数$Q(s, a)$可能是负值，比如-50，表示这一步棋在这个状态下是个不好的选择。</li>
+</ul>
+</li>
+<li><p>Model: agent’s representation of the environment</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h4><h6 id="1-state-value-function-V-s-and-state-action-value-function-Q-s-a-difference"><a href="#1-state-value-function-V-s-and-state-action-value-function-Q-s-a-difference" class="headerlink" title="1. state value function $V(s)$ and state-action value function $Q(s, a)$ difference?"></a>1. state value function $V(s)$ and state-action value function $Q(s, a)$ difference?</h6><p>​	Bearing that in mind, the definition of these functions should clarify the distinction for you.</p>
+<p>$V_{\pi}(s)$ expresses the expected value of following policy $\pi$ forever when the agent starts following it from state $s$.</p>
+<p>$Q_{\pi}(s, a)$ expresses the expected value of first taking action $a$ from state $s$ and <em>then</em> following policy $\pi$ forever.</p>
+<p>The main difference then, is the Q-value lets you play a hypothetical of potentially taking a different action in the first time step than what the policy might prescribe and <em>then</em> following the policy from the state the agent winds up in.</p>
+<p><strong>Example</strong>:</p>
+<p>That said, lets make the example more concrete. Lets imagine a deterministic grid world. The goal is at (5, 0). As stated in the description, the agent is one step away, so lets say s &#x3D; (4, 0) for concreteness. For the optimal policy, it will tell us to go right from (4, 0). If we take right, that takes us to our terminating goal state (5, 0), with a single reward of -1 for taking that action after which we stop and receive no more reward. Clearly then, $V^*((4, 0)) &#x3D; -1$.</p>
+<p>As stated in the answer, we want to compare this to the Q-value for an action that takes us one step further away than where we started. Let say $a$ &#x3D; left.</p>
+<p>If we start at (4, 0) and take left, then we’ll end up in (3, 0), with -1 reward.</p>
+<p>From here on out we now follow our policy. The agent is now in state (3, 0) and our policy says to take right. That takes us back to where we started: (4, 0) receiving another reward of -1, for a total of -2 reward so far.</p>
+<p>But we’re still not done, because we’re only back to where we started! Once again, we follow our policy which from (4, 0) tells us to go right again, now taking us to our terminating goal state (5, 0) with another -1 reward for a total of -3 reward.</p>
+<p>So we just accumulated -3 reward; ergo, $Q^*((4, 0), left) &#x3D; -3$.</p>
+<p>We receive -1 reward for going the wrong way, -1 for undoing that mistake, and a third -1 to get to the goal after undoing the mistak</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><p><a target="_blank" rel="noopener" href="https://www.kaggle.com/competitions/connectx/discussion/124421">Useful courses, books, … for Reinforcement Learning</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/KhashayarRahimi/Reinforcement-Learning-Algorithms-From-Scratch">Reinforcement-Learning-Algorithms-From-Scratch</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.quora.com/In-reinforcement-learning-what-is-the-difference-between-a-state-value-function-V-s-and-a-state-action-value-function-Q-s-a">In reinforcement learning, what is the difference between a state value function V(s) and a state-action value function Q(s,a)?</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=9g32v7bK3Co&list=PLoROMvodv4rOca_Ovz1DvdtWuz8BfSWL2&index=20">Markov Decision Processes 1 - Value Iteration | Stanford CS221: AI (Autumn 2019)</a></p>
+<p>推荐</p>
+</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/reinforcement-learning/" class="category-chain-item">reinforcement learning</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Introduction to Reinforcement Learning</div>
+      <div>http://example.com/2024/10/16/machine learning/Introduction to Reinforcement Learning/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>October 16, 2024</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/16/leetcode/leetcode%202938%20%E5%8C%BA%E5%88%86%E9%BB%91%E7%90%83%E5%92%8C%E7%99%BD%E7%90%83/" title="leetcode 2938">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">leetcode 2938</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/16/algorithm/heap/" title="堆">
+                        <span class="hidden-mobile">堆</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>

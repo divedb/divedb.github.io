@@ -19,21 +19,21 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="git checkoutgit checkout是一个非常重要的git命令，常用于切换分支和恢复文件。以下是一些常见用法： 1. 切换分支1git checkout branch-name  切换到指定的分支branch-name。 2. 创建新分支并切换1git checkout -b new-branch-name  创建一个新的分支new-branch-name并切换到该分支。 3. 恢复文">
+    <meta name="description" content="Fold Expression1. 概念​	折叠表达式（fold expression）是C++17引入的一种特性，允许对变长模板参数进行简单而优雅的操作。它简化了对参数包的处理，尤其是在需要对包中的所有元素进行某种操作（如求和、逻辑运算等）时。 例如，使用折叠表达式可以方便地计算参数包中所有元素的和： 1234template &lt;typename... Args&gt;auto sum(A">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/2024/09/29/git%20checkout/index.html">
+<meta property="og:title" content="折叠表达式">
+<meta property="og:url" content="http://example.com/2024/10/19/c++/%E6%8A%98%E5%8F%A0%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="git checkoutgit checkout是一个非常重要的git命令，常用于切换分支和恢复文件。以下是一些常见用法： 1. 切换分支1git checkout branch-name  切换到指定的分支branch-name。 2. 创建新分支并切换1git checkout -b new-branch-name  创建一个新的分支new-branch-name并切换到该分支。 3. 恢复文">
+<meta property="og:description" content="Fold Expression1. 概念​	折叠表达式（fold expression）是C++17引入的一种特性，允许对变长模板参数进行简单而优雅的操作。它简化了对参数包的处理，尤其是在需要对包中的所有元素进行某种操作（如求和、逻辑运算等）时。 例如，使用折叠表达式可以方便地计算参数包中所有元素的和： 1234template &lt;typename... Args&gt;auto sum(A">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-09-29T14:35:01.138Z">
-<meta property="article:modified_time" content="2024-10-08T14:50:17.122Z">
+<meta property="article:published_time" content="2024-10-19T05:27:55.225Z">
+<meta property="article:modified_time" content="2024-10-19T05:39:50.111Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Hexo</title>
+  <title>折叠表达式 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text=""></span>
+            <span id="subtitle" data-typed-text="折叠表达式"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-09-29 22:35" pubdate>
-          September 29, 2024 pm
+        <time datetime="2024-10-19 13:27" pubdate>
+          October 19, 2024 pm
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          440 words
+          182 words
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          4 mins
+          2 mins
         
       </span>
     
@@ -270,62 +270,47 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">折叠表达式</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a><code>git checkout</code></h2><p><code>git checkout</code>是一个非常重要的<code>git</code>命令，常用于<strong>切换分支</strong>和<strong>恢复文件</strong>。以下是一些常见用法：</p>
-<h4 id="1-切换分支"><a href="#1-切换分支" class="headerlink" title="1. 切换分支"></a>1. 切换分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout branch-name<br></code></pre></td></tr></table></figure>
+                <h2 id="Fold-Expression"><a href="#Fold-Expression" class="headerlink" title="Fold Expression"></a>Fold Expression</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	折叠表达式（fold expression）是C++17引入的一种特性，允许对变长模板参数进行简单而优雅的操作。它简化了对参数包的处理，尤其是在需要对包中的所有元素进行某种操作（如求和、逻辑运算等）时。</p>
+<p>例如，使用折叠表达式可以方便地计算参数包中所有元素的和：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span>... Args&gt;<br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">sum</span><span class="hljs-params">(Args... args)</span> </span>&#123;<br>	<span class="hljs-keyword">return</span> (args + ...); <span class="hljs-comment">// 折叠表达式</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>切换到指定的分支<code>branch-name</code>。</p>
-<h4 id="2-创建新分支并切换"><a href="#2-创建新分支并切换" class="headerlink" title="2. 创建新分支并切换"></a>2. 创建新分支并切换</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout -b new-branch-name<br></code></pre></td></tr></table></figure>
+<p>C++14做法</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span>... Args&gt;<br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">sum</span><span class="hljs-params">(Args... args)</span> </span>&#123;<br>  <span class="hljs-keyword">typename</span> std::common_type&lt;Args...&gt;::type result&#123;&#125;;<br>  (<span class="hljs-type">void</span>) std::initializer_list&lt;<span class="hljs-type">int</span>&gt;&#123; (result += args, <span class="hljs-number">0</span>)... &#125;;<br>  <br>  <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>创建一个新的分支<code>new-branch-name</code>并切换到该分支。</p>
-<h4 id="3-恢复文件到某个提交"><a href="#3-恢复文件到某个提交" class="headerlink" title="3. 恢复文件到某个提交"></a>3. 恢复文件到某个提交</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout commit-hash -- path/to/file<br></code></pre></td></tr></table></figure>
-
-<p>将指定的文件恢复到某个提交（<code>commit-hash</code>）的状态。</p>
-<h4 id="4-恢复整个工作区"><a href="#4-恢复整个工作区" class="headerlink" title="4. 恢复整个工作区"></a>4. 恢复整个工作区</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout -- .<br></code></pre></td></tr></table></figure>
-
-<p>将当前工作区的所有文件恢复到上次提交的状态。</p>
-<h4 id="5-切换到最近的分支"><a href="#5-切换到最近的分支" class="headerlink" title="5. 切换到最近的分支"></a>5. 切换到最近的分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout -<br></code></pre></td></tr></table></figure>
-
-<p>切换回上一个分支。</p>
-<h4 id="6-查看某个提交的内容"><a href="#6-查看某个提交的内容" class="headerlink" title="6. 查看某个提交的内容"></a>6. 查看某个提交的内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout commit-hash<br></code></pre></td></tr></table></figure>
-
-<p>查看某个提交的状态，但注意这会让你进入“游离 HEAD”状态。</p>
-<p><code>git checkout</code>到特定的提交而不是分支时，<code>HEAD</code>指针指向某个提交，但不指向任何分支。此时处于一种特殊的状态，称为“游离 HEAD”状态。</p>
-<p><strong>Example</strong></p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">A</span> -- <span class="hljs-selector-tag">B</span> -- C (master)<br>          ^<br>         HEAD<br></code></pre></td></tr></table></figure>
-
-<p>在上图中，<code>HEAD</code>指向分支 <code>master</code> 的最新提交 <code>C</code>。</p>
-<p>游离<code>HEAD</code>状态:</p>
-<p>​	使用 <code>git checkout commit-hash</code>切换到某个具体提交，例如 <code>B</code>，图示变为：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">A</span> -- <span class="hljs-selector-tag">B</span> -- C (master)<br>     ^<br>    HEAD (游离状态)<br></code></pre></td></tr></table></figure>
-
-<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ul>
-<li><strong>没有分支</strong>：HEAD 不再指向任何分支，因此在此状态下进行的提交不会被记录到任何分支上。</li>
-<li><strong>提交的后果</strong>：如果你在这个状态下进行了提交，Git 会创建一个新的提交，但你需要手动将其移动到某个分支上，否则它将孤立。</li>
-</ul>
-<h5 id="如何回到正常状态"><a href="#如何回到正常状态" class="headerlink" title="如何回到正常状态"></a>如何回到正常状态</h5><ul>
-<li><p><strong>切换回分支</strong>：使用<code>git checkout branch-name</code>回到某个分支。</p>
-</li>
-<li><p>创建新分支</p>
-<ul>
-<li>如果希望保留当前的更改，可以创建一个新分支：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout -b new-branch-name<br></code></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
-<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=GN36mrrM12k">Using Git: What is a “Detached HEAD”?</a></li>
-</ol>
-
+<p>注意区分</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span>... Args&gt;<br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">div</span><span class="hljs-params">(Args... args)</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> (args / ...);<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span>... Args&gt;<br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">div</span><span class="hljs-params">(Args... args)</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> (... / args);<br>&#125;<br></code></pre></td></tr></table></figure>
                 
               </div>
             
             <hr/>
             <div>
               <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/c/" class="category-chain-item">c++</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
   
   
 </div>
@@ -336,8 +321,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
-      <div>http://example.com/2024/09/29/git checkout/</div>
+      <div>折叠表达式</div>
+      <div>http://example.com/2024/10/19/c++/折叠表达式/</div>
     </div>
     <div class="license-meta">
       
@@ -349,7 +334,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>September 29, 2024</div>
+          <div>October 19, 2024</div>
         </div>
       
       
@@ -381,9 +366,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/09/30/cuda/cuda%20block/" title="">
+                      <a href="/2024/10/21/calculus/%E6%97%A0%E7%A9%B7%E5%B0%8F%E9%87%8F/" title="无穷小量">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile"></span>
+                        <span class="hidden-mobile">无穷小量</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -391,8 +376,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/09/29/leetcode/leetcode%20432/" title="">
-                        <span class="hidden-mobile"></span>
+                      <a href="/2024/10/16/c++/is_array/" title="is_array">
+                        <span class="hidden-mobile">is_array</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
