@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>linear regression | Hexo</title><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="线性回归推导过程 Assuming that the independent variables are$${\vec {x_{i}}}&#x3D;\left[x_{1}^{i},x_{2}^{i},\ldots ,x_{m}^{i}\right]$$and the model’s parameters are$${\vec {\beta }}&#x3D;\left[\beta {0},\beta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linear regression">
+<meta property="og:url" content="http://example.com/2024/10/30/deeplearning/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="线性回归推导过程 Assuming that the independent variables are$${\vec {x_{i}}}&#x3D;\left[x_{1}^{i},x_{2}^{i},\ldots ,x_{m}^{i}\right]$$and the model’s parameters are$${\vec {\beta }}&#x3D;\left[\beta {0},\beta">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/butterfly-icon.png">
+<meta property="article:published_time" content="2024-10-30T14:06:12.427Z">
+<meta property="article:modified_time" content="2024-10-30T14:15:01.427Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/butterfly-icon.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/10/30/deeplearning/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'linear regression',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-10-30 22:15:01',
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Hexo</span></a><a class="nav-page-title" href="/"><span class="site-name">linear regression</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">linear regression</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-10-30T14:06:12.427Z" title="Created 2024-10-30 22:06:12">2024-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-10-30T14:15:01.427Z" title="Updated 2024-10-30 22:15:01">2024-10-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/deep-learning/">deep learning</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="线性回归"><a href="#线性回归" class="headerlink" title="线性回归"></a>线性回归</h2><p>推导过程</p>
+<p>Assuming that the independent variables are<br>$$<br>{\vec {x_{i}}}&#x3D;\left[x_{1}^{i},x_{2}^{i},\ldots ,x_{m}^{i}\right]<br>$$<br>and the model’s parameters are<br>$$<br>{\vec {\beta }}&#x3D;\left[\beta <em>{0},\beta <em>{1},\ldots ,\beta <em>{m}\right]<br>$$<br>, then the model’s prediction would be<br>$$<br>y</em>{i}\approx \beta <em>{0}+\sum <em>{j&#x3D;1}^{m}\beta <em>{j}\times x</em>{j}^{i}<br>$$<br>If ${\vec {x</em>{i}}}$ is extended to ${\vec {x</em>{i}}}&#x3D;\left[1,x</em>{1}^{i},x</em>{2}^{i},\ldots ,x_{m}^{i}\right]$ then $y_i$ would become a dot product of the parameter and the independent vectors, i.e.<br>$$<br>y_{i}\approx \sum <em>{j&#x3D;0}^{m}\beta <em>{j}\times x</em>{j}^{i}&#x3D;{\vec {\beta }}\cdot {\vec {x</em>{i}}}<br>$$<br>In the least-squares setting, the optimum parameter vector is defined as such that minimizes the sum of mean squared loss:<br>$$<br>{\vec {\hat {\beta }}}&#x3D;{\underset {\vec {\beta }}{\mbox{arg min}}},L\left(D,{\vec {\beta }}\right)&#x3D;{\underset {\vec {\beta }}{\mbox{arg min}}}\sum <em>{i&#x3D;1}^{n}\left({\vec {\beta }}\cdot {\vec {x</em>{i}}}-y_{i}\right)^{2}<br>$$<br>Now putting the independent and dependent variables in matrices $X$ and $Y$ respectively, the loss function can be rewritten as:<br>$$<br>{\begin{aligned}L\left(D,{\vec {\beta }}\right)&amp;&#x3D;|X{\vec {\beta }}-Y|^{2}\&amp;&#x3D;\left(X{\vec {\beta }}-Y\right)^{\textsf {T}}\left(X{\vec {\beta }}-Y\right)\&amp;&#x3D;Y^{\textsf {T}}Y-Y^{\textsf {T}}X{\vec {\beta }}-{\vec {\beta }}^{\textsf {T}}X^{\textsf {T}}Y+{\vec {\beta }}^{\textsf {T}}X^{\textsf {T}}X{\vec {\beta }}\end{aligned}}<br>$$<br>As the loss function is convex, the optimum solution lies at gradient zero. The gradient of the loss function is (using Denominator layout convention):<br>$$<br>{\begin{aligned}{\frac {\partial L\left(D,{\vec {\beta }}\right)}{\partial {\vec {\beta }}}}&amp;&#x3D;{\frac {\partial \left(Y^{\textsf {T}}Y-Y^{\textsf {T}}X{\vec {\beta }}-{\vec {\beta }}^{\textsf {T}}X^{\textsf {T}}Y+{\vec {\beta }}^{\textsf {T}}X^{\textsf {T}}X{\vec {\beta }}\right)}{\partial {\vec {\beta }}}}\&amp;&#x3D;-2X^{\textsf {T}}Y+2X^{\textsf {T}}X{\vec {\beta }}\end{aligned}}<br>$$<br>Setting the gradient to zero produces the optimum parameter:<br>$$<br>{\begin{aligned}-2X^{\textsf {T}}Y+2X^{\textsf {T}}X{\vec {\beta }}&amp;&#x3D;0\\Rightarrow X^{\textsf {T}}X{\vec {\beta }}&amp;&#x3D;X^{\textsf {T}}Y\\Rightarrow {\vec {\hat {\beta }}}&amp;&#x3D;\left(X^{\textsf {T}}X\right)^{-1}X^{\textsf {T}}Y\end{aligned}}<br>$$</p>
+<p><strong>Note:</strong> The $\hat {\beta }$ obtained may indeed be the local minimum, one needs to differentiate once more to obtain the Hessian matrix and show that it is positive definite. This is provided by the Gauss–Markov theorem.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">John Doe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2024/10/30/deeplearning/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">http://example.com/2024/10/30/deeplearning/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/11/01/assembly/sse/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2"></div></div><div class="info-2"><div class="info-item-1">x86 SSE register supported data types control status mechanism X86-SSE OverviewThe original Streaming SIMD Extension, called SSE, was introduced with the Pentium III processor.  奔腾3：SSE 奔腾4：SSE2（双精度，整数） SSE3（） SSE4.1（dot products and data blending） SSE4.2    Bit Field Name Description    IE Invalid operation flag X86-SSE floating-point invalid operation error flag.   DE Denormal flag X86-SSE floating-point denormal error flag.   ZE Divide-by-zero flag    OE Overflow flag    UE Underflow...</div></div></div></a><a class="pagination-related" href="/2024/10/30/deeplearning/torch-backward/" title="torch backward"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">torch backward</div></div><div class="info-2"><div class="info-item-1">torch backward下面是一个简单的例子，说明在没有清零梯度的情况下，梯度是如何累加的。 12345678910111213141516171819import torch# 创建一个可求导的张量x = torch.tensor([2.0], requires_grad=True)# 定义一个简单的函数def func(x):    return x ** 2# 第一轮前向传播和反向传播y = func(x)  # y = 2^2 = 4y.backward()  # 计算梯度print(f&quot;Gradient after first backward: &#123;x.grad&#125;&quot;)  # 输出: 4.0# 第二轮前向传播和反向传播y = func(x)  # y = 2^2 = 4y.backward()  # 计算梯度print(f&quot;Gradient after second backward: &#123;x.grad&#125;&quot;)  # 输出: 8.0  </div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">John Doe</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">53</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">18</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92"><span class="toc-number">1.</span> <span class="toc-text">线性回归</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/02/c++/C++%20FAQ/" title="C++ FAQ">C++ FAQ</a><time datetime="2024-11-02T13:40:31.367Z" title="Created 2024-11-02 21:40:31">2024-11-02</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/02/linux/fs/SPFS/" title="SPFS">SPFS</a><time datetime="2024-11-02T10:06:53.955Z" title="Created 2024-11-02 18:06:53">2024-11-02</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/python/descriptor/" title="descriptor">descriptor</a><time datetime="2024-11-01T04:06:09.921Z" title="Created 2024-11-01 12:06:09">2024-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/python/python%E5%85%83%E7%BC%96%E7%A8%8B/" title="python元编程">python元编程</a><time datetime="2024-11-01T03:54:39.406Z" title="Created 2024-11-01 11:54:39">2024-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/assembly/sse/" title="Untitled">Untitled</a><time datetime="2024-11-01T03:53:43.526Z" title="Created 2024-11-01 11:53:43">2024-11-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2024 By John Doe</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

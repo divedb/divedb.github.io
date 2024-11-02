@@ -1,931 +1,183 @@
-
-
-<!DOCTYPE html>
-<html lang="en" data-default-color-scheme=auto>
-
-
-
-<head>
-  <meta charset="UTF-8">
-
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="John Doe">
-  <meta name="keywords" content="">
-  
-    <meta property="og:type" content="website">
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Hexo</title><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/butterfly-icon.png">
 <meta property="article:author" content="John Doe">
-<meta name="twitter:card" content="summary_large_image">
-  
-  
-  
-  <title>Hexo</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
-
-
-
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
-  
-
-
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
-
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
-    }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
-  
-
-
-  
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-
-<body>
-  
-
-  <header>
-    
-
-<div class="header-inner" style="height: 100vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/" target="_self">
-                <i class="iconfont icon-home-fill"></i>
-                <span>Home</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/" target="_self">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>Archives</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/" target="_self">
-                <i class="iconfont icon-category-fill"></i>
-                <span>Categories</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/" target="_self">
-                <i class="iconfont icon-tags-fill"></i>
-                <span>Tags</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/" target="_self">
-                <i class="iconfont icon-user-fill"></i>
-                <span>About</span>
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              <i class="iconfont icon-search"></i>
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
-              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
-            </a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="An elegant Material-Design theme for Hexo"></span>
-          
-        </div>
-
-        
-      </div>
-
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/butterfly-icon.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
       
-        <div class="scroll-down-bar">
-          <i class="iconfont icon-arrowdown"></i>
-        </div>
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
-    
-      <div class="container nopadding-x-md">
-        <div id="board"
-          style="margin-top: 0">
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/21/leetcode/leetcode-1593/" target="_self">
-          leetcode 1593
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/21/leetcode/leetcode-1593/" target="_self">
-        <div>
-          1593. 拆分字符串使唯一子字符串的数目最大 1. 题目要求​	给你一个字符串s，请你拆分该字符串，并返回拆分后唯一子字符串的最大数目。 字符串s拆分后可以得到若干非空子字符串 ，这些子字符串连接后应当能够还原为原字符串。但是拆分出来的每个子字符串都必须是 唯一的 。 注意：子字符串是字符串中的一个连续字符序列。 示例 1： 123输入：s = &quot;ababccc&quot;输出：5解释
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-21 19:06" pubdate>
-              2024-10-21
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/leetcode/" class="category-chain-item">leetcode</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/leetcode/%E5%9B%9E%E6%BA%AF/" class="category-chain-item">回溯</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%89%AA%E6%9E%9D/">#剪枝</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/21/calculus/%E6%97%A0%E7%A9%B7%E5%B0%8F%E9%87%8F/" target="_self">
-          无穷小量
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/21/calculus/%E6%97%A0%E7%A9%B7%E5%B0%8F%E9%87%8F/" target="_self">
-        <div>
-          无穷小量1. 定义若$\lim_{x \to x_0}f(x) &#x3D; 0$，称$f(x)$当$x$趋于$x_0$时是无穷小量。 例$\lim_{x \to \infty}\frac{1}{x} &#x3D; 0$称$\frac{1}{x}$当$x \to \infty$是无穷小量。 2. 无穷小量性质性质1：有限个无穷小量仍是无穷小量。 性质2：有限个无穷小量之积仍是无穷小量。 有界量定义
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-21 17:00" pubdate>
-              2024-10-21
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/calculus/" class="category-chain-item">calculus</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/19/c++/%E6%8A%98%E5%8F%A0%E8%A1%A8%E8%BE%BE%E5%BC%8F/" target="_self">
-          折叠表达式
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/19/c++/%E6%8A%98%E5%8F%A0%E8%A1%A8%E8%BE%BE%E5%BC%8F/" target="_self">
-        <div>
-          Fold Expression1. 概念​	折叠表达式（fold expression）是C++17引入的一种特性，允许对变长模板参数进行简单而优雅的操作。它简化了对参数包的处理，尤其是在需要对包中的所有元素进行某种操作（如求和、逻辑运算等）时。 例如，使用折叠表达式可以方便地计算参数包中所有元素的和： 1234template &lt;typename... Args&gt;auto sum(A
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-19 13:27" pubdate>
-              2024-10-19
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/c/" class="category-chain-item">c++</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/16/c++/is_array/" target="_self">
-          is_array
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/16/c++/is_array/" target="_self">
-        <div>
-          1. is_array1.1 简介​	std::is_array是一个用于检测类型是否为数组类型的模板类，它是标准库&lt;type_traits&gt;头文件中的一部分（since C++11）。    If the program adds specializations for std::is_array or std::is_array_v, the behavior is undefin
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-16 21:18" pubdate>
-              2024-10-16
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/c/" class="category-chain-item">c++</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/type-traits/">#type_traits</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/16/leetcode/leetcode%202938%20%E5%8C%BA%E5%88%86%E9%BB%91%E7%90%83%E5%92%8C%E7%99%BD%E7%90%83/" target="_self">
-          leetcode 2938
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/16/leetcode/leetcode%202938%20%E5%8C%BA%E5%88%86%E9%BB%91%E7%90%83%E5%92%8C%E7%99%BD%E7%90%83/" target="_self">
-        <div>
-          leetcode 2938 区分黑球和白球要求：桌子上有 n 个球，每个球的颜色不是黑色，就是白色。 给你一个长度为 n 、下标从 0 开始的二进制字符串 s，其中 1 和 0 分别代表黑色和白色的球。 在每一步中，你可以选择两个相邻的球并交换它们。 返回「将所有黑色球都移到右侧，所有白色球都移到左侧所需的 最小步数」。 示例 1： 12345输入：s = &quot;101&quot;输出：1解
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-16 19:10" pubdate>
-              2024-10-16
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/leetcode/" class="category-chain-item">leetcode</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/">#双指针</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/" target="_self">
-          Introduction to Reinforcement Learning
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/" target="_self">
-        <div>
-          Introduction to Reinforcement Learning1. 概念​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。 强化学习的基本要素包括：  智能体（Agent）: 在环境中做出决策的实体。 环境（Enviro
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-16 14:04" pubdate>
-              2024-10-16
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/reinforcement-learning/" class="category-chain-item">reinforcement learning</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/machine-learning/">#machine learning</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/16/algorithm/heap/" target="_self">
-          堆
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/16/algorithm/heap/" target="_self">
-        <div>
-          heap1. 简介​	在Python中heapq 是一个用于堆队列算法的标准库，可以用来实现优先队列。它提供了一组函数来维护堆（最小堆），从而支持高效的插入和删除操作。 2. 示例1. 转化列表成最小堆12345import heapqnums = [3, 1, 4, 1, 5, 9]heapq.heapify(nums)  	# 转换成最小堆print(nums)  					# 输出: [1,
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-16 09:12" pubdate>
-              2024-10-16
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/algorithm/" class="category-chain-item">algorithm</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/python%E7%AE%97%E6%B3%95/">#python算法</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/15/deeplearning/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" target="_self">
-          循环神经网络
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/15/deeplearning/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" target="_self">
-        <div>
-          recurrent neural network强化学习 https://www.youtube.com/watch?v=2pWv7GOvuf0 博主 https://github.com/dennybritz/reinforcement-learning
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-15 19:16" pubdate>
-              2024-10-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/deeplearning/" class="category-chain-item">deeplearning</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/15/calculus/%E5%81%8F%E5%BE%AE%E5%88%86%E6%A6%82%E5%BF%B5/" target="_self">
-          偏微分概念
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/15/calculus/%E5%81%8F%E5%BE%AE%E5%88%86%E6%A6%82%E5%BF%B5/" target="_self">
-        <div>
-          偏微分概念1. Gradient（梯度）​	Gradient是向量微积分中的一个重要概念，它描述了多变量函数的导数。梯度是一个向量，表示函数在各个自变量方向上的变化率。具体来说，它是多变量函数的偏导数的集合。 解释： 对于一个多元函数$f(x_1, x_2, \dots, x_n)$，梯度$\nabla f$是一个向量，由函数对每个变量的偏导数组成： $\nabla f(x_1, x_2, \do
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-15 15:43" pubdate>
-              2024-10-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/calculus/" class="category-chain-item">calculus</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/15/probability%20theory/probability-measure/" target="_self">
-          probability measure
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/15/probability%20theory/probability-measure/" target="_self">
-        <div>
-          Probability Measure1. 概念​	Probability measure is a mathematical concept used in probability theory to assign a numerical value to the likelihood of certain events occurring within a given sample space
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-15 11:55" pubdate>
-              2024-10-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/probability-theory/" class="category-chain-item">probability theory</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-
-
-  <nav aria-label="navigation">
-    <span class="pagination" id="pagination">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
-    </span>
-  </nav>
-
-
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
-    </div>
-  
-  
-  
-</div>
-
-  </footer>
-
-  <!-- Scripts -->
-  
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
       }
-      var text = subtitle.getAttribute('data-typed-text');
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
       
-        typing(text);
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
       
-    })(window, document);
-  </script>
-
-
-
-
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
   
-    <script  src="/js/img-lazyload.js" ></script>
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Hexo',
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2024-11-02 22:09:28',
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Hexo</span></a></span><div id="menus"></div></nav><div id="site-info"><h1 id="site-title">Hexo</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/11/02/c++/C++%20FAQ/" title="C++ FAQ">C++ FAQ</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-11-02T13:40:31.367Z" title="Created 2024-11-02 21:40:31">2024-11-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span></div><div class="content">C++ FAQ1. operator delete重载123456789101112131415161718192021222324252627class B1 &#123; public:  B1() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;  virtual ~B1() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;  void* operator new(size_t bytes) &#123; return nullptr; &#125;  void operator delete(void* ptr, size_t bytes) &#123;    cout &lt;&lt; &quot;delete: &quot; &lt;&lt; ptr &lt;&lt; endl;    cout &lt;&lt; &quot;bytes: &quot; &lt;&lt; bytes &lt;&lt; endl; ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/11/02/linux/fs/SPFS/" title="SPFS">SPFS</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-11-02T10:06:53.955Z" title="Created 2024-11-02 18:06:53">2024-11-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/filesystem/">filesystem</a></span></div><div class="content">SPFSModule Agenda Basic Linux filesystem information Where is the Linux filesystem code? Who uses what filesystems? Where do filesystems sit in the kernel? How to get started with filesystem development Some basic SPFS information  1. How many Filesystems? Linux has over 80 different filesystems They fall into several different categories: Disk-based filesystems, filesystems with built-in fault-tolerance, filesystems optimized for flash memory, solid state media, record-oriented filesystems,...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/11/01/python/descriptor/" title="descriptor">descriptor</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-11-01T04:06:09.921Z" title="Created 2024-11-01 12:06:09">2024-11-01</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/python-metaprogram/">python metaprogram</a></span></div><div class="content">描述器1. 入门现在，让我们从最基本的示例开始，然后逐步添加新功能。 简单示例：返回常量的描述器Ten类是一个描述器，其__get__()方法总是返回常量 10： 123class Ten:    def __get__(self, obj, objtype=None):        return 10  要使用描述器，它必须作为一个类变量存储在另一个类中： 123class A:    x = 5                       # 常规类属性    y = Ten()                   # 描述器实例  用交互式会话查看普通属性查找和描述器查找之间的区别： &gt;&gt;&gt; 12345&gt;&gt;&gt; a = A()                     # 创建一个类 A 的实例&gt;&gt;&gt; a.x                         # 正常属性查找5&gt;&gt;&gt; a.y                         # 描述器查找10  在 a.x...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/11/01/python/python%E5%85%83%E7%BC%96%E7%A8%8B/" title="python元编程">python元编程</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-11-01T03:54:39.406Z" title="Created 2024-11-01 11:54:39">2024-11-01</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/python/">python</a></span></div><div class="content">Python元编程1. 简介元编程让程序能够生成、修改或分析自身的代码。Python的元编程通常涉及以下几个方面：  类和对象的动态创建：使用type()函数可以动态创建类。例如，可以在运行时生成新的类定义。 装饰器：装饰器是Python中常见的元编程技巧，可以在函数或方法被定义时修改其行为。 描述符：描述符允许你通过定义__get__、__set__和__delete__方法来控制属性的访问。 反射：使用getattr()、setattr()和hasattr()等内置函数，可以在运行时访问和修改对象的属性。 元类：元类是用于创建类的类，允许你在类被定义时自定义类的行为。  </div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/11/01/assembly/sse/" title="Untitled">Untitled</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-11-01T03:53:43.526Z" title="Created 2024-11-01 11:53:43">2024-11-01</time></span></div><div class="content">x86 SSE register supported data types control status mechanism X86-SSE OverviewThe original Streaming SIMD Extension, called SSE, was introduced with the Pentium III processor.  奔腾3：SSE 奔腾4：SSE2（双精度，整数） SSE3（） SSE4.1（dot products and data blending） SSE4.2    Bit Field Name Description    IE Invalid operation flag X86-SSE floating-point invalid operation error flag.   DE Denormal flag X86-SSE floating-point denormal error flag.   ZE Divide-by-zero flag    OE Overflow flag    UE Underflow...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/10/30/deeplearning/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" title="linear regression">linear regression</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-10-30T14:06:12.427Z" title="Created 2024-10-30 22:06:12">2024-10-30</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/deep-learning/">deep learning</a></span></div><div class="content">线性回归推导过程 Assuming that the independent variables are$${\vec {x_{i}}}&#x3D;\left[x_{1}^{i},x_{2}^{i},\ldots ,x_{m}^{i}\right]$$and the model’s parameters are$${\vec {\beta }}&#x3D;\left[\beta {0},\beta {1},\ldots ,\beta {m}\right]$$, then the model’s prediction would be$$y{i}\approx \beta {0}+\sum {j&#x3D;1}^{m}\beta {j}\times x{j}^{i}$$If ${\vec {x{i}}}$ is extended to ${\vec {x{i}}}&#x3D;\left[1,x{1}^{i},x{2}^{i},\ldots ,x_{m}^{i}\right]$ then $y_i$ would become a dot product of the...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/10/30/deeplearning/torch-backward/" title="torch backward">torch backward</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-10-30T11:37:36.024Z" title="Created 2024-10-30 19:37:36">2024-10-30</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/torch/">torch</a></span></div><div class="content">torch backward下面是一个简单的例子，说明在没有清零梯度的情况下，梯度是如何累加的。 12345678910111213141516171819import torch# 创建一个可求导的张量x = torch.tensor([2.0], requires_grad=True)# 定义一个简单的函数def func(x):    return x ** 2# 第一轮前向传播和反向传播y = func(x)  # y = 2^2 = 4y.backward()  # 计算梯度print(f&quot;Gradient after first backward: &#123;x.grad&#125;&quot;)  # 输出: 4.0# 第二轮前向传播和反向传播y = func(x)  # y = 2^2 = 4y.backward()  # 计算梯度print(f&quot;Gradient after second backward: &#123;x.grad&#125;&quot;)  # 输出: 8.0  </div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/10/29/c++/memory%E6%A8%A1%E5%9D%97/" title="c++ memory模块">c++ memory模块</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-10-29T12:03:53.558Z" title="Created 2024-10-29 20:03:53">2024-10-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/c/">c++</a></span></div><div class="content">memory模块1....</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/10/29/deeplearning/%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0v2/" title="01-简介">01-简介</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-10-29T03:55:43.189Z" title="Created 2024-10-29 11:55:43">2024-10-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0v2/">动手学深度学习v2</a></span></div><div class="content">动手学深度学习v21. 内容 深度学习基础：线性神经网络、多层感知机 卷积神经网络：LeNet、AlexNet、VGG、Inception、ResNet 循环神经网络：RNN、GRU、LSTM、seq2seq 注意力机制：Attention、Transformer 优化算法：SGD、Momentum、Adam 高性能计算：并行、多GPU、分布式 计算机视觉：目标检测、语义分割 自然语言处理：词嵌入、BERT  2. 安装 使用conda&#x2F;miniconda环境 123conda env remove -n d2l-zhconda create -n d2l-zh -y python=3.8 pipconda activate d2l-zh  安装需要的包 pip install jupyter d2l torch torchvision   下载代码并执行 wget https://zh-v2.d2l.ai/d2l-zh.zip unzip d2l-zh.zip jupyter notebook    3....</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2024/10/28/python/python-mixin/" title="python mixin">python mixin</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-10-28T14:01:47.573Z" title="Created 2024-10-28 22:01:47">2024-10-28</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/python/">python</a></span></div><div class="content">Python Mixin1. 简介​	Mixin是一种设计模式，用于创建可复用的类，这些类可以与其他类组合，以增强其功能。Mixin通常不作为独立的类使用，而是作为基类被其他类继承，提供特定的行为或功能，而不需要成为该类的主要部分。 特点 可复用性：Mixin允许将功能模块化，使得相同的功能可以在多个类中复用。 单一职责：Mixin通常负责提供一种特定的功能或行为，而不是承担类的主要业务逻辑。这有助于保持代码的清晰性和可维护性。 组合性：可以将多个Mixin类组合到一个类中，从而为该类提供多种功能。这种方式支持多重继承。  示例 以下是一个简单的示例，展示了如何在Python中使用Mixin： 123456789101112131415161718192021class JSONMixin:    def to_json(self):        import json        return json.dumps(self.__dict__)class XMLMixin:    def to_xml(self):        xml =...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#content-inner">6</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">John Doe</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">53</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">18</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/02/c++/C++%20FAQ/" title="C++ FAQ">C++ FAQ</a><time datetime="2024-11-02T13:40:31.367Z" title="Created 2024-11-02 21:40:31">2024-11-02</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/02/linux/fs/SPFS/" title="SPFS">SPFS</a><time datetime="2024-11-02T10:06:53.955Z" title="Created 2024-11-02 18:06:53">2024-11-02</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/python/descriptor/" title="descriptor">descriptor</a><time datetime="2024-11-01T04:06:09.921Z" title="Created 2024-11-01 12:06:09">2024-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/python/python%E5%85%83%E7%BC%96%E7%A8%8B/" title="python元编程">python元编程</a><time datetime="2024-11-01T03:54:39.406Z" title="Created 2024-11-01 11:54:39">2024-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/assembly/sse/" title="Untitled">Untitled</a><time datetime="2024-11-01T03:53:43.526Z" title="Created 2024-11-01 11:53:43">2024-11-01</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>Categories</span>
+            <a class="card-more-btn" href="/categories/" title="View More">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C/"><span class="card-category-list-name">C++</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/algorithm/"><span class="card-category-list-name">algorithm</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/assembly/"><span class="card-category-list-name">assembly</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/c/"><span class="card-category-list-name">c++</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/calculus/"><span class="card-category-list-name">calculus</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/deep-learning/"><span class="card-category-list-name">deep learning</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/deeplearning/"><span class="card-category-list-name">deeplearning</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/filesystem/"><span class="card-category-list-name">filesystem</span><span class="card-category-list-count">1</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/type-traits/" style="font-size: 1.1em; color: #999">type_traits</a> <a href="/tags/linux/" style="font-size: 1.1em; color: #999">linux</a> <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" style="font-size: 1.1em; color: #999">双指针</a> <a href="/tags/%E5%9B%9E%E6%BA%AF%E5%89%AA%E6%9E%9D/" style="font-size: 1.1em; color: #999">回溯剪枝</a> <a href="/tags/filesystem/" style="font-size: 1.1em; color: #999">filesystem</a> <a href="/tags/python%E7%AE%97%E6%B3%95/" style="font-size: 1.1em; color: #999">python算法</a> <a href="/tags/machine-learning/" style="font-size: 1.1em; color: #999">machine learning</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 1.1em; color: #999">递归</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 1.1em; color: #999">线性代数</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>Archives</span>
+      
+    </div>
+    <ul class="card-archive-list">
   
-
-
-
-
-  <script  src="/js/local-search.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
-  </noscript>
-</body>
-</html>
+      <li class="card-archive-list-item">
+        <a class="card-archive-list-link" href="/archives/2024/11/">
+          <span class="card-archive-list-date">November 2024</span>
+          <span class="card-archive-list-count">5</span>
+        </a>
+      </li>
+    
+      <li class="card-archive-list-item">
+        <a class="card-archive-list-link" href="/archives/2024/10/">
+          <span class="card-archive-list-date">October 2024</span>
+          <span class="card-archive-list-count">43</span>
+        </a>
+      </li>
+    
+      <li class="card-archive-list-item">
+        <a class="card-archive-list-link" href="/archives/2024/09/">
+          <span class="card-archive-list-date">September 2024</span>
+          <span class="card-archive-list-count">5</span>
+        </a>
+      </li>
+    </ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Website Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article Count :</div><div class="item-count">53</div></div><div class="webinfo-item"><div class="item-name">Unique Visitors :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Page Views :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Last Update :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-11-02T14:09:28.178Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2024 By John Doe</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

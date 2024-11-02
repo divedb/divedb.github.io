@@ -1,0 +1,155 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>最大似然估计 | Hexo</title><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="最大似然估计​	在统计学中，最大似然估计（maximum likelihood estimation，简作MLE），也称极大似然估计，是用来估计一个概率模型的参数的一种方法。 最大似然估计的原理给定一个概率分布$D$，已知其概率密度函数（连续分布）或概率质量函数（离散分布）为$f_D$，以及一个分布参数$\theta$，我们可以从这个分布中抽出一个具有$n$个值的采样$X_1, X_2, \dot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最大似然估计">
+<meta property="og:url" content="http://example.com/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="最大似然估计​	在统计学中，最大似然估计（maximum likelihood estimation，简作MLE），也称极大似然估计，是用来估计一个概率模型的参数的一种方法。 最大似然估计的原理给定一个概率分布$D$，已知其概率密度函数（连续分布）或概率质量函数（离散分布）为$f_D$，以及一个分布参数$\theta$，我们可以从这个分布中抽出一个具有$n$个值的采样$X_1, X_2, \dot">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/butterfly-icon.png">
+<meta property="article:published_time" content="2024-10-23T08:48:27.774Z">
+<meta property="article:modified_time" content="2024-10-23T09:03:02.217Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/butterfly-icon.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '最大似然估计',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-10-23 17:03:02',
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Hexo</span></a><a class="nav-page-title" href="/"><span class="site-name">最大似然估计</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">最大似然估计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-10-23T08:48:27.774Z" title="Created 2024-10-23 16:48:27">2024-10-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-10-23T09:03:02.217Z" title="Updated 2024-10-23 17:03:02">2024-10-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/probability-theory/">probability theory</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="最大似然估计"><a href="#最大似然估计" class="headerlink" title="最大似然估计"></a>最大似然估计</h2><p>​	在统计学中，<strong>最大似然估计</strong>（maximum likelihood estimation，简作<strong>MLE</strong>），也称<strong>极大似然估计</strong>，是用来估计一个概率模型的参数的一种方法。</p>
+<h5 id="最大似然估计的原理"><a href="#最大似然估计的原理" class="headerlink" title="最大似然估计的原理"></a>最大似然估计的原理</h5><p>给定一个概率分布$D$，已知其概率密度函数（连续分布）或概率质量函数（离散分布）为$f_D$，以及一个分布参数$\theta$，我们可以从这个分布中抽出一个具有$n$个值的采样$X_1, X_2, \dots, X_n$，利用$f_D$计算出其似然函数：<br>$$<br>{\mbox{L}}(\theta \mid x_{1},\dots ,x_{n})&#x3D;f_{\theta }(x_{1},\dots ,x_{n}).<br>$$<br>若$D$是离散分布，$f_{\theta}$即是在参数为$\theta$时观测到这一采样的概率；若其是连续分布，$f_{\theta}$则为$X_1, X_2, \dots, X_n$联合分布的概率密度函数在观测值处的取值。一旦我们获得$X_1, X_2, \dots, X_n$，我们就能求得一个关于$\theta$的估计。最大似然估计会寻找关于$\theta$的最可能的值（即，在所有可能的$\theta$取值中，寻找一个值使这个采样的“可能性”最大化）。从数学上来说，我们可以在$\theta$的所有可能取值中寻找一个值使得似然函数取到最大值。这个使可能性最大的$\widehat {\theta }$值即称为$\theta$的<strong>最大似然估计</strong>。由定义，最大似然估计是样本的函数。</p>
+<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p>​	考虑一个抛硬币的例子。假设这个硬币正面跟反面轻重不同。我们把这个硬币抛80次（即，我们获取一个采样$x_1&#x3D;H,x_2&#x3D;T,…,x_{80}&#x3D;T$并把正面的次数记下来，正面记为H，反面记为T）。并把抛出一个正面的概率记为$p$，抛出一个反面的概率记为$1-p$（因此，这里的$p$即相当于上方的$\theta$）。假设我们抛出了49个正面，31个反面，即49次H，31次T。假设这个硬币是我们从一个装了三个硬币的盒子里头取出的。这三个硬币抛出正面的概率分别为$p&#x3D;1&#x2F;3, p&#x3D;1&#x2F;2, p&#x3D;2&#x2F;3$，这些硬币没有标记，所以我们无法知道哪个是哪个。使用<strong>最大似然估计</strong>，基于<strong>二项分布</strong>中的<strong>概率质量函数</strong>公式，通过这些试验数据（即采样数据)，我们可以计算出哪个硬币的可能性最大。这个似然函数取以下三个值中的一个：<br>$$<br>{\begin{matrix}\mathbb {L} (p&#x3D;1&#x2F;3\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;1&#x2F;3)&amp;&#x3D;&amp;{80 \choose 49}(1&#x2F;3)^{49}(1-1&#x2F;3)^{31}\approx 0.000\&amp;&amp;\\mathbb {L} (p&#x3D;1&#x2F;2\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;1&#x2F;2)&amp;&#x3D;&amp;{80 \choose 49}(1&#x2F;2)^{49}(1-1&#x2F;2)^{31}\approx 0.012\&amp;&amp;\\mathbb {L} (p&#x3D;2&#x2F;3\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;2&#x2F;3)&amp;&#x3D;&amp;{80 \choose 49}(2&#x2F;3)^{49}(1-2&#x2F;3)^{31}\approx 0.054\\end{matrix}}<br>$$</p>
+<p>我们可以看到当${\widehat {p}}&#x3D;2&#x2F;3$时，似然函数取得最大值。<br>显然地，这硬币的公平性和那种抛出后正面的概率是$\frac{2}{3}$的硬币是最接近的。这就是$p$的最大似然估计。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">John Doe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/">http://example.com/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/10/28/python/python-mixin/" title="python mixin"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">python mixin</div></div><div class="info-2"><div class="info-item-1">Python Mixin1. 简介​	Mixin是一种设计模式，用于创建可复用的类，这些类可以与其他类组合，以增强其功能。Mixin通常不作为独立的类使用，而是作为基类被其他类继承，提供特定的行为或功能，而不需要成为该类的主要部分。 特点 可复用性：Mixin允许将功能模块化，使得相同的功能可以在多个类中复用。 单一职责：Mixin通常负责提供一种特定的功能或行为，而不是承担类的主要业务逻辑。这有助于保持代码的清晰性和可维护性。 组合性：可以将多个Mixin类组合到一个类中，从而为该类提供多种功能。这种方式支持多重继承。  示例 以下是一个简单的示例，展示了如何在Python中使用Mixin： 123456789101112131415161718192021class JSONMixin:    def to_json(self):        import json        return json.dumps(self.__dict__)class XMLMixin:    def to_xml(self):        xml =...</div></div></div></a><a class="pagination-related" href="/2024/10/22/machine%20learning/logistic-function/" title="logistic function"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">logistic function</div></div><div class="info-2"><div class="info-item-1">Logistic FunctionA logistic function or logistic curve is a common S-shaped curve (sigmoid curve) with the equation$$f(x)&#x3D;{\frac {L}{1+e^{-k(x-x_{0})}}}$$where  $L$ is the carrying capacity, the supremum of the values of the function;  $k$ is the logistic growth rate, the steepness of the curve; and  $x_0$ is the $x$ value of the function’s midpoint   The logistic function has domain the real numbers, the limit as $x \rightarrow -\infty$ is 0, and the limit as $x \rightarrow +\infty$ is...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">John Doe</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">53</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">18</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">最大似然估计</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">最大似然估计的原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">例子</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/02/c++/C++%20FAQ/" title="C++ FAQ">C++ FAQ</a><time datetime="2024-11-02T13:40:31.367Z" title="Created 2024-11-02 21:40:31">2024-11-02</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/02/linux/fs/SPFS/" title="SPFS">SPFS</a><time datetime="2024-11-02T10:06:53.955Z" title="Created 2024-11-02 18:06:53">2024-11-02</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/python/descriptor/" title="descriptor">descriptor</a><time datetime="2024-11-01T04:06:09.921Z" title="Created 2024-11-01 12:06:09">2024-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/python/python%E5%85%83%E7%BC%96%E7%A8%8B/" title="python元编程">python元编程</a><time datetime="2024-11-01T03:54:39.406Z" title="Created 2024-11-01 11:54:39">2024-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2024/11/01/assembly/sse/" title="Untitled">Untitled</a><time datetime="2024-11-01T03:53:43.526Z" title="Created 2024-11-01 11:53:43">2024-11-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2024 By John Doe</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
