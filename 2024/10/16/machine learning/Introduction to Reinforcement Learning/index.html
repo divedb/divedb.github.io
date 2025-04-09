@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction to Reinforcement Learning1. 概念​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。 强化学习的基本要素包括：  智能体（Agent）: 在环境中做出决策的实体。 环境（Enviro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Reinforcement Learning">
+<meta property="og:url" content="http://example.com/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Introduction to Reinforcement Learning1. 概念​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。 强化学习的基本要素包括：  智能体（Agent）: 在环境中做出决策的实体。 环境（Enviro">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-16T06:04:37.956Z">
+<meta property="article:modified_time" content="2024-10-18T06:33:03.906Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/","path":"2024/10/16/machine learning/Introduction to Reinforcement Learning/","title":"Introduction to Reinforcement Learning"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Introduction to Reinforcement Learning | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction-to-Reinforcement-Learning"><span class="nav-number">1.</span> <span class="nav-text">Introduction to Reinforcement Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A6%82%E5%BF%B5"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-State"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. State</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Observability"><span class="nav-number">1.0.3.</span> <span class="nav-text">3. Observability</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7%EF%BC%88Full-Observability%EF%BC%89"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">完全可观测性（Full Observability）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7%EF%BC%88Partial-Observability%EF%BC%89"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">部分可观测性（Partial Observability）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">应用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-Major-Components-of-an-RL-Agent"><span class="nav-number">1.0.4.</span> <span class="nav-text">4. Major Components of an RL Agent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FAQ"><span class="nav-number">1.0.5.</span> <span class="nav-text">FAQ</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-state-value-function-V-s-and-state-action-value-function-Q-s-a-difference"><span class="nav-number">1.0.5.0.1.</span> <span class="nav-text">1. state value function $V(s)$ and state-action value function $Q(s, a)$ difference?</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.0.6.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Introduction to Reinforcement Learning | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to Reinforcement Learning
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-16 14:04:37" itemprop="dateCreated datePublished" datetime="2024-10-16T14:04:37+08:00">2024-10-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-18 14:33:03" itemprop="dateModified" datetime="2024-10-18T14:33:03+08:00">2024-10-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/reinforcement-learning/" itemprop="url" rel="index"><span itemprop="name">reinforcement learning</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Introduction-to-Reinforcement-Learning"><a href="#Introduction-to-Reinforcement-Learning" class="headerlink" title="Introduction to Reinforcement Learning"></a>Introduction to Reinforcement Learning</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。</p>
+<p>强化学习的基本要素包括：</p>
+<ol>
+<li><strong>智能体（Agent）</strong>: 在环境中做出决策的实体。</li>
+<li><strong>环境（Environment）</strong>: 智能体与之交互的外部系统，包括状态、奖励和状态转移。</li>
+<li><strong>状态（State）</strong>: 环境在某一时刻的描述，智能体根据状态来做出决策。</li>
+<li><strong>动作（Action）</strong>: 智能体在某个状态下可以选择的操作。</li>
+<li><strong>奖励（Reward）</strong>: 智能体在执行某个动作后，环境给予的反馈信号，用于评估该动作的好坏。</li>
+<li><strong>策略（Policy）</strong>: 智能体选择动作的规则，可以是确定性的（给定状态下选择固定动作）或随机的（根据概率分布选择动作）。</li>
+<li><strong>价值函数（Value Function）</strong>: 用于评估在某个状态下的期望收益，帮助智能体判断哪个状态更有利。</li>
+</ol>
+<h4 id="2-State"><a href="#2-State" class="headerlink" title="2. State"></a>2. State</h4><ul>
+<li><p>Environment state</p>
+</li>
+<li><p>Agent state</p>
+</li>
+<li><p>Markov state</p>
+<ul>
+<li><p><strong>马尔可夫性</strong>：当前状态的未来状态只依赖于当前状态，而与过去的状态无关。换句话说，给定当前状态，未来的状态转移不受过去历史的影响。</p>
+</li>
+<li><p>在强化学习或随机过程的背景下，马尔可夫状态通常指的是系统的状态，该状态能够完整描述系统的未来演变。也就是说，知道当前状态后，未来状态的概率分布只与当前状态相关。</p>
+</li>
+</ul>
+<p>例子</p>
+<ul>
+<li>在棋类游戏中，当前的棋盘布局就是一个马尔可夫状态，因为下一步的可能棋盘布局仅依赖于当前的布局，而与之前的动作和状态无关。</li>
+<li>在天气预报中，如果当前状态是“晴天”，那么明天的天气只依赖于“晴天”的状态，而与之前的天气无关。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-Observability"><a href="#3-Observability" class="headerlink" title="3. Observability"></a>3. Observability</h4><h5 id="完全可观测性（Full-Observability）"><a href="#完全可观测性（Full-Observability）" class="headerlink" title="完全可观测性（Full Observability）"></a>完全可观测性（Full Observability）</h5><ul>
+<li><strong>定义</strong>：在完全可观测的系统中，所有的状态信息都可以被完全观测到。即，在每个时间点，系统的状态是完全可知的。</li>
+<li>特点<ul>
+<li>代理可以直接获得系统的当前状态信息。</li>
+<li>不需要任何额外的推理或估计。</li>
+</ul>
+</li>
+<li><strong>例子</strong>：在一个简单的棋类游戏中，玩家可以看到整个棋盘的状态，这就是一个完全可观测的环境。</li>
+</ul>
+<h5 id="部分可观测性（Partial-Observability）"><a href="#部分可观测性（Partial-Observability）" class="headerlink" title="部分可观测性（Partial Observability）"></a>部分可观测性（Partial Observability）</h5><ul>
+<li><strong>定义</strong>：在部分可观测的系统中，代理只能观察到系统状态的一部分信息，或可能存在噪声，使得状态无法完全确定。</li>
+<li>特点<ul>
+<li>代理必须依赖于观察到的信息来推测未观察到的状态。</li>
+<li>需要使用策略来处理不确定性，通常涉及状态估计或历史信息。</li>
+</ul>
+</li>
+<li><strong>例子</strong>：在机器人导航中，机器人可能只能感知周围的障碍物，而无法知道环境的完整布局。</li>
+</ul>
+<h5 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h5><ul>
+<li>在强化学习中，部分可观测环境通常需要使用<strong>部分可观测马尔可夫决策过程（POMDP）</strong>模型来处理，而完全可观测环境则可以简单地使用马尔可夫决策过程（MDP）模型。</li>
+</ul>
+<h4 id="4-Major-Components-of-an-RL-Agent"><a href="#4-Major-Components-of-an-RL-Agent" class="headerlink" title="4. Major Components of an RL Agent"></a>4. Major Components of an RL Agent</h4><ul>
+<li><p>An RL agent may include one or more of these components:</p>
+<ul>
+<li><p>Policy: agent’s behaviour function</p>
+</li>
+<li><p>Value function: how good is each state and&#x2F;or action</p>
+<p><strong>价值函数（Value Function）</strong>是强化学习中的一个核心概念，用于评估某一状态或状态-动作对的“价值”。它帮助代理（agent）决定在不同状态下采取哪些行动，以最大化长期回报。</p>
+<p>主要类型</p>
+<ol>
+<li><strong>状态价值函数（State Value Function, V(s)）</strong>：<ul>
+<li>定义：在给定状态$s$下，代理在该状态下所能获得的预期回报。</li>
+<li>表示为：$V(s) &#x3D; \mathbb{E}[R_t | S_t &#x3D; s]$，其中$R_t$是从时间$t$开始的累计回报。</li>
+</ul>
+</li>
+<li><strong>动作价值函数（Action Value Function, Q(s, a)）</strong>：<ul>
+<li>定义：在给定状态$s$和动作$a$下，代理执行该动作后所能获得的预期回报。</li>
+<li>表示为：$Q(s, a) &#x3D; \mathbb{E}[R_t | S_t &#x3D; s, A_t &#x3D; a]$。</li>
+</ul>
+</li>
+</ol>
+<p>在象棋中，假设当前状态是棋盘上某种特定的布局：</p>
+<ul>
+<li><strong>状态价值函数（V(s)）</strong>：如果在当前布局下，玩家有很高的胜算，比如能确保胜利或导致对手陷入绝境，状态价值函数$V(s)$可以被认为是正值，比如+100，表示这是一个有利的状态。</li>
+<li><strong>动作价值函数（Q(s, a)）</strong>：假设在该状态下，玩家选择了一步棋（比如移动某个棋子）但这一步棋导致了对手的反击，最终失败。此时，动作价值函数$Q(s, a)$可能是负值，比如-50，表示这一步棋在这个状态下是个不好的选择。</li>
+</ul>
+</li>
+<li><p>Model: agent’s representation of the environment</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h4><h6 id="1-state-value-function-V-s-and-state-action-value-function-Q-s-a-difference"><a href="#1-state-value-function-V-s-and-state-action-value-function-Q-s-a-difference" class="headerlink" title="1. state value function $V(s)$ and state-action value function $Q(s, a)$ difference?"></a>1. state value function $V(s)$ and state-action value function $Q(s, a)$ difference?</h6><p>​	Bearing that in mind, the definition of these functions should clarify the distinction for you.</p>
+<p>$V_{\pi}(s)$ expresses the expected value of following policy $\pi$ forever when the agent starts following it from state $s$.</p>
+<p>$Q_{\pi}(s, a)$ expresses the expected value of first taking action $a$ from state $s$ and <em>then</em> following policy $\pi$ forever.</p>
+<p>The main difference then, is the Q-value lets you play a hypothetical of potentially taking a different action in the first time step than what the policy might prescribe and <em>then</em> following the policy from the state the agent winds up in.</p>
+<p><strong>Example</strong>:</p>
+<p>That said, lets make the example more concrete. Lets imagine a deterministic grid world. The goal is at (5, 0). As stated in the description, the agent is one step away, so lets say s &#x3D; (4, 0) for concreteness. For the optimal policy, it will tell us to go right from (4, 0). If we take right, that takes us to our terminating goal state (5, 0), with a single reward of -1 for taking that action after which we stop and receive no more reward. Clearly then, $V^*((4, 0)) &#x3D; -1$.</p>
+<p>As stated in the answer, we want to compare this to the Q-value for an action that takes us one step further away than where we started. Let say $a$ &#x3D; left.</p>
+<p>If we start at (4, 0) and take left, then we’ll end up in (3, 0), with -1 reward.</p>
+<p>From here on out we now follow our policy. The agent is now in state (3, 0) and our policy says to take right. That takes us back to where we started: (4, 0) receiving another reward of -1, for a total of -2 reward so far.</p>
+<p>But we’re still not done, because we’re only back to where we started! Once again, we follow our policy which from (4, 0) tells us to go right again, now taking us to our terminating goal state (5, 0) with another -1 reward for a total of -3 reward.</p>
+<p>So we just accumulated -3 reward; ergo, $Q^*((4, 0), left) &#x3D; -3$.</p>
+<p>We receive -1 reward for going the wrong way, -1 for undoing that mistake, and a third -1 to get to the goal after undoing the mistak</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><p><a target="_blank" rel="noopener" href="https://www.kaggle.com/competitions/connectx/discussion/124421">Useful courses, books, … for Reinforcement Learning</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/KhashayarRahimi/Reinforcement-Learning-Algorithms-From-Scratch">Reinforcement-Learning-Algorithms-From-Scratch</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.quora.com/In-reinforcement-learning-what-is-the-difference-between-a-state-value-function-V-s-and-a-state-action-value-function-Q-s-a">In reinforcement learning, what is the difference between a state value function V(s) and a state-action value function Q(s,a)?</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=9g32v7bK3Co&list=PLoROMvodv4rOca_Ovz1DvdtWuz8BfSWL2&index=20">Markov Decision Processes 1 - Value Iteration | Stanford CS221: AI (Autumn 2019)</a></p>
+<p>推荐</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/machine-learning/" rel="tag"># machine learning</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/16/algorithm/heap/" rel="prev" title="堆">
+                  <i class="fa fa-angle-left"></i> 堆
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/16/leetcode/leetcode%202938%20%E5%8C%BA%E5%88%86%E9%BB%91%E7%90%83%E5%92%8C%E7%99%BD%E7%90%83/" rel="next" title="leetcode 2938">
+                  leetcode 2938 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

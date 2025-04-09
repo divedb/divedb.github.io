@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="逆矩阵1. 概念逆矩阵是指，对于一个方阵$A$（即行数等于列数的矩阵），如果存在一个矩阵$A^{-1}$ 满足：$$A\cdot A^{-1} &#x3D; A^{-1} \cdot A &#x3D; I$$其中，$I$是同样维数的单位矩阵（对角线元素为1，其他元素为 0），那么$A^{-1}$就称为矩阵$A$的逆矩阵。 逆矩阵的定义条件 逆矩阵只存在于方阵中。非方阵（行数与列数不等的矩阵）不可能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/10/10/linear%20algebra/%E9%80%86%E7%9F%A9%E9%98%B5/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="逆矩阵1. 概念逆矩阵是指，对于一个方阵$A$（即行数等于列数的矩阵），如果存在一个矩阵$A^{-1}$ 满足：$$A\cdot A^{-1} &#x3D; A^{-1} \cdot A &#x3D; I$$其中，$I$是同样维数的单位矩阵（对角线元素为1，其他元素为 0），那么$A^{-1}$就称为矩阵$A$的逆矩阵。 逆矩阵的定义条件 逆矩阵只存在于方阵中。非方阵（行数与列数不等的矩阵）不可能">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-10T13:17:33.269Z">
+<meta property="article:modified_time" content="2024-10-10T13:46:18.226Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/10/10/linear%20algebra/%E9%80%86%E7%9F%A9%E9%98%B5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/10/10/linear%20algebra/%E9%80%86%E7%9F%A9%E9%98%B5/","path":"2024/10/10/linear algebra/逆矩阵/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%86%E7%9F%A9%E9%98%B5"><span class="nav-number">1.</span> <span class="nav-text">逆矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A6%82%E5%BF%B5"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%86%E7%9F%A9%E9%98%B5%E7%9A%84%E5%AE%9A%E4%B9%89%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">逆矩阵的定义条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%86%E7%9F%A9%E9%98%B5%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">逆矩阵的性质</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%80%86%E7%9F%A9%E9%98%B5%E6%B1%82%E8%A7%A3"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. 逆矩阵求解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%B6%88%E5%85%83%E6%B3%95-Gaussian-Elimination"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">高斯消元法 (Gaussian Elimination)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%AB%98%E6%96%AF-%E7%BA%A6%E5%B0%94%E5%BD%93%E6%B6%88%E5%85%83%E6%B3%95-Gauss-Jordan-Elimination"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">高斯-约尔当消元法 (Gauss-Jordan Elimination)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-%E5%AE%9A%E4%B9%89%E5%88%9D%E7%AD%89%E8%A1%8C%E5%8F%98%E6%8D%A2%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="nav-number">1.0.2.2.1.</span> <span class="nav-text">1. 定义初等行变换的性质</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-%E6%9E%84%E5%BB%BA%E5%A2%9E%E5%B9%BF%E7%9F%A9%E9%98%B5-A%E2%88%A3I"><span class="nav-number">1.0.2.2.2.</span> <span class="nav-text">2. 构建增广矩阵$[A∣I]$</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-%E5%AF%B9%E7%9F%A9%E9%98%B5-A-%E6%96%BD%E5%8A%A0%E5%88%9D%E7%AD%89%E8%A1%8C%E5%8F%98%E6%8D%A2"><span class="nav-number">1.0.2.2.3.</span> <span class="nav-text">3. 对矩阵$A$施加初等行变换</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-%E9%AA%8C%E8%AF%81%E5%8F%B3%E4%BE%A7%E5%8F%98%E4%B8%BA-A-1"><span class="nav-number">1.0.2.2.4.</span> <span class="nav-text">4. 验证右侧变为$A^{-1}$</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/10/linear%20algebra/%E9%80%86%E7%9F%A9%E9%98%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-10 21:17:33 / Modified: 21:46:18" itemprop="dateCreated datePublished" datetime="2024-10-10T21:17:33+08:00">2024-10-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="逆矩阵"><a href="#逆矩阵" class="headerlink" title="逆矩阵"></a>逆矩阵</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p><strong>逆矩阵</strong>是指，对于一个方阵$A$（即行数等于列数的矩阵），如果存在一个矩阵$A^{-1}$ 满足：<br>$$<br>A\cdot A^{-1} &#x3D; A^{-1} \cdot A &#x3D; I<br>$$<br>其中，$I$是同样维数的单位矩阵（对角线元素为1，其他元素为 0），那么$A^{-1}$就称为矩阵$A$的<strong>逆矩阵</strong>。</p>
+<h5 id="逆矩阵的定义条件"><a href="#逆矩阵的定义条件" class="headerlink" title="逆矩阵的定义条件"></a>逆矩阵的定义条件</h5><ol>
+<li>逆矩阵只存在于方阵中。非方阵（行数与列数不等的矩阵）不可能有逆矩阵。</li>
+<li>矩阵$A$必须是<strong>非奇异矩阵</strong>（即矩阵的行列式不为 0，$\det(A) \ne 0$）。</li>
+<li>如果$A$的行或列是线性无关的，逆矩阵$A^{-1}$存在。</li>
+</ol>
+<h5 id="逆矩阵的性质"><a href="#逆矩阵的性质" class="headerlink" title="逆矩阵的性质"></a>逆矩阵的性质</h5><ol>
+<li><strong>唯一性</strong>：矩阵的逆矩阵是唯一的。</li>
+<li><strong>自反性</strong>：如果$A^{-1}$存在，那么$(A^{-1})^{-1}&#x3D;A$。</li>
+<li><strong>逆矩阵的乘法性质</strong>：对于两个方阵$A$和$B$，如果$A \cdot B &#x3D; B \cdot A &#x3D; I$，那么$B$是$A$的逆矩阵，即$A^{-1} &#x3D; B$。</li>
+<li><strong>矩阵乘积的逆矩阵</strong>：如果$A$和$B$都是可逆矩阵，那么$(A \cdot B)^{-1} &#x3D; B^{-1} \cdot A^{-1}$。</li>
+</ol>
+<h4 id="2-逆矩阵求解"><a href="#2-逆矩阵求解" class="headerlink" title="2. 逆矩阵求解"></a>2. 逆矩阵求解</h4><h5 id="高斯消元法-Gaussian-Elimination"><a href="#高斯消元法-Gaussian-Elimination" class="headerlink" title="高斯消元法 (Gaussian Elimination)"></a>高斯消元法 (Gaussian Elimination)</h5><p>​	高斯消元法最早由德国数学家卡尔·弗里德里希·高斯提出，是一种通过消去方法解线性方程组的技术。高斯消元法的基本思想是通过初等行变换，将一个线性方程组的系数矩阵变为上三角形式，再通过回代过程解方程组。</p>
+<h5 id="高斯-约尔当消元法-Gauss-Jordan-Elimination"><a href="#高斯-约尔当消元法-Gauss-Jordan-Elimination" class="headerlink" title="高斯-约尔当消元法 (Gauss-Jordan Elimination)"></a>高斯-约尔当消元法 (Gauss-Jordan Elimination)</h5><p>​	威廉·约尔当在高斯消元法的基础上，提出了<strong>将矩阵进一步化简为单位矩阵</strong>的思路，这样就可以直接求解逆矩阵。这个方法通过不断进行初等行变换，使矩阵从原来的形态逐渐转变为单位矩阵，同时记录变换过程，从而得到逆矩阵。</p>
+<p>要证明通过初等行变换将增广矩阵$[A∣I]$的左侧变为单位矩阵$I$时，右侧会变为矩阵$A$的逆矩阵$A^{-1}$，可以通过以下步骤进行：</p>
+<h6 id="1-定义初等行变换的性质"><a href="#1-定义初等行变换的性质" class="headerlink" title="1. 定义初等行变换的性质"></a>1. 定义初等行变换的性质</h6><p>初等行变换是指对矩阵进行的以下操作：</p>
+<ul>
+<li><strong>行交换</strong>：交换两行的位置。</li>
+<li><strong>行倍乘</strong>：将某一行乘以一个非零常数。</li>
+<li><strong>行加减</strong>：将某一行的倍数加到另一行上。</li>
+</ul>
+<p>初等行变换的特点是，它们不会改变矩阵的行列式，且每个初等行变换都可逆。这意味着如果我们对矩阵$A$施加一系列初等行变换，最终的结果会是一个与初始矩阵$A$等价的矩阵。</p>
+<h6 id="2-构建增广矩阵-A∣I"><a href="#2-构建增广矩阵-A∣I" class="headerlink" title="2. 构建增广矩阵$[A∣I]$"></a>2. 构建增广矩阵$[A∣I]$</h6><p>假设$A$是一个$n \times n$的方阵，它与单位矩阵$I$组成增广矩阵：<br>$$<br>[A∣I]&#x3D; \left[\begin{array}{ccc|ccc} a_{11} &amp; a_{12} &amp; \dots &amp; 1 &amp; 0 &amp; \dots \ a_{21} &amp; a_{22} &amp; \dots &amp; 0 &amp; 1 &amp; \dots \ \vdots &amp; \vdots &amp; \ddots &amp; \vdots &amp; \vdots &amp; \ddots \ \end{array}\right]<br>$$</p>
+<h6 id="3-对矩阵-A-施加初等行变换"><a href="#3-对矩阵-A-施加初等行变换" class="headerlink" title="3. 对矩阵$A$施加初等行变换"></a>3. 对矩阵$A$施加初等行变换</h6><p>通过对增广矩阵$[A∣I]$进行初等行变换，目标是将左侧的$A$变为单位矩阵$I$：</p>
+<p>$[A | I] \xrightarrow{\text{初等行变换}} [I | B]$</p>
+<p>注意，初等行变换会作用于增广矩阵的两侧，意味着每次变换也同时对右侧的单位矩阵进行修改。</p>
+<h6 id="4-验证右侧变为-A-1"><a href="#4-验证右侧变为-A-1" class="headerlink" title="4. 验证右侧变为$A^{-1}$"></a>4. 验证右侧变为$A^{-1}$</h6><p>​	现在，我们知道通过这些初等行变换，我们已经将左侧的$A$转换成了单位矩阵$I$。此时，增广矩阵的形式变为$[I∣B]$，其中$B$是通过初等行变换后右侧的结果。</p>
+<p>此时，已经有$A \cdot B &#x3D; I$，因为对矩阵$A$所进行的变换是等效于求它的逆矩阵。由矩阵逆的定义可知，矩阵$B$就是$A$的逆矩阵 $A^{-1}$。</p>
+<p>因此，通过初等行变换后，增广矩阵的右侧就是$A^{-1}$。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/10/calculus/%E5%A4%B9%E9%80%BC%E5%AE%9A%E7%90%86%E3%80%81%E5%8D%95%E8%B0%83%E6%9C%89%E7%95%8C%E5%AE%9A%E7%90%86/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/10/deeplearning/Image%20Classification/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

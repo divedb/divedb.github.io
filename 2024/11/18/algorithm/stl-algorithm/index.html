@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="STL Algorithm1. Non-modifying sequence operations1. adjacent_find​	用于查找相邻元素满足特定条件的第一个位置。它返回一个指向该位置的迭代器。如果没有找到相邻的满足条件的元素，则返回容器的末尾迭代器。 函数原型 12345template &lt;class ForwardIt&gt;ForwardIt adjacent_find(F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="stl algorithm">
+<meta property="og:url" content="http://example.com/2024/11/18/algorithm/stl-algorithm/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="STL Algorithm1. Non-modifying sequence operations1. adjacent_find​	用于查找相邻元素满足特定条件的第一个位置。它返回一个指向该位置的迭代器。如果没有找到相邻的满足条件的元素，则返回容器的末尾迭代器。 函数原型 12345template &lt;class ForwardIt&gt;ForwardIt adjacent_find(F">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-18T01:28:23.919Z">
+<meta property="article:modified_time" content="2024-11-24T11:18:38.051Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/11/18/algorithm/stl-algorithm/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/11/18/algorithm/stl-algorithm/","path":"2024/11/18/algorithm/stl-algorithm/","title":"stl algorithm"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>stl algorithm | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#STL-Algorithm"><span class="nav-number">1.</span> <span class="nav-text">STL Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Non-modifying-sequence-operations"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">1. Non-modifying sequence operations</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-adjacent-find"><span class="nav-number">1.0.0.1.1.</span> <span class="nav-text">1. adjacent_find</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-reduce"><span class="nav-number">1.0.0.1.2.</span> <span class="nav-text">2. reduce</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/18/algorithm/stl-algorithm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="stl algorithm | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          stl algorithm
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-18 09:28:23" itemprop="dateCreated datePublished" datetime="2024-11-18T09:28:23+08:00">2024-11-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-11-24 19:18:38" itemprop="dateModified" datetime="2024-11-24T19:18:38+08:00">2024-11-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="STL-Algorithm"><a href="#STL-Algorithm" class="headerlink" title="STL Algorithm"></a>STL Algorithm</h2><h5 id="1-Non-modifying-sequence-operations"><a href="#1-Non-modifying-sequence-operations" class="headerlink" title="1. Non-modifying sequence operations"></a>1. Non-modifying sequence operations</h5><h6 id="1-adjacent-find"><a href="#1-adjacent-find" class="headerlink" title="1. adjacent_find"></a>1. <code>adjacent_find</code></h6><p>​	用于查找<strong>相邻元素满足特定条件</strong>的第一个位置。它返回一个指向该位置的迭代器。如果没有找到相邻的满足条件的元素，则返回容器的末尾迭代器。</p>
+<p><strong>函数原型</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">ForwardIt</span>&gt;</span><br><span class="line"><span class="function">ForwardIt <span class="title">adjacent_find</span><span class="params">(ForwardIt first, ForwardIt last)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">ForwardIt</span>, <span class="keyword">class</span> <span class="title class_">BinaryPredicate</span>&gt;</span><br><span class="line"><span class="function">ForwardIt <span class="title">adjacent_find</span><span class="params">(ForwardIt first, ForwardIt last, BinaryPredicate p)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>默认行为</p>
+<ul>
+<li>如果没有提供自定义的二元谓词，<code>std::adjacent_find</code>会使用相等比较（<code>==</code>）判断相邻元素。</li>
+</ul>
+<p>示例1：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">6</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> it = std::<span class="built_in">adjacent_find</span>(vec.<span class="built_in">begin</span>(), vec.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (it != vec.<span class="built_in">end</span>()) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;First adjacent equal elements found at index: &quot;</span> </span><br><span class="line">                  &lt;&lt; std::<span class="built_in">distance</span>(vec.<span class="built_in">begin</span>(), it) </span><br><span class="line">                  &lt;&lt; <span class="string">&quot; with value: &quot;</span> &lt;&lt; *it &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;No adjacent equal elements found.\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例2：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">CustomPredicate</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (b - a == <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">8</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> it = std::<span class="built_in">adjacent_find</span>(vec.<span class="built_in">begin</span>(), vec.<span class="built_in">end</span>(), CustomPredicate);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (it != vec.<span class="built_in">end</span>()) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Adjacent elements satisfying custom condition found at index: &quot;</span> </span><br><span class="line">                  &lt;&lt; std::<span class="built_in">distance</span>(vec.<span class="built_in">begin</span>(), it) </span><br><span class="line">                  &lt;&lt; <span class="string">&quot; with values: &quot;</span> &lt;&lt; *it &lt;&lt; <span class="string">&quot; and &quot;</span> &lt;&lt; *(it + <span class="number">1</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;No adjacent elements satisfying custom condition found.\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-reduce"><a href="#2-reduce" class="headerlink" title="2. reduce"></a>2. <code>reduce</code></h6><p>​	<code>std::reduce</code>是一个标准库算法，用于在指定范围内对元素进行<strong>归约操作</strong>。它在C++17中引入，属于<code>&lt;numeric&gt;</code>头文件的一部分。</p>
+<p><strong>基本语法</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;numeric&gt;</span></span></span><br><span class="line"></span><br><span class="line">(<span class="number">1</span>)</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">InputIt</span>&gt;</span><br><span class="line"><span class="keyword">typename</span> std::iterator_traits&lt;InputIt&gt;::<span class="function">value_type</span></span><br><span class="line"><span class="function">  <span class="title">reduce</span><span class="params">(InputIt first, InputIt last )</span></span>;</span><br><span class="line"></span><br><span class="line">(<span class="number">2</span>)</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">ExecutionPolicy</span>, <span class="keyword">class</span> <span class="title class_">ForwardIt</span>&gt;</span><br><span class="line"><span class="keyword">typename</span> std::iterator_traits&lt;ForwardIt&gt;::<span class="function">value_type </span></span><br><span class="line"><span class="function">  <span class="title">reduce</span><span class="params">(ExecutionPolicy&amp;&amp; policy, ForwardIt first, ForwardIt last)</span></span>;</span><br><span class="line"></span><br><span class="line">(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">InputIt</span>, <span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">reduce</span><span class="params">(InputIt first, InputIt last, T init)</span></span>;</span><br><span class="line"></span><br><span class="line">(<span class="number">4</span>)</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">ExecutionPolicy</span>, <span class="keyword">class</span> <span class="title class_">ForwardIt</span>, <span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">reduce</span><span class="params">(ExecutionPolicy&amp;&amp; policy, ForwardIt first, ForwardIt last, T init)</span></span>;</span><br><span class="line"></span><br><span class="line">(<span class="number">5</span>)</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">InputIt</span>, <span class="keyword">class</span> <span class="title class_">T</span>, <span class="keyword">class</span> <span class="title class_">BinaryOp</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">reduce</span><span class="params">(InputIt first, InputIt last, T init, BinaryOp op)</span></span>;</span><br><span class="line"></span><br><span class="line">(<span class="number">6</span>)</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">ExecutionPolicy</span>, <span class="keyword">class</span> <span class="title class_">ForwardIt</span>, <span class="keyword">class</span> <span class="title class_">T</span>, <span class="keyword">class</span> <span class="title class_">BinaryOp</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">reduce</span><span class="params">(ExecutionPolicy&amp;&amp; policy, ForwardIt first, ForwardIt last, T init, BinaryOp op)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>主要功能</strong></p>
+<ol>
+<li>对范围<code>[first, last)</code>的所有元素应用<strong>二元操作符</strong><code>binary_op</code>，将结果累加到<code>init</code>上。</li>
+<li>支持并行执行（需要执行策略）。</li>
+<li>与<code>std::accumulate</code>类似，但有以下不同点：<ul>
+<li><code>std::reduce</code>支持并行化；</li>
+<li><code>std::reduce</code>的操作顺序不固定（无序归约），需要操作满足交换律和结合律。</li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/" rel="prev" title="双指针">
+                  <i class="fa fa-angle-left"></i> 双指针
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/18/c++/code-style/" rel="next" title="code style">
+                  code style <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

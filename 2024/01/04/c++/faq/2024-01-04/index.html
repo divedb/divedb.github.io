@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="2024-01-041. gettid获得线程id 单线程中和进程id相同。 多线程中短时间内（？）可以保证每个线程id不同。 需要注意和pthread_t的区别。 在现代Linux中，它直接表示内核的任务调度id，因此在&#x2F;proc文件系统中可以轻易找到对应项：&#x2F;proc&#x2F;tid或&#x2F;proc&#x2F;pid&#x2F;task&#x2F;tid。  Exa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2024/01/04/c++/faq/2024-01-04/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="2024-01-041. gettid获得线程id 单线程中和进程id相同。 多线程中短时间内（？）可以保证每个线程id不同。 需要注意和pthread_t的区别。 在现代Linux中，它直接表示内核的任务调度id，因此在&#x2F;proc文件系统中可以轻易找到对应项：&#x2F;proc&#x2F;tid或&#x2F;proc&#x2F;pid&#x2F;task&#x2F;tid。  Exa">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-01-04T07:18:55.341Z">
+<meta property="article:modified_time" content="2024-01-05T04:32:14.678Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/01/04/c++/faq/2024-01-04/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/01/04/c++/faq/2024-01-04/","path":"2024/01/04/c++/faq/2024-01-04/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2024-01-04"><span class="nav-number">1.</span> <span class="nav-text">2024-01-04</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-gettid%E8%8E%B7%E5%BE%97%E7%BA%BF%E7%A8%8Bid"><span class="nav-number">1.0.0.0.1.</span> <span class="nav-text">1. gettid获得线程id</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-builtin-expect"><span class="nav-number">1.0.0.0.2.</span> <span class="nav-text">2. __builtin_expect</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-static%E7%9A%84%E9%94%99%E8%AF%AF%E7%94%A8%E6%B3%95"><span class="nav-number">1.0.0.0.3.</span> <span class="nav-text">3. static的错误用法</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/04/c++/faq/2024-01-04/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-01-04 15:18:55" itemprop="dateCreated datePublished" datetime="2024-01-04T15:18:55+08:00">2024-01-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-01-05 12:32:14" itemprop="dateModified" datetime="2024-01-05T12:32:14+08:00">2024-01-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="2024-01-04"><a href="#2024-01-04" class="headerlink" title="2024-01-04"></a>2024-01-04</h2><h6 id="1-gettid获得线程id"><a href="#1-gettid获得线程id" class="headerlink" title="1. gettid获得线程id"></a>1. gettid获得线程id</h6><ul>
+<li>单线程中和进程id相同。</li>
+<li>多线程中短时间内（？）可以保证每个线程id不同。</li>
+<li>需要注意和<code>pthread_t</code>的区别。</li>
+<li>在现代Linux中，它直接表示内核的任务调度id，因此在&#x2F;proc文件系统中可以轻易找到对应项：&#x2F;proc&#x2F;tid或&#x2F;proc&#x2F;pid&#x2F;task&#x2F;tid。</li>
+</ul>
+<p><strong>Example 1</strong></p>
+<p>可以看到t1和t2输出相同。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;foo\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">pthread_t</span> t1, t2;</span><br><span class="line">  pthread_create(&amp;t1, <span class="literal">NULL</span>, foo, <span class="literal">NULL</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%lx\n&quot;</span>, t1);</span><br><span class="line">  pthread_join(t1, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  pthread_create(&amp;t2, <span class="literal">NULL</span>, foo, <span class="literal">NULL</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%lx\n&quot;</span>, t2);</span><br><span class="line">  pthread_join(t2, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">7f542e7ff640</span><br><span class="line">foo</span><br><span class="line">7f542e7ff640</span><br><span class="line">foo</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>Example 2</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%x\n&quot;</span>, getpid());</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%x\n&quot;</span>, gettid());</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">360</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">128c</span><br><span class="line">128c</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">➜  Desktop <span class="built_in">ls</span> /proc/4748/task/4748</span><br><span class="line">arch_status         cwd                loginuid   oom_score_adj  smaps</span><br><span class="line">attr                environ            maps       pagemap        smaps_rollup</span><br><span class="line">auxv                exe                mem        patch_state    stack</span><br><span class="line">cgroup              fd                 mountinfo  personality    <span class="built_in">stat</span></span><br><span class="line">children            fdinfo             mounts     projid_map     statm</span><br><span class="line">clear_refs          gid_map            net        root           status</span><br><span class="line">cmdline             io                 ns         <span class="built_in">sched</span>          syscall</span><br><span class="line"><span class="built_in">comm</span>                ksm_merging_pages  numa_maps  schedstat      uid_map</span><br><span class="line">cpu_resctrl_groups  ksm_stat           oom_adj    sessionid      wchan</span><br><span class="line">cpuset              limits             oom_score  setgroups</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="2-builtin-expect"><a href="#2-builtin-expect" class="headerlink" title="2. __builtin_expect"></a>2. __builtin_expect</h6><p><code>__builtin_expect</code>是GCC（GNU Compiler Collection）提供的一个编译器内置函数，它允许程序员向编译器提供关于程序分支执行可能性的提示。这个函数主要用于指导编译器进行更有效的代码生成和优化，特别是针对条件分支预测。</p>
+<p>在C&#x2F;C++代码中使用<code>__builtin_expect</code>的一般形式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">__builtin_expect(expression, expected_value)</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<ul>
+<li><code>expression</code> 是一个布尔表达式或比较结果为整数0或1的表达式。</li>
+<li><code>expected_value</code> 是一个整数值0或1，表示你预期<code>expression</code>在运行时可能的结果。</li>
+</ul>
+<p>通过这种方式，你可以告诉编译器哪一侧分支更有可能被执行到。例如，如果预期某个条件经常为真，可以这样编写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (__builtin_expect(condition, <span class="number">1</span>)) &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期会经常执行</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期较少执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者，如果你认为某个条件很少为真：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (__builtin_expect(condition, <span class="number">0</span>)) &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期极少执行</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期经常执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>尽管<code>__builtin_expect</code>不会改变程序的实际逻辑行为，但它可以帮助编译器生成更加高效的机器码，比如调整跳转指令顺序以更好地利用CPU的分支预测硬件特性。在实际编程中，<code>__builtin_expect</code>通常会被封装到宏定义中，如<code>likely</code>和<code>unlikely</code>，以便于更简洁地使用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> likely(x) __builtin_expect((x), 1)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> unlikely(x) __builtin_expect((x), 0)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (likely(condition)) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="3-static的错误用法"><a href="#3-static的错误用法" class="headerlink" title="3. static的错误用法"></a>3. static的错误用法</h6><blockquote>
+<p>  在a.h文件中定义static int a; 在b.h中include a.h，同时c.c中include a.h和b.h。为什么没有出现多重定义</p>
+</blockquote>
+<p>在C++中，静态变量（如<code>static int a;</code>）具有文件作用域。这意味着即使你在一个头文件（比如a.h）中定义了一个静态变量，并且这个头文件被多个源文件包含，该静态变量在整个程序中也只会有一个实例。</p>
+<p>当你在b.h中包含了a.h，然后c.c中同时包含了a.h和b.h时：</p>
+<ol>
+<li>在编译阶段，每个包含a.h的源文件（这里假设是b.cpp和c.cpp）都会看到<code>static int a;</code>的声明。</li>
+<li>由于<code>a</code>是静态局部变量（根据描述推断，这里应该是静态全局变量），它的存储是在编译时分配的，并且只存在于包含其定义的编译单元（即对应的.obj或.o文件）中。</li>
+<li>链接器在链接阶段会处理所有编译后的目标文件，但因为静态变量的作用域仅限于定义它的编译单元内部，所以不会在不同的目标文件之间合并或冲突。</li>
+</ol>
+<p>因此，在这种情况下，虽然多次包含了同一个静态变量的声明，但在最终生成的可执行文件中，<code>a</code>变量只有一个实例，所以不会出现多重定义错误。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/29/c++/faq/2023-12-29/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/18/c++/faq/2024-01-18/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="笔记2023&#x2F;07&#x2F;21 OOB（out of band数据）  epoll三剑客  epoll_create  epoll_ctl 需要搞清楚几个参数的具体含义  EPOLLIN EPOLLOUT EPOLLRDHUP EPOLLERR EPOLLET EPOLLPRI EPOLLONESHOT   epoll_wait  水平触发和边缘触发 水平触发的主要特点是，如果用户在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/07/21/c++/faq/%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="笔记2023&#x2F;07&#x2F;21 OOB（out of band数据）  epoll三剑客  epoll_create  epoll_ctl 需要搞清楚几个参数的具体含义  EPOLLIN EPOLLOUT EPOLLRDHUP EPOLLERR EPOLLET EPOLLPRI EPOLLONESHOT   epoll_wait  水平触发和边缘触发 水平触发的主要特点是，如果用户在">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-07-21T11:53:42.891Z">
+<meta property="article:modified_time" content="2023-07-27T00:58:23.762Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/07/21/c++/faq/%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2023/07/21/c++/faq/%E7%AC%94%E8%AE%B0/","path":"2023/07/21/c++/faq/笔记/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2023-07-21"><span class="nav-number">1.1.</span> <span class="nav-text">2023&#x2F;07&#x2F;21</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2023-7-22"><span class="nav-number">1.2.</span> <span class="nav-text">2023&#x2F;7&#x2F;22</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2023-7-25"><span class="nav-number">1.3.</span> <span class="nav-text">2023&#x2F;7&#x2F;25</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.4.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2023-07-26"><span class="nav-number">1.5.</span> <span class="nav-text">2023&#x2F;07&#x2F;26</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-strace"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. strace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%BD%BF%E7%94%A8cut%E6%8C%89%E5%88%97%E5%88%87%E5%88%86%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. 使用cut按列切分文件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E6%88%98%E6%BC%94%E7%BB%83"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">实战演练</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-sed%E5%91%BD%E4%BB%A4"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. sed命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-smart-pointer"><span class="nav-number">1.5.4.</span> <span class="nav-text">4. smart pointer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#F-7-For-general-use-take-T-or-T-arguments-rather-than-smart-pointers"><span class="nav-number">1.6.</span> <span class="nav-text">F.7: For general use, take T* or T&amp; arguments rather than smart pointers</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reason"><span class="nav-number">1.6.0.1.</span> <span class="nav-text">Reason</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Example"><span class="nav-number">1.6.0.2.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-bad"><span class="nav-number">1.6.0.3.</span> <span class="nav-text">Example, bad</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-good"><span class="nav-number">1.6.0.4.</span> <span class="nav-text">Example, good</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Note"><span class="nav-number">1.6.0.5.</span> <span class="nav-text">Note</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Enforcement"><span class="nav-number">1.6.0.6.</span> <span class="nav-text">Enforcement</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%85%B3%E4%BA%8EFetchContent-Declare%E9%9C%80%E8%A6%81%E5%86%8D%E7%9C%8B%E4%B8%8B"><span class="nav-number">1.6.1.</span> <span class="nav-text">5. 关于FetchContent_Declare需要再看下</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/21/c++/faq/%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-07-21 19:53:42" itemprop="dateCreated datePublished" datetime="2023-07-21T19:53:42+08:00">2023-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-07-27 08:58:23" itemprop="dateModified" datetime="2023-07-27T08:58:23+08:00">2023-07-27</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h2><h3 id="2023-07-21"><a href="#2023-07-21" class="headerlink" title="2023&#x2F;07&#x2F;21"></a>2023&#x2F;07&#x2F;21</h3><ul>
+<li><p>OOB（out of band数据）</p>
+</li>
+<li><p>epoll三剑客</p>
+<ul>
+<li><p><code>epoll_create</code></p>
+</li>
+<li><p><code>epoll_ctl</code></p>
+<p>需要搞清楚几个参数的具体含义</p>
+<ul>
+<li><code>EPOLLIN</code></li>
+<li><code>EPOLLOUT</code></li>
+<li><code>EPOLLRDHUP</code></li>
+<li><code>EPOLLERR</code></li>
+<li><code>EPOLLET</code></li>
+<li><code>EPOLLPRI</code></li>
+<li><code>EPOLLONESHOT</code></li>
+</ul>
+</li>
+<li><p><code>epoll_wait</code></p>
+</li>
+<li><p><strong>水平触发</strong>和<strong>边缘触发</strong></p>
+<p>水平触发的主要特点是，如果用户在监听epoll事件，当内核有事件的时候，会拷贝给用户态。但是如果用户只处理了一次，那么剩下没有处理的会在下一次<code>epoll_wait</code>再次返回该事件。</p>
+<p>这样如果用户永远不处理这个事件，就导致每次都会有该事件从内核到用户的拷贝，耗费性能。但是水平触发相对安全，最起码事件不会丢掉，除非用户处理完毕。</p>
+<p>边缘触发，相对跟水平触发相反，当内核有事件到达， 只会通知用户一次，至于用 户处理还是不处理，以后将不会再通知。这样减少了拷贝过程，增加了性能，但是 相对来说，如果用户马虎忘记处理，将会产生事件丢的情况。</p>
+</li>
+<li><p>Reactor模式</p>
+<ul>
+<li>描述符（handle）：由操作系统提供，用于识别每一个事件，如Socket描述符</li>
+<li>同步事件分离器（Demultiplexer）：用来等待一个或多个事件的发生</li>
+<li>事件处理器接口（event handler）：由一个或多个模板函数组成的接口</li>
+<li>Reactor管理器：定义了一些接口，用于应用程序控制事件调度</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr/>
+
+<h3 id="2023-7-22"><a href="#2023-7-22" class="headerlink" title="2023&#x2F;7&#x2F;22"></a>2023&#x2F;7&#x2F;22</h3><ul>
+<li><p>Erlang is no silver bullet and will be particularly bad at things like image and signal processing, operating system device drivers, etc. and will shine at things like large software for server use (i.e.: queues, map-reduce), doing some lifting coupled with other languages, higher-level protocol implementation, etc. Areas in the middle will depend on you.</p>
+</li>
+<li><pre><code class="erlang">User switch command
+  --&gt; h
+  c [nn]            - connect to job
+  i [nn]            - interrupt job
+  k [nn]            - kill job
+  j                 - list all jobs
+  s [shell]         - start local shell
+  r [node [shell]]  - start remote shell
+  q        - quit erlang
+  ? | h             - this message
+  --&gt;
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">-   **Numbers**</span><br><span class="line"></span><br><span class="line">    ```erlang</span><br><span class="line">    1&gt; 2 + 15.</span><br><span class="line">    17</span><br><span class="line">    2&gt; 49 * 100.</span><br><span class="line">    4900</span><br><span class="line">    3&gt; 1892 - 1472.</span><br><span class="line">    420</span><br><span class="line">    4&gt; 5/2.</span><br><span class="line">    2.5</span><br><span class="line">    5&gt; 5 div 2.</span><br><span class="line">    2</span><br><span class="line">    6&gt; 5 rem 2.</span><br><span class="line">    1</span><br><span class="line">    8&gt; 5 div 2.0.</span><br><span class="line">    ** exception error: an error occurred when evaluating an arithmetic expression</span><br><span class="line">         in operator  div/2</span><br><span class="line">            called as 5 div 2.0</span><br><span class="line">    9&gt; (50*100)-4999.</span><br><span class="line">    1</span><br><span class="line">    10&gt; -(50*100)-4999.</span><br><span class="line">    -9999</span><br><span class="line">    11&gt; -(50 * 100 - 4999).</span><br><span class="line">    -1</span><br><span class="line">    12&gt; -50 * (100 - 4999).</span><br><span class="line">    244950</span><br><span class="line">    13&gt; </span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+<li><p><strong>Invariable Variables</strong></p>
+<p>(note that variables begin with an uppercase letter):</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">18</span>&gt; One = <span class="number">1</span>.</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">19</span>&gt; Un = Uno = One = <span class="number">1</span>.</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">20</span>&gt; Two = One + One.</span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">21</span>&gt; Two = <span class="number">2</span>.</span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">22</span>&gt; Two = Two + <span class="number">1</span>.</span><br><span class="line">** exception error: no match <span class="keyword">of</span> right hand side value <span class="number">3</span></span><br><span class="line"><span class="number">23</span>&gt; two = <span class="number">2</span>.</span><br><span class="line">** exception error: no match <span class="keyword">of</span> right hand side value <span class="number">2</span></span><br><span class="line"><span class="number">24</span>&gt; </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Atoms</p>
+<p>There is a reason why variables names can’t begin with a lowercase character: atoms. Atoms are literals, constants with their own name for value.</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>&gt; atom.</span><br><span class="line">atom</span><br><span class="line"><span class="number">2</span>&gt; atoms_rule.</span><br><span class="line">atoms_rule</span><br><span class="line"><span class="number">3</span>&gt; atoms_rule@erlang.</span><br><span class="line">atoms_rule@erlang</span><br><span class="line"><span class="number">4</span>&gt; &#x27;Atoms can be cheated!&#x27;.</span><br><span class="line">&#x27;Atoms can be cheated!&#x27;</span><br><span class="line"><span class="number">5</span>&gt; atom = &#x27;atom&#x27;.</span><br><span class="line">atom</span><br></pre></td></tr></table></figure>
+
+<p>An atom should be enclosed in single quotes (‘) if it does not begin with a lower-case letter or if it contains other characters than alphanumeric characters, underscore (_), or @.<br>Expression 5 also shows that an atom with single quotes is exactly the same as a similar atom without them.</p>
+<blockquote>
+<p><strong>Don’t drink too much Kool-Aid:</strong><br>Atoms are really nice and a great way to send messages or represent constants. However there are pitfalls to using atoms for too many things: an atom is referred to in an “atom table” which consumes memory (4 bytes&#x2F;atom in a 32-bit system, 8 bytes&#x2F;atom in a 64-bit system). The atom table is not garbage collected, and so atoms will accumulate until the system tips over, either from memory usage or because 1048577 atoms were declared.</p>
+<p>This means atoms should not be generated dynamically for whatever reason; if your system has to be reliable and user input lets someone crash it at will by telling it to create atoms, you’re in serious trouble. Atoms should be seen as tools for the developer because honestly, it’s what they are.</p>
+</blockquote>
+<blockquote>
+<p>  <strong>Note:</strong> some atoms are reserved words and can not be used except for what the language designers wanted them to be: function names, operators, expressions, etc. These are: <code>after and andalso band begin bnot bor bsl bsr bxor case catch cond div end fun if let not of or orelse query receive rem try when xor</code></p>
+</blockquote>
+<hr/></li>
+</ul>
+<h3 id="2023-7-25"><a href="#2023-7-25" class="headerlink" title="2023&#x2F;7&#x2F;25"></a>2023&#x2F;7&#x2F;25</h3><ul>
+<li><p><strong>C++17</strong> Defines several standard resources:</p>
+<ul>
+<li><p><code>new_delete_resource()</code>: Allocates <code>using ::operator new</code></p>
+</li>
+<li><p><code>null_memory_resource()</code>: Throws on allocation</p>
+</li>
+<li><p><code>synchronized_pool_resource</code>: Thread-safe pools of similar-sized memory blocks</p>
+</li>
+<li><p><code>unsynchronized_pool_resource</code>: Non-thread-safe pools of similar-sized memory blocks</p>
+</li>
+<li><p><code>monotonic_buffer_resource</code>: Super-fast, non-thread-safe allocation into a buffer with do-nothing deallocation</p>
+</li>
+<li><p>A memory resource for testing</p>
+<p>We will build a new memory resource for testing purposes which will</p>
+<ul>
+<li><p>Keep track of amount of how much memory is allocated, deallocated, and a high-water mark for memory outstanding.</p>
+</li>
+<li><p>Check that every deallocation matches an allocation.</p>
+</li>
+<li><p>Check for memory leaks - any memory still allocated when the resource’s destructor is called is considered leaked.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">test_resource</span> : <span class="keyword">public</span> pmr::memory_resource &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="title">test_resource</span><span class="params">(pmr::memory_resource* parent = </span></span></span><br><span class="line"><span class="params"><span class="function">                         pmr::get_default_resource())</span></span>;</span><br><span class="line">  ~<span class="built_in">test_resource</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="function">pmr::memory_resource *<span class="title">parent</span><span class="params">()</span> ocnst</span>;</span><br><span class="line">  <span class="function"><span class="type">size_t</span> <span class="title">bytes_allocated</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">  <span class="function"><span class="type">size_t</span> <span class="title">bytes_deallocated</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">  <span class="function"><span class="type">size_t</span> <span class="title">bytes_outstanding</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">  <span class="function"><span class="type">size_t</span> <span class="title">bytes_highwater</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">  <span class="function"><span class="type">size_t</span> <span class="title">blocks_outstanding</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="type">static</span> <span class="type">size_t</span> <span class="title">leaked_bytes</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="type">static</span> <span class="type">size_t</span> <span class="title">leaked_blocks</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="type">static</span> <span class="type">void</span>   <span class="title">clear_leaked</span><span class="params">()</span></span>;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">  <span class="function"><span class="type">void</span>* <span class="title">do_allocated</span><span class="params">(<span class="type">size_t</span> bytes, <span class="type">size_t</span> alignment)</span> <span class="keyword">override</span></span>;</span><br><span class="line">  <span class="function"><span class="type">void</span>  <span class="title">do_deallocate</span><span class="params">(<span class="type">void</span>* p, <span class="type">size_t</span> bytes, <span class="type">size_t</span> alignment)</span> <span class="keyword">override</span></span>;</span><br><span class="line">  <span class="function"><span class="type">bool</span>  <span class="title">do_is_equal</span><span class="params">(<span class="type">const</span> pmr::memory_resource&amp; other)</span> <span class="type">const</span> <span class="keyword">noexcept</span> <span class="keyword">override</span></span>;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="comment">// Record holding the results of an allocation</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">allocation_res</span> &#123;</span><br><span class="line">    <span class="type">void</span>*  m_ptr;</span><br><span class="line">    <span class="type">size_t</span> m_bytes;</span><br><span class="line">    <span class="type">size_t</span> m_alignment;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  pmr::memory_resource*	 			m_parent;</span><br><span class="line">  <span class="type">size_t</span> 											m_bytes_allocated;</span><br><span class="line">  <span class="type">size_t</span>											m_bytes_outstanding;</span><br><span class="line">  <span class="type">size_t</span>											m_bytes_highwater;</span><br><span class="line">  pmr::vector&lt;allocation_res&gt; m_blocks;</span><br><span class="line">  </span><br><span class="line">  <span class="type">static</span> <span class="type">size_t</span>								s_leaked_bytes;</span><br><span class="line">  <span class="type">static</span> <span class="type">size_t</span>								s_leaked_blocks;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span>* <span class="title">test_resource::do_allocate</span><span class="params">(<span class="type">size_t</span> bytes, <span class="type">size_t</span> alignment)</span> </span>&#123;</span><br><span class="line">	<span class="type">void</span>* ret = m_parent-&gt;<span class="built_in">allocate</span>(bytes, alignment);</span><br><span class="line">  m_blocks.<span class="built_in">push_back</span>(allocation_rec&#123;ret, bytes, alignment&#125;);</span><br><span class="line">  m_bytes_allocated += bytes;</span><br><span class="line">  m_bytes_outstanding += bytes;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (m_bytes_outstanding &gt; m_bytes_highwater) &#123;</span><br><span class="line">		m_bytes_highwater = m_bytes_outstanding;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_resource::do_deallocate</span><span class="params">(<span class="type">void</span>* p, <span class="type">size_t</span> bytes, <span class="type">size_t</span> alignment)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// Check that deallocation args exactly match allocation args.</span></span><br><span class="line">  <span class="keyword">auto</span> i = std::<span class="built_in">find_if</span>(m_blocks.<span class="built_in">begin</span>(), m_blocks.<span class="built_in">end</span>(),</span><br><span class="line">                       [p](allocation_rec&amp; r) &#123; <span class="keyword">return</span> r.m_ptr == p; &#125;);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (i == m_blocks.<span class="built_in">end</span>()) &#123;</span><br><span class="line">    <span class="keyword">throw</span> std::<span class="built_in">invalid_argument</span>(<span class="string">&quot;deallocate: Invalid pointer&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (i-&gt;m_bytes != bytes) &#123;</span><br><span class="line">    <span class="keyword">throw</span> std::<span class="built_in">invalid_argument</span>(<span class="string">&quot;deallocate: size mismatch&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (i-&gt;m_alignment != alignment) &#123;</span><br><span class="line">		<span class="keyword">throw</span> std::<span class="built_in">invalid_argument</span>(<span class="string">&quot;deallocate: alignment mismatch&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  m_parent-&gt;<span class="built_in">deallocate</span>(p, i-&gt;m_bytes, i-&gt;m_alignment);</span><br><span class="line">  m_blocks.<span class="built_in">erase</span>(i);</span><br><span class="line">  m_bytes_outstanding -= bytes;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">test_resource::do_is_equal</span><span class="params">(<span class="type">const</span> pmr::memory_resource&amp; other)</span> <span class="type">const</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Two test resource are equal if they are the same resource.</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span> == &amp;other;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>Summary</strong></p>
+<ul>
+<li>Creating a new memory resource is as easy as deriving from <code>pmr::memory_resource</code>.</li>
+<li>Override <code>do_allocate()</code> and <code>do_deallocate()</code> to do the real work.</li>
+<li>Override <code>do_is_equal()</code> to test for equality.<ul>
+<li>In most cases <code>return this == &amp;other</code> (identity equality) is sufficient</li>
+<li>If there is no resource-specific state, <code>return true</code> is correct.</li>
+<li>In rare cases, something more complex is needed.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<p><code>slist&lt;Tp&gt;</code> is a sequence container like <code>list&lt;Tp&gt;</code> and <code>vector&lt;Tp&gt;</code>.</p>
+<ul>
+<li>Supports <code>push_back/front</code>, <code>emplace_back/front</code>, <code>front</code>, <code>emplace</code>, <code>insert</code>, <code>erase</code>, <code>pop_front</code>, <code>begin</code>, <code>end</code>, <code>size</code>, <code>empty</code>, <code>swap</code>.</li>
+<li>Implemented as a singly-linked list with a sentinel at the head.</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">node</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Base class holds no value.</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">node_base</span> &#123;</span><br><span class="line">  node&lt;Tp&gt;* m_next;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">node_base</span>() : <span class="built_in">m_next</span>(<span class="literal">nullptr</span>) &#123;&#125;</span><br><span class="line">  <span class="built_in">node_base</span>(<span class="type">const</span> node_base&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">  node_base <span class="keyword">operator</span>=(<span class="type">const</span> node_base&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Derived class holds value.</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">node</span> : node_base&lt;Tp&gt; &#123;</span><br><span class="line">	<span class="comment">// Value nested in union suppressed constructor invocation</span></span><br><span class="line">  <span class="keyword">union</span> &#123;</span><br><span class="line">    Tp m_value;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">slist</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">using</span> value_type 			= Tp;</span><br><span class="line">  <span class="keyword">using</span> reference 			= value_type&amp;;</span><br><span class="line">  <span class="keyword">using</span> const_reference = value_type <span class="type">const</span>&amp;;</span><br><span class="line">  <span class="keyword">using</span> difference_type = std::<span class="type">ptrdiff_t</span>;</span><br><span class="line">  <span class="keyword">using</span> size_type				= std::<span class="type">size_t</span>;</span><br><span class="line">  <span class="keyword">using</span> allocator_type	= pmr::polymorphic_allocator&lt;byte&gt;;</span><br><span class="line">  <span class="keyword">using</span> iterator				= ...;</span><br><span class="line">  <span class="keyword">using</span> const_iterator	= ...;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Constructors</span></span><br><span class="line">  <span class="built_in">slist</span>(allocator_type a = &#123;&#125;)</span><br><span class="line">    : <span class="built_in">m_head</span>(), <span class="built_in">m_tail_p</span>(&amp;m_head), <span class="built_in">m_size</span>(<span class="number">0</span>), <span class="built_in">m_allocator</span>(a) &#123;&#125;</span><br><span class="line">  <span class="comment">// Every constructor has an variant taking an allocator</span></span><br><span class="line">  <span class="built_in">slist</span>(<span class="type">const</span> slist&amp; other, allocator_type a = &#123;&#125;);</span><br><span class="line">  <span class="built_in">slist</span>(slist&amp;&amp; other);</span><br><span class="line">  <span class="built_in">slist</span>(slist&amp;&amp; other, allocator_type a);</span><br><span class="line">  </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  node_base 			m_head; 	<span class="comment">// sentinel node</span></span><br><span class="line">  node_base* 			m_tail_p;	<span class="comment">// pointer to last node</span></span><br><span class="line">  <span class="type">size_t</span>					m_size;</span><br><span class="line">  allocator_type 	m_allocator;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Secret sauce #1:</span></span><br><span class="line"><span class="comment">// Allocate a node, then construct a value within it.</span></span><br><span class="line"><span class="comment">// 思考为什么用construct而不是placement new</span></span><br><span class="line"><span class="comment">// addressof可以避免重载的&amp;</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="keyword">typename</span> slist&lt;Tp&gt;::iterator</span><br><span class="line">slist&lt;Tp&gt;::<span class="built_in">emplace</span>(iterator i, Args&amp;&amp;... args) &#123;</span><br><span class="line">  node* new_node = <span class="built_in">static_cast</span>&lt;node*&gt;(</span><br><span class="line">  	m_allocator.<span class="built_in">resource</span>()-&gt;<span class="built_in">allocate</span>(<span class="built_in">sizeof</span>(node), <span class="built_in">alignof</span>(node)));</span><br><span class="line">  m_allocator.<span class="built_in">construct</span>(std::<span class="built_in">addressof</span>(new_node-&gt;m_value), </span><br><span class="line">                        std::forward&lt;Args&gt;(args)...);</span><br><span class="line">  new_node-&gt;m_next = i.m_prev-&gt;m_next;</span><br><span class="line">  i.m_prev-&gt;m_next = new_node;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (i.m_prev == m_tail_p) &#123;</span><br><span class="line">    m_tail_p = new_node;</span><br><span class="line">  &#125;</span><br><span class="line">  ++m_size;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line"><span class="keyword">typename</span> slist&lt;Tp&gt;::iterator</span><br><span class="line">slist&lt;Tp&gt;::<span class="built_in">erase</span>(iterator b, iterator e) &#123;</span><br><span class="line">  node* erase_next = b.m_prev-&gt;m_next;</span><br><span class="line">  node* erase_past = e.m_prev-&gt;m_next;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Erasing at tail</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="literal">nullptr</span> == erase_past) &#123;</span><br><span class="line">    m_tail_p = b.m_prev;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Splice out sublist</span></span><br><span class="line">  b.m_prev-&gt;m_next = erase_past;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">while</span> (erase_next != erase_past) &#123;</span><br><span class="line">    node* old_node = erase_next;</span><br><span class="line">    erase_next = erase_next-&gt;m_next;</span><br><span class="line">    --m_size;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Secret sauce #2</span></span><br><span class="line">    <span class="comment">// Destroyc value within node, then deallocate the node.</span></span><br><span class="line">    m_allocator.<span class="built_in">destroy</span>(std::<span class="built_in">addressof</span>(old_node-&gt;m_value));</span><br><span class="line">    m_allocator.<span class="built_in">resource</span>()-&gt;<span class="built_in">deallocate</span>(old_node, <span class="built_in">sizeof</span>(node), <span class="built_in">alignof</span>(node));</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line">slist&lt;Tp.&amp; slist&lt;Tp&gt;::<span class="keyword">operator</span>=(<span class="type">const</span> slist&amp; other) &#123;</span><br><span class="line">  <span class="keyword">if</span> (&amp;otehr == <span class="keyword">this</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">erase</span>(<span class="built_in">begin</span>(), <span class="built_in">end</span>());</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">for</span> (<span class="type">const</span> Tp&amp; v : other) &#123;</span><br><span class="line">    <span class="built_in">push_back</span>(v);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line">slist&lt;Tp&gt;&amp; slist&lt;Tp&gt;::<span class="keyword">operator</span>=(slist&amp;&amp; other) &#123;</span><br><span class="line">  <span class="keyword">if</span> (m_allocator == other.m_allocator) &#123;</span><br><span class="line">    <span class="comment">// non-copying move</span></span><br><span class="line">    <span class="comment">// Don&#x27;t movbe the allocator.</span></span><br><span class="line">    <span class="comment">// Never change the allocator of an existing object!</span></span><br><span class="line">    <span class="built_in">swap</span>(other);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// Copy assign</span></span><br><span class="line">		<span class="keyword">operator</span>=(other);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Do not propagate other allocator on copy construction.</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line">slist&lt;Tp&gt;::<span class="built_in">slist</span>(<span class="type">const</span> slist&amp; other, allocator_type a)</span><br><span class="line">  : <span class="built_in">slist</span>(a) &#123;</span><br><span class="line">	<span class="keyword">operator</span>=(other);    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Always propagate other allocator on regular move constrution.</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line">slist&lt;Tp&gt;::<span class="built_in">slist</span>(slist&amp;&amp; other)</span><br><span class="line">  : <span class="built_in">slist</span>(other.<span class="built_in">get_allocator</span>()) &#123;</span><br><span class="line">	<span class="keyword">operator</span>=(std::<span class="built_in">move</span>(other));    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Do not propagate other allocator on extended move construction.</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line">slist&lt;Tp&gt;::<span class="built_in">slist</span>(slist&amp;&amp; other, allocator_type a)</span><br><span class="line">	: <span class="built_in">slist</span>(a) &#123;</span><br><span class="line">	<span class="keyword">operator</span>=(std::<span class="built_in">move</span>(other));    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://learnyousomeerlang.com/introduction#about-this-tutorial">lear you some Erlang for great good!</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=v3dz-AKOVL8">CppCon 2017: Pablo Halpern “Allocators: The Good Parts”</a></li>
+</ol>
+<hr/>
+
+<h3 id="2023-07-26"><a href="#2023-07-26" class="headerlink" title="2023&#x2F;07&#x2F;26"></a>2023&#x2F;07&#x2F;26</h3><h4 id="1-strace"><a href="#1-strace" class="headerlink" title="1. strace"></a>1. strace</h4><p>​	<a target="_blank" rel="noopener" href="https://ipcmen.com/strace">https://ipcmen.com/strace</a></p>
+<h4 id="2-使用cut按列切分文件"><a href="#2-使用cut按列切分文件" class="headerlink" title="2. 使用cut按列切分文件"></a>2. 使用cut按列切分文件</h4><p>​	cut命令可以按列，而不是按行来切分文件。该命令可用于处理使用固定宽度字段的文件，CSV文件或是由空格分隔的文件（例如标准日志文件）。</p>
+<h5 id="实战演练"><a href="#实战演练" class="headerlink" title="实战演练"></a>实战演练</h5><ol>
+<li><p>选项<code>-f</code>可以指定要提取的字段</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 该命令将显示第2列和第3列</span></span><br><span class="line">$ <span class="built_in">cut</span> -f 2, 3 filename</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>cut命令也能够从<code>stdin</code>中读取输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> student_data.txt </span><br><span class="line">No	Name	Mark	Percent</span><br><span class="line">1	Sarath	45	90</span><br><span class="line">2	Alex	49	98</span><br><span class="line">3	Anu	45	90</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cut</span> -f1 student_data.txt </span><br><span class="line">No</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 多个字段用逗号隔开</span></span><br><span class="line">$ <span class="built_in">cut</span> -f2,4 student_data.txt</span><br><span class="line">Name	Percent</span><br><span class="line">Sarath	90</span><br><span class="line">Alex	98</span><br><span class="line">Anu	90</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="3-sed命令"><a href="#3-sed命令" class="headerlink" title="3. sed命令"></a>3. sed命令</h4><p>​	sed是<strong>stream editor</strong>（流编辑器）的缩写。它最常见的用法是进行文本替换。sed可以使用另一个字符串来替换匹配模式。模式可以是简单的字符串或正则表达式。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sed <span class="string">&#x27;s/pattern/replace_string/&#x27;</span> file</span><br></pre></td></tr></table></figure>
+
+<p>sed也可以从<code>stdin</code>读取输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> file | sed <span class="string">&#x27;s/pattern/replace_string/&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="4-smart-pointer"><a href="#4-smart-pointer" class="headerlink" title="4. smart pointer"></a>4. smart pointer</h4><h3 id="F-7-For-general-use-take-T-or-T-arguments-rather-than-smart-pointers"><a href="#F-7-For-general-use-take-T-or-T-arguments-rather-than-smart-pointers" class="headerlink" title="F.7: For general use, take T* or T&amp; arguments rather than smart pointers"></a>F.7: For general use, take <code>T*</code> or <code>T&amp;</code> arguments rather than smart pointers</h3><h5 id="Reason"><a href="#Reason" class="headerlink" title="Reason"></a>Reason</h5><p>Passing a smart pointer transfers or shares ownership and should only be used when ownership semantics are intended. A function that does not manipulate lifetime should take raw pointers or references instead.</p>
+<p>Passing by smart pointer restricts the use of a function to callers that use smart pointers. A function that needs a <code>widget</code> should be able to accept any <code>widget</code> object, not just ones whose lifetimes are managed by a particular kind of smart pointer.</p>
+<p>Passing a shared smart pointer (e.g., <code>std::shared_ptr</code>) implies a run-time cost.</p>
+<h5 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// accepts any int*</span><br><span class="line">void f(int*);</span><br><span class="line"></span><br><span class="line">// can only accept ints for which you want to transfer ownership</span><br><span class="line">void g(unique_ptr&lt;int&gt;);</span><br><span class="line"></span><br><span class="line">// can only accept ints for which you are willing to share ownership</span><br><span class="line">void g(shared_ptr&lt;int&gt;);</span><br><span class="line"></span><br><span class="line">// doesn&#x27;t change ownership, but requires a particular ownership of the caller</span><br><span class="line">void h(const unique_ptr&lt;int&gt;&amp;);</span><br><span class="line"></span><br><span class="line">// accepts any int</span><br><span class="line">void h(int&amp;);</span><br></pre></td></tr></table></figure>
+
+<h5 id="Example-bad"><a href="#Example-bad" class="headerlink" title="Example, bad"></a>Example, bad</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// callee</span><br><span class="line">void f(shared_ptr&lt;widget&gt;&amp; w)</span><br><span class="line">&#123;</span><br><span class="line">    // ...</span><br><span class="line">    use(*w); // only use of w -- the lifetime is not used at all</span><br><span class="line">    // ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// caller</span><br><span class="line">shared_ptr&lt;widget&gt; my_widget = /* ... */;</span><br><span class="line">f(my_widget);</span><br><span class="line"></span><br><span class="line">widget stack_widget;</span><br><span class="line">f(stack_widget); // error</span><br></pre></td></tr></table></figure>
+
+<h5 id="Example-good"><a href="#Example-good" class="headerlink" title="Example, good"></a>Example, good</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// callee</span><br><span class="line">void f(widget&amp; w)</span><br><span class="line">&#123;</span><br><span class="line">    // ...</span><br><span class="line">    use(w);</span><br><span class="line">    // ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// caller</span><br><span class="line">shared_ptr&lt;widget&gt; my_widget = /* ... */;</span><br><span class="line">f(*my_widget);</span><br><span class="line"></span><br><span class="line">widget stack_widget;</span><br><span class="line">f(stack_widget); // ok -- now this works</span><br></pre></td></tr></table></figure>
+
+<h5 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h5><p>We can catch many common cases of dangling pointers statically (see <a target="_blank" rel="noopener" href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#SS-lifetime">lifetime safety profile</a>). Function arguments naturally live for the lifetime of the function call, and so have fewer lifetime problems.</p>
+<h5 id="Enforcement"><a href="#Enforcement" class="headerlink" title="Enforcement"></a>Enforcement</h5><ul>
+<li>(Simple) Warn if a function takes a parameter of a smart pointer type (that overloads <code>operator-&gt;</code> or <code>operator*</code>) that is copyable but the function only calls any of: <code>operator*</code>, <code>operator-&gt;</code> or <code>get()</code>. Suggest using a <code>T*</code> or <code>T&amp;</code> instead.</li>
+<li>Flag a parameter of a smart pointer type (a type that overloads <code>operator-&gt;</code> or <code>operator*</code>) that is copyable&#x2F;movable but never copied&#x2F;moved from in the function body, and that is never modified, and that is not passed along to another function that could do so. That means the ownership semantics are not used. Suggest using a <code>T*</code> or <code>T&amp;</code> instead.</li>
+</ul>
+<p><strong>See also</strong>:</p>
+<p><a target="_blank" rel="noopener" href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rf-ptr-ref">Prefer <code>T*</code> over <code>T&amp;</code> when “no argument” is a valid option</a></p>
+<p><a target="_blank" rel="noopener" href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rr-summary-smartptrs">Smart pointer rule summary</a></p>
+<h4 id="5-关于FetchContent-Declare需要再看下"><a href="#5-关于FetchContent-Declare需要再看下" class="headerlink" title="5. 关于FetchContent_Declare需要再看下"></a>5. 关于<code>FetchContent_Declare</code>需要再看下</h4>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/08/c++/std/STL%E4%B9%8Bvector/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/07/c++/std/STL%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="SIGSEGV发生的情况包括：  NULL指针访问 指针被破坏等原因导致的非法地址访问 栈溢出导致访问超出了已分配的地址空间  Resource deadlock avoidedn 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HACK#26 发生SIGSEGV">
+<meta property="og:url" content="http://example.com/2024/11/21/c++/debug/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SIGSEGV发生的情况包括：  NULL指针访问 指针被破坏等原因导致的非法地址访问 栈溢出导致访问超出了已分配的地址空间  Resource deadlock avoidedn 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-21T04:16:39.670Z">
+<meta property="article:modified_time" content="2024-11-21T04:16:40.475Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/11/21/c++/debug/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/11/21/c++/debug/","path":"2024/11/21/c++/debug/","title":"HACK#26 发生SIGSEGV"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>HACK#26 发生SIGSEGV | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/21/c++/debug/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="HACK#26 发生SIGSEGV | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HACK#26 发生SIGSEGV
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-11-21 12:16:39 / Modified: 12:16:40" itemprop="dateCreated datePublished" datetime="2024-11-21T12:16:39+08:00">2024-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/gdb/" itemprop="url" rel="index"><span itemprop="name">gdb</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><code>SIGSEGV</code>发生的情况包括：</p>
+<ul>
+<li><code>NULL</code>指针访问</li>
+<li>指针被破坏等原因导致的非法地址访问</li>
+<li>栈溢出导致访问超出了已分配的地址空间</li>
+</ul>
+<p>Resource deadlock avoidedn</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;condition_variable&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;deque&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;future&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Barrier</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">Barrier</span><span class="params">(std::<span class="type">size_t</span> thread_count)</span></span></span><br><span class="line"><span class="function">		: thread_count_(thread_count), waiting_(<span class="number">0</span>), step_(<span class="number">0</span>) &#123;</span>&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">wait</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">auto</span> current_step = step_.<span class="built_in">load</span>(std::memory_order_relaxed);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (waiting_.<span class="built_in">fetch_add</span>(<span class="number">1</span>, std::memory_order_acquire) + <span class="number">1</span> == thread_count_) &#123;</span><br><span class="line">			<span class="comment">// 最后一个线程到达屏障，重置等待计数，并进入下一步</span></span><br><span class="line">			waiting_.<span class="built_in">store</span>(<span class="number">0</span>, std::memory_order_relaxed);</span><br><span class="line">			step_.<span class="built_in">fetch_add</span>(<span class="number">1</span>, std::memory_order_release);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// 等待其他线程到达</span></span><br><span class="line">			<span class="keyword">while</span> (step_.<span class="built_in">load</span>(std::memory_order_acquire) == current_step) &#123;</span><br><span class="line">				<span class="comment">// 自旋等待</span></span><br><span class="line">				std::this_thread::<span class="built_in">yield</span>(); <span class="comment">// 让出 CPU 时间片，避免完全忙等待</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="type">const</span> std::<span class="type">size_t</span> thread_count_; <span class="comment">// 线程总数</span></span><br><span class="line">	std::atomic&lt;std::<span class="type">size_t</span>&gt; waiting_; <span class="comment">// 当前等待的线程数</span></span><br><span class="line">	std::atomic&lt;std::<span class="type">size_t</span>&gt; step_;    <span class="comment">// 用于区分不同的屏障周期</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">WaitGroup</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">WaitGroup</span>(<span class="type">int</span> n) :count_&#123; n &#125; &#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Done</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		count_.<span class="built_in">fetch_sub</span>(<span class="number">1</span>, memory_order_acq_rel);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Wait</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="type">int</span> n;</span><br><span class="line">		<span class="keyword">while</span> ((n = count_.<span class="built_in">load</span>(memory_order_acquire)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="comment">// cout &lt;&lt; &quot;n = &quot; &lt;&lt; n &lt;&lt; endl;</span></span><br><span class="line">			this_thread::<span class="built_in">yield</span>();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	atomic&lt;<span class="type">int</span>&gt; count_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadPool</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">enum</span> <span class="title class_">Signal</span> &#123;</span><br><span class="line">		STOP,</span><br><span class="line">		IGNORE</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">explicit</span> <span class="title">ThreadPool</span><span class="params">(<span class="type">unsigned</span> n)</span> </span>&#123;</span><br><span class="line">		<span class="built_in">Spawn</span>(n);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	~<span class="built_in">ThreadPool</span>() &#123;</span><br><span class="line">	  <span class="built_in">Destroy</span>();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		&#123;</span><br><span class="line">			lock_guard&lt;mutex&gt; guard&#123; tasks_mtx_ &#125;;</span><br><span class="line">			<span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; thread_group_.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">				tasks_.<span class="built_in">emplace_back</span>([] &#123; <span class="keyword">return</span> STOP; &#125;);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		tasks_cv_.<span class="built_in">notify_all</span>();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">auto</span>&amp; td : thread_group_) &#123;</span><br><span class="line">			td.<span class="built_in">join</span>();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Fn, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line">	<span class="function"><span class="keyword">auto</span> <span class="title">async_execute</span><span class="params">(Fn&amp;&amp; fn, Args&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">using</span> R = <span class="type">invoke_result_t</span>&lt;Fn, Args...&gt;;</span><br><span class="line">		shared_ptr&lt;promise&lt;R&gt;&gt; sp = make_shared&lt;promise&lt;R&gt;&gt;();</span><br><span class="line">		future&lt;R&gt; result = sp-&gt;<span class="built_in">get_future</span>();</span><br><span class="line"></span><br><span class="line">		&#123;</span><br><span class="line">			lock_guard&lt;mutex&gt; guard&#123; tasks_mtx_ &#125;;</span><br><span class="line">			tasks_.<span class="built_in">push_back</span>([_fn = std::forward&lt;Fn&gt;(fn), ..._args = std::forward&lt;Args&gt;(args), _sp=sp]() &#123;</span><br><span class="line">				<span class="keyword">if</span> <span class="built_in">constexpr</span> (is_void_v&lt;R&gt;) &#123;</span><br><span class="line">					<span class="built_in">invoke</span>(_fn, _args...);</span><br><span class="line">					_sp-&gt;<span class="built_in">set_value</span>();</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span> &#123;</span><br><span class="line">					R ret = <span class="built_in">invoke</span>(_fn, _args...);</span><br><span class="line">					_sp-&gt;<span class="built_in">set_value</span>(ret);</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="keyword">return</span> IGNORE;</span><br><span class="line">			&#125;);</span><br><span class="line"></span><br><span class="line">			tasks_cv_.<span class="built_in">notify_one</span>();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> result;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Spawn</span><span class="params">(<span class="type">unsigned</span> n)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">unsigned</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">			thread_group_.<span class="built_in">emplace_back</span>([<span class="keyword">this</span>]() &#123;</span><br><span class="line">				<span class="type">bool</span> is_stopped = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">				<span class="keyword">while</span> (!is_stopped) &#123;</span><br><span class="line">					function&lt;<span class="built_in">Signal</span>()&gt; task;</span><br><span class="line"></span><br><span class="line">					&#123;</span><br><span class="line">						unique_lock&lt;mutex&gt; lock_guard&#123; tasks_mtx_ &#125;;</span><br><span class="line">						tasks_cv_.<span class="built_in">wait</span>(lock_guard, [<span class="keyword">this</span>]() &#123; <span class="keyword">return</span> !tasks_.<span class="built_in">empty</span>(); &#125;);</span><br><span class="line"></span><br><span class="line">						task = std::<span class="built_in">move</span>(tasks_.<span class="built_in">front</span>());</span><br><span class="line">						tasks_.<span class="built_in">pop_front</span>();</span><br><span class="line">						tasks_cv_.<span class="built_in">notify_one</span>();</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					<span class="comment">// Execute the task without lock.</span></span><br><span class="line">					<span class="keyword">auto</span> signal = <span class="built_in">task</span>();</span><br><span class="line">					</span><br><span class="line">					<span class="keyword">if</span> (signal == STOP) &#123;</span><br><span class="line">						is_stopped = <span class="literal">true</span>;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	vector&lt;thread&gt; thread_group_;</span><br><span class="line">	deque&lt;function&lt;Signal()&gt;&gt; tasks_;</span><br><span class="line">	mutex tasks_mtx_;</span><br><span class="line">	condition_variable tasks_cv_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TaskGraph</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">TaskGraph</span>() &#123;</span><br><span class="line">		<span class="built_in">AddNode</span>([]() &#123; cout &lt;&lt; <span class="string">&quot;This is sink: dadada\n&quot;</span>; &#125;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Fn, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line">	<span class="function"><span class="type">int</span> <span class="title">AddNode</span><span class="params">(Fn&amp;&amp; fn, Args&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">		<span class="type">int</span> id = unique_id_++;</span><br><span class="line">		nodes_.<span class="built_in">emplace_back</span>(id, [_fn = std::forward&lt;Fn&gt;(fn), ..._args = std::forward&lt;Args&gt;(args)]() &#123; _fn(_args...); &#125;);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Execute</span><span class="params">(ThreadPool&amp; executor)</span> </span>&#123;</span><br><span class="line">		<span class="built_in">AddSource</span>();</span><br><span class="line">		<span class="built_in">AddSink</span>(executor);</span><br><span class="line">		<span class="comment">// Dump();</span></span><br><span class="line">		<span class="type">int</span> n = nodes_.<span class="built_in">size</span>();</span><br><span class="line">		WaitGroup wg&#123; n &#125;;</span><br><span class="line">		<span class="built_in">Schedule</span>(nodes_.<span class="built_in">front</span>(), executor, wg);</span><br><span class="line">		wg.<span class="built_in">Wait</span>();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Dump</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span>&amp; node : nodes_) &#123;</span><br><span class="line">			<span class="built_in">DumpNode</span>(node);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">		<span class="built_in">Node</span>(<span class="type">int</span> id, <span class="type">const</span> function&lt;<span class="built_in">void</span>()&gt;&amp; func) : id &#123; id &#125;, npredecessor&#123; <span class="keyword">new</span> atomic&lt;<span class="type">int</span>&gt;&#123;&#125; &#125;, task&#123; func &#125; &#123;&#125;</span><br><span class="line"></span><br><span class="line">		<span class="type">void</span> <span class="built_in">operator</span>()() &#123;</span><br><span class="line">			<span class="built_in">task</span>();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="type">int</span> id;</span><br><span class="line">		atomic&lt;<span class="type">int</span>&gt;* npredecessor;</span><br><span class="line">		vector&lt;<span class="type">int</span>&gt; successors;</span><br><span class="line">		string name;</span><br><span class="line">		function&lt;<span class="type">void</span>()&gt; task;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">AddSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">auto</span>&amp; source = nodes_[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; nodes_.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">			source.successors.<span class="built_in">push_back</span>(nodes_[i].id);</span><br><span class="line">			nodes_[i].npredecessor-&gt;<span class="keyword">operator</span>++();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">AddSink</span><span class="params">(ThreadPool&amp; executor)</span> </span>&#123;</span><br><span class="line">		<span class="built_in">AddNode</span>([&amp;executor]() &#123; executor.<span class="built_in">Destroy</span>(); &#125;);</span><br><span class="line">		<span class="keyword">auto</span>&amp; sink = nodes_.<span class="built_in">back</span>();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nodes_.<span class="built_in">size</span>() - <span class="number">1</span>; i++) &#123;</span><br><span class="line">			nodes_[i].successors.<span class="built_in">push_back</span>(sink.id);</span><br><span class="line">			sink.npredecessor-&gt;<span class="keyword">operator</span>++();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Schedule</span><span class="params">(Node&amp; node, ThreadPool&amp; executor, WaitGroup&amp; wg)</span> </span>&#123;</span><br><span class="line">		executor.<span class="built_in">async_execute</span>([&amp;node, &amp;executor, &amp;wg, <span class="keyword">this</span>]() &#123;</span><br><span class="line">			<span class="built_in">node</span>();</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">auto</span> sid : node.successors) &#123;</span><br><span class="line">				<span class="keyword">auto</span> count = nodes_[sid].npredecessor-&gt;<span class="built_in">fetch_sub</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">					<span class="built_in">Schedule</span>(nodes_[sid], executor, wg);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			wg.<span class="built_in">Done</span>();</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">DumpNode</span><span class="params">(<span class="type">const</span> Node&amp; node)</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;# of Predecessors: &quot;</span> &lt;&lt; node.npredecessor-&gt;<span class="built_in">load</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;# of Successors:   &quot;</span> &lt;&lt; node.successors.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">auto</span> sid : node.successors) &#123;</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;  &quot;</span> &lt;&lt; sid &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		cout &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> unique_id_&#123;&#125;;</span><br><span class="line">	vector&lt;Node&gt; nodes_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Taskflow</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">Taskflow</span>(<span class="type">unsigned</span> nthreads) : pool_&#123; nthreads &#125; &#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Fn, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line">	<span class="function"><span class="type">int</span> <span class="title">Submit</span><span class="params">(Fn&amp;&amp; fn, Args&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> graph_.<span class="built_in">AddNode</span>(std::forward&lt;Fn&gt;(fn), std::forward&lt;Args&gt;(args)...);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">WaitAll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		graph_.<span class="built_in">Execute</span>(pool_);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Visualize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		graph_.<span class="built_in">Dump</span>();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	TaskGraph graph_;</span><br><span class="line">	ThreadPool pool_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">// this_thread::sleep_for(chrono::seconds(5));</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;foo\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">worker</span><span class="params">(<span class="type">int</span> id, Barrier&amp; barrier)</span> </span>&#123;</span><br><span class="line">	std::cout &lt;&lt; <span class="string">&quot;Thread &quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&quot; before barrier\n&quot;</span>;</span><br><span class="line">	barrier.<span class="built_in">wait</span>();</span><br><span class="line">	std::cout &lt;&lt; <span class="string">&quot;Thread &quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&quot; after barrier\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">	Taskflow tf&#123; <span class="number">1</span> &#125;;</span><br><span class="line">	tf.<span class="built_in">Submit</span>(foo);</span><br><span class="line">	tf.<span class="built_in">Submit</span>(add, <span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">	tf.<span class="built_in">WaitAll</span>();</span><br><span class="line">	</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;end of main\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/18/c++/code-style/" rel="prev" title="code style">
+                  <i class="fa fa-angle-left"></i> code style
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/21/algorithm/AVX512/" rel="next" title="滑动窗口">
+                  滑动窗口 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

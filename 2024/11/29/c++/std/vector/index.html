@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="c++ vector1. resize()避免值初始化Is this behavior of vector::resize(size_type n) under C++11 and Boost.Container correct? 2. vector(InputIt first, InputIt last)判断InputIt是迭代器？tag继承 12345678struct input_itera">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vector">
+<meta property="og:url" content="http://example.com/2024/11/29/c++/std/vector/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="c++ vector1. resize()避免值初始化Is this behavior of vector::resize(size_type n) under C++11 and Boost.Container correct? 2. vector(InputIt first, InputIt last)判断InputIt是迭代器？tag继承 12345678struct input_itera">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-29T11:38:34.739Z">
+<meta property="article:modified_time" content="2024-12-23T13:16:48.093Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/11/29/c++/std/vector/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/11/29/c++/std/vector/","path":"2024/11/29/c++/std/vector/","title":"vector"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>vector | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#c-vector"><span class="nav-number">1.</span> <span class="nav-text">c++ vector</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-resize-%E9%81%BF%E5%85%8D%E5%80%BC%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.0.0.0.1.</span> <span class="nav-text">1. resize()避免值初始化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-vector-InputIt-first-InputIt-last-%E5%88%A4%E6%96%ADInputIt%E6%98%AF%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%9F"><span class="nav-number">1.0.0.0.2.</span> <span class="nav-text">2. vector(InputIt first, InputIt last)判断InputIt是迭代器？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-vector"><span class="nav-number">1.0.0.0.3.</span> <span class="nav-text">3. vector()</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/29/c++/std/vector/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="vector | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vector
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-29 19:38:34" itemprop="dateCreated datePublished" datetime="2024-11-29T19:38:34+08:00">2024-11-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-12-23 21:16:48" itemprop="dateModified" datetime="2024-12-23T21:16:48+08:00">2024-12-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="c-vector"><a href="#c-vector" class="headerlink" title="c++ vector"></a>c++ vector</h2><h6 id="1-resize-避免值初始化"><a href="#1-resize-避免值初始化" class="headerlink" title="1. resize()避免值初始化"></a>1. <code>resize()</code>避免值初始化</h6><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/21028299/is-this-behavior-of-vectorresizesize-type-n-under-c11-and-boost-container">Is this behavior of vector::resize(size_type n) under C++11 and Boost.Container correct?</a></p>
+<h6 id="2-vector-InputIt-first-InputIt-last-判断InputIt是迭代器？"><a href="#2-vector-InputIt-first-InputIt-last-判断InputIt是迭代器？" class="headerlink" title="2. vector(InputIt first, InputIt last)判断InputIt是迭代器？"></a>2. <code>vector(InputIt first, InputIt last)</code>判断<code>InputIt</code>是迭代器？</h6><p><code>tag</code>继承</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">input_iterator_tag</span> &#123;&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">output_iterator_tag</span> &#123;&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">forward_iterator_tag</span> : <span class="keyword">public</span> input_iterator_tag &#123;&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">bidirectional_iterator_tag</span> : <span class="keyword">public</span> forward_iterator_tag &#123;&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">random_access_iterator_tag</span> : <span class="keyword">public</span> bidirectional_iterator_tag &#123;&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> _LIBCPP_STD_VER &gt;= 20</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">contiguous_iterator_tag</span> : <span class="keyword">public</span> random_access_iterator_tag &#123;&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>sfinae</code>判定类型<code>T</code>是否可以转成<code>input_iterator_tag</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt; <span class="keyword">struct</span> <span class="title class_">has_iterator_category</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Up&gt; <span class="function"><span class="type">static</span> std::false_type <span class="title">test</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Up&gt;</span><br><span class="line">  <span class="function"><span class="type">static</span> std::true_type <span class="title">test</span><span class="params">(<span class="keyword">typename</span> Up::iterator_category * = <span class="literal">nullptr</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="type">static</span> <span class="type">const</span> <span class="type">bool</span> value = <span class="keyword">decltype</span>(<span class="built_in">test</span>&lt;Tp&gt;(<span class="literal">nullptr</span>))::value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp, <span class="keyword">typename</span> Up,</span><br><span class="line">          <span class="type">bool</span> = has_iterator_category&lt;std::iterator_traits&lt;Tp&gt;&gt;::value&gt;</span><br><span class="line"><span class="keyword">struct</span> has_iterator_category_convertible_to</span><br><span class="line">    : std::is_convertible&lt;<span class="keyword">typename</span> std::iterator_traits&lt;Tp&gt;::iterator_category,</span><br><span class="line">                          Up&gt; &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp, <span class="keyword">typename</span> Up&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">has_iterator_category_convertible_to</span>&lt;Tp, Up, <span class="literal">false</span>&gt; : std::false_type &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tp&gt;</span><br><span class="line"><span class="keyword">using</span> has_exactly_input_iterator_category =</span><br><span class="line">    std::integral_constant&lt;<span class="type">bool</span>, has_iterator_category_convertible_to&lt;</span><br><span class="line">                                     Tp, std::input_iterator_tag&gt;::value &amp;&amp;</span><br><span class="line">                                     !has_iterator_category_convertible_to&lt;</span><br><span class="line">                                         Tp, std::forward_iterator_tag&gt;::value&gt;;</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>input_iterator</code></strong> 和 <strong><code>forward_iterator</code></strong> 是两种迭代器类别，定义于标准库的迭代器概念中。它们的主要区别在于功能和适用的场景：</p>
+<p><strong>1. 共性</strong></p>
+<ul>
+<li><strong>基本功能</strong>：两者都可以顺序访问容器中的元素。</li>
+<li><strong>单向移动</strong>：两者都只支持单向遍历（不能向后移动）。</li>
+<li><strong>操作符支持</strong>：都支持 <code>operator*</code> 和 <code>operator++</code>。</li>
+</ul>
+<p><strong>2. 区别</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>Input Iterator</strong></th>
+<th><strong>Forward Iterator</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>用途</strong></td>
+<td>一次性读取数据（通常用于输入流等）</td>
+<td>可多次遍历数据（通常用于容器）</td>
+</tr>
+<tr>
+<td><strong>可重用性</strong></td>
+<td><strong>不保证可重用</strong>，迭代一次后可能失效</td>
+<td><strong>可重用</strong>，支持多次遍历</td>
+</tr>
+<tr>
+<td><strong>复制性</strong></td>
+<td><strong>不要求支持复制</strong>，但可以被移动</td>
+<td><strong>必须支持复制</strong>，即多个迭代器可同时使用</td>
+</tr>
+<tr>
+<td><strong>多次解引用</strong></td>
+<td>不保证支持多次解引用</td>
+<td>可多次解引用</td>
+</tr>
+<tr>
+<td><strong>递增操作</strong></td>
+<td>支持 <code>++</code>，但不保证效率</td>
+<td>支持 <code>++</code>，效率较高</td>
+</tr>
+<tr>
+<td><strong>容器适配性</strong></td>
+<td>适用于输入流或单次读取场景</td>
+<td>适用于标准容器（如 <code>std::vector</code>, <code>std::list</code>）</td>
+</tr>
+</tbody></table>
+<h6 id="3-vector"><a href="#3-vector" class="headerlink" title="3. vector()"></a>3. vector()</h6><p><strong>Notes</strong></p>
+<p>By default, this will value-initialize the object, as by <code>::new((void*)p) T()</code>(until C++20)<code>std::construct_at(p)</code>(since C++20).</p>
+<p>If value-initialization is undesirable, for example, if the object is of non-class type and zeroing out is not needed, it can be avoided by providing a <a target="_blank" rel="noopener" href="https://stackoverflow.com/a/21028912/273767">custom <code>Allocator::construct</code></a>.</p>
+<p>Although it is required that customized <code>construct</code> is used when constructing elements of <code>std::basic_string</code> until C++23, all implementations only used the default mechanism. The requirement is corrected by <a target="_blank" rel="noopener" href="https://wg21.link/P1072R10">P1072R10</a> to match existing practice.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/27/gdb/HACK#4-%E8%8E%B7%E5%8F%96%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E6%A0%B8%E8%BD%AC%E5%82%A8/" rel="prev" title="HACK">
+                  <i class="fa fa-angle-left"></i> HACK
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/12/12/python/python%E6%A8%A1%E5%9D%97/" rel="next" title="python模块">
+                  python模块 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

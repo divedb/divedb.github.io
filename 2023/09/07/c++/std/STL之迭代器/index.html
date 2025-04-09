@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="STL之迭代器1. 迭代包装器1.1 声明以下友元类 __wrap_iter  basic_string  vector  span   可以访问私有构造函数 123456789101112131415161718192021template &lt;class _Iter&gt;class __wrap_iter &#123;  ...  private:  _LIBCPP_HIDE_FROM_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/07/c++/std/STL%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="STL之迭代器1. 迭代包装器1.1 声明以下友元类 __wrap_iter  basic_string  vector  span   可以访问私有构造函数 123456789101112131415161718192021template &lt;class _Iter&gt;class __wrap_iter &#123;  ...  private:  _LIBCPP_HIDE_FROM_">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-07T00:17:27.701Z">
+<meta property="article:modified_time" content="2023-09-20T05:13:32.913Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/09/07/c++/std/STL%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2023/09/07/c++/std/STL%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8/","path":"2023/09/07/c++/std/STL之迭代器/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#STL%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">STL之迭代器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E8%BF%AD%E4%BB%A3%E5%8C%85%E8%A3%85%E5%99%A8"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 迭代包装器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-%E5%A3%B0%E6%98%8E%E4%BB%A5%E4%B8%8B%E5%8F%8B%E5%85%83%E7%B1%BB"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">1.1 声明以下友元类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">1.2 实现的方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-%E5%85%A8%E5%B1%80%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">1.3 全局的函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-back-inserter-iterator"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. back_inserter_iterator</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/07/c++/std/STL%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-09-07 08:17:27" itemprop="dateCreated datePublished" datetime="2023-09-07T08:17:27+08:00">2023-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-09-20 13:13:32" itemprop="dateModified" datetime="2023-09-20T13:13:32+08:00">2023-09-20</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="STL之迭代器"><a href="#STL之迭代器" class="headerlink" title="STL之迭代器"></a>STL之迭代器</h2><h4 id="1-迭代包装器"><a href="#1-迭代包装器" class="headerlink" title="1. 迭代包装器"></a>1. 迭代包装器</h4><h5 id="1-1-声明以下友元类"><a href="#1-1-声明以下友元类" class="headerlink" title="1.1 声明以下友元类"></a>1.1 声明以下友元类</h5><ul>
+<li><p><code>__wrap_iter</code></p>
+</li>
+<li><p><code>basic_string</code></p>
+</li>
+<li><p><code>vector</code></p>
+</li>
+<li><p><code>span</code></p>
+</li>
+</ul>
+<p>可以访问私有构造函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__wrap_iter</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 <span class="keyword">explicit</span> __wrap_iter(</span><br><span class="line">      <span class="type">const</span> <span class="type">void</span>* __p, iterator_type __x) _NOEXCEPT : __i_(__x) &#123;</span><br><span class="line">    (<span class="type">void</span>)__p;</span><br><span class="line">  <span class="meta">#<span class="keyword">ifdef</span> _LIBCPP_ENABLE_DEBUG_MODE</span></span><br><span class="line">    <span class="keyword">if</span> (!__libcpp_is_constant_evaluated()) __get_db()-&gt;__insert_ic(<span class="keyword">this</span>, __p);</span><br><span class="line">  <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Up</span>&gt;</span><br><span class="line">  <span class="keyword">friend</span> <span class="keyword">class</span> <span class="title class_">__wrap_iter</span>;</span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_CharT</span>, <span class="keyword">class</span> <span class="title class_">_Traits</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>&gt;</span><br><span class="line">  <span class="keyword">friend</span> <span class="keyword">class</span> <span class="title class_">basic_string</span>;</span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>&gt;</span><br><span class="line">  <span class="keyword">friend</span> <span class="keyword">class</span> <span class="title class_">_LIBCPP_TEMPLATE_VIS</span> vector;</span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="type">size_t</span>&gt;</span><br><span class="line">  <span class="keyword">friend</span> <span class="keyword">class</span> <span class="title class_">_LIBCPP_TEMPLATE_VIS</span> span;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-2-实现的方法"><a href="#1-2-实现的方法" class="headerlink" title="1.2 实现的方法"></a>1.2 实现的方法</h5><ul>
+<li>前置++</li>
+<li>后置++</li>
+<li>前置–</li>
+<li>后置–</li>
+<li><ul>
+<li></li>
+</ul>
+</li>
+<li>+&#x3D;</li>
+<li><ul>
+<li></li>
+</ul>
+</li>
+<li>-&#x3D;</li>
+<li>索引[]</li>
+<li>解引用</li>
+</ul>
+<h5 id="1-3-全局的函数"><a href="#1-3-全局的函数" class="headerlink" title="1.3 全局的函数"></a>1.3 全局的函数</h5><ul>
+<li><p><code>==</code></p>
+</li>
+<li><p><code>!=</code></p>
+</li>
+<li><p><code>&lt;</code></p>
+</li>
+<li><p><code>&gt;</code></p>
+</li>
+<li><p><code>&lt;=</code></p>
+</li>
+<li><p><code>&gt;=</code></p>
+</li>
+<li><p><code>n + __wrap_iter</code></p>
+</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__wrap_iter</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">typedef</span> _Iter iterator_type;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> iterator_traits&lt;iterator_type&gt;::value_type value_type;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> iterator_traits&lt;iterator_type&gt;::difference_type difference_type;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> iterator_traits&lt;iterator_type&gt;::pointer pointer;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> iterator_traits&lt;iterator_type&gt;::reference reference;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> iterator_traits&lt;iterator_type&gt;::iterator_category</span><br><span class="line">      iterator_category;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> _LIBCPP_STD_VER &gt; 17</span></span><br><span class="line">  <span class="keyword">typedef</span> contiguous_iterator_tag iterator_concept;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  iterator_type __i_;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter() _NOEXCEPT</span><br><span class="line">      : __i_() &#123;</span><br><span class="line">    _VSTD::__debug_db_insert_i(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Up</span>&gt;</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter(</span><br><span class="line">      <span class="type">const</span> __wrap_iter&lt;_Up&gt;&amp; __u,</span><br><span class="line">      <span class="keyword">typename</span> enable_if&lt;is_convertible&lt;_Up, iterator_type&gt;::value&gt;::type* =</span><br><span class="line">          <span class="literal">nullptr</span>) _NOEXCEPT : __i_(__u.<span class="built_in">base</span>()) &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _LIBCPP_ENABLE_DEBUG_MODE</span></span><br><span class="line">    <span class="keyword">if</span> (!__libcpp_is_constant_evaluated())</span><br><span class="line">      __get_db()-&gt;__iterator_copy(<span class="keyword">this</span>, _VSTD::<span class="built_in">addressof</span>(__u));</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _LIBCPP_ENABLE_DEBUG_MODE</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14</span><br><span class="line">  __wrap_iter(<span class="type">const</span> __wrap_iter&amp; __x)</span><br><span class="line">      : __i_(__x.<span class="built_in">base</span>()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!__libcpp_is_constant_evaluated())</span><br><span class="line">      __get_db()-&gt;__iterator_copy(<span class="keyword">this</span>, _VSTD::<span class="built_in">addressof</span>(__x));</span><br><span class="line">  &#125;</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter&amp; <span class="keyword">operator</span>=(</span><br><span class="line">      <span class="type">const</span> __wrap_iter&amp; __x) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> != _VSTD::<span class="built_in">addressof</span>(__x)) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!__libcpp_is_constant_evaluated())</span><br><span class="line">        __get_db()-&gt;__iterator_copy(<span class="keyword">this</span>, _VSTD::<span class="built_in">addressof</span>(__x));</span><br><span class="line">      __i_ = __x.__i_;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 ~__wrap_iter() &#123;</span><br><span class="line">    <span class="keyword">if</span> (!__libcpp_is_constant_evaluated()) __get_db()-&gt;__erase_i(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 重载解引用</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 reference</span><br><span class="line">  <span class="keyword">operator</span>*() <span class="type">const</span> _NOEXCEPT &#123;</span><br><span class="line">    _LIBCPP_DEBUG_ASSERT(</span><br><span class="line">        __get_const_db()-&gt;__dereferenceable(<span class="keyword">this</span>),</span><br><span class="line">        <span class="string">&quot;Attempted to dereference a non-dereferenceable iterator&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> *__i_;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 重载-&gt;</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 pointer</span><br><span class="line">  <span class="keyword">operator</span>-&gt;() <span class="type">const</span> _NOEXCEPT &#123;</span><br><span class="line">    _LIBCPP_DEBUG_ASSERT(</span><br><span class="line">        __get_const_db()-&gt;__dereferenceable(<span class="keyword">this</span>),</span><br><span class="line">        <span class="string">&quot;Attempted to dereference a non-dereferenceable iterator&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> _VSTD::__to_address(__i_);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 前置++</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter&amp; <span class="keyword">operator</span>++()</span><br><span class="line">      _NOEXCEPT &#123;</span><br><span class="line">    _LIBCPP_DEBUG_ASSERT(__get_const_db()-&gt;__dereferenceable(<span class="keyword">this</span>),</span><br><span class="line">                         <span class="string">&quot;Attempted to increment a non-incrementable iterator&quot;</span>);</span><br><span class="line">    ++__i_;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 后置++</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter</span><br><span class="line">  <span class="keyword">operator</span>++(<span class="type">int</span>) _NOEXCEPT &#123;</span><br><span class="line">    __wrap_iter __tmp(*<span class="keyword">this</span>);</span><br><span class="line">    ++(*<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">return</span> __tmp;</span><br><span class="line">  &#125;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 前置--</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter&amp; <span class="keyword">operator</span>--()</span><br><span class="line">      _NOEXCEPT &#123;</span><br><span class="line">    _LIBCPP_DEBUG_ASSERT(__get_const_db()-&gt;__decrementable(<span class="keyword">this</span>),</span><br><span class="line">                         <span class="string">&quot;Attempted to decrement a non-decrementable iterator&quot;</span>);</span><br><span class="line">    --__i_;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 后置--</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter</span><br><span class="line">  <span class="keyword">operator</span>--(<span class="type">int</span>) _NOEXCEPT &#123;</span><br><span class="line">    __wrap_iter __tmp(*<span class="keyword">this</span>);</span><br><span class="line">    --(*<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">return</span> __tmp;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 重载+</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter</span><br><span class="line">  <span class="keyword">operator</span>+(difference_type __n) <span class="type">const</span> _NOEXCEPT &#123;</span><br><span class="line">    __wrap_iter __w(*<span class="keyword">this</span>);</span><br><span class="line">    __w += __n;</span><br><span class="line">    <span class="keyword">return</span> __w;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 重载+=</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter&amp; <span class="keyword">operator</span>+=(</span><br><span class="line">      difference_type __n) _NOEXCEPT &#123;</span><br><span class="line">    _LIBCPP_DEBUG_ASSERT(</span><br><span class="line">        __get_const_db()-&gt;__addable(<span class="keyword">this</span>, __n),</span><br><span class="line">        <span class="string">&quot;Attempted to add/subtract an iterator outside its valid range&quot;</span>);</span><br><span class="line">    __i_ += __n;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 重载-</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter</span><br><span class="line">  <span class="keyword">operator</span>-(difference_type __n) <span class="type">const</span> _NOEXCEPT &#123;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span> + (-__n);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 重载-=</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter&amp; <span class="keyword">operator</span>-=(</span><br><span class="line">      difference_type __n) _NOEXCEPT &#123;</span><br><span class="line">    *<span class="keyword">this</span> += -__n;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 索引</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 reference</span><br><span class="line">  <span class="keyword">operator</span>[](difference_type __n) <span class="type">const</span> _NOEXCEPT &#123;</span><br><span class="line">    _LIBCPP_DEBUG_ASSERT(</span><br><span class="line">        __get_const_db()-&gt;__subscriptable(<span class="keyword">this</span>, __n),</span><br><span class="line">        <span class="string">&quot;Attempted to subscript an iterator outside its valid range&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> __i_[__n];</span><br><span class="line">  &#125;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 返回base</span></span><br><span class="line">  <span class="function">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 iterator_type</span></span><br><span class="line"><span class="function">  <span class="title">base</span><span class="params">()</span> <span class="type">const</span> _NOEXCEPT </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> __i_;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>==(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> __x.<span class="built_in">base</span>() == __y.<span class="built_in">base</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>, <span class="keyword">class</span> <span class="title class_">_Iter2</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>==(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> __x.<span class="built_in">base</span>() == __y.<span class="built_in">base</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 <span class="type">bool</span> <span class="keyword">operator</span>&lt;(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  _LIBCPP_DEBUG_ASSERT(__get_const_db()-&gt;__less_than_comparable(</span><br><span class="line">                           _VSTD::<span class="built_in">addressof</span>(__x), _VSTD::<span class="built_in">addressof</span>(__y)),</span><br><span class="line">                       <span class="string">&quot;Attempted to compare incomparable iterators&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> __x.<span class="built_in">base</span>() &lt; __y.<span class="built_in">base</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>, <span class="keyword">class</span> <span class="title class_">_Iter2</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 <span class="type">bool</span> <span class="keyword">operator</span>&lt;(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  _LIBCPP_DEBUG_ASSERT(__get_const_db()-&gt;__less_than_comparable(&amp;__x, &amp;__y),</span><br><span class="line">                       <span class="string">&quot;Attempted to compare incomparable iterators&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> __x.<span class="built_in">base</span>() &lt; __y.<span class="built_in">base</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>!=(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> !(__x == __y);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>, <span class="keyword">class</span> <span class="title class_">_Iter2</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>!=(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> !(__x == __y);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>&gt;(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> __y &lt; __x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>, <span class="keyword">class</span> <span class="title class_">_Iter2</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>&gt;(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> __y &lt; __x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>&gt;=(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> !(__x &lt; __y);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>, <span class="keyword">class</span> <span class="title class_">_Iter2</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>&gt;=(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> !(__x &lt; __y);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>&lt;=(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> !(__y &lt; __x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>, <span class="keyword">class</span> <span class="title class_">_Iter2</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">bool</span> <span class="keyword">operator</span>&lt;=(</span><br><span class="line">    <span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x, <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> !(__y &lt; __x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>, <span class="keyword">class</span> <span class="title class_">_Iter2</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14</span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _LIBCPP_CXX03_LANG</span></span><br><span class="line">    <span class="keyword">auto</span></span><br><span class="line">    <span class="keyword">operator</span>-(<span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x,</span><br><span class="line">              <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT-&gt;<span class="keyword">decltype</span>(__x.<span class="built_in">base</span>() -</span><br><span class="line">                                                                  __y.<span class="built_in">base</span>())</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">    <span class="keyword">typename</span> __wrap_iter&lt;_Iter1&gt;::difference_type</span><br><span class="line">    <span class="keyword">operator</span>-(<span class="type">const</span> __wrap_iter&lt;_Iter1&gt;&amp; __x,</span><br><span class="line">              <span class="type">const</span> __wrap_iter&lt;_Iter2&gt;&amp; __y) _NOEXCEPT</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span>  <span class="comment">// C++03</span></span></span><br><span class="line">&#123;</span><br><span class="line">  _LIBCPP_DEBUG_ASSERT(__get_const_db()-&gt;__less_than_comparable(</span><br><span class="line">                           _VSTD::<span class="built_in">addressof</span>(__x), _VSTD::<span class="built_in">addressof</span>(__y)),</span><br><span class="line">                       <span class="string">&quot;Attempted to subtract incompatible iterators&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> __x.<span class="built_in">base</span>() - __y.<span class="built_in">base</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Iter1</span>&gt;</span><br><span class="line">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX14 __wrap_iter&lt;_Iter1&gt;</span><br><span class="line"><span class="keyword">operator</span>+(<span class="keyword">typename</span> __wrap_iter&lt;_Iter1&gt;::difference_type __n,</span><br><span class="line">          __wrap_iter&lt;_Iter1&gt; __x) _NOEXCEPT &#123;</span><br><span class="line">  __x += __n;</span><br><span class="line">  <span class="keyword">return</span> __x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> _LIBCPP_STD_VER &lt;= 17</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_It</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__is_cpp17_contiguous_iterator</span>&lt;__wrap_iter&lt;_It&gt; &gt; : true_type &#123;&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 偏特化`pointer_traits`</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_It</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">_LIBCPP_TEMPLATE_VIS</span> pointer_traits&lt;__wrap_iter&lt;_It&gt; &gt; &#123;</span><br><span class="line">  <span class="keyword">typedef</span> __wrap_iter&lt;_It&gt; pointer;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> pointer_traits&lt;_It&gt;::element_type element_type;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> pointer_traits&lt;_It&gt;::difference_type difference_type;</span><br><span class="line"></span><br><span class="line">  <span class="function">_LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR <span class="type">static</span> element_type* <span class="title">to_address</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      pointer __w)</span> _NOEXCEPT </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _VSTD::__to_address(__w.<span class="built_in">base</span>());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-back-inserter-iterator"><a href="#2-back-inserter-iterator" class="headerlink" title="2. back_inserter_iterator"></a>2. <code>back_inserter_iterator</code></h4><blockquote>
+<p>  Defined in header <code>&lt;iterator&gt;</code></p>
+</blockquote>
+<p>C++17之前</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt; <span class="keyword">class</span> <span class="title class_">Container</span> &gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">back_insert_iterator</span> : <span class="keyword">public</span> std::iterator&lt;std::output_iterator_tag,</span><br><span class="line">                                                  <span class="type">void</span>, <span class="type">void</span>, <span class="type">void</span>, <span class="type">void</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>C++17之后</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt; <span class="keyword">class</span> <span class="title class_">Container</span> &gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">back_insert_iterator</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>std::back_insert_iterator</code> is a <em>LegacyOutputIterator</em> that appends elements to a container for which it was constructed. The container’s <code>push_back()</code> member function is called whenever the iterator (whether dereferenced or not) is assigned to. Incrementing the <code>std::back_insert_iterator</code> is a no-op.</p>
+<p>本质就是持有容器指针，重载了<code>operator =</code>，赋值则调用容器的<code>push_back</code>方法。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// C++17之前从iterator继承</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Container</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">_LIBCPP_TEMPLATE_VIS</span> back_insert_iterator</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> _LIBCPP_STD_VER &lt;= 14 || !defined(_LIBCPP_ABI_NO_ITERATOR_BASES)</span></span><br><span class="line">    : <span class="keyword">public</span> iterator&lt;output_iterator_tag, <span class="type">void</span>, <span class="type">void</span>, <span class="type">void</span>, <span class="type">void</span>&gt;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  _Container* container;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">typedef</span> output_iterator_tag iterator_category;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="type">void</span> value_type;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> _LIBCPP_STD_VER &gt; 17</span></span><br><span class="line">  <span class="keyword">typedef</span> <span class="type">ptrdiff_t</span> difference_type;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  <span class="keyword">typedef</span> <span class="type">void</span> difference_type;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">  <span class="keyword">typedef</span> <span class="type">void</span> pointer;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="type">void</span> reference;</span><br><span class="line">  <span class="keyword">typedef</span> _Container container_type;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 持有指向容器的指针</span></span><br><span class="line">  <span class="function">_LIBCPP_HIDE_FROM_ABI</span></span><br><span class="line"><span class="function">      _LIBCPP_CONSTEXPR_SINCE_CXX20 <span class="keyword">explicit</span> <span class="title">back_insert_iterator</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">          _Container&amp; __x)</span></span></span><br><span class="line"><span class="function">      : container(_VSTD::addressof(__x)) &#123;</span>&#125;</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 back_insert_iterator&amp;</span><br><span class="line">  <span class="keyword">operator</span>=(<span class="type">const</span> <span class="keyword">typename</span> _Container::value_type&amp; __value) &#123;</span><br><span class="line">    container-&gt;<span class="built_in">push_back</span>(__value);</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _LIBCPP_CXX03_LANG</span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 back_insert_iterator&amp;</span><br><span class="line">  <span class="keyword">operator</span>=(<span class="keyword">typename</span> _Container::value_type&amp;&amp; __value) &#123;</span><br><span class="line">    container-&gt;<span class="built_in">push_back</span>(_VSTD::<span class="built_in">move</span>(__value));</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span>  <span class="comment">// _LIBCPP_CXX03_LANG</span></span></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 back_insert_iterator&amp;</span><br><span class="line">  <span class="keyword">operator</span>*() &#123;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 back_insert_iterator&amp;</span><br><span class="line">  <span class="keyword">operator</span>++() &#123;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 back_insert_iterator</span><br><span class="line">  <span class="keyword">operator</span>++(<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 _Container*</span><br><span class="line">  __get_container() <span class="type">const</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> container;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// back_inserter is a convenient function template that constructs a </span></span><br><span class="line"><span class="comment">// std::back_insert_iterator for the container c with the type deduced from the type of the argument.</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Container</span>&gt;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20</span></span><br><span class="line"><span class="function">    back_insert_iterator&lt;_Container&gt;</span></span><br><span class="line"><span class="function">    <span class="title">back_inserter</span><span class="params">(_Container&amp; __x)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">back_insert_iterator</span>&lt;_Container&gt;(__x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/07/21/c++/faq/%E7%AC%94%E8%AE%B0/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/15/c++/std/STL%E4%B9%8Bsplit_buffer/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

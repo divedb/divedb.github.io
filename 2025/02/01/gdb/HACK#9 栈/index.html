@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="HACK#9 调试时必需的栈知识1. 概要栈（stack）是程序存放数据的内存区域之一，其特征是LIFO（Last In First Out，后进先出）式数据结构，即后放进的数据最先被取出。向栈中存储数据的操作称为PUSH（压入），从栈中取出数据称为POP（弹出）。在保存动态分配的自动变量时要使用栈。此外在函数调用时，栈还用于传递函数参数，以及用于保存返回地址和返回值。 栈上依次保存了传给函数的参">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2025/02/01/gdb/HACK#9%20%E6%A0%88/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="HACK#9 调试时必需的栈知识1. 概要栈（stack）是程序存放数据的内存区域之一，其特征是LIFO（Last In First Out，后进先出）式数据结构，即后放进的数据最先被取出。向栈中存储数据的操作称为PUSH（压入），从栈中取出数据称为POP（弹出）。在保存动态分配的自动变量时要使用栈。此外在函数调用时，栈还用于传递函数参数，以及用于保存返回地址和返回值。 栈上依次保存了传给函数的参">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/stack_frame.png">
+<meta property="article:published_time" content="2025-02-01T04:25:18.502Z">
+<meta property="article:modified_time" content="2025-02-10T05:33:29.038Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/stack_frame.png">
+
+
+<link rel="canonical" href="http://example.com/2025/02/01/gdb/HACK#9%20%E6%A0%88/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/02/01/gdb/HACK#9%20%E6%A0%88/","path":"2025/02/01/gdb/HACK#9 栈/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HACK-9-%E8%B0%83%E8%AF%95%E6%97%B6%E5%BF%85%E9%9C%80%E7%9A%84%E6%A0%88%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">HACK#9 调试时必需的栈知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A6%82%E8%A6%81"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%B0%83%E8%AF%95%E5%99%A8%E7%9A%84backtrace"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. 调试器的backtrace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%BD%BF%E7%94%A8GDB%E6%93%8D%E4%BD%9C%E6%A0%88%E5%B8%A7"><span class="nav-number">1.0.3.</span> <span class="nav-text">3. 使用GDB操作栈帧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%A0%88%E5%A4%A7%E5%B0%8F%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">1.0.4.</span> <span class="nav-text">4. 栈大小的限制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%80%BB%E7%BB%93"><span class="nav-number">1.0.5.</span> <span class="nav-text">4. 总结</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/02/01/gdb/HACK#9%20%E6%A0%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-02-01 12:25:18" itemprop="dateCreated datePublished" datetime="2025-02-01T12:25:18+08:00">2025-02-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-02-10 13:33:29" itemprop="dateModified" datetime="2025-02-10T13:33:29+08:00">2025-02-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="HACK-9-调试时必需的栈知识"><a href="#HACK-9-调试时必需的栈知识" class="headerlink" title="HACK#9 调试时必需的栈知识"></a>HACK#9 调试时必需的栈知识</h2><h4 id="1-概要"><a href="#1-概要" class="headerlink" title="1. 概要"></a>1. 概要</h4><p>栈（stack）是程序存放数据的内存区域之一，其特征是LIFO（Last In First Out，后进先出）式数据结构，即后放进的数据最先被取出。向栈中存储数据的操作称为PUSH（压入），从栈中取出数据称为POP（弹出）。在保存动态分配的自动变量时要使用栈。此外在函数调用时，栈还用于传递函数参数，以及用于保存返回地址和返回值。</p>
+<p>栈上依次保存了传给函数的参数、调用者的返回地址、上层栈帧指针和函数内部使用的自动变量。此外，调用函数时还会用栈来临时保存寄存器。每个函数都独自拥有这些信息，称为栈帧（stack frame）。此时需要适当地设置表示栈帧起始地址的帧指针（FP）。此外，栈指针（SP）永远指向栈的顶端。</p>
+<blockquote>
+<p>x86_64中自动变量和工作空间有可能会超过栈指针。从栈指针指向的地址开始，再次扩展128字节，这部分空间称为red zone（“危险区”），可以当作自动变量和工作空间使用。这是AMD64的ABI规格定义的内容。</p>
+</blockquote>
+<p><img src="/images/stack_frame.png"></p>
+<p><strong>图1</strong></p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;ctype.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX (1UL &lt;&lt; 20)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> u64;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">int</span> u32;</span><br><span class="line"></span><br><span class="line">u32 max_addend = MAX;</span><br><span class="line"></span><br><span class="line"><span class="function">u64 <span class="title">sum_till_MAX</span><span class="params">(u32 n)</span> </span>&#123;</span><br><span class="line">  u64 sum;</span><br><span class="line">  n++;</span><br><span class="line">  sum = n;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (n &lt; max_addend) &#123;</span><br><span class="line">    sum += <span class="built_in">sum_till_MAX</span>(n);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  u64 sum = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> ((argc == <span class="number">2</span>) &amp;&amp; <span class="built_in">isdigit</span>(*(argv[<span class="number">1</span>]))) &#123;</span><br><span class="line">    max_addend = <span class="built_in">strtoul</span>(argv[<span class="number">1</span>], <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (max_addend &gt; MAX || max_addend == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Invalid number is specified\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  sum = <span class="built_in">sum_till_MAX</span>(<span class="number">0</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;sum(0..%lu) = %llu\n&quot;</span>, max_addend, sum);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">(gdb) disas sum_till_MAX</span><br><span class="line">Dump of assembler code <span class="keyword">for</span> <span class="keyword">function</span> sum_till_MAX:</span><br><span class="line">   0x00000000000011a9 &lt;+0&gt;:	endbr64 </span><br><span class="line">   0x00000000000011ad &lt;+4&gt;:	push   %rbp                      	<span class="comment"># 3</span></span><br><span class="line">   0x00000000000011ae &lt;+5&gt;:	mov    %rsp,%rbp									<span class="comment"># 4</span></span><br><span class="line">   0x00000000000011b1 &lt;+8&gt;:	sub    <span class="variable">$0x20</span>,%rsp									<span class="comment"># 5</span></span><br><span class="line">   0x00000000000011b5 &lt;+12&gt;:	mov    %edi,-0x14(%rbp)    </span><br><span class="line">   0x00000000000011b8 &lt;+15&gt;:	addl   <span class="variable">$0x1</span>,-0x14(%rbp)         <span class="comment"># 6</span></span><br><span class="line">   0x00000000000011bc &lt;+19&gt;:	mov    -0x14(%rbp),%eax</span><br><span class="line">   0x00000000000011bf &lt;+22&gt;:	mov    %rax,-0x8(%rbp)</span><br><span class="line">   0x00000000000011c3 &lt;+26&gt;:	mov    0x2e47(%rip),%eax        <span class="comment"># 0x4010 &lt;max_addend&gt;</span></span><br><span class="line">   0x00000000000011c9 &lt;+32&gt;:	cmp    %eax,-0x14(%rbp)</span><br><span class="line">   0x00000000000011cc &lt;+35&gt;:	jae    0x11dc &lt;sum_till_MAX+51&gt;</span><br><span class="line">   0x00000000000011ce &lt;+37&gt;:	mov    -0x14(%rbp),%eax</span><br><span class="line">   0x00000000000011d1 &lt;+40&gt;:	mov    %eax,%edi</span><br><span class="line">   0x00000000000011d3 &lt;+42&gt;:	call   0x11a9 &lt;sum_till_MAX&gt;</span><br><span class="line">   0x00000000000011d8 &lt;+47&gt;:	add    %rax,-0x8(%rbp)</span><br><span class="line">   0x00000000000011dc &lt;+51&gt;:	mov    -0x8(%rbp),%rax</span><br><span class="line">   0x00000000000011e0 &lt;+55&gt;:	leave  </span><br><span class="line">   0x00000000000011e1 &lt;+56&gt;:	ret    </span><br><span class="line">End of assembler dump.</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
+
+<p>首先在栈上保存上层帧的帧指针<strong>3</strong>，然后将新的栈帧赋给帧指针<strong>4</strong>。接下来在栈上分配用于保存自动变量的空间<strong>5</strong>。到此为止，图1所示的栈帧就准备好了。图1展示的通过栈传递参数，实际参数<code>u32 n</code>传递是通过<code>rdi</code>寄存器，位置<strong>6</strong>对应<code>n++</code>操作。</p>
+<h4 id="2-调试器的backtrace"><a href="#2-调试器的backtrace" class="headerlink" title="2. 调试器的backtrace"></a>2. 调试器的backtrace</h4><p>GDB等调试器的<code>backtrace</code>功能是通过搜索栈中保存的信息来实现的。下面来手动执行一下与GDB的backtrace相同的操作，将栈上保存的信息与图1的栈示意图对照一下。首先获取当前的执行位置和FP（栈指针）。当前执行位置可以通过程序计数器（PC）获得，在x86-64处理器上为rip寄存器，FP是rbp寄存器。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -g sum.c -o <span class="built_in">sum</span></span><br><span class="line">$ gdb <span class="built_in">sum</span></span><br><span class="line">(gdb) <span class="built_in">set</span> args 10</span><br><span class="line">(gdb) b sum_till_MAX</span><br><span class="line">(gdb) r</span><br><span class="line">(gdb) c</span><br><span class="line">(gdb) bt</span><br><span class="line"><span class="comment">#0  sum_till_MAX (n=1) at sum.c:14</span></span><br><span class="line"><span class="comment">#1  0x00005555555551d8 in sum_till_MAX (n=1) at sum.c:18</span></span><br><span class="line"><span class="comment">#2  0x00005555555552a0 in main (argc=2, argv=0x7fffffffe058) at sum.c:37</span></span><br><span class="line">(gdb) i r rip rbp rsp</span><br><span class="line">rip            0x5555555551b8      0x5555555551b8 &lt;sum_till_MAX+15&gt;</span><br><span class="line">rbp            0x7fffffffdee0      0x7fffffffdee0</span><br><span class="line">rsp            0x7fffffffdec0      0x7fffffffdec0</span><br></pre></td></tr></table></figure>
+
+<p>接下来查看栈的内容。在上面反汇编可以看到<code>sub    $0x20,%rsp</code>，所以<code>rsp</code>和<code>rbp</code>相差<code>0x20</code>，所以前<code>0x20</code>个字节是没有意思的。然后上一个frame的帧指针的值是<code>0x00007fffffffdf10</code>，然后是返回地址<code>0x00005555555551d8</code>（对应上面bt中的#1的值），继续跳过<code>0x20</code>个字节，可以看到返回地址是<code>0x00005555555552a0</code>（对应上面bt中的#0的值）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/40xw <span class="variable">$rsp</span></span><br><span class="line">0x7fffffffdec0:	0x0000000d	0x00000000	0x00000000	0x00000001</span><br><span class="line">0x7fffffffded0:	0x00050001	0x00000000	0xffffffff	0xffffffff</span><br><span class="line">0x7fffffffdee0:	0xffffdf10	0x00007fff	0x555551d8	0x00005555</span><br><span class="line">0x7fffffffdef0:	0xffffdf40	0x00007fff	0xffffe058	0x00000001</span><br><span class="line">0x7fffffffdf00:	0x555551e2	0x00005555	0x00000001	0x00000000</span><br><span class="line">0x7fffffffdf10:	0xffffdf40	0x00007fff	0x555552a0	0x00005555</span><br><span class="line">0x7fffffffdf20:	0xffffe058	0x00007fff	0x00000064	0x00000002</span><br><span class="line">0x7fffffffdf30:	0x00001000	0x00000000	0x00000000	0x00000000</span><br><span class="line">0x7fffffffdf40:	0x00000002	0x00000000	0xf7c29d90	0x00007fff</span><br><span class="line">0x7fffffffdf50:	0x00000000	0x00000000	0x555551e2	0x00005555</span><br></pre></td></tr></table></figure>
+
+<p>看到这里应该明白，对于调试器来说，栈上的数据是极其重要的信息。万一栈上的信息被破坏，就无法使用调试器跟踪调用过程。</p>
+<blockquote>
+<p>  编译时为gcc指定<code>-fomit-frame-pointer</code>选项，即可生成不使用帧指针的二进制文件。但是即使如此，GDB也能正确理解帧，这是因为GDB是根据记录在调试信息中的栈使用量来计算帧的位置的。</p>
+</blockquote>
+<h4 id="3-使用GDB操作栈帧"><a href="#3-使用GDB操作栈帧" class="headerlink" title="3. 使用GDB操作栈帧"></a>3. 使用GDB操作栈帧</h4><p>GDB提供了操作栈帧的命令，这里介绍该命令的使用例。</p>
+<p>用<code>frame</code>命令查看现在选择的帧。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) frame</span><br><span class="line"><span class="comment">#0  sum_till_MAX (n=1) at sum.c:14</span></span><br><span class="line">14	  n++;</span><br></pre></td></tr></table></figure>
+
+<p>现在选择的帧为#0，查看该帧内的自动变量<code>sum</code>，其值为18446744073709551615。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p <span class="built_in">sum</span></span><br><span class="line"><span class="variable">$2</span> = 18446744073709551615</span><br></pre></td></tr></table></figure>
+
+<p>接下来选择上一层的#1帧，用同样的方法确认自动变量<code>sum</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(gdb) frame 1</span><br><span class="line"><span class="comment">#1  0x00005555555551d8 in sum_till_MAX (n=1) at sum.c:18</span></span><br><span class="line">18	    <span class="built_in">sum</span> += sum_till_MAX(n);</span><br><span class="line">(gdb) p <span class="built_in">sum</span></span><br><span class="line"><span class="variable">$3</span> = 1</span><br><span class="line">(gdb) </span><br></pre></td></tr></table></figure>
+
+<p>此外，选择帧还可以使用<code>up</code>和<code>down</code>命令。<code>up</code>命令选择上一层的帧，<code>down</code>命令选择下一层的帧。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(gdb) up</span><br><span class="line"><span class="comment">#2  0x00005555555552a0 in main (argc=2, argv=0x7fffffffe058) at sum.c:37</span></span><br><span class="line">37	  <span class="built_in">sum</span> = sum_till_MAX(0);</span><br><span class="line">(gdb) down</span><br><span class="line"><span class="comment">#1  0x00005555555551d8 in sum_till_MAX (n=1) at sum.c:18</span></span><br><span class="line">18	    <span class="built_in">sum</span> += sum_till_MAX(n);</span><br></pre></td></tr></table></figure>
+
+<p>用<code>info</code>命令的<code>frame</code>选项可以看到更详细的栈帧信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(gdb) i frame 1</span><br><span class="line">Stack frame at 0x7fffffffdf20:</span><br><span class="line"> rip = 0x5555555551d8 <span class="keyword">in</span> sum_till_MAX (sum.c:18); saved rip = 0x5555555552a0</span><br><span class="line"> called by frame at 0x7fffffffdf50, <span class="built_in">caller</span> of frame at 0x7fffffffdef0</span><br><span class="line"> <span class="built_in">source</span> language c.</span><br><span class="line"> Arglist at 0x7fffffffdf10, args: n=1</span><br><span class="line"> Locals at 0x7fffffffdf10, Previous frame<span class="string">&#x27;s sp is 0x7fffffffdf20</span></span><br><span class="line"><span class="string"> Saved registers:</span></span><br><span class="line"><span class="string">  rbp at 0x7fffffffdf10, rip at 0x7fffffffdf18</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-栈大小的限制"><a href="#4-栈大小的限制" class="headerlink" title="4. 栈大小的限制"></a>4. 栈大小的限制</h4><p>实际上，本hack使用的示例程序如果不带参数执行，会引发segmentation fault（段错误）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ./sum</span><br><span class="line">[1]    9284 segmentation fault (core dumped)  ./sum</span><br></pre></td></tr></table></figure>
+
+<p>通过GDB执行示例程序，看看执行到什么时发生了segmentation fault。查看程序计数器（PC）即可看到程序执行位置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">➜  Desktop gdb ./sum</span><br><span class="line">...</span><br><span class="line">(gdb) r</span><br><span class="line">Starting program: /home/gc/Desktop/sum </span><br><span class="line">[Thread debugging using libthread_db enabled]</span><br><span class="line">Using host libthread_db library <span class="string">&quot;/lib/x86_64-linux-gnu/libthread_db.so.1&quot;</span>.</span><br><span class="line"></span><br><span class="line">Program received signal SIGSEGV, Segmentation fault.</span><br><span class="line">0x00005555555551b5 <span class="keyword">in</span> sum_till_MAX (n=&lt;error reading variable: Cannot access memory at address 0x7fffff7fefec&gt;) at sum.c:12</span><br><span class="line">12	u64 sum_till_MAX(u32 n) &#123;</span><br><span class="line">(gdb) x/i <span class="variable">$pc</span></span><br><span class="line">=&gt; 0x5555555551b5 &lt;sum_till_MAX+12&gt;:	mov    %edi,-0x14(%rbp)</span><br><span class="line">(gdb) p <span class="variable">$sp</span></span><br><span class="line"><span class="variable">$1</span> = (void *) 0x7fffff7fefe0</span><br><span class="line">(gdb) </span><br></pre></td></tr></table></figure>
+
+<p>现在查看一下栈指针（SP）的位置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p <span class="variable">$sp</span></span><br><span class="line"><span class="variable">$1</span> = (void *) 0x7fffff7fefe0</span><br></pre></td></tr></table></figure>
+
+<p>下面查看该进程的内存映射（memory map）。要查看GDB attach了的进程的内存映像，可以执行以下命令。执行该命令后，GDB就会显示与被调试的进程相对应的<code>/proc/&lt;PID&gt;/maps</code>的信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p <span class="variable">$sp</span></span><br><span class="line"><span class="variable">$1</span> = (void *) 0x7fffff7fefe0</span><br><span class="line">(gdb) i proc mapping</span><br><span class="line">process 9313</span><br><span class="line">Mapped address spaces:</span><br><span class="line"></span><br><span class="line">					Start Addr           End Addr       Size     Offset  Perms  objfile</span><br><span class="line">	...</span><br><span class="line">      0x7fffff7ff000     0x7ffffffff000   0x800000        0x0  rw-p   [stack]</span><br><span class="line">  0xffffffffff600000 0xffffffffff601000     0x1000        0x0  --xp   [vsyscall]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>请注意[stack]那一行，它表示栈空间，栈空间的顶端是<code>0x7fffff7ff000</code>。然而， 刚才看到的栈指针的值却是<code>0x7fffff7fefe0</code>，超出了栈的范围。访问地址超出了栈的范围，也就是说，发生了栈的溢出。</p>
+<blockquote>
+<p>  使用该命令时，GDB会打开<code>/proc/&lt;PID&gt;/maps</code>，因此在分析core dump（内核转储）时无法使用。分析core dump时可以利用以下命令获得相同信息。</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info files</span><br><span class="line">或者</span><br><span class="line">(gdb) info target</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>该示例程序默认情况下会递归调用<code>sum_till_MAX()</code>一百万以上。如前所述，每次函数调用都会生成栈帧，随之消耗栈空间。这里由于栈空间的消耗量超出了进程的许可范围，因而发生了栈溢出。</p>
+<p>可以通过<code>ulimit -s</code>查看允许的栈大小（单位为KB）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ulimit</span> -s</span><br><span class="line">8192</span><br></pre></td></tr></table></figure>
+
+<p>将该值增到到10倍，再次执行示例程序，就不会发生segmentation fault而正常结束了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ulimit</span> -Ss 81920</span><br><span class="line">$ ./sum</span><br><span class="line"><span class="built_in">sum</span>(0..1048576) = 549756338176</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h4><p>本hack说明了栈的基本原理，以及调试器的backtrace功能是如何利用栈信息的。此外还介绍了GDB中可以使用的操作栈帧的命令，并举例说明了栈溢出。本hack中提到，每个进程都有允许的栈大小，但实际上每个线程的栈大小也有限制。多线程编程时，各个线程使用的栈的综合不能超过进程许可的栈大小，同时还要注意各个线程的栈大小限制。设计应用程序时一定要注意栈的使用量。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/01/gdb/HACK#27%20backtrace/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/01/linux/driver/module_init%E5%92%8Cmodule_exit/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
