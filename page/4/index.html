@@ -112,13 +112,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -139,6 +139,510 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/08/python/Numpy-Tutorial/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/11/08/python/Numpy-Tutorial/" class="post-title-link" itemprop="url">Numpy Tutorial</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-08 14:16:41" itemprop="dateCreated datePublished" datetime="2024-11-08T14:16:41+08:00">2024-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-11-09 22:58:05" itemprop="dateModified" datetime="2024-11-09T22:58:05+08:00">2024-11-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="numpy-tutorial"><a href="#numpy-tutorial" class="headerlink" title="numpy tutorial"></a>numpy tutorial</h2><h4 id="1-Array-manipulation-routines"><a href="#1-Array-manipulation-routines" class="headerlink" title="1. Array manipulation routines"></a>1. Array manipulation routines</h4><p><code>hstack</code></p>
+<p>​	函数用于在水平方向（列方向）将多个数组拼接在一起。</p>
+<p>示例:</p>
+<ol>
+<li>一维数组示例：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = np.array([<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.hstack((a, b))</span><br><span class="line">array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</span><br></pre></td></tr></table></figure>
+
+<p>在一维数组的情况下，<code>hstack</code>将它们直接拼接在一起，形成一个更长的数组。</p>
+<ol start="2">
+<li>二维数组的拼接：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = np.array([[<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>], [<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.hstack((a, b))</span><br><span class="line">array([[ <span class="number">1</span>,  <span class="number">2</span>,  <span class="number">3</span>,  <span class="number">7</span>,  <span class="number">8</span>,  <span class="number">9</span>],</span><br><span class="line">       [ <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]])</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>a</code>和<code>b</code>都是形状为<code>(2, 3)</code>的数组，在列方向上进行拼接后形成<code>(2, 6)</code>的数组。</p>
+<h4 id="2-Sorting-searching-and-counting"><a href="#2-Sorting-searching-and-counting" class="headerlink" title="2. Sorting, searching, and counting"></a>2. Sorting, searching, and counting</h4><p><code>flatnonzero</code></p>
+<p>​	函数用于返回数组中非零元素的“扁平化索引”，即按行优先（行主序）的方式返回一维索引。</p>
+<p>等价于<code>np.nonzero(np.ravel(a))[0]</code> 。</p>
+<p>示例:</p>
+<h6 id="1-一维数组示例："><a href="#1-一维数组示例：" class="headerlink" title="1. 一维数组示例："></a>1. 一维数组示例：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = np.array([<span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.flatnonzero(a)</span><br><span class="line">array([<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>])</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>0, 2, 4</code>是非零元素<code>1, 2, 3</code>的索引。</p>
+<h6 id="2-多维数组示例："><a href="#2-多维数组示例：" class="headerlink" title="2. 多维数组示例："></a>2. 多维数组示例：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = np.array([[<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>], [<span class="number">3</span>, <span class="number">0</span>, <span class="number">4</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.flatnonzero(a)</span><br><span class="line">array([<span class="number">0</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>])</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>0, 4, 6, 8</code>是非零元素<code>1, 2, 3, 4</code>在一维形式（扁平化）下的位置索引。</p>
+<h6 id="3-获取非零元素位置的坐标："><a href="#3-获取非零元素位置的坐标：" class="headerlink" title="3. 获取非零元素位置的坐标："></a>3. 获取非零元素位置的坐标：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = np.array([[<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>], [<span class="number">3</span>, <span class="number">0</span>, <span class="number">4</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>indices = np.flatnonzero(a)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.unravel_index(indices, a.shape)</span><br><span class="line">(array([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>]), array([<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>]))</span><br></pre></td></tr></table></figure>
+
+<p>这表示非零元素的坐标分别是<code>(0,0)</code>, <code>(1,1)</code>, <code>(2,0)</code>, <code>(2,2)</code>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/c++/c++%20faq/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/11/02/c++/c++%20faq/" class="post-title-link" itemprop="url">C++ FAQ</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-02 21:40:31" itemprop="dateCreated datePublished" datetime="2024-11-02T21:40:31+08:00">2024-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-02-26 12:28:18" itemprop="dateModified" datetime="2025-02-26T12:28:18+08:00">2025-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="C-FAQ"><a href="#C-FAQ" class="headerlink" title="C++ FAQ"></a>C++ FAQ</h2><h6 id="1-operator-delete重载"><a href="#1-operator-delete重载" class="headerlink" title="1. operator delete重载"></a>1. <code>operator delete</code>重载</h6><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">B1</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">B1</span>() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;</span><br><span class="line">  <span class="keyword">virtual</span> ~<span class="built_in">B1</span>() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span>* <span class="keyword">operator</span> <span class="title">new</span><span class="params">(<span class="type">size_t</span> bytes)</span> </span>&#123; <span class="keyword">return</span> <span class="literal">nullptr</span>; &#125;</span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="keyword">operator</span> <span class="title">delete</span><span class="params">(<span class="type">void</span>* ptr, <span class="type">size_t</span> bytes)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;delete: &quot;</span> &lt;&lt; ptr &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;bytes: &quot;</span> &lt;&lt; bytes &lt;&lt; endl;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123; <span class="keyword">delete</span> <span class="keyword">this</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">D1</span> : <span class="keyword">public</span> B1 &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">D1</span>() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;</span><br><span class="line">  ~<span class="built_in">D1</span>() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  D1 d;</span><br><span class="line"></span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;address of d: &quot;</span> &lt;&lt; &amp;d &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">  d.<span class="built_in">foo</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>output</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">B1::B1()</span><br><span class="line">D1::D1()</span><br><span class="line">address of d: 0x7ff7bd9b60b8</span><br><span class="line">virtual D1::~D1()</span><br><span class="line">virtual B1::~B1()</span><br><span class="line">delete: 0x7ff7bd9b60b8</span><br><span class="line">bytes: 8</span><br><span class="line">virtual D1::~D1()</span><br><span class="line">virtual B1::~B1()</span><br></pre></td></tr></table></figure>
+
+<p> 使得 sizeof(..填什么?..) 结果为0.</p>
+<h3 id="例子1：使用编译器扩展（非标准）"><a href="#例子1：使用编译器扩展（非标准）" class="headerlink" title="例子1：使用编译器扩展（非标准）"></a>例子1：使用编译器扩展（非标准）</h3><p>某些编译器（如GCC）允许定义大小为0的数组作为结构体的最后一个成员（称为“柔性数组成员”）。在这种情况下，<code>sizeof</code>可能会返回0。</p>
+<p>cpp</p>
+<p>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">struct EmptyArray &#123;</span><br><span class="line">    int arr[0]; // 大小为0的数组（非标准，依赖编译器支持）</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    std::cout &lt;&lt; sizeof(EmptyArray) &lt;&lt; std::endl; // 可能输出0（依赖编译器）</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：这种行为是非标准的，依赖于编译器实现，不具备可移植性。</p>
+<p>alignof(…) 有没有可能 返回 0</p>
+<p><code>alignof</code>运算符用于查询类型的对齐要求（alignment requirement）。**<code>alignof</code>不可能返回0**，原因如下：</p>
+<hr>
+<h3 id="1-对齐要求的基本定义"><a href="#1-对齐要求的基本定义" class="headerlink" title="1. 对齐要求的基本定义"></a>1. <strong>对齐要求的基本定义</strong></h3><p>对齐要求是指一个类型在内存中的起始地址必须满足的条件。例如，一个对齐要求为4的类型，其起始地址必须是4的倍数。对齐要求至少为1，因为所有对象都必须占用至少1字节的内存空间。</p>
+<hr>
+<h3 id="2-C-标准的规定"><a href="#2-C-标准的规定" class="headerlink" title="2. C++标准的规定"></a>2. <strong>C++标准的规定</strong></h3><p>根据C++标准（如C++11及之后的版本），对齐要求的最小值为1。标准中明确规定：</p>
+<ul>
+<li>每个对象类型都有一个对齐要求，且对齐要求至少为1。</li>
+<li><code>alignof(T)</code>返回类型<code>T</code>的对齐要求，且结果必须大于或等于1。</li>
+</ul>
+<p>请构造出一个类型struct&#x2F;class S，使得std:has_unique_object_representation(S)返回false</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">S</span> &#123;</span><br><span class="line">    <span class="type">char</span> c;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; std::boolalpha;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;std::has_unique_object_representations&lt;S&gt;::value: &quot;</span></span><br><span class="line">              &lt;&lt; std::has_unique_object_representations&lt;S&gt;::value &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/02/linux/fs/SPFS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/11/02/linux/fs/SPFS/" class="post-title-link" itemprop="url">SPFS</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-11-02 18:06:53" itemprop="dateCreated datePublished" datetime="2024-11-02T18:06:53+08:00">2024-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-11-05 22:26:32" itemprop="dateModified" datetime="2024-11-05T22:26:32+08:00">2024-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/filesystem/" itemprop="url" rel="index"><span itemprop="name">filesystem</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="SPFS"><a href="#SPFS" class="headerlink" title="SPFS"></a>SPFS</h2><h4 id="Module-Agenda"><a href="#Module-Agenda" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
+<li>Basic Linux filesystem information</li>
+<li>Where is the Linux filesystem code?</li>
+<li>Who uses what filesystems?</li>
+<li>Where do filesystems sit in the kernel?</li>
+<li>How to get started with filesystem development</li>
+<li>Some basic SPFS information</li>
+</ul>
+<h5 id="1-How-many-Filesystems"><a href="#1-How-many-Filesystems" class="headerlink" title="1. How many Filesystems?"></a>1. How many Filesystems?</h5><ul>
+<li>Linux has over 80 different filesystems</li>
+<li>They fall into several different categories:<ul>
+<li>Disk-based filesystems, filesystems with built-in fault-tolerance, filesystems optimized for flash memory, solid state media, record-oriented filesystems, shared-disk filesystems, distributed filesystems, distributed fault-tolerant filesystems, distributed parallel filesystems, distirbuted parallel fault-tolerant filesystems, peer-to-peer filesystems, special-purpose filesystems, pseudo filesystems, encrypted filesystems.</li>
+<li>There are many filesystems not in the source tree</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-Whre-Are-They"><a href="#2-Whre-Are-They" class="headerlink" title="2. Whre Are They?"></a>2. Whre Are They?</h5><ul>
+<li>All different kernels can be found at <a target="_blank" rel="noopener" href="http://www.kernel.org/">www.kernel.org</a></li>
+<li>Filesystems are located under the <code>fs</code> directory, for example:<ul>
+<li><code>linux-6.5.5/fs</code></li>
+</ul>
+</li>
+</ul>
+<h5 id="3-Which-Distributions-Use-Which-Filesystems"><a href="#3-Which-Distributions-Use-Which-Filesystems" class="headerlink" title="3. Which Distributions Use Which Filesystems?"></a>3. Which Distributions Use Which Filesystems?</h5><table>
+<thead>
+<tr>
+<th>Distribution</th>
+<th>Fils System</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ubuntu&#x2F;Debian</td>
+<td>ext4</td>
+</tr>
+<tr>
+<td>Fedora</td>
+<td>btrfs</td>
+</tr>
+<tr>
+<td>CentOS</td>
+<td>XFS (CentOS EOL - Rocky?)</td>
+</tr>
+<tr>
+<td>RHEL</td>
+<td>XFS - was ext4 up to RHEL 6.0</td>
+</tr>
+<tr>
+<td>OpenSuSE</td>
+<td>btrfs</td>
+</tr>
+<tr>
+<td>SLES</td>
+<td>XFS</td>
+</tr>
+<tr>
+<td>Android</td>
+<td>ext4 or one of the flash-based filesystems such as YAFFS2</td>
+</tr>
+</tbody></table>
+<h5 id="4-How-Much-Code"><a href="#4-How-Much-Code" class="headerlink" title="4. How Much Code?"></a>4. How Much Code?</h5><ul>
+<li>High-end<ul>
+<li>XFS  - 73,000   LOC</li>
+<li>btrfs - 151,000 LOC</li>
+<li>ext4  - 63,000   LOC</li>
+<li>NFS  - 73,000   LOC</li>
+</ul>
+</li>
+<li>Low-end<ul>
+<li>bfs    - 1,000 LOC</li>
+<li>ext2  - 9,000 LOC</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-Complexity"><a href="#5-Complexity" class="headerlink" title="5. Complexity"></a>5. Complexity</h5><ul>
+<li>There are 4 vectors of (over 100) operations that filesystems can provide:<ul>
+<li><code>inode_operations</code>                    - 29 different operations</li>
+<li><code>super_operations</code>                    - 19 different operations</li>
+<li><code>file_operation</code>                        - 33 different operations</li>
+<li><code>address_space_operations</code> - 22 different operations</li>
+</ul>
+</li>
+<li>No filesystem provide all functions</li>
+<li>SPFS provides only a small number (depends on file type)</li>
+</ul>
+<p><img src="/fig.1.png"></p>
+<h5 id="6-Where-Would-I-Normally-Start"><a href="#6-Where-Would-I-Normally-Start" class="headerlink" title="6. Where Would I Normally Start?"></a>6. Where Would I Normally Start?</h5><ul>
+<li>bfs, sysvfs, fat, …</li>
+<li>Look at features. Less features the better!<ul>
+<li>Filesystems are optimized for performance</li>
+<li>This makes the code harder to understand</li>
+</ul>
+</li>
+<li>But no need. That’s what SPFS is for!</li>
+</ul>
+<h5 id="7-SPFS-was-Developed-for-Teaching"><a href="#7-SPFS-was-Developed-for-Teaching" class="headerlink" title="7. SPFS was Developed for Teaching"></a>7. SPFS was Developed for Teaching</h5><ul>
+<li>It’s as simple as you can get</li>
+<li>It will be updated once per year (Ubuntu x.04 releases)</li>
+<li>It has <code>prints()</code> calls for each function - viewed with <code>dmesg(1)</code></li>
+<li>It’s also backed by an online open-source filesystem book<ul>
+<li><code>https://github.com/stevedpate/linux-fs-book</code></li>
+<li>450 pages and counting… looking for help to move it forwards</li>
+<li>There is a chapter on SPFS</li>
+</ul>
+</li>
+</ul>
+<hr/>
+
+<h4 id="Module-Agenda-1"><a href="#Module-Agenda-1" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
+<li>Basic SPFS information including features&#x2F;properties&#x2F;limitations</li>
+<li>Important SPFS structures</li>
+<li>SPFS disk layout</li>
+<li>What happens during filesystem creation</li>
+</ul>
+<h5 id="1-Basic-Information"><a href="#1-Basic-Information" class="headerlink" title="1. Basic Information"></a>1. Basic Information</h5><ul>
+<li>A Linux filesystem contains the following minimal items:<ul>
+<li>A kernel module</li>
+<li>A basic set of commands (<code>mkfs</code> and <code>fsdb</code> at a minimum)</li>
+</ul>
+</li>
+<li>There may be other commands to support filesystem features:<ul>
+<li><code>e2fsprogs</code> - <code>badblocks</code>, <code>blkid</code>, <code>chattr</code>, <code>debugfs</code>, <code>dumpe2fs</code>, <code>e2freefrag</code>, <code>e2fsck</code>, <code>e2image</code>, <code>e2label</code>, <code>e2undo</code>, <code>e4defrag</code>, <code>filefrag</code>, <code>findfs</code>, <code>findsuper</code>, <code>logsave</code>, <code>lsattr</code>, <code>mke2fs</code>, <code>resize2fs</code>, <code>tune2fs</code>.</li>
+</ul>
+</li>
+<li>SPFS only has the following:<ul>
+<li>A kernel module, <code>mkfs</code>, <code>fsdb</code> and <code>fillfs</code> commands plus test programs.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-SPFS-Features-Properties"><a href="#2-SPFS-Features-Properties" class="headerlink" title="2. SPFS Features &#x2F; Properties"></a>2. SPFS Features &#x2F; Properties</h5><ul>
+<li>Single block size (2048 bytes)</li>
+<li>760 blocks in the whole filesystem (760 * 2048 byte block size &#x3D; ~1.5GB?MB)</li>
+<li>Maximum filename length of up to 28 characters</li>
+<li>Multi-level directories (directories within directories)</li>
+<li>File creation, deletion, rename, hard links, symlinks, …</li>
+<li>File undelete using the SPFS <code>fsdb</code> command</li>
+</ul>
+<h5 id="3-Some-Basic-SPFS-Concepts"><a href="#3-Some-Basic-SPFS-Concepts" class="headerlink" title="3. Some Basic SPFS Concepts"></a>3. Some Basic SPFS Concepts</h5><ul>
+<li><p>SPFS Superblock</p>
+<ul>
+<li><p>Contains information about the filesystem</p>
+</li>
+<li><p>Inode and data block usage</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_superblock</span> &#123;</span></span><br><span class="line">  __u32 s_magic; 								<span class="comment">// 0x53504653</span></span><br><span class="line">  __u32 s_mod;		</span><br><span class="line">  __u32 s_nifree;</span><br><span class="line">  __u32 s_inode[SP_MAXFILES];		<span class="comment">// 128</span></span><br><span class="line">  __u32 s_nbfree;</span><br><span class="line">  __u16 s_block[SP_MAXBLOCKS];	<span class="comment">// 760</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>Inodes</p>
+<ul>
+<li><p>1 inode per file regardless of file type</p>
+</li>
+<li><p>Holds file size, ownershop, time stamps, which blocks are allocated</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_inode</span> &#123;</span></span><br><span class="line">  __u32 i_mode;										<span class="comment">// file type and permissions</span></span><br><span class="line">  __u32 i_nlink;									<span class="comment">// e.g. (S_IFDIR | 0755)</span></span><br><span class="line">  __u32 i_atime;</span><br><span class="line">  __u32 i_mtime;</span><br><span class="line">  __u32 i_ctime;</span><br><span class="line">  __u32 i_uid;</span><br><span class="line">  __u32 i_gid;</span><br><span class="line">  __u32 i_size;</span><br><span class="line">  __u32 i_blocks;</span><br><span class="line">  __u32 i_addr[SP_DIRECT_BLOCKS];	<span class="comment">// 64</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Directory entries</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_dirent</span> &#123;</span></span><br><span class="line">  __u32 d_ino;</span><br><span class="line">  <span class="type">char</span>  d_name[SP_NAMELEN];	<span class="comment">// 28</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p><img src="/fig.2.png"></p>
+<h5 id="4-What-Happens-During-mkfs"><a href="#4-What-Happens-During-mkfs" class="headerlink" title="4. What Happens During mkfs?"></a>4. What Happens During <code>mkfs</code>?</h5><ul>
+<li>Fill in the superblock structure fields</li>
+<li>Write the superblock to disk</li>
+<li>Write inodes 2 (root) and 3 (lost+found) to disk</li>
+<li>Write directory entries for both directories<ul>
+<li>“.” and “..” for “lost+found”</li>
+<li>“.”, “..” and “lost+found” for the root inode</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-Introducing-mkfs-and-fsdb"><a href="#5-Introducing-mkfs-and-fsdb" class="headerlink" title="5. Introducing mkfs and fsdb"></a>5. Introducing <code>mkfs</code> and <code>fsdb</code></h5><ul>
+<li>Best way to learn the disk layout is to see it in action!</li>
+<li>We’ll create a filesystem with <code>mkfs</code> and use <code>fsdb</code> to explore what’s there</li>
+<li>Source code will be introduced soon</li>
+</ul>
+<p><code>lost+found</code> 目录是 Linux 和 Unix 文件系统中的一个特殊目录，通常存在于文件系统的根目录下。它的主要用途是存储在文件系统检查（例如，使用 <code>fsck</code> 命令）期间恢复的丢失文件或目录。</p>
+<h6 id="主要特点和用途"><a href="#主要特点和用途" class="headerlink" title="主要特点和用途"></a>主要特点和用途</h6><ol>
+<li><strong>恢复丢失的文件</strong>：<ul>
+<li>当文件系统发生损坏或崩溃时，文件系统检查工具会尝试修复错误，并可能找到一些无法与原有目录结构相匹配的孤立文件。这些文件会被放置在<code>lost+found</code>目录中。</li>
+</ul>
+</li>
+<li><strong>文件命名</strong>：<ul>
+<li>恢复的文件通常会被重命名为数字（例如，<code>#1</code>、<code>#2</code>），以便用户在恢复后可以检查它们。</li>
+</ul>
+</li>
+<li><strong>存在于不同的文件系统中</strong>：<ul>
+<li><code>lost+found</code>目录主要出现在使用<code>ext2</code>、<code>ext3</code>、<code>ext4</code>和其他一些Linux文件系统中。</li>
+</ul>
+</li>
+<li><strong>文件系统检查</strong>：<ul>
+<li><code>lost+found</code>目录是在文件系统创建时自动生成的，用户通常无需手动创建或删除它。运行文件系统检查（如<code>fsck</code>）时，工具会自动处理该目录中的文件。</li>
+</ul>
+</li>
+</ol>
+<hr/>
+
+<h4 id="Module-Agenda-2"><a href="#Module-Agenda-2" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
+<li>How to downlaod the source code</li>
+<li>Looking through the directory structure</li>
+<li>Walking through the <code>mkfs</code> and <code>fsdb</code> source code</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1058,285 +1562,8 @@ jupyter notebook
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/28/python/python-mixin/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/28/python/python-mixin/" class="post-title-link" itemprop="url">python mixin</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-28 22:01:47" itemprop="dateCreated datePublished" datetime="2024-10-28T22:01:47+08:00">2024-10-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-10-29 13:46:55" itemprop="dateModified" datetime="2024-10-29T13:46:55+08:00">2024-10-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Python-Mixin"><a href="#Python-Mixin" class="headerlink" title="Python Mixin"></a>Python Mixin</h2><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p>​	<strong>Mixin</strong>是一种设计模式，用于创建可复用的类，这些类可以与其他类组合，以增强其功能。Mixin通常不作为独立的类使用，而是作为基类被其他类继承，提供特定的行为或功能，而不需要成为该类的主要部分。</p>
-<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ol>
-<li><strong>可复用性</strong>：Mixin允许将功能模块化，使得相同的功能可以在多个类中复用。</li>
-<li><strong>单一职责</strong>：Mixin通常负责提供一种特定的功能或行为，而不是承担类的主要业务逻辑。这有助于保持代码的清晰性和可维护性。</li>
-<li><strong>组合性</strong>：可以将多个Mixin类组合到一个类中，从而为该类提供多种功能。这种方式支持多重继承。</li>
-</ol>
-<p>示例</p>
-<p>以下是一个简单的示例，展示了如何在Python中使用Mixin：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">JSONMixin</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">to_json</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">return</span> json.dumps(<span class="variable language_">self</span>.__dict__)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XMLMixin</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">to_xml</span>(<span class="params">self</span>):</span><br><span class="line">        xml = <span class="string">&quot;&lt;object&gt;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="variable language_">self</span>.__dict__.items():</span><br><span class="line">            xml += <span class="string">f&quot;&lt;<span class="subst">&#123;key&#125;</span>&gt;<span class="subst">&#123;value&#125;</span>&lt;/<span class="subst">&#123;key&#125;</span>&gt;&quot;</span></span><br><span class="line">        xml += <span class="string">&quot;&lt;/object&gt;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> xml</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>(JSONMixin, XMLMixin):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, age</span>):</span><br><span class="line">        <span class="variable language_">self</span>.name = name</span><br><span class="line">        <span class="variable language_">self</span>.age = age</span><br><span class="line"></span><br><span class="line">person = Person(<span class="string">&quot;Alice&quot;</span>, <span class="number">30</span>)</span><br><span class="line"><span class="built_in">print</span>(person.to_json())  <span class="comment"># &#123;&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30&#125;</span></span><br><span class="line"><span class="built_in">print</span>(person.to_xml())   <span class="comment"># &lt;object&gt;&lt;name&gt;Alice&lt;/name&gt;&lt;age&gt;30&lt;/age&gt;&lt;/object&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-参考"><a href="#2-参考" class="headerlink" title="2. 参考"></a>2. 参考</h4><ol>
-<li><a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/mixins/">Mixins</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/" class="post-title-link" itemprop="url">最大似然估计</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-23 16:48:27 / Modified: 17:03:02" itemprop="dateCreated datePublished" datetime="2024-10-23T16:48:27+08:00">2024-10-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/probability-theory/" itemprop="url" rel="index"><span itemprop="name">probability theory</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="最大似然估计"><a href="#最大似然估计" class="headerlink" title="最大似然估计"></a>最大似然估计</h2><p>​	在统计学中，<strong>最大似然估计</strong>（maximum likelihood estimation，简作<strong>MLE</strong>），也称<strong>极大似然估计</strong>，是用来估计一个概率模型的参数的一种方法。</p>
-<h5 id="最大似然估计的原理"><a href="#最大似然估计的原理" class="headerlink" title="最大似然估计的原理"></a>最大似然估计的原理</h5><p>给定一个概率分布$D$，已知其概率密度函数（连续分布）或概率质量函数（离散分布）为$f_D$，以及一个分布参数$\theta$，我们可以从这个分布中抽出一个具有$n$个值的采样$X_1, X_2, \dots, X_n$，利用$f_D$计算出其似然函数：<br>$$<br>{\mbox{L}}(\theta \mid x_{1},\dots ,x_{n})&#x3D;f_{\theta }(x_{1},\dots ,x_{n}).<br>$$<br>若$D$是离散分布，$f_{\theta}$即是在参数为$\theta$时观测到这一采样的概率；若其是连续分布，$f_{\theta}$则为$X_1, X_2, \dots, X_n$联合分布的概率密度函数在观测值处的取值。一旦我们获得$X_1, X_2, \dots, X_n$，我们就能求得一个关于$\theta$的估计。最大似然估计会寻找关于$\theta$的最可能的值（即，在所有可能的$\theta$取值中，寻找一个值使这个采样的“可能性”最大化）。从数学上来说，我们可以在$\theta$的所有可能取值中寻找一个值使得似然函数取到最大值。这个使可能性最大的$\widehat {\theta }$值即称为$\theta$的<strong>最大似然估计</strong>。由定义，最大似然估计是样本的函数。</p>
-<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p>​	考虑一个抛硬币的例子。假设这个硬币正面跟反面轻重不同。我们把这个硬币抛80次（即，我们获取一个采样$x_1&#x3D;H,x_2&#x3D;T,…,x_{80}&#x3D;T$并把正面的次数记下来，正面记为H，反面记为T）。并把抛出一个正面的概率记为$p$，抛出一个反面的概率记为$1-p$（因此，这里的$p$即相当于上方的$\theta$）。假设我们抛出了49个正面，31个反面，即49次H，31次T。假设这个硬币是我们从一个装了三个硬币的盒子里头取出的。这三个硬币抛出正面的概率分别为$p&#x3D;1&#x2F;3, p&#x3D;1&#x2F;2, p&#x3D;2&#x2F;3$，这些硬币没有标记，所以我们无法知道哪个是哪个。使用<strong>最大似然估计</strong>，基于<strong>二项分布</strong>中的<strong>概率质量函数</strong>公式，通过这些试验数据（即采样数据)，我们可以计算出哪个硬币的可能性最大。这个似然函数取以下三个值中的一个：<br>$$<br>{\begin{matrix}\mathbb {L} (p&#x3D;1&#x2F;3\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;1&#x2F;3)&amp;&#x3D;&amp;{80 \choose 49}(1&#x2F;3)^{49}(1-1&#x2F;3)^{31}\approx 0.000\&amp;&amp;\\mathbb {L} (p&#x3D;1&#x2F;2\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;1&#x2F;2)&amp;&#x3D;&amp;{80 \choose 49}(1&#x2F;2)^{49}(1-1&#x2F;2)^{31}\approx 0.012\&amp;&amp;\\mathbb {L} (p&#x3D;2&#x2F;3\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;2&#x2F;3)&amp;&#x3D;&amp;{80 \choose 49}(2&#x2F;3)^{49}(1-2&#x2F;3)^{31}\approx 0.054\\end{matrix}}<br>$$</p>
-<p>我们可以看到当${\widehat {p}}&#x3D;2&#x2F;3$时，似然函数取得最大值。<br>显然地，这硬币的公平性和那种抛出后正面的概率是$\frac{2}{3}$的硬币是最接近的。这就是$p$的最大似然估计。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/22/machine%20learning/logistic-function/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/22/machine%20learning/logistic-function/" class="post-title-link" itemprop="url">logistic function</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-22 16:16:43 / Modified: 16:40:44" itemprop="dateCreated datePublished" datetime="2024-10-22T16:16:43+08:00">2024-10-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine learning</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Logistic-Function"><a href="#Logistic-Function" class="headerlink" title="Logistic Function"></a>Logistic Function</h2><p>A <strong>logistic function</strong> or <strong>logistic curve</strong> is a common S-shaped curve (sigmoid curve) with the equation<br>$$<br>f(x)&#x3D;{\frac {L}{1+e^{-k(x-x_{0})}}}<br>$$<br>where</p>
-<ul>
-<li><p>$L$ is the carrying capacity, the supremum of the values of the function;</p>
-</li>
-<li><p>$k$ is the logistic growth rate, the steepness of the curve; and</p>
-</li>
-<li><p>$x_0$ is the $x$ value of the function’s midpoint</p>
-</li>
-</ul>
-<p>The logistic function has domain the real numbers, the limit as $x \rightarrow -\infty$ is 0, and the limit as $x \rightarrow +\infty$ is $L$.</p>
-<p>The <strong>standard logistic function</strong>, depicted at right, where $L &#x3D; 1, k &#x3D; 1, x_0 &#x3D; 0$ has the equation<br>$$<br>f(x)&#x3D;{\frac {1}{1+e^{-x}}}<br>$$<br>and is sometimes simply called <strong>the sigmoid</strong>. It is also sometimes called the <strong>expit</strong>, being the inverse function of the logit.</p>
-<p><img src="/logistic-function.png"></p>
-<h4 id="1-Mathematical-properties"><a href="#1-Mathematical-properties" class="headerlink" title="1. Mathematical properties"></a>1. Mathematical properties</h4><h5 id="1-1-Symmetries"><a href="#1-1-Symmetries" class="headerlink" title="1.1 Symmetries"></a>1.1 Symmetries</h5><p>$$<br>1 - f(x) &#x3D; f(-x)<br>$$</p>
-<p>Further, $x \mapsto f(x) - \frac{1}{2}$ is an odd function.</p>
-<h5 id="1-2-Inverse-function"><a href="#1-2-Inverse-function" class="headerlink" title="1.2 Inverse function"></a>1.2 Inverse function</h5><p>The logistic function is the inverse of the natural logit function<br>$$<br>\operatorname {logit} p&#x3D;\log {\frac {p}{1-p}}{\text{ for }}0&lt;p&lt;1<br>$$</p>
-<p>and so converts the logarithm of odds into a probability. The conversion from the log-likelihood ratio of two alternatives also takes the form of a logistic curve.</p>
-<p>证：</p>
-<p>令$p&#x3D;\frac{1}{1+e^{-x}} \Rightarrow \operatorname{logit} p &#x3D; \log \frac{\frac{1}{1+e^{-x}} }{1-\frac{1}{1+e^{-x}} } &#x3D; \log e^x &#x3D; x$</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

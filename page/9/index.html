@@ -112,13 +112,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -139,6 +139,456 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/30/leetcode/leetcode%201381/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/30/leetcode/leetcode%201381/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-09-30 22:27:15" itemprop="dateCreated datePublished" datetime="2024-09-30T22:27:15+08:00">2024-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-08 16:50:03" itemprop="dateModified" datetime="2024-10-08T16:50:03+08:00">2024-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="leetcode-1381"><a href="#leetcode-1381" class="headerlink" title="leetcode 1381"></a>leetcode 1381</h2><p>Design a stack that supports increment operations on its elements.</p>
+<p>Implement the <code>CustomStack</code> class:</p>
+<ul>
+<li><code>CustomStack(int maxSize)</code> Initializes the object with <code>maxSize</code> which is the maximum number of elements in the stack.</li>
+<li><code>void push(int x)</code> Adds <code>x</code> to the top of the stack if the stack has not reached the <code>maxSize</code>.</li>
+<li><code>int pop()</code> Pops and returns the top of the stack or <code>-1</code> if the stack is empty.</li>
+<li><code>void inc(int k, int val)</code> Increments the bottom <code>k</code> elements of the stack by <code>val</code>. If there are less than <code>k</code> elements in the stack, increment all the elements in the stack.</li>
+</ul>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Input</span><br><span class="line">[&quot;CustomStack&quot;,&quot;push&quot;,&quot;push&quot;,&quot;pop&quot;,&quot;push&quot;,&quot;push&quot;,&quot;push&quot;,&quot;increment&quot;,&quot;increment&quot;,&quot;pop&quot;,&quot;pop&quot;,&quot;pop&quot;,&quot;pop&quot;]</span><br><span class="line">[[3],[1],[2],[],[2],[3],[4],[5,100],[2,100],[],[],[],[]]</span><br><span class="line">Output</span><br><span class="line">[null,null,null,2,null,null,null,null,null,103,202,201,-1]</span><br><span class="line">Explanation</span><br><span class="line">CustomStack stk = new CustomStack(3); // Stack is Empty []</span><br><span class="line">stk.push(1);                          // stack becomes [1]</span><br><span class="line">stk.push(2);                          // stack becomes [1, 2]</span><br><span class="line">stk.pop();                            // return 2 --&gt; Return top of the stack 2, stack becomes [1]</span><br><span class="line">stk.push(2);                          // stack becomes [1, 2]</span><br><span class="line">stk.push(3);                          // stack becomes [1, 2, 3]</span><br><span class="line">stk.push(4);                          // stack still [1, 2, 3], Do not add another elements as size is 4</span><br><span class="line">stk.increment(5, 100);                // stack becomes [101, 102, 103]</span><br><span class="line">stk.increment(2, 100);                // stack becomes [201, 202, 103]</span><br><span class="line">stk.pop();                            // return 103 --&gt; Return top of the stack 103, stack becomes [201, 202]</span><br><span class="line">stk.pop();                            // return 202 --&gt; Return top of the stack 202, stack becomes [201]</span><br><span class="line">stk.pop();                            // return 201 --&gt; Return top of the stack 201, stack becomes []</span><br><span class="line">stk.pop();                            // return -1 --&gt; Stack is empty return -1.</span><br></pre></td></tr></table></figure>
+
+<p>思路：</p>
+<p>利用Lazy Propagate.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CustomStack</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; stack_array;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; incr_array;</span><br><span class="line">    <span class="type">int</span> top_index;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">CustomStack</span>(<span class="type">int</span> max_size) : <span class="built_in">stack_array</span>(max_size), <span class="built_in">incr_array</span>(max_size), top_index&#123;<span class="number">-1</span>&#125; &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (top_index &lt; (<span class="type">int</span>)(stack_array.<span class="built_in">size</span>()) - <span class="number">1</span>) &#123;</span><br><span class="line">        stack_array[++top_index] = x;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (top_index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="type">int</span> result = stack_array[top_index] + incr_array[top_index];</span><br><span class="line">      </span><br><span class="line">      <span class="keyword">if</span> (top_index &gt; <span class="number">0</span>) &#123;</span><br><span class="line">				incr_array[top_index - <span class="number">1</span>] += incr_array[top_index];</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      incr_array[top_index] = <span class="number">0</span>;</span><br><span class="line">      top_index--;</span><br><span class="line">      </span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">increment</span><span class="params">(<span class="type">int</span> k, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (top_index &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="type">int</span> index = std::<span class="built_in">min</span>(top_index, k - <span class="number">1</span>);</span><br><span class="line">        incr_array[index] += val;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/30/cuda/cuda%20block/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/30/cuda/cuda%20block/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-09-30 21:12:46" itemprop="dateCreated datePublished" datetime="2024-09-30T21:12:46+08:00">2024-09-30</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="cuda-block"><a href="#cuda-block" class="headerlink" title="cuda block"></a>cuda block</h2><h5 id="Block"><a href="#Block" class="headerlink" title="Block:"></a>Block:</h5><p>定义：Block是线程的集合，表示在GPU上并行执行的基本单位。每个Block可以包含多个线程。</p>
+<p>大小：Block的大小（即线程的数量）可以在1D、2D或3D结构中定义。例如，1D block可以是<code>blockDim.x</code>，2D block可以是<code>blockDim.x</code>和<code>blockDim.y</code>。</p>
+<p>共享内存：同一个block内的线程可以访问共享内存，便于线程间通信和数据共享 。</p>
+<p>限制：每个block的线程数量是有限制的，通常在1024或更少，取决于GPU架构。</p>
+<h5 id="Grid"><a href="#Grid" class="headerlink" title="Grid:"></a>Grid:</h5><p>定义：Grid是由多个blocks组成的集合，表示在GPU上执行的高层次的并行结构。</p>
+<p>大小：Grid的大小可以是1D、2D或3D结构，定义了整个计算任务的规模。</p>
+<p>调度：Grid中的blocks可以独立调度，GPU可以并行执行多个blocks，直到计算完成。</p>
+<p>All threads spawned by a single kernel launch are collectively called a grid. All threads in a grid share the same global memory space. A grid is made up of many thread blocks. A thread block is a group of threads that can cooperate with each other using:</p>
+<ul>
+<li>Block-local synchronization</li>
+<li>Block-local shared memory</li>
+</ul>
+<p>Threads from different blocks cannot cooperate.<br>Threads rely on the following two unique coordinates to distinguish themselves from each other:</p>
+<ul>
+<li>blockIdx (block index within a grid)</li>
+<li>threadIdx (thread index within a block)</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cuda_runtime.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;device_launch_parameters.h&gt;</span> <span class="comment">// blockIdx, blockDim</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">checkIndex</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;threadIdx:(%d, %d, %d) blockIdx:(%d, %d, %d) blockDim:(%d, %d, %d) &quot;</span></span><br><span class="line">		<span class="string">&quot;gridDim:(%d, %d, %d)\n&quot;</span>, threadIdx.x, threadIdx.y, threadIdx.z,</span><br><span class="line">		blockIdx.x, blockIdx.y, blockIdx.z, blockDim.x, blockDim.y, blockDim.z,</span><br><span class="line">		gridDim.x, gridDim.y, gridDim.z);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// define total data element</span></span><br><span class="line">	<span class="type">int</span> nElem = <span class="number">6</span>;</span><br><span class="line">	<span class="comment">// define grid and block structure</span></span><br><span class="line">	<span class="function">dim3 <span class="title">block</span><span class="params">(<span class="number">3</span>)</span></span>;</span><br><span class="line">	<span class="function">dim3 <span class="title">grid</span><span class="params">((nElem + block.x - <span class="number">1</span>) / block.x)</span></span>;</span><br><span class="line">	<span class="comment">// check grid and block dimension from host side</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;grid.x %d grid.y %d grid.z %d\n&quot;</span>, grid.x, grid.y, grid.z);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;block.x %d block.y %d block.z %d\n&quot;</span>, block.x, block.y, block.z);</span><br><span class="line">	<span class="comment">// check grid and block dimension from device side</span></span><br><span class="line">	checkIndex &lt;&lt;&lt;grid, block&gt;&gt;&gt; ();</span><br><span class="line">	<span class="comment">// reset device before you leave</span></span><br><span class="line">	<span class="built_in">cudaDeviceReset</span>();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">grid.x 2 grid.y 1 grid.z 1</span><br><span class="line">block.x 3 block.y 1 block.z 1</span><br><span class="line">threadIdx:(0, 0, 0) blockIdx:(0, 0, 0) blockDim:(3, 1, 1) gridDim:(2, 1, 1)</span><br><span class="line">threadIdx:(1, 0, 0) blockIdx:(0, 0, 0) blockDim:(3, 1, 1) gridDim:(2, 1, 1)</span><br><span class="line">threadIdx:(2, 0, 0) blockIdx:(0, 0, 0) blockDim:(3, 1, 1) gridDim:(2, 1, 1)</span><br><span class="line">threadIdx:(0, 0, 0) blockIdx:(1, 0, 0) blockDim:(3, 1, 1) gridDim:(2, 1, 1)</span><br><span class="line">threadIdx:(1, 0, 0) blockIdx:(1, 0, 0) blockDim:(3, 1, 1) gridDim:(2, 1, 1)</span><br><span class="line">threadIdx:(2, 0, 0) blockIdx:(1, 0, 0) blockDim:(3, 1, 1) gridDim:(2, 1, 1)</span><br></pre></td></tr></table></figure>
+
+<p>如何决定grid和block的dimension</p>
+<p>For a given data size, the general steps to determine the grid and block dimensions are:</p>
+<ul>
+<li>Decide the block size.</li>
+<li>Calculate the grid dimension based on the application data size and the block size.</li>
+</ul>
+<p>To determine the block dimension, you usually need to consider:</p>
+<ul>
+<li>Performance characteristics of the kernel</li>
+<li>Limitations on GPU resources</li>
+</ul>
+<p>Launching a CUDA Kernel<br>You are familiar with the following C function call syntax:<br>function_name (argument list);<br>A CUDA kernel call is a direct extension to the C function syntax that adds a kernel’s execution<br>confi guration inside triple-angle-brackets:<br>kernel_name &lt;&lt;&lt;grid, block&gt;&gt;&gt;(argument list);<br>As explained in the previous section, the CUDA programming model exposes the thread hierarchy.<br>With the execution confi guration, you can specify how the threads will be scheduled to run on the<br>GPU. The fi rst value in the execution confi guration is the grid dimension, the number of blocks to<br>launch. The second value is the block dimension, the number of threads within each block. By speci-<br>fying the grid and block dimensions, you confi gure:<br>➤<br>The total number of threads for a kernel<br>➤<br>The layout of the threads you want to employ for a kernel</p>
+<p>Writing Your Kernel<br>A kernel function is the code to be executed on the device side. In a kernel function, you defi ne the<br>computation for a single thread, and the data access for that thread. When the kernel is called, many<br>different CUDA threads perform the same computation in parallel. A kernel is defi ned using the<br><strong>global</strong> declaration specifi cation as shown:<br><strong>global</strong> void kernel_name(argument list);</p>
+<p>A kernel function must have a void return type.</p>
+<table>
+<thead>
+<tr>
+<th>QUALIFIERS</th>
+<th>EXECUTION</th>
+<th>CALLABLE</th>
+<th>NOTES</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>__global__</code></td>
+<td>Executed on the device</td>
+<td>Callable from the host.                Callable from the device for devices of compute capability</td>
+<td>Must have a void return type</td>
+</tr>
+<tr>
+<td><code>__device__</code></td>
+<td>Executed on the device</td>
+<td>Callable from the device only</td>
+<td></td>
+</tr>
+<tr>
+<td><code>__host__</code></td>
+<td>Executed on the host</td>
+<td>Callable from the host only</td>
+<td>Can be omitted</td>
+</tr>
+</tbody></table>
+<p>CUDA KERNELS ARE FUNCTIONS WITH RESTRICTIONS<br>The following restrictions apply for all kernels:<br>➤<br>Access to device memory only<br>➤<br>Must have void return type<br>➤<br>No support for a variable number of arguments<br>➤<br>No support for static variables<br>➤<br>No support for function pointers<br>➤<br>Exhibit an asynchronous behavior</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/29/git/git%20checkout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/29/git/git%20checkout/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-09-29 22:35:01" itemprop="dateCreated datePublished" datetime="2024-09-29T22:35:01+08:00">2024-09-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-08 22:50:17" itemprop="dateModified" datetime="2024-10-08T22:50:17+08:00">2024-10-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a><code>git checkout</code></h2><p><code>git checkout</code>是一个非常重要的<code>git</code>命令，常用于<strong>切换分支</strong>和<strong>恢复文件</strong>。以下是一些常见用法：</p>
+<h4 id="1-切换分支"><a href="#1-切换分支" class="headerlink" title="1. 切换分支"></a>1. 切换分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout branch-name</span><br></pre></td></tr></table></figure>
+
+<p>切换到指定的分支<code>branch-name</code>。</p>
+<h4 id="2-创建新分支并切换"><a href="#2-创建新分支并切换" class="headerlink" title="2. 创建新分支并切换"></a>2. 创建新分支并切换</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b new-branch-name</span><br></pre></td></tr></table></figure>
+
+<p>创建一个新的分支<code>new-branch-name</code>并切换到该分支。</p>
+<h4 id="3-恢复文件到某个提交"><a href="#3-恢复文件到某个提交" class="headerlink" title="3. 恢复文件到某个提交"></a>3. 恢复文件到某个提交</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout commit-hash -- path/to/file</span><br></pre></td></tr></table></figure>
+
+<p>将指定的文件恢复到某个提交（<code>commit-hash</code>）的状态。</p>
+<h4 id="4-恢复整个工作区"><a href="#4-恢复整个工作区" class="headerlink" title="4. 恢复整个工作区"></a>4. 恢复整个工作区</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- .</span><br></pre></td></tr></table></figure>
+
+<p>将当前工作区的所有文件恢复到上次提交的状态。</p>
+<h4 id="5-切换到最近的分支"><a href="#5-切换到最近的分支" class="headerlink" title="5. 切换到最近的分支"></a>5. 切换到最近的分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -</span><br></pre></td></tr></table></figure>
+
+<p>切换回上一个分支。</p>
+<h4 id="6-查看某个提交的内容"><a href="#6-查看某个提交的内容" class="headerlink" title="6. 查看某个提交的内容"></a>6. 查看某个提交的内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout commit-hash</span><br></pre></td></tr></table></figure>
+
+<p>查看某个提交的状态，但注意这会让你进入“游离 HEAD”状态。</p>
+<p><code>git checkout</code>到特定的提交而不是分支时，<code>HEAD</code>指针指向某个提交，但不指向任何分支。此时处于一种特殊的状态，称为“游离 HEAD”状态。</p>
+<p><strong>Example</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">A</span> -- <span class="selector-tag">B</span> -- C (master)</span><br><span class="line">          ^</span><br><span class="line">         HEAD</span><br></pre></td></tr></table></figure>
+
+<p>在上图中，<code>HEAD</code>指向分支 <code>master</code> 的最新提交 <code>C</code>。</p>
+<p>游离<code>HEAD</code>状态:</p>
+<p>​	使用 <code>git checkout commit-hash</code>切换到某个具体提交，例如 <code>B</code>，图示变为：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">A</span> -- <span class="selector-tag">B</span> -- C (master)</span><br><span class="line">     ^</span><br><span class="line">    HEAD (游离状态)</span><br></pre></td></tr></table></figure>
+
+<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ul>
+<li><strong>没有分支</strong>：HEAD 不再指向任何分支，因此在此状态下进行的提交不会被记录到任何分支上。</li>
+<li><strong>提交的后果</strong>：如果你在这个状态下进行了提交，Git 会创建一个新的提交，但你需要手动将其移动到某个分支上，否则它将孤立。</li>
+</ul>
+<h5 id="如何回到正常状态"><a href="#如何回到正常状态" class="headerlink" title="如何回到正常状态"></a>如何回到正常状态</h5><ul>
+<li><p><strong>切换回分支</strong>：使用<code>git checkout branch-name</code>回到某个分支。</p>
+</li>
+<li><p>创建新分支</p>
+<ul>
+<li>如果希望保留当前的更改，可以创建一个新分支：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b new-branch-name</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=GN36mrrM12k">Using Git: What is a “Detached HEAD”?</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/29/leetcode/leetcode%20432/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/29/leetcode/leetcode%20432/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-09-29 20:45:43" itemprop="dateCreated datePublished" datetime="2024-09-29T20:45:43+08:00">2024-09-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-08 16:49:33" itemprop="dateModified" datetime="2024-10-08T16:49:33+08:00">2024-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="leetcode-432"><a href="#leetcode-432" class="headerlink" title="leetcode 432"></a>leetcode 432</h2><p>Design a data structure to store the strings’ count with the ability to return the strings with minimum and maximum counts.</p>
+<p>Implement the <code>AllOne</code> class:</p>
+<ul>
+<li><code>AllOne()</code> Initializes the object of the data structure.</li>
+<li><code>inc(String key)</code> Increments the count of the string <code>key</code> by <code>1</code>. If <code>key</code> does not exist in the data structure, insert it with count <code>1</code>.</li>
+<li><code>dec(String key)</code> Decrements the count of the string <code>key</code> by <code>1</code>. If the count of <code>key</code> is <code>0</code> after the decrement, remove it from the data structure. It is guaranteed that <code>key</code> exists in the data structure before the decrement.</li>
+<li><code>getMaxKey()</code> Returns one of the keys with the maximal count. If no element exists, return an empty string <code>&quot;&quot;</code>.</li>
+<li><code>getMinKey()</code> Returns one of the keys with the minimum count. If no element exists, return an empty string <code>&quot;&quot;</code>.</li>
+</ul>
+<p><strong>Note</strong> that each function must run in <code>O(1)</code> average time complexity.</p>
+<p>思路：</p>
+<p><img src="https://leetcode.com/problems/all-oone-data-structure/Figures/432/432_allOone.png" alt="AllOone"></p>
+<p>代码实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Node</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="type">int</span> freq;</span><br><span class="line">    Node* prev;</span><br><span class="line">    Node* next;</span><br><span class="line">    unordered_set&lt;string&gt; keys;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Node</span>(<span class="type">int</span> freq, Node* prev = <span class="literal">nullptr</span>, Node* next = <span class="literal">nullptr</span>) </span><br><span class="line">      : freq&#123;freq&#125;, prev&#123;prev&#125;, next&#123;next&#125; &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AllOne</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    Node* head;                        <span class="comment">// Dummy head</span></span><br><span class="line">    Node* tail;                        <span class="comment">// Dummy tail</span></span><br><span class="line">    unordered_map&lt;string, Node*&gt; map;  <span class="comment">// Mapping from key to its node</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    <span class="built_in">AllOne</span>() &#123;</span><br><span class="line">        head = <span class="keyword">new</span> <span class="built_in">Node</span>(<span class="number">0</span>);  <span class="comment">// Create dummy head</span></span><br><span class="line">        tail = <span class="keyword">new</span> <span class="built_in">Node</span>(<span class="number">0</span>);  <span class="comment">// Create dummy tail</span></span><br><span class="line">        head-&gt;next = tail;   <span class="comment">// Link dummy head to dummy tail</span></span><br><span class="line">        tail-&gt;prev = head;   <span class="comment">// Link dummy tail to dummy head</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Inserts a new key &lt;Key&gt; with value 1. Or increments an existing key by 1.</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">inc</span><span class="params">(string key)</span> </span>&#123;</span><br><span class="line">      	<span class="comment">// Case if:</span></span><br><span class="line">      	<span class="comment">//	如果key存在</span></span><br><span class="line">      	<span class="comment">// Case else:</span></span><br><span class="line">      	<span class="comment">// 	如果key不存在</span></span><br><span class="line">        <span class="keyword">if</span> (map.<span class="built_in">find</span>(key) != map.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            Node* node = map[key];</span><br><span class="line">            <span class="type">int</span> freq = node-&gt;freq;</span><br><span class="line">            node-&gt;keys.<span class="built_in">erase</span>(key);  <span class="comment">// Remove key from current node</span></span><br><span class="line"></span><br><span class="line">            Node* next_node = node-&gt;next;</span><br><span class="line">          		</span><br><span class="line">          	<span class="comment">// Case if:</span></span><br><span class="line">          	<span class="comment">//  如果下一个节点是尾部或者写一个节点的频率不等于freq + 1</span></span><br><span class="line">          	<span class="comment">//  创建一个新的节点</span></span><br><span class="line">          	<span class="comment">// Case else:</span></span><br><span class="line">          	<span class="comment">//  只要将当前的key插入到下一个节点的map中即可</span></span><br><span class="line">            <span class="keyword">if</span> (next_node == tail || next_node-&gt;freq != freq + <span class="number">1</span>) &#123;</span><br><span class="line">                Node* new_node = <span class="keyword">new</span> <span class="built_in">Node</span>(freq + <span class="number">1</span>, node, next_node);</span><br><span class="line">                new_node-&gt;keys.<span class="built_in">insert</span>(key);</span><br><span class="line">                node-&gt;next = new_node;</span><br><span class="line">                next_node-&gt;prev = new_node;</span><br><span class="line">                map[key] = new_node;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                next_node-&gt;keys.<span class="built_in">insert</span>(key);</span><br><span class="line">                map[key] = next_node;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 当前节点keys为空</span></span><br><span class="line">            <span class="keyword">if</span> (node-&gt;keys.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">                <span class="built_in">remove_node</span>(node);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Node* first_node = head-&gt;next;</span><br><span class="line">          	<span class="comment">// Case if:</span></span><br><span class="line">          	<span class="comment">//	当前链表为空或者第一个节点的频率不为1</span></span><br><span class="line">          	<span class="comment">// Case else:</span></span><br><span class="line">          	<span class="comment">// 	当前链表不为空同时第一个节点的频率为1</span></span><br><span class="line">            <span class="keyword">if</span> (first_node == tail || first_node-&gt;freq &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                Node* new_node = <span class="keyword">new</span> <span class="built_in">Node</span>(<span class="number">1</span>, head, first_node);</span><br><span class="line">                new_node-&gt;keys.<span class="built_in">insert</span>(key);</span><br><span class="line">                head-&gt;next = new_node;</span><br><span class="line">                first_node-&gt;prev = new_node;</span><br><span class="line">                map[key] = new_node;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                first_node-&gt;keys.<span class="built_in">insert</span>(key);</span><br><span class="line">                map[key] = first_node;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Decrements an existing key by 1. If Key&#x27;s value is 1, remove it from the</span></span><br><span class="line">    <span class="comment">// data structure.</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dec</span><span class="params">(string key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (map.<span class="built_in">find</span>(key) == map.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Node* node = map[key];</span><br><span class="line">        node-&gt;keys.<span class="built_in">erase</span>(key);</span><br><span class="line">        <span class="type">int</span> freq = node-&gt;freq;</span><br><span class="line">				</span><br><span class="line">      	<span class="comment">// Case if:</span></span><br><span class="line">      	<span class="comment">//	如果当前节点的频率为1 需要从map中删除key</span></span><br><span class="line">        <span class="keyword">if</span> (freq == <span class="number">1</span>) &#123;</span><br><span class="line">            map.<span class="built_in">erase</span>(key);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          	<span class="comment">// Case if:</span></span><br><span class="line">          	<span class="comment">//	如果前一个节点是head哨兵 或者前一个节点的频率不等于freq-1</span></span><br><span class="line">          	<span class="comment">// 	需要创建一个新的节点</span></span><br><span class="line">            Node* prev_node = node-&gt;prev;</span><br><span class="line">            <span class="keyword">if</span> (prev_node == head || prev_node-&gt;freq != freq - <span class="number">1</span>) &#123;</span><br><span class="line">                Node* new_node = <span class="keyword">new</span> <span class="built_in">Node</span>(freq - <span class="number">1</span>, prev_node, node);</span><br><span class="line">                new_node-&gt;keys.<span class="built_in">insert</span>(key);</span><br><span class="line">                prev_node-&gt;next = new_node;</span><br><span class="line">                node-&gt;prev = new_node;</span><br><span class="line">                map[key] = new_node;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                prev_node-&gt;keys.<span class="built_in">insert</span>(key);</span><br><span class="line">                map[key] = prev_node;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (node-&gt;keys.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            <span class="built_in">remove_node</span>(node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Returns one of the keys with maximal value.</span></span><br><span class="line">    <span class="function">string <span class="title">getMaxKey</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (tail-&gt;prev == head) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;  <span class="comment">// No keys exist</span></span><br><span class="line">        &#125;</span><br><span class="line">      </span><br><span class="line">        <span class="keyword">return</span> *(tail-&gt;prev-&gt;keys.<span class="built_in">begin</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Returns one of the keys with minimal value.</span></span><br><span class="line">    <span class="function">string <span class="title">getMinKey</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (head-&gt;next == tail) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      </span><br><span class="line">        <span class="keyword">return</span> *(head-&gt;next-&gt;keys.<span class="built_in">begin</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">remove_node</span><span class="params">(Node* node)</span> </span>&#123;</span><br><span class="line">        Node* prev_node = node-&gt;prev;</span><br><span class="line">        Node* next_node = node-&gt;next;</span><br><span class="line"></span><br><span class="line">        prev_node-&gt;next = next_node;</span><br><span class="line">        next_node-&gt;prev = prev_node;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">delete</span> node;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -648,435 +1098,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/17/raft/raft%E4%B9%8B%E6%88%90%E5%91%98%E5%8F%98%E6%9B%B4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/17/raft/raft%E4%B9%8B%E6%88%90%E5%91%98%E5%8F%98%E6%9B%B4/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-04-17 14:54:28 / Modified: 14:55:58" itemprop="dateCreated datePublished" datetime="2024-04-17T14:54:28+08:00">2024-04-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="raft之成员变更"><a href="#raft之成员变更" class="headerlink" title="raft之成员变更"></a>raft之成员变更</h2><h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/359206808">Raft成员变更的工程实践</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/342319702">TiDB 在 Raft 成员变更上踩的坑</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cockroachlabs.com/blog/joint-consensus-raft/">Availability and region failure: Joint consensus in CockroachDB</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/09/raft/Raft%20FAQ/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/09/raft/Raft%20FAQ/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-04-09 19:18:37" itemprop="dateCreated datePublished" datetime="2024-04-09T19:18:37+08:00">2024-04-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-04-10 15:45:44" itemprop="dateModified" datetime="2024-04-10T15:45:44+08:00">2024-04-10</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Raft-FAQ"><a href="#Raft-FAQ" class="headerlink" title="Raft FAQ"></a>Raft FAQ</h2><h5 id="1-Raft为什么要持久化current-term？"><a href="#1-Raft为什么要持久化current-term？" class="headerlink" title="1. Raft为什么要持久化current term？"></a>1. Raft为什么要持久化current term？</h5><p>如果不持久化当前任期，可能会导致以下问题：</p>
-<ol>
-<li><strong>失去一致性</strong>：在 Raft 中，领导者（leader）通过不断地发送心跳消息来维持其在任期内的领导地位。如果不持久化当前任期，那么当系统重新启动或领导者崩溃时，系统可能无法知道当前的任期，从而可能导致多个节点都认为自己是领导者，导致分区，从而破坏了一致性。</li>
-<li><strong>领导者选举问题</strong>：Raft 中的领导者选举是基于任期号的。如果不持久化当前任期，系统可能无法正确地执行领导者选举过程，导致选举过程出现问题，从而无法正常地选举出新的领导者。</li>
-<li><strong>日志一致性问题</strong>：Raft 中的日志复制依赖于当前任期的信息。如果不持久化当前任期，系统可能无法正确地执行日志复制过程，导致日志不一致，从而影响系统的正确性和可靠性。</li>
-</ol>
-<h5 id="2-什么时候需要删除Log？"><a href="#2-什么时候需要删除Log？" class="headerlink" title="2. 什么时候需要删除Log？"></a>2. 什么时候需要删除Log？</h5><p>假设5个节点，$S_1$，$S_2$，$S_3$，$S_4$，$S_5$。</p>
-<p>$T_1$时刻通过选举，假设$S_4$获得Leader的身份。<strong>当前任期是2</strong>。</p>
-<p>$T_2$时刻$S_1$，$S_2$，$S_3$宕机，$S_4$发起AppendEntry请求，将日志添加到$S_5$上。假设发送了3次AppendEntry请求。</p>
-<table>
-<thead>
-<tr>
-<th>peer</th>
-<th>next index</th>
-<th>match index</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>$S_1$</td>
-<td>1</td>
-<td>0</td>
-</tr>
-<tr>
-<td>$S_2$</td>
-<td>1</td>
-<td>0</td>
-</tr>
-<tr>
-<td>$S_3$</td>
-<td>1</td>
-<td>0</td>
-</tr>
-<tr>
-<td>$S_5$</td>
-<td>4</td>
-<td>3</td>
-</tr>
-</tbody></table>
-<p>$T_3$时刻$S_1$，$S_2$，$S_3$重启，$S_4$和$S_5$宕机。假设经过两轮超时选举，  $S_1$成为leader，<strong>当前任期是是4</strong>。</p>
-<p>$T_4$时刻$S_1$发送AppendEntry请求。</p>
-<h6 id="发送前"><a href="#发送前" class="headerlink" title="发送前"></a>发送前</h6><p><img src="/raft1.png"></p>
-<h6 id="发送后"><a href="#发送后" class="headerlink" title="发送后"></a>发送后</h6><p><img src="/raft2.png"></p>
-<p>可以看到$S_5$删除了之前的Log。</p>
-<p>如果在<strong>任期2的时候</strong>，$S_4$服务器成功的将日志复制到一半以上的服务器上，这种情况就不会发生。</p>
-<h6 id="情况2"><a href="#情况2" class="headerlink" title="情况2"></a>情况2</h6><p><img src="/raft3.png"></p>
-<h6 id="当前任期5"><a href="#当前任期5" class="headerlink" title="当前任期5"></a>当前任期5</h6><p><img src="/raft4.png"></p>
-<p><img src="/raft5.png"></p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
-<li><p><a target="_blank" rel="noopener" href="https://raft.github.io/">https://raft.github.io/</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://tikv.org/deep-dive/scalability/multi-raft/">Multi-raft</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://elasticell.readthedocs.io/en/latest/architecture/multi-raft/">Multi-Raft</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://timilearning.com/posts/mit-6.824/lecture-12-distributed-transactions/">MIT 6.824: Lecture 12 - Distributed Transactions</a></p>
-<p>Two Phase Commit和Raft</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/18/c++/faq/2024-01-18/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/01/18/c++/faq/2024-01-18/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-01-18 18:22:55" itemprop="dateCreated datePublished" datetime="2024-01-18T18:22:55+08:00">2024-01-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-01-19 13:41:13" itemprop="dateModified" datetime="2024-01-19T13:41:13+08:00">2024-01-19</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="2024-01-18"><a href="#2024-01-18" class="headerlink" title="2024-01-18"></a>2024-01-18</h2><h5 id="1-std-launder"><a href="#1-std-launder" class="headerlink" title="1. std::launder"></a>1. std::launder</h5><p>看上去的作用可以防止编译器做一些优化？</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">X</span> &#123; <span class="type">const</span> <span class="type">int</span> n; &#125;;</span><br><span class="line"><span class="keyword">union</span> <span class="title class_">U</span> &#123; X x; <span class="type">float</span> f; &#125;;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">U u = &#123;&#123; <span class="number">1</span> &#125;&#125;;</span><br><span class="line"></span><br><span class="line">X *p = <span class="built_in">new</span> (&amp;u.x) X &#123;<span class="number">2</span>&#125;;</span><br><span class="line"><span class="built_in">assert</span>(*std::<span class="built_in">launder</span>(&amp;u.x.n) == <span class="number">2</span>); <span class="comment">// Will be true.</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="2-将destructor声明为delete"><a href="#2-将destructor声明为delete" class="headerlink" title="2. 将destructor声明为delete"></a>2. 将destructor声明为delete</h5><h5 id="3-宏定义的问题"><a href="#3-宏定义的问题" class="headerlink" title="3. 宏定义的问题"></a>3. 宏定义的问题</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unordered_map&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IS_SAME(t1, t2) static_assert(is_same_v<span class="string">&lt;t1, t2&gt;</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">using</span> value_type = <span class="type">int</span>;</span><br><span class="line">  <span class="keyword">using</span> allocator_type = std::allocator&lt;<span class="type">int</span>&gt;;</span><br><span class="line">  <span class="keyword">using</span> alloc_traits = std::allocator_traits&lt;allocator_type&gt;;</span><br><span class="line">  <span class="keyword">using</span> NodeTypes = <span class="keyword">typename</span> __make_hash_node_types&lt;</span><br><span class="line">      value_type, <span class="keyword">typename</span> alloc_traits::void_pointer&gt;::type;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">IS_SAME</span>(<span class="keyword">typename</span> NodeTypes::__node_type, __hash_node&lt;<span class="type">int</span>, <span class="type">void</span>*&gt;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">undef</span> IS_SAME</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>报错</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">filter_test.cpp:13:61: error: too many arguments provided to function-like macro invocation</span><br><span class="line">  IS_SAME(typename NodeTypes::__node_type, __hash_node&lt;int, void*&gt;);</span><br><span class="line">                                                            ^</span><br><span class="line">filter_test.cpp:4:9: note: macro <span class="string">&#x27;IS_SAME&#x27;</span> defined here</span><br><span class="line"><span class="comment">#define IS_SAME(t1, t2) static_assert(is_same_v&lt;t1, t2&gt;)</span></span><br><span class="line">        ^</span><br><span class="line">filter_test.cpp:13:3: error: use of undeclared identifier <span class="string">&#x27;IS_SAME&#x27;</span></span><br><span class="line">  IS_SAME(typename NodeTypes::__node_type, __hash_node&lt;int, void*&gt;);</span><br><span class="line">  ^</span><br><span class="line">2 errors generated.</span><br><span class="line">make: *** [filter_test] Error 1</span><br></pre></td></tr></table></figure>
-
-<p><strong>原因</strong></p>
-<p>预处理器认为<code>__hash_node&lt;int,</code>是一个参数，<code>void*&gt;</code>是另外一个参数。</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/39382501/what-is-the-purpose-of-stdlaunder">What is the purpose of std::launder?</a></li>
-<li><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/utility/launder">std::launder</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.rangakrish.com/index.php/2020/03/04/deleted-destructor-in-c/">Deleted Destructor in C++</a></li>
-<li>[Too many arguments provided to function-like macro invocation <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/38030048/too-many-arguments-provided-to-function-like-macro-invocation">duplicate]</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/04/c++/faq/2024-01-04/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/01/04/c++/faq/2024-01-04/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-01-04 15:18:55" itemprop="dateCreated datePublished" datetime="2024-01-04T15:18:55+08:00">2024-01-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-01-05 12:32:14" itemprop="dateModified" datetime="2024-01-05T12:32:14+08:00">2024-01-05</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="2024-01-04"><a href="#2024-01-04" class="headerlink" title="2024-01-04"></a>2024-01-04</h2><h6 id="1-gettid获得线程id"><a href="#1-gettid获得线程id" class="headerlink" title="1. gettid获得线程id"></a>1. gettid获得线程id</h6><ul>
-<li>单线程中和进程id相同。</li>
-<li>多线程中短时间内（？）可以保证每个线程id不同。</li>
-<li>需要注意和<code>pthread_t</code>的区别。</li>
-<li>在现代Linux中，它直接表示内核的任务调度id，因此在&#x2F;proc文件系统中可以轻易找到对应项：&#x2F;proc&#x2F;tid或&#x2F;proc&#x2F;pid&#x2F;task&#x2F;tid。</li>
-</ul>
-<p><strong>Example 1</strong></p>
-<p>可以看到t1和t2输出相同。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;foo\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">pthread_t</span> t1, t2;</span><br><span class="line">  pthread_create(&amp;t1, <span class="literal">NULL</span>, foo, <span class="literal">NULL</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%lx\n&quot;</span>, t1);</span><br><span class="line">  pthread_join(t1, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  pthread_create(&amp;t2, <span class="literal">NULL</span>, foo, <span class="literal">NULL</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%lx\n&quot;</span>, t2);</span><br><span class="line">  pthread_join(t2, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">7f542e7ff640</span><br><span class="line">foo</span><br><span class="line">7f542e7ff640</span><br><span class="line">foo</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>Example 2</strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%x\n&quot;</span>, getpid());</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%x\n&quot;</span>, gettid());</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">360</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">128c</span><br><span class="line">128c</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">➜  Desktop <span class="built_in">ls</span> /proc/4748/task/4748</span><br><span class="line">arch_status         cwd                loginuid   oom_score_adj  smaps</span><br><span class="line">attr                environ            maps       pagemap        smaps_rollup</span><br><span class="line">auxv                exe                mem        patch_state    stack</span><br><span class="line">cgroup              fd                 mountinfo  personality    <span class="built_in">stat</span></span><br><span class="line">children            fdinfo             mounts     projid_map     statm</span><br><span class="line">clear_refs          gid_map            net        root           status</span><br><span class="line">cmdline             io                 ns         <span class="built_in">sched</span>          syscall</span><br><span class="line"><span class="built_in">comm</span>                ksm_merging_pages  numa_maps  schedstat      uid_map</span><br><span class="line">cpu_resctrl_groups  ksm_stat           oom_adj    sessionid      wchan</span><br><span class="line">cpuset              limits             oom_score  setgroups</span><br></pre></td></tr></table></figure>
-
-
-
-<h6 id="2-builtin-expect"><a href="#2-builtin-expect" class="headerlink" title="2. __builtin_expect"></a>2. __builtin_expect</h6><p><code>__builtin_expect</code>是GCC（GNU Compiler Collection）提供的一个编译器内置函数，它允许程序员向编译器提供关于程序分支执行可能性的提示。这个函数主要用于指导编译器进行更有效的代码生成和优化，特别是针对条件分支预测。</p>
-<p>在C&#x2F;C++代码中使用<code>__builtin_expect</code>的一般形式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line">__builtin_expect(expression, expected_value)</span><br></pre></td></tr></table></figure>
-
-<p>其中：</p>
-<ul>
-<li><code>expression</code> 是一个布尔表达式或比较结果为整数0或1的表达式。</li>
-<li><code>expected_value</code> 是一个整数值0或1，表示你预期<code>expression</code>在运行时可能的结果。</li>
-</ul>
-<p>通过这种方式，你可以告诉编译器哪一侧分支更有可能被执行到。例如，如果预期某个条件经常为真，可以这样编写：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (__builtin_expect(condition, <span class="number">1</span>)) &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期会经常执行</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期较少执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>或者，如果你认为某个条件很少为真：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (__builtin_expect(condition, <span class="number">0</span>)) &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期极少执行</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 这个分支预期经常执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>尽管<code>__builtin_expect</code>不会改变程序的实际逻辑行为，但它可以帮助编译器生成更加高效的机器码，比如调整跳转指令顺序以更好地利用CPU的分支预测硬件特性。在实际编程中，<code>__builtin_expect</code>通常会被封装到宏定义中，如<code>likely</code>和<code>unlikely</code>，以便于更简洁地使用：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> likely(x) __builtin_expect((x), 1)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> unlikely(x) __builtin_expect((x), 0)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (likely(condition)) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h6 id="3-static的错误用法"><a href="#3-static的错误用法" class="headerlink" title="3. static的错误用法"></a>3. static的错误用法</h6><blockquote>
-<p>  在a.h文件中定义static int a; 在b.h中include a.h，同时c.c中include a.h和b.h。为什么没有出现多重定义</p>
-</blockquote>
-<p>在C++中，静态变量（如<code>static int a;</code>）具有文件作用域。这意味着即使你在一个头文件（比如a.h）中定义了一个静态变量，并且这个头文件被多个源文件包含，该静态变量在整个程序中也只会有一个实例。</p>
-<p>当你在b.h中包含了a.h，然后c.c中同时包含了a.h和b.h时：</p>
-<ol>
-<li>在编译阶段，每个包含a.h的源文件（这里假设是b.cpp和c.cpp）都会看到<code>static int a;</code>的声明。</li>
-<li>由于<code>a</code>是静态局部变量（根据描述推断，这里应该是静态全局变量），它的存储是在编译时分配的，并且只存在于包含其定义的编译单元（即对应的.obj或.o文件）中。</li>
-<li>链接器在链接阶段会处理所有编译后的目标文件，但因为静态变量的作用域仅限于定义它的编译单元内部，所以不会在不同的目标文件之间合并或冲突。</li>
-</ol>
-<p>因此，在这种情况下，虽然多次包含了同一个静态变量的声明，但在最终生成的可执行文件中，<code>a</code>变量只有一个实例，所以不会出现多重定义错误。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/10/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/10/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

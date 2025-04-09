@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="bitsetC++ bitset 使用笔记bitset 是 C++ 标准库中一个高效的位操作容器，特别适合处理固定大小的位标志集合。以下是我的使用总结： 一、基本特性 固定大小：大小在编译时确定，不可动态调整 高效存储：每个元素仅占1位物理空间 快速操作：支持各种位运算，直接映射到CPU指令 转换能力：可与整数、字符串相互转换  二、基本操作1. 创建与初始化cpp 复制 123456789101">
+<meta property="og:type" content="article">
+<meta property="og:title" content="bitset">
+<meta property="og:url" content="http://example.com/2025/04/08/c++/bitset/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="bitsetC++ bitset 使用笔记bitset 是 C++ 标准库中一个高效的位操作容器，特别适合处理固定大小的位标志集合。以下是我的使用总结： 一、基本特性 固定大小：大小在编译时确定，不可动态调整 高效存储：每个元素仅占1位物理空间 快速操作：支持各种位运算，直接映射到CPU指令 转换能力：可与整数、字符串相互转换  二、基本操作1. 创建与初始化cpp 复制 123456789101">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-04-08T05:05:12.701Z">
+<meta property="article:modified_time" content="2025-04-09T05:28:18.221Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/04/08/c++/bitset/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/04/08/c++/bitset/","path":"2025/04/08/c++/bitset/","title":"bitset"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>bitset | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#bitset"><span class="nav-number">1.</span> <span class="nav-text">bitset</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C-bitset-%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0"><span class="nav-number"></span> <span class="nav-text">C++ bitset 使用笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">一、基本特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">二、基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">1. 创建与初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AE%BF%E9%97%AE%E4%B8%8E%E4%BF%AE%E6%94%B9"><span class="nav-number">2.2.</span> <span class="nav-text">2. 访问与修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BD%8D%E6%93%8D%E4%BD%9C"><span class="nav-number">2.3.</span> <span class="nav-text">3. 位操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">三、查询操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">4.</span> <span class="nav-text">四、类型转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%AE%9E%E7%94%A8%E6%8A%80%E5%B7%A7"><span class="nav-number">5.</span> <span class="nav-text">五、实用技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9B%BF%E4%BB%A3%E4%BD%8D%E6%A0%87%E5%BF%97"><span class="nav-number">5.1.</span> <span class="nav-text">1. 替代位标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BD%8D%E6%8E%A9%E7%A0%81%E6%93%8D%E4%BD%9C"><span class="nav-number">5.2.</span> <span class="nav-text">2. 位掩码操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BD%8D%E9%9B%86%E5%90%88%E8%BF%90%E7%AE%97"><span class="nav-number">5.3.</span> <span class="nav-text">3. 位集合运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%80%A7%E8%83%BD%E6%95%8F%E6%84%9F%E4%BB%A3%E7%A0%81"><span class="nav-number">5.4.</span> <span class="nav-text">4. 性能敏感代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">6.</span> <span class="nav-text">六、注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E7%A4%BA%E4%BE%8B"><span class="nav-number">7.</span> <span class="nav-text">七、性能测试示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">八、总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/08/c++/bitset/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="bitset | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          bitset
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-04-08 13:05:12" itemprop="dateCreated datePublished" datetime="2025-04-08T13:05:12+08:00">2025-04-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-04-09 13:28:18" itemprop="dateModified" datetime="2025-04-09T13:28:18+08:00">2025-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="bitset"><a href="#bitset" class="headerlink" title="bitset"></a>bitset</h2><h1 id="C-bitset-使用笔记"><a href="#C-bitset-使用笔记" class="headerlink" title="C++ bitset 使用笔记"></a>C++ <code>bitset</code> 使用笔记</h1><p><code>bitset</code> 是 C++ 标准库中一个高效的位操作容器，特别适合处理固定大小的位标志集合。以下是我的使用总结：</p>
+<h2 id="一、基本特性"><a href="#一、基本特性" class="headerlink" title="一、基本特性"></a>一、基本特性</h2><ol>
+<li><strong>固定大小</strong>：大小在编译时确定，不可动态调整</li>
+<li><strong>高效存储</strong>：每个元素仅占1位物理空间</li>
+<li><strong>快速操作</strong>：支持各种位运算，直接映射到CPU指令</li>
+<li><strong>转换能力</strong>：可与整数、字符串相互转换</li>
+</ol>
+<h2 id="二、基本操作"><a href="#二、基本操作" class="headerlink" title="二、基本操作"></a>二、基本操作</h2><h3 id="1-创建与初始化"><a href="#1-创建与初始化" class="headerlink" title="1. 创建与初始化"></a>1. 创建与初始化</h3><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 默认构造（全0）</span></span><br><span class="line">std::bitset&lt;8&gt; b1;          <span class="comment">// 00000000</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 从整数构造</span></span><br><span class="line"><span class="function">std::bitset&lt;8&gt; <span class="title">b2</span><span class="params">(<span class="number">42</span>)</span></span>;      <span class="comment">// 00101010</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 从字符串构造</span></span><br><span class="line"><span class="function">std::bitset&lt;8&gt; <span class="title">b3</span><span class="params">(<span class="string">&quot;101010&quot;</span>)</span></span>; <span class="comment">// 00101010（自动右对齐）</span></span><br><span class="line"><span class="function">std::bitset&lt;8&gt; <span class="title">b4</span><span class="params">(<span class="string">&quot;101010&quot;</span>, <span class="number">4</span>)</span></span>; <span class="comment">// 只取前4位: 00001010</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 从子字符串构造</span></span><br><span class="line"><span class="function">std::bitset&lt;8&gt; <span class="title">b5</span><span class="params">(<span class="string">&quot;xx1010xx&quot;</span>, <span class="number">8</span>, <span class="string">&#x27;x&#x27;</span>)</span></span>; <span class="comment">// 忽略&#x27;x&#x27;: 00001010</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-访问与修改"><a href="#2-访问与修改" class="headerlink" title="2. 访问与修改"></a>2. 访问与修改</h3><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下标访问（从右向左，0-based）</span></span><br><span class="line"><span class="type">bool</span> bit = b2[<span class="number">1</span>];   <span class="comment">// 获取第1位（值为1）</span></span><br><span class="line">b2[<span class="number">0</span>] = <span class="number">1</span>;          <span class="comment">// 设置第0位为1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不可变访问</span></span><br><span class="line"><span class="function"><span class="type">const</span> std::bitset&lt;8&gt; <span class="title">cb</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line"><span class="type">bool</span> b = cb[<span class="number">3</span>];     <span class="comment">// OK</span></span><br><span class="line"><span class="comment">// cb[2] = 1;       // 错误！const对象不可修改</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 整体赋值</span></span><br><span class="line">b2 = <span class="number">0xAA</span>;          <span class="comment">// 10101010</span></span><br><span class="line">b3 = <span class="string">&quot;11001100&quot;</span>;    <span class="comment">// 从字符串赋值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-位操作"><a href="#3-位操作" class="headerlink" title="3. 位操作"></a>3. 位操作</h3><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基本位运算</span></span><br><span class="line"><span class="keyword">auto</span> b_and = b2 &amp; b3;   <span class="comment">// 按位与</span></span><br><span class="line"><span class="keyword">auto</span> b_or = b2 | b3;    <span class="comment">// 按位或</span></span><br><span class="line"><span class="keyword">auto</span> b_xor = b2 ^ b3;   <span class="comment">// 按位异或</span></span><br><span class="line"><span class="keyword">auto</span> b_not = ~b2;       <span class="comment">// 按位取反</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 位移操作</span></span><br><span class="line">b2 &lt;&lt;= <span class="number">2</span>;   <span class="comment">// 左移2位</span></span><br><span class="line">b2 &gt;&gt;= <span class="number">1</span>;   <span class="comment">// 右移1位</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 单bit操作</span></span><br><span class="line">b<span class="number">2.</span><span class="built_in">set</span>(<span class="number">3</span>);      <span class="comment">// 设置第3位为1</span></span><br><span class="line">b<span class="number">2.</span><span class="built_in">set</span>();       <span class="comment">// 设置所有位为1</span></span><br><span class="line">b<span class="number">2.</span><span class="built_in">reset</span>(<span class="number">2</span>);    <span class="comment">// 重置第2位为0</span></span><br><span class="line">b<span class="number">2.</span><span class="built_in">reset</span>();     <span class="comment">// 重置所有位为0</span></span><br><span class="line">b<span class="number">2.f</span>lip(<span class="number">4</span>);     <span class="comment">// 翻转第4位</span></span><br><span class="line">b<span class="number">2.f</span>lip();      <span class="comment">// 翻转所有位</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="三、查询操作"><a href="#三、查询操作" class="headerlink" title="三、查询操作"></a>三、查询操作</h2><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 统计</span></span><br><span class="line"><span class="type">size_t</span> count = b<span class="number">2.</span><span class="built_in">count</span>();   <span class="comment">// 1的个数</span></span><br><span class="line"><span class="type">size_t</span> size = b<span class="number">2.</span><span class="built_in">size</span>();     <span class="comment">// 总位数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 状态检查</span></span><br><span class="line"><span class="type">bool</span> any = b<span class="number">2.</span><span class="built_in">any</span>();    <span class="comment">// 是否有至少一个1</span></span><br><span class="line"><span class="type">bool</span> none = b<span class="number">2.</span><span class="built_in">none</span>();  <span class="comment">// 是否全为0</span></span><br><span class="line"><span class="type">bool</span> all = b<span class="number">2.</span><span class="built_in">all</span>();    <span class="comment">// 是否全为1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 单bit查询</span></span><br><span class="line"><span class="type">bool</span> test = b<span class="number">2.</span><span class="built_in">test</span>(<span class="number">3</span>); <span class="comment">// 测试第3位是否为1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、类型转换"><a href="#四、类型转换" class="headerlink" title="四、类型转换"></a>四、类型转换</h2><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转为字符串</span></span><br><span class="line">std::string s1 = b<span class="number">2.</span><span class="built_in">to_string</span>();       <span class="comment">// &quot;00101010&quot;</span></span><br><span class="line">std::string s2 = b<span class="number">2.</span><span class="built_in">to_string</span>(<span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;x&#x27;</span>); <span class="comment">// &quot;oooxoxox&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 转为整数</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> ul = b<span class="number">2.</span><span class="built_in">to_ulong</span>();</span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> ull = b<span class="number">2.</span><span class="built_in">to_ullong</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 流操作</span></span><br><span class="line">std::cout &lt;&lt; b2;        <span class="comment">// 输出二进制表示</span></span><br><span class="line">std::cin &gt;&gt; b3;         <span class="comment">// 从输入读取</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="五、实用技巧"><a href="#五、实用技巧" class="headerlink" title="五、实用技巧"></a>五、实用技巧</h2><h3 id="1-替代位标志"><a href="#1-替代位标志" class="headerlink" title="1. 替代位标志"></a>1. 替代位标志</h3><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传统C风格</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLAG_A 0x01</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLAG_B 0x02</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLAG_C 0x04</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用bitset更安全</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Flags</span> &#123; A = <span class="number">0</span>, B = <span class="number">1</span>, C = <span class="number">2</span>, COUNT &#125;;</span><br><span class="line">std::bitset&lt;Flags::COUNT&gt; flags;</span><br><span class="line">flags.<span class="built_in">set</span>(Flags::A);</span><br><span class="line"><span class="keyword">if</span> (flags.<span class="built_in">test</span>(Flags::B)) &#123; <span class="comment">/*...*/</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-位掩码操作"><a href="#2-位掩码操作" class="headerlink" title="2. 位掩码操作"></a>2. 位掩码操作</h3><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">const</span> std::bitset&lt;8&gt; <span class="title">mask</span><span class="params">(<span class="string">&quot;00001111&quot;</span>)</span></span>;</span><br><span class="line"><span class="keyword">auto</span> masked = b2 &amp; mask;    <span class="comment">// 只保留低4位</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-位集合运算"><a href="#3-位集合运算" class="headerlink" title="3. 位集合运算"></a>3. 位集合运算</h3><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断子集</span></span><br><span class="line"><span class="type">bool</span> is_subset = (b1 &amp; b2) == b1;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 寻找差异位</span></span><br><span class="line"><span class="keyword">auto</span> diff = b1 ^ b2;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-性能敏感代码"><a href="#4-性能敏感代码" class="headerlink" title="4. 性能敏感代码"></a>4. 性能敏感代码</h3><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 比传统数组更快的位操作</span></span><br><span class="line">std::bitset&lt;64&gt; bitmap;</span><br><span class="line"><span class="comment">// 比bool[64]更节省空间且操作更快</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="六、注意事项"><a href="#六、注意事项" class="headerlink" title="六、注意事项"></a>六、注意事项</h2><ol>
+<li><strong>大小限制</strong>：<code>to_ulong()</code> 可能抛出 <code>overflow_error</code></li>
+<li><strong>越界访问</strong>：使用 <code>test()</code> 会检查边界，<code>operator[]</code> 不会</li>
+<li><strong>非标准容器</strong>：没有迭代器，不能用于STL算法</li>
+<li><strong>平台差异</strong>：不同平台可能有不同的大小限制</li>
+</ol>
+<h2 id="七、性能测试示例"><a href="#七、性能测试示例" class="headerlink" title="七、性能测试示例"></a>七、性能测试示例</h2><p>cpp</p>
+<p>复制</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test_performance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constexpr</span> <span class="type">size_t</span> N = <span class="number">1000000</span>;</span><br><span class="line">    std::bitset&lt;64&gt; bs;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">auto</span> start = std::chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; N; ++i) &#123;</span><br><span class="line">        bs.<span class="built_in">flip</span>(i % <span class="number">64</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">auto</span> end = std::chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">    </span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;bitset time: &quot;</span> </span><br><span class="line">              &lt;&lt; std::chrono::<span class="built_in">duration_cast</span>&lt;std::chrono::microseconds&gt;(end - start).<span class="built_in">count</span>() </span><br><span class="line">              &lt;&lt; <span class="string">&quot; μs\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h2><p><code>bitset</code> 是处理固定大小位集合的最佳选择，它：</p>
+<ul>
+<li>比 <code>vector&lt;bool&gt;</code> 更高效</li>
+<li>比原始位操作更安全</li>
+<li>比整数位掩码更易读</li>
+<li>特别适合硬件寄存器操作、位标志集合、位图算法等场景</li>
+</ul>
+<p>合理使用 <code>bitset</code> 可以写出既高效又易维护的位操作代码。</p>
+<p>源码实现</p>
+<p>存储结构</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="type">size_t</span> _N_words, <span class="type">size_t</span> _Size&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__bitset</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">typedef</span> <span class="type">size_t</span> __storage_type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">  <span class="comment">// 每个word的bit数量</span></span><br><span class="line">  <span class="type">static</span> <span class="type">const</span> <span class="type">unsigned</span> __bits_per_word = </span><br><span class="line">    <span class="built_in">static_cast</span>&lt;<span class="type">unsigned</span>&gt;(<span class="built_in">sizeof</span>(__storage_type) * CHAR_BIT);</span><br><span class="line"></span><br><span class="line">  __storage_type __first_[_N_words];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="type">size_t</span> _Size&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">bitset</span></span><br><span class="line">    : <span class="keyword">private</span> __bitset&lt;_Size == <span class="number">0</span> ? <span class="number">0</span> : (_Size - <span class="number">1</span>) / (<span class="built_in">sizeof</span>(<span class="type">size_t</span>) * CHAR_BIT) + <span class="number">1</span>, _Size&gt;</span><br></pre></td></tr></table></figure>
+
+<p>构造函数</p>
+<ul>
+<li>如果<code>size_t</code>占用8字节，直接拷贝赋值</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="type">size_t</span> _N_words, <span class="type">size_t</span> _Size&gt;</span><br><span class="line"><span class="keyword">inline</span> _LIBCPP_CONSTEXPR __bitset&lt;_N_words, _Size&gt;::__bitset(<span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> __v) _NOEXCEPT</span><br><span class="line"><span class="meta">#  <span class="keyword">ifndef</span> _LIBCPP_CXX03_LANG</span></span><br><span class="line"><span class="meta">#    <span class="keyword">if</span> __SIZEOF_SIZE_T__ == 8</span></span><br><span class="line">    : __first_&#123;__v&#125;</span><br><span class="line"><span class="meta">#    <span class="keyword">elif</span> __SIZEOF_SIZE_T__ == 4</span></span><br><span class="line">    : __first_&#123;<span class="built_in">static_cast</span>&lt;__storage_type&gt;(__v),</span><br><span class="line">               _Size &gt;= <span class="number">2</span> * __bits_per_word</span><br><span class="line">                   ? <span class="built_in">static_cast</span>&lt;__storage_type&gt;(__v &gt;&gt; __bits_per_word)</span><br><span class="line">                   : <span class="built_in">static_cast</span>&lt;__storage_type&gt;((__v &gt;&gt; __bits_per_word) &amp;</span><br><span class="line">                                                 (__storage_type(<span class="number">1</span>) &lt;&lt; (_Size - __bits_per_word)) - <span class="number">1</span>)&#125;</span><br><span class="line"><span class="meta">#    <span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#      <span class="keyword">error</span> This constructor has not been ported to this platform</span></span><br><span class="line"><span class="meta">#    <span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span></span></span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#  <span class="keyword">ifdef</span> _LIBCPP_CXX03_LANG</span></span><br><span class="line">  __init(__v, <span class="built_in">integral_constant</span>&lt;<span class="type">bool</span>, <span class="built_in">sizeof</span>(<span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span>) == <span class="built_in">sizeof</span>(__storage_type)&gt;());</span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/18/c++/ADL/README/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

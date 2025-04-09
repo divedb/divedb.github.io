@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Monte Carlo Simulation1. 概念​	蒙特卡洛方法是一种基于随机抽样的计算方法，其主要思想是通过随机模拟大量样本来近似求解问题，通常用于以下几种情况：  概率估计：通过多次随机试验来估计事件发生的概率。例如，使用随机点落在几何图形内外来估计面积。 积分计算：在高维空间中，蒙特卡洛方法可以用于计算复杂积分，尤其是在解析解难以获得时。 优化问题：通过随机搜索空间来寻找函数的最优解，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Monte Carlo Simulation">
+<meta property="og:url" content="http://example.com/2024/10/16/machine%20learning/monte%20carlo%20simulation/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Monte Carlo Simulation1. 概念​	蒙特卡洛方法是一种基于随机抽样的计算方法，其主要思想是通过随机模拟大量样本来近似求解问题，通常用于以下几种情况：  概率估计：通过多次随机试验来估计事件发生的概率。例如，使用随机点落在几何图形内外来估计面积。 积分计算：在高维空间中，蒙特卡洛方法可以用于计算复杂积分，尤其是在解析解难以获得时。 优化问题：通过随机搜索空间来寻找函数的最优解，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-10-16T09:04:29.249Z">
+<meta property="article:modified_time" content="2025-04-09T05:28:57.190Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/10/16/machine%20learning/monte%20carlo%20simulation/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/10/16/machine%20learning/monte%20carlo%20simulation/","path":"2024/10/16/machine learning/monte carlo simulation/","title":"Monte Carlo Simulation"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Monte Carlo Simulation | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Monte-Carlo-Simulation"><span class="nav-number">1.</span> <span class="nav-text">Monte Carlo Simulation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A6%82%E5%BF%B5"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Inferential-Statistics"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">Inferential Statistics</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Difference-in-Confidence"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">Difference in Confidence?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%AF%E5%8A%AA%E5%88%A9%E5%AE%9A%E7%90%86"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">伯努利定理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BD%AE%E4%BF%A1%E5%8C%BA%E9%97%B4"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">置信区间</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83%E7%9A%84%E6%A6%82%E7%8E%87%E5%AF%86%E5%BA%A6%E5%87%BD%E6%95%B0"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">正态分布的概率密度函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">1.0.1.6.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%8F%E9%AA%8C%E6%B3%95%E5%88%99"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">经验法则</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.0.2.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/16/machine%20learning/monte%20carlo%20simulation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Monte Carlo Simulation | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Monte Carlo Simulation
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-16 17:04:29" itemprop="dateCreated datePublished" datetime="2024-10-16T17:04:29+08:00">2024-10-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-04-09 13:28:57" itemprop="dateModified" datetime="2025-04-09T13:28:57+08:00">2025-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine learning</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Monte-Carlo-Simulation"><a href="#Monte-Carlo-Simulation" class="headerlink" title="Monte Carlo Simulation"></a>Monte Carlo Simulation</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	蒙特卡洛方法是一种基于<strong>随机抽样</strong>的计算方法，其主要思想是通过随机模拟大量样本来近似求解问题，通常用于以下几种情况：</p>
+<ol>
+<li><strong>概率估计</strong>：通过多次随机试验来估计事件发生的概率。例如，使用随机点落在几何图形内外来估计面积。</li>
+<li><strong>积分计算</strong>：在高维空间中，蒙特卡洛方法可以用于计算复杂积分，尤其是在解析解难以获得时。</li>
+<li><strong>优化问题</strong>：通过随机搜索空间来寻找函数的最优解，比如在机器学习中的超参数优化。</li>
+<li><strong>物理模拟</strong>：用于模拟粒子在物理系统中的行为，比如核反应或流体动力学。</li>
+</ol>
+<h5 id="Inferential-Statistics"><a href="#Inferential-Statistics" class="headerlink" title="Inferential Statistics"></a>Inferential Statistics</h5><p>​	推断统计（Inferential Statistics）是一种统计分析方法，用于从样本数据推断或估计总体特征。它通过对样本进行分析，来得出关于更大群体的结论或判断。推断统计的主要目的包括：</p>
+<ol>
+<li><strong>估计参数</strong>：通过样本数据估计总体参数（如均值、比例等），并提供置信区间来表示估计的不确定性。</li>
+<li><strong>假设检验</strong>：检验关于总体参数的假设，判断样本数据是否提供足够的证据支持或反驳某个假设。</li>
+<li><strong>样本间的比较</strong>：比较不同样本之间的特征差异，例如使用t检验或方差分析（ANOVA）。</li>
+</ol>
+<p>推断统计依赖于概率论，使用概率模型来处理样本数据的不确定性，从而为决策提供依据。</p>
+<h5 id="Difference-in-Confidence"><a href="#Difference-in-Confidence" class="headerlink" title="Difference in Confidence?"></a>Difference in Confidence?</h5><ul>
+<li>Confidence in our estimate depends upon two things</li>
+<li>Size of sample (100 versus 2)</li>
+<li>Variance of sample (all heads versus 52 heads)</li>
+<li>As the variance grows, we need larger samples to have the same degree of confidence</li>
+</ul>
+<h5 id="伯努利定理"><a href="#伯努利定理" class="headerlink" title="伯努利定理"></a>伯努利定理</h5><p>伯努利定理可以表述为：</p>
+<ol>
+<li>如果进行独立的伯努利试验，成功的概率为$p$，失败的概率为$1-p$，那么在 nnn 次试验中，成功的次数$X$服从二项分布$X \sim B(n, p)$。</li>
+<li>在大量试验中，随着试验次数$n$的增加，样本比例趋向于真实概率$p$。</li>
+</ol>
+<h5 id="置信区间"><a href="#置信区间" class="headerlink" title="置信区间"></a>置信区间</h5><p>​	置信区间（Confidence Interval）是统计学中用于估计总体参数范围的一种方法。它提供了一个区间估计，表明在一定的置信水平下，该区间内可能包含未知的总体参数值。</p>
+<ol>
+<li><p><strong>置信水平</strong>：通常以百分比表示（如95%或99%），表示在重复抽样中，有多少比例的置信区间会包含真实的总体参数。例如，95%的置信水平意味着如果进行多次独立抽样，约95%的计算出的置信区间会包含真实的参数。</p>
+</li>
+<li><p><strong>区间的计算</strong>：置信区间的计算通常依赖于样本均值、样本标准差和样本大小。常用的形式为：</p>
+<p>$\text{置信区间} &#x3D; \text{样本均值} \pm z \times \frac{\text{样本标准差}}{\sqrt{n}}$</p>
+<p>其中，$z$是与置信水平对应的标准正态分布的临界值，$n$是样本大小。</p>
+</li>
+<li><p><strong>解释</strong>：置信区间并不表示真实参数值在该区间内的概率，而是指在很多次抽样中，构造的置信区间有一定的比例会包含真实参数。</p>
+</li>
+</ol>
+<p>例题：</p>
+<p>假设你想了解某个学校学生的数学考试成绩，随机抽取了30名学生，计算得出平均分为75分，标准差为10分。你希望构建一个95%的置信区间来估计该学校所有学生的平均分。</p>
+<ol>
+<li><p><strong>计算标准误差（SE）</strong>：</p>
+<p>$SE &#x3D; \frac{\sigma}{\sqrt{n}} &#x3D; \frac{10}{\sqrt{30}} \approx 1.83$</p>
+</li>
+<li><p><strong>确定置信水平</strong>： 对于95%的置信水平，查找Z值（通常为1.96）。</p>
+</li>
+<li><p><strong>计算置信区间</strong>：</p>
+<p>$\text{置信区间} &#x3D; \bar{x} \pm Z \times SE &#x3D; 75 \pm 1.96 \times 1.83$</p>
+</li>
+</ol>
+<p>因此，你可以说，你有95%的把握认为该学校所有学生的数学考试成绩平均分在71.41到78.59之间。</p>
+<h5 id="正态分布的概率密度函数"><a href="#正态分布的概率密度函数" class="headerlink" title="正态分布的概率密度函数"></a>正态分布的概率密度函数</h5><p>$f(x) &#x3D; \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(x - \mu)^2}{2\sigma^2}}$</p>
+<p>其中：</p>
+<ul>
+<li>$\mu$是均值（期望值），表示正态分布的中心。</li>
+<li>$\sigma$是标准差，表示数据的离散程度。</li>
+<li>$e$是自然常数。</li>
+</ul>
+<h5 id=""><a href="#" class="headerlink" title=""></a></h5><h5 id="经验法则"><a href="#经验法则" class="headerlink" title="经验法则"></a>经验法则</h5><p>经验法则（Empirical Rule）是一种用于描述正态分布数据集中数据点分布的统计规则。根据这一规则，约有：</p>
+<ol>
+<li><strong>68%</strong> 的数据点位于均值的一个标准差范围内（即$\mu \pm \sigma$）。</li>
+<li><strong>95%</strong> 的数据点位于均值的两个标准差范围内（即$\mu \pm 2\sigma$）。</li>
+<li><strong>99.7%</strong> 的数据点位于均值的三个标准差范围内（即$\mu \pm 3\sigma$）。</li>
+</ol>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=OgO1gpXSUzU">6. Monte Carlo Simulation</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/" rel="prev" title="Introduction to Reinforcement Learning">
+                  <i class="fa fa-angle-left"></i> Introduction to Reinforcement Learning
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/16/leetcode/leetcode%202938%20%E5%8C%BA%E5%88%86%E9%BB%91%E7%90%83%E5%92%8C%E7%99%BD%E7%90%83/" rel="next" title="leetcode 2938">
+                  leetcode 2938 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

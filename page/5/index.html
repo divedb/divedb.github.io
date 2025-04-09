@@ -112,13 +112,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -139,6 +139,283 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/28/python/python-mixin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/28/python/python-mixin/" class="post-title-link" itemprop="url">python mixin</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-28 22:01:47" itemprop="dateCreated datePublished" datetime="2024-10-28T22:01:47+08:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-29 13:46:55" itemprop="dateModified" datetime="2024-10-29T13:46:55+08:00">2024-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Python-Mixin"><a href="#Python-Mixin" class="headerlink" title="Python Mixin"></a>Python Mixin</h2><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p>​	<strong>Mixin</strong>是一种设计模式，用于创建可复用的类，这些类可以与其他类组合，以增强其功能。Mixin通常不作为独立的类使用，而是作为基类被其他类继承，提供特定的行为或功能，而不需要成为该类的主要部分。</p>
+<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ol>
+<li><strong>可复用性</strong>：Mixin允许将功能模块化，使得相同的功能可以在多个类中复用。</li>
+<li><strong>单一职责</strong>：Mixin通常负责提供一种特定的功能或行为，而不是承担类的主要业务逻辑。这有助于保持代码的清晰性和可维护性。</li>
+<li><strong>组合性</strong>：可以将多个Mixin类组合到一个类中，从而为该类提供多种功能。这种方式支持多重继承。</li>
+</ol>
+<p>示例</p>
+<p>以下是一个简单的示例，展示了如何在Python中使用Mixin：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">JSONMixin</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">to_json</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">return</span> json.dumps(<span class="variable language_">self</span>.__dict__)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XMLMixin</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">to_xml</span>(<span class="params">self</span>):</span><br><span class="line">        xml = <span class="string">&quot;&lt;object&gt;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="variable language_">self</span>.__dict__.items():</span><br><span class="line">            xml += <span class="string">f&quot;&lt;<span class="subst">&#123;key&#125;</span>&gt;<span class="subst">&#123;value&#125;</span>&lt;/<span class="subst">&#123;key&#125;</span>&gt;&quot;</span></span><br><span class="line">        xml += <span class="string">&quot;&lt;/object&gt;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> xml</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>(JSONMixin, XMLMixin):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, age</span>):</span><br><span class="line">        <span class="variable language_">self</span>.name = name</span><br><span class="line">        <span class="variable language_">self</span>.age = age</span><br><span class="line"></span><br><span class="line">person = Person(<span class="string">&quot;Alice&quot;</span>, <span class="number">30</span>)</span><br><span class="line"><span class="built_in">print</span>(person.to_json())  <span class="comment"># &#123;&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30&#125;</span></span><br><span class="line"><span class="built_in">print</span>(person.to_xml())   <span class="comment"># &lt;object&gt;&lt;name&gt;Alice&lt;/name&gt;&lt;age&gt;30&lt;/age&gt;&lt;/object&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-参考"><a href="#2-参考" class="headerlink" title="2. 参考"></a>2. 参考</h4><ol>
+<li><a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/mixins/">Mixins</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/23/probability%20theory/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/" class="post-title-link" itemprop="url">最大似然估计</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-23 16:48:27 / Modified: 17:03:02" itemprop="dateCreated datePublished" datetime="2024-10-23T16:48:27+08:00">2024-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/probability-theory/" itemprop="url" rel="index"><span itemprop="name">probability theory</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="最大似然估计"><a href="#最大似然估计" class="headerlink" title="最大似然估计"></a>最大似然估计</h2><p>​	在统计学中，<strong>最大似然估计</strong>（maximum likelihood estimation，简作<strong>MLE</strong>），也称<strong>极大似然估计</strong>，是用来估计一个概率模型的参数的一种方法。</p>
+<h5 id="最大似然估计的原理"><a href="#最大似然估计的原理" class="headerlink" title="最大似然估计的原理"></a>最大似然估计的原理</h5><p>给定一个概率分布$D$，已知其概率密度函数（连续分布）或概率质量函数（离散分布）为$f_D$，以及一个分布参数$\theta$，我们可以从这个分布中抽出一个具有$n$个值的采样$X_1, X_2, \dots, X_n$，利用$f_D$计算出其似然函数：<br>$$<br>{\mbox{L}}(\theta \mid x_{1},\dots ,x_{n})&#x3D;f_{\theta }(x_{1},\dots ,x_{n}).<br>$$<br>若$D$是离散分布，$f_{\theta}$即是在参数为$\theta$时观测到这一采样的概率；若其是连续分布，$f_{\theta}$则为$X_1, X_2, \dots, X_n$联合分布的概率密度函数在观测值处的取值。一旦我们获得$X_1, X_2, \dots, X_n$，我们就能求得一个关于$\theta$的估计。最大似然估计会寻找关于$\theta$的最可能的值（即，在所有可能的$\theta$取值中，寻找一个值使这个采样的“可能性”最大化）。从数学上来说，我们可以在$\theta$的所有可能取值中寻找一个值使得似然函数取到最大值。这个使可能性最大的$\widehat {\theta }$值即称为$\theta$的<strong>最大似然估计</strong>。由定义，最大似然估计是样本的函数。</p>
+<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p>​	考虑一个抛硬币的例子。假设这个硬币正面跟反面轻重不同。我们把这个硬币抛80次（即，我们获取一个采样$x_1&#x3D;H,x_2&#x3D;T,…,x_{80}&#x3D;T$并把正面的次数记下来，正面记为H，反面记为T）。并把抛出一个正面的概率记为$p$，抛出一个反面的概率记为$1-p$（因此，这里的$p$即相当于上方的$\theta$）。假设我们抛出了49个正面，31个反面，即49次H，31次T。假设这个硬币是我们从一个装了三个硬币的盒子里头取出的。这三个硬币抛出正面的概率分别为$p&#x3D;1&#x2F;3, p&#x3D;1&#x2F;2, p&#x3D;2&#x2F;3$，这些硬币没有标记，所以我们无法知道哪个是哪个。使用<strong>最大似然估计</strong>，基于<strong>二项分布</strong>中的<strong>概率质量函数</strong>公式，通过这些试验数据（即采样数据)，我们可以计算出哪个硬币的可能性最大。这个似然函数取以下三个值中的一个：<br>$$<br>{\begin{matrix}\mathbb {L} (p&#x3D;1&#x2F;3\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;1&#x2F;3)&amp;&#x3D;&amp;{80 \choose 49}(1&#x2F;3)^{49}(1-1&#x2F;3)^{31}\approx 0.000\&amp;&amp;\\mathbb {L} (p&#x3D;1&#x2F;2\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;1&#x2F;2)&amp;&#x3D;&amp;{80 \choose 49}(1&#x2F;2)^{49}(1-1&#x2F;2)^{31}\approx 0.012\&amp;&amp;\\mathbb {L} (p&#x3D;2&#x2F;3\mid {\mbox{H&#x3D;49, T&#x3D;31 }})&amp;&#x3D;&amp;\mathbb {P} ({\mbox{H&#x3D;49, T&#x3D;31 }}\mid p&#x3D;2&#x2F;3)&amp;&#x3D;&amp;{80 \choose 49}(2&#x2F;3)^{49}(1-2&#x2F;3)^{31}\approx 0.054\\end{matrix}}<br>$$</p>
+<p>我们可以看到当${\widehat {p}}&#x3D;2&#x2F;3$时，似然函数取得最大值。<br>显然地，这硬币的公平性和那种抛出后正面的概率是$\frac{2}{3}$的硬币是最接近的。这就是$p$的最大似然估计。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/22/machine%20learning/logistic-function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/22/machine%20learning/logistic-function/" class="post-title-link" itemprop="url">logistic function</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-22 16:16:43 / Modified: 16:40:44" itemprop="dateCreated datePublished" datetime="2024-10-22T16:16:43+08:00">2024-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine learning</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Logistic-Function"><a href="#Logistic-Function" class="headerlink" title="Logistic Function"></a>Logistic Function</h2><p>A <strong>logistic function</strong> or <strong>logistic curve</strong> is a common S-shaped curve (sigmoid curve) with the equation<br>$$<br>f(x)&#x3D;{\frac {L}{1+e^{-k(x-x_{0})}}}<br>$$<br>where</p>
+<ul>
+<li><p>$L$ is the carrying capacity, the supremum of the values of the function;</p>
+</li>
+<li><p>$k$ is the logistic growth rate, the steepness of the curve; and</p>
+</li>
+<li><p>$x_0$ is the $x$ value of the function’s midpoint</p>
+</li>
+</ul>
+<p>The logistic function has domain the real numbers, the limit as $x \rightarrow -\infty$ is 0, and the limit as $x \rightarrow +\infty$ is $L$.</p>
+<p>The <strong>standard logistic function</strong>, depicted at right, where $L &#x3D; 1, k &#x3D; 1, x_0 &#x3D; 0$ has the equation<br>$$<br>f(x)&#x3D;{\frac {1}{1+e^{-x}}}<br>$$<br>and is sometimes simply called <strong>the sigmoid</strong>. It is also sometimes called the <strong>expit</strong>, being the inverse function of the logit.</p>
+<p><img src="/logistic-function.png"></p>
+<h4 id="1-Mathematical-properties"><a href="#1-Mathematical-properties" class="headerlink" title="1. Mathematical properties"></a>1. Mathematical properties</h4><h5 id="1-1-Symmetries"><a href="#1-1-Symmetries" class="headerlink" title="1.1 Symmetries"></a>1.1 Symmetries</h5><p>$$<br>1 - f(x) &#x3D; f(-x)<br>$$</p>
+<p>Further, $x \mapsto f(x) - \frac{1}{2}$ is an odd function.</p>
+<h5 id="1-2-Inverse-function"><a href="#1-2-Inverse-function" class="headerlink" title="1.2 Inverse function"></a>1.2 Inverse function</h5><p>The logistic function is the inverse of the natural logit function<br>$$<br>\operatorname {logit} p&#x3D;\log {\frac {p}{1-p}}{\text{ for }}0&lt;p&lt;1<br>$$</p>
+<p>and so converts the logarithm of odds into a probability. The conversion from the log-likelihood ratio of two alternatives also takes the form of a logistic curve.</p>
+<p>证：</p>
+<p>令$p&#x3D;\frac{1}{1+e^{-x}} \Rightarrow \operatorname{logit} p &#x3D; \log \frac{\frac{1}{1+e^{-x}} }{1-\frac{1}{1+e^{-x}} } &#x3D; \log e^x &#x3D; x$</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1539,409 +1816,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/16/leetcode/leetcode%202938%20%E5%8C%BA%E5%88%86%E9%BB%91%E7%90%83%E5%92%8C%E7%99%BD%E7%90%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/16/leetcode/leetcode%202938%20%E5%8C%BA%E5%88%86%E9%BB%91%E7%90%83%E5%92%8C%E7%99%BD%E7%90%83/" class="post-title-link" itemprop="url">leetcode 2938</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-16 19:10:00 / Modified: 19:15:28" itemprop="dateCreated datePublished" datetime="2024-10-16T19:10:00+08:00">2024-10-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="leetcode-2938-区分黑球和白球"><a href="#leetcode-2938-区分黑球和白球" class="headerlink" title="leetcode 2938 区分黑球和白球"></a>leetcode 2938 区分黑球和白球</h2><h4 id="要求："><a href="#要求：" class="headerlink" title="要求："></a>要求：</h4><p>桌子上有 <code>n</code> 个球，每个球的颜色不是黑色，就是白色。</p>
-<p>给你一个长度为 <code>n</code> 、下标从 <strong>0</strong> 开始的二进制字符串 <code>s</code>，其中 <code>1</code> 和 <code>0</code> 分别代表黑色和白色的球。</p>
-<p>在每一步中，你可以选择两个相邻的球并交换它们。</p>
-<p>返回「将所有黑色球都移到右侧，所有白色球都移到左侧所需的 <strong>最小步数</strong>」。</p>
-<p><strong>示例 1：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;101&quot;</span><br><span class="line">输出：1</span><br><span class="line">解释：我们可以按以下方式将所有黑色球移到右侧：</span><br><span class="line">- 交换 s[0] 和 s[1]，s = &quot;011&quot;。</span><br><span class="line">最开始，1 没有都在右侧，需要至少 1 步将其移到右侧。</span><br></pre></td></tr></table></figure>
-
-<p><strong>示例 2：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;100&quot;</span><br><span class="line">输出：2</span><br><span class="line">解释：我们可以按以下方式将所有黑色球移到右侧：</span><br><span class="line">- 交换 s[0] 和 s[1]，s = &quot;010&quot;。</span><br><span class="line">- 交换 s[1] 和 s[2]，s = &quot;001&quot;。</span><br><span class="line">可以证明所需的最小步数为 2 。</span><br></pre></td></tr></table></figure>
-
-<p><strong>示例 3：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;0111&quot;</span><br><span class="line">输出：0</span><br><span class="line">解释：所有黑色球都已经在右侧。</span><br></pre></td></tr></table></figure>
-
-<h5 id="解法1：双指针"><a href="#解法1：双指针" class="headerlink" title="解法1：双指针"></a>解法1：双指针</h5><p><strong>Algorithm</strong></p>
-<ul>
-<li>Initialize variables:<ul>
-<li><code>whitePosition</code> to 0. This represents the next available position for a white ball.</li>
-<li><code>totalSwaps</code> to 0 to keep track of the total number of swaps required.</li>
-</ul>
-</li>
-<li>Iterate over each character in the string <code>s</code>:<ul>
-<li>If the character is <code>&#39;0&#39;</code> (a white ball):<ul>
-<li>Calculate the number of swaps needed by subtracting <code>whitePosition</code> from the current position. Add it to <code>totalSwaps</code>.</li>
-<li>Increment <code>whitePosition</code> by 1 to mark the next available position for a white ball.</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>After the loop ends, return the value of <code>totalSwaps</code>.</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">long</span> <span class="type">long</span> <span class="title">minimumSteps</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> whitePosition = <span class="number">0</span>;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> totalSwaps = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Iterate through each ball (character) in the string</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> currentPos = <span class="number">0</span>; currentPos &lt; s.<span class="built_in">length</span>(); currentPos++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (s[currentPos] == <span class="string">&#x27;0&#x27;</span>) &#123;</span><br><span class="line">        <span class="comment">// Calculate the number of swaps needed</span></span><br><span class="line">        <span class="comment">// to move it to the leftmost available position</span></span><br><span class="line">        totalSwaps += currentPos - whitePosition;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Move the next available position for a white ball one step to</span></span><br><span class="line">        <span class="comment">// the right</span></span><br><span class="line">        whitePosition++;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> totalSwaps;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h5 id="解法2：从后往前推"><a href="#解法2：从后往前推" class="headerlink" title="解法2：从后往前推"></a>解法2：从后往前推</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">minimumSteps</span>(<span class="params">self, s: <span class="built_in">str</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        ans = <span class="number">0</span></span><br><span class="line">        zero = s.rfind(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> zero == -<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 检查0前面有没有1</span></span><br><span class="line">        one = s[:zero].rfind(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> one == -<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        ans += zero - one</span><br><span class="line">        one -= <span class="number">1</span></span><br><span class="line">        zero -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> one &gt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">while</span> one &gt;= <span class="number">0</span> <span class="keyword">and</span> s[one] != <span class="string">&#x27;1&#x27;</span>:</span><br><span class="line">                one -= <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> one &lt; <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">            ans += zero - one</span><br><span class="line">            one -= <span class="number">1</span></span><br><span class="line">            zero -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> ans</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/16/machine%20learning/Introduction%20to%20Reinforcement%20Learning/" class="post-title-link" itemprop="url">Introduction to Reinforcement Learning</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-16 14:04:37" itemprop="dateCreated datePublished" datetime="2024-10-16T14:04:37+08:00">2024-10-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-10-18 14:33:03" itemprop="dateModified" datetime="2024-10-18T14:33:03+08:00">2024-10-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/reinforcement-learning/" itemprop="url" rel="index"><span itemprop="name">reinforcement learning</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Introduction-to-Reinforcement-Learning"><a href="#Introduction-to-Reinforcement-Learning" class="headerlink" title="Introduction to Reinforcement Learning"></a>Introduction to Reinforcement Learning</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	强化学习（Reinforcement Learning, RL）是一种机器学习的范式，旨在通过与环境的交互来学习如何采取最佳行动，以最大化累积的奖励。其核心思想是通过试错的方式，让智能体在给定的环境中探索和学习。</p>
-<p>强化学习的基本要素包括：</p>
-<ol>
-<li><strong>智能体（Agent）</strong>: 在环境中做出决策的实体。</li>
-<li><strong>环境（Environment）</strong>: 智能体与之交互的外部系统，包括状态、奖励和状态转移。</li>
-<li><strong>状态（State）</strong>: 环境在某一时刻的描述，智能体根据状态来做出决策。</li>
-<li><strong>动作（Action）</strong>: 智能体在某个状态下可以选择的操作。</li>
-<li><strong>奖励（Reward）</strong>: 智能体在执行某个动作后，环境给予的反馈信号，用于评估该动作的好坏。</li>
-<li><strong>策略（Policy）</strong>: 智能体选择动作的规则，可以是确定性的（给定状态下选择固定动作）或随机的（根据概率分布选择动作）。</li>
-<li><strong>价值函数（Value Function）</strong>: 用于评估在某个状态下的期望收益，帮助智能体判断哪个状态更有利。</li>
-</ol>
-<h4 id="2-State"><a href="#2-State" class="headerlink" title="2. State"></a>2. State</h4><ul>
-<li><p>Environment state</p>
-</li>
-<li><p>Agent state</p>
-</li>
-<li><p>Markov state</p>
-<ul>
-<li><p><strong>马尔可夫性</strong>：当前状态的未来状态只依赖于当前状态，而与过去的状态无关。换句话说，给定当前状态，未来的状态转移不受过去历史的影响。</p>
-</li>
-<li><p>在强化学习或随机过程的背景下，马尔可夫状态通常指的是系统的状态，该状态能够完整描述系统的未来演变。也就是说，知道当前状态后，未来状态的概率分布只与当前状态相关。</p>
-</li>
-</ul>
-<p>例子</p>
-<ul>
-<li>在棋类游戏中，当前的棋盘布局就是一个马尔可夫状态，因为下一步的可能棋盘布局仅依赖于当前的布局，而与之前的动作和状态无关。</li>
-<li>在天气预报中，如果当前状态是“晴天”，那么明天的天气只依赖于“晴天”的状态，而与之前的天气无关。</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-Observability"><a href="#3-Observability" class="headerlink" title="3. Observability"></a>3. Observability</h4><h5 id="完全可观测性（Full-Observability）"><a href="#完全可观测性（Full-Observability）" class="headerlink" title="完全可观测性（Full Observability）"></a>完全可观测性（Full Observability）</h5><ul>
-<li><strong>定义</strong>：在完全可观测的系统中，所有的状态信息都可以被完全观测到。即，在每个时间点，系统的状态是完全可知的。</li>
-<li>特点<ul>
-<li>代理可以直接获得系统的当前状态信息。</li>
-<li>不需要任何额外的推理或估计。</li>
-</ul>
-</li>
-<li><strong>例子</strong>：在一个简单的棋类游戏中，玩家可以看到整个棋盘的状态，这就是一个完全可观测的环境。</li>
-</ul>
-<h5 id="部分可观测性（Partial-Observability）"><a href="#部分可观测性（Partial-Observability）" class="headerlink" title="部分可观测性（Partial Observability）"></a>部分可观测性（Partial Observability）</h5><ul>
-<li><strong>定义</strong>：在部分可观测的系统中，代理只能观察到系统状态的一部分信息，或可能存在噪声，使得状态无法完全确定。</li>
-<li>特点<ul>
-<li>代理必须依赖于观察到的信息来推测未观察到的状态。</li>
-<li>需要使用策略来处理不确定性，通常涉及状态估计或历史信息。</li>
-</ul>
-</li>
-<li><strong>例子</strong>：在机器人导航中，机器人可能只能感知周围的障碍物，而无法知道环境的完整布局。</li>
-</ul>
-<h5 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h5><ul>
-<li>在强化学习中，部分可观测环境通常需要使用<strong>部分可观测马尔可夫决策过程（POMDP）</strong>模型来处理，而完全可观测环境则可以简单地使用马尔可夫决策过程（MDP）模型。</li>
-</ul>
-<h4 id="4-Major-Components-of-an-RL-Agent"><a href="#4-Major-Components-of-an-RL-Agent" class="headerlink" title="4. Major Components of an RL Agent"></a>4. Major Components of an RL Agent</h4><ul>
-<li><p>An RL agent may include one or more of these components:</p>
-<ul>
-<li><p>Policy: agent’s behaviour function</p>
-</li>
-<li><p>Value function: how good is each state and&#x2F;or action</p>
-<p><strong>价值函数（Value Function）</strong>是强化学习中的一个核心概念，用于评估某一状态或状态-动作对的“价值”。它帮助代理（agent）决定在不同状态下采取哪些行动，以最大化长期回报。</p>
-<p>主要类型</p>
-<ol>
-<li><strong>状态价值函数（State Value Function, V(s)）</strong>：<ul>
-<li>定义：在给定状态$s$下，代理在该状态下所能获得的预期回报。</li>
-<li>表示为：$V(s) &#x3D; \mathbb{E}[R_t | S_t &#x3D; s]$，其中$R_t$是从时间$t$开始的累计回报。</li>
-</ul>
-</li>
-<li><strong>动作价值函数（Action Value Function, Q(s, a)）</strong>：<ul>
-<li>定义：在给定状态$s$和动作$a$下，代理执行该动作后所能获得的预期回报。</li>
-<li>表示为：$Q(s, a) &#x3D; \mathbb{E}[R_t | S_t &#x3D; s, A_t &#x3D; a]$。</li>
-</ul>
-</li>
-</ol>
-<p>在象棋中，假设当前状态是棋盘上某种特定的布局：</p>
-<ul>
-<li><strong>状态价值函数（V(s)）</strong>：如果在当前布局下，玩家有很高的胜算，比如能确保胜利或导致对手陷入绝境，状态价值函数$V(s)$可以被认为是正值，比如+100，表示这是一个有利的状态。</li>
-<li><strong>动作价值函数（Q(s, a)）</strong>：假设在该状态下，玩家选择了一步棋（比如移动某个棋子）但这一步棋导致了对手的反击，最终失败。此时，动作价值函数$Q(s, a)$可能是负值，比如-50，表示这一步棋在这个状态下是个不好的选择。</li>
-</ul>
-</li>
-<li><p>Model: agent’s representation of the environment</p>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h4><h6 id="1-state-value-function-V-s-and-state-action-value-function-Q-s-a-difference"><a href="#1-state-value-function-V-s-and-state-action-value-function-Q-s-a-difference" class="headerlink" title="1. state value function $V(s)$ and state-action value function $Q(s, a)$ difference?"></a>1. state value function $V(s)$ and state-action value function $Q(s, a)$ difference?</h6><p>​	Bearing that in mind, the definition of these functions should clarify the distinction for you.</p>
-<p>$V_{\pi}(s)$ expresses the expected value of following policy $\pi$ forever when the agent starts following it from state $s$.</p>
-<p>$Q_{\pi}(s, a)$ expresses the expected value of first taking action $a$ from state $s$ and <em>then</em> following policy $\pi$ forever.</p>
-<p>The main difference then, is the Q-value lets you play a hypothetical of potentially taking a different action in the first time step than what the policy might prescribe and <em>then</em> following the policy from the state the agent winds up in.</p>
-<p><strong>Example</strong>:</p>
-<p>That said, lets make the example more concrete. Lets imagine a deterministic grid world. The goal is at (5, 0). As stated in the description, the agent is one step away, so lets say s &#x3D; (4, 0) for concreteness. For the optimal policy, it will tell us to go right from (4, 0). If we take right, that takes us to our terminating goal state (5, 0), with a single reward of -1 for taking that action after which we stop and receive no more reward. Clearly then, $V^*((4, 0)) &#x3D; -1$.</p>
-<p>As stated in the answer, we want to compare this to the Q-value for an action that takes us one step further away than where we started. Let say $a$ &#x3D; left.</p>
-<p>If we start at (4, 0) and take left, then we’ll end up in (3, 0), with -1 reward.</p>
-<p>From here on out we now follow our policy. The agent is now in state (3, 0) and our policy says to take right. That takes us back to where we started: (4, 0) receiving another reward of -1, for a total of -2 reward so far.</p>
-<p>But we’re still not done, because we’re only back to where we started! Once again, we follow our policy which from (4, 0) tells us to go right again, now taking us to our terminating goal state (5, 0) with another -1 reward for a total of -3 reward.</p>
-<p>So we just accumulated -3 reward; ergo, $Q^*((4, 0), left) &#x3D; -3$.</p>
-<p>We receive -1 reward for going the wrong way, -1 for undoing that mistake, and a third -1 to get to the goal after undoing the mistak</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
-<li><p><a target="_blank" rel="noopener" href="https://www.kaggle.com/competitions/connectx/discussion/124421">Useful courses, books, … for Reinforcement Learning</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/KhashayarRahimi/Reinforcement-Learning-Algorithms-From-Scratch">Reinforcement-Learning-Algorithms-From-Scratch</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.quora.com/In-reinforcement-learning-what-is-the-difference-between-a-state-value-function-V-s-and-a-state-action-value-function-Q-s-a">In reinforcement learning, what is the difference between a state value function V(s) and a state-action value function Q(s,a)?</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=9g32v7bK3Co&list=PLoROMvodv4rOca_Ovz1DvdtWuz8BfSWL2&index=20">Markov Decision Processes 1 - Value Iteration | Stanford CS221: AI (Autumn 2019)</a></p>
-<p>推荐</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/16/algorithm/heap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/16/algorithm/heap/" class="post-title-link" itemprop="url">堆</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-16 09:12:33 / Modified: 19:43:48" itemprop="dateCreated datePublished" datetime="2024-10-16T09:12:33+08:00">2024-10-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p>​	在Python中<code>heapq</code> 是一个用于堆队列算法的标准库，可以用来实现优先队列。它提供了一组函数来维护堆（最小堆），从而支持高效的插入和删除操作。</p>
-<h4 id="2-示例"><a href="#2-示例" class="headerlink" title="2. 示例"></a>2. 示例</h4><h6 id="1-转化列表成最小堆"><a href="#1-转化列表成最小堆" class="headerlink" title="1. 转化列表成最小堆"></a>1. 转化列表成最小堆</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"></span><br><span class="line">nums = [<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">9</span>]</span><br><span class="line">heapq.heapify(nums)  	<span class="comment"># 转换成最小堆</span></span><br><span class="line"><span class="built_in">print</span>(nums)  					<span class="comment"># 输出: [1, 1, 4, 3, 5, 9]</span></span><br></pre></td></tr></table></figure>
-
-<h6 id="2-push操作"><a href="#2-push操作" class="headerlink" title="2. push操作"></a>2. <code>push</code>操作</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">heapq.heappush(nums, <span class="number">2</span>)  	<span class="comment"># 将 2 推入堆中</span></span><br><span class="line"><span class="built_in">print</span>(nums)  							<span class="comment"># 输出: [1, 1, 2, 3, 5, 9, 4]</span></span><br></pre></td></tr></table></figure>
-
-<h6 id="3-pop操作"><a href="#3-pop操作" class="headerlink" title="3. pop操作"></a>3. <code>pop</code>操作</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">smallest = heapq.heappop(nums)</span><br><span class="line"><span class="built_in">print</span>(smallest)  	<span class="comment"># 输出: 1</span></span><br><span class="line"><span class="built_in">print</span>(nums)      	<span class="comment"># 输出: [1, 3, 2, 4, 5, 9]</span></span><br></pre></td></tr></table></figure>
-
-<h6 id="4-获取前n个最小元素"><a href="#4-获取前n个最小元素" class="headerlink" title="4. 获取前n个最小元素"></a>4. 获取前n个最小元素</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">smallest_n = heapq.nsmallest(<span class="number">3</span>, nums)</span><br><span class="line"><span class="built_in">print</span>(smallest_n)  	<span class="comment"># 输出: [1, 2, 3]</span></span><br></pre></td></tr></table></figure>
-
-<h6 id="5-获取前n个最大元素："><a href="#5-获取前n个最大元素：" class="headerlink" title="5. 获取前n个最大元素："></a>5. <strong>获取前n个最大元素</strong>：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">largest_n = heapq.nlargest(<span class="number">3</span>, nums)</span><br><span class="line"><span class="built_in">print</span>(largest_n)  	<span class="comment"># 输出: [9, 5, 4]</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-注意事项"><a href="#3-注意事项" class="headerlink" title="3. 注意事项"></a>3. 注意事项</h4><ul>
-<li><code>heapq</code>只实现了最小堆，如果需要最大堆，可以插入负值来模拟。</li>
-<li><code>heapq</code>的操作时间复杂度为$O(\log n)$。</li>
-</ul>
-<h4 id="4-源码"><a href="#4-源码" class="headerlink" title="4. 源码"></a>4. 源码</h4><p>只需要分析<code>heapify</code>函数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">heapify</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Transform list into a heap, in-place, in O(len(x)) time.&quot;&quot;&quot;</span></span><br><span class="line">    n = <span class="built_in">len</span>(x)</span><br><span class="line">    <span class="comment"># Transform bottom-up.  The largest index there&#x27;s any point to looking at</span></span><br><span class="line">    <span class="comment"># is the largest with a child index in-range, so must have 2*i + 1 &lt; n,</span></span><br><span class="line">    <span class="comment"># or i &lt; (n-1)/2.  If n is even = 2*j, this is (2*j-1)/2 = j-1/2 so</span></span><br><span class="line">    <span class="comment"># j-1 is the largest, which is n//2 - 1.  If n is odd = 2*j+1, this is</span></span><br><span class="line">    <span class="comment"># (2*j+1-1)/2 = j so j-1 is the largest, and that&#x27;s again n//2-1.</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">reversed</span>(<span class="built_in">range</span>(n//<span class="number">2</span>)):</span><br><span class="line">        _siftup(x, i)</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># &#x27;heap&#x27; is a heap at all indices &gt;= startpos, except possibly for pos.  pos</span></span><br><span class="line"><span class="comment"># is the index of a leaf with a possibly out-of-order value.  Restore the</span></span><br><span class="line"><span class="comment"># heap invariant.</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_siftdown</span>(<span class="params">heap, startpos, pos</span>):</span><br><span class="line">    newitem = heap[pos]</span><br><span class="line">    <span class="comment"># Follow the path to the root, moving parents down until finding a place</span></span><br><span class="line">    <span class="comment"># newitem fits.</span></span><br><span class="line">    <span class="keyword">while</span> pos &gt; startpos:</span><br><span class="line">        parentpos = (pos - <span class="number">1</span>) &gt;&gt; <span class="number">1</span></span><br><span class="line">        parent = heap[parentpos]</span><br><span class="line">        <span class="keyword">if</span> newitem &lt; parent:</span><br><span class="line">            heap[pos] = parent</span><br><span class="line">            pos = parentpos</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    heap[pos] = newitem</span><br><span class="line"></span><br><span class="line"><span class="comment"># The child indices of heap index pos are already heaps, and we want to make</span></span><br><span class="line"><span class="comment"># a heap at index pos too.  We do this by bubbling the smaller child of</span></span><br><span class="line"><span class="comment"># pos up (and so on with that child&#x27;s children, etc) until hitting a leaf,</span></span><br><span class="line"><span class="comment"># then using _siftdown to move the oddball originally at index pos into place.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># We *could* break out of the loop as soon as we find a pos where newitem &lt;=</span></span><br><span class="line"><span class="comment"># both its children, but turns out that&#x27;s not a good idea, and despite that</span></span><br><span class="line"><span class="comment"># many books write the algorithm that way.  During a heap pop, the last array</span></span><br><span class="line"><span class="comment"># element is sifted in, and that tends to be large, so that comparing it</span></span><br><span class="line"><span class="comment"># against values starting from the root usually doesn&#x27;t pay (= usually doesn&#x27;t</span></span><br><span class="line"><span class="comment"># get us out of the loop early).  See Knuth, Volume 3, where this is</span></span><br><span class="line"><span class="comment"># explained and quantified in an exercise.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Cutting the # of comparisons is important, since these routines have no</span></span><br><span class="line"><span class="comment"># way to extract &quot;the priority&quot; from an array element, so that intelligence</span></span><br><span class="line"><span class="comment"># is likely to be hiding in custom comparison methods, or in array elements</span></span><br><span class="line"><span class="comment"># storing (priority, record) tuples.  Comparisons are thus potentially</span></span><br><span class="line"><span class="comment"># expensive.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># On random arrays of length 1000, making this change cut the number of</span></span><br><span class="line"><span class="comment"># comparisons made by heapify() a little, and those made by exhaustive</span></span><br><span class="line"><span class="comment"># heappop() a lot, in accord with theory.  Here are typical results from 3</span></span><br><span class="line"><span class="comment"># runs (3 just to demonstrate how small the variance is):</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Compares needed by heapify     Compares needed by 1000 heappops</span></span><br><span class="line"><span class="comment"># --------------------------     --------------------------------</span></span><br><span class="line"><span class="comment"># 1837 cut to 1663               14996 cut to 8680</span></span><br><span class="line"><span class="comment"># 1855 cut to 1659               14966 cut to 8678</span></span><br><span class="line"><span class="comment"># 1847 cut to 1660               15024 cut to 8703</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Building the heap by using heappush() 1000 times instead required</span></span><br><span class="line"><span class="comment"># 2198, 2148, and 2219 compares:  heapify() is more efficient, when</span></span><br><span class="line"><span class="comment"># you can use it.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># The total compares needed by list.sort() on the same lists were 8627,</span></span><br><span class="line"><span class="comment"># 8627, and 8632 (this should be compared to the sum of heapify() and</span></span><br><span class="line"><span class="comment"># heappop() compares):  list.sort() is (unsurprisingly!) more efficient</span></span><br><span class="line"><span class="comment"># for sorting.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_siftup</span>(<span class="params">heap, pos</span>):</span><br><span class="line">    endpos = <span class="built_in">len</span>(heap)</span><br><span class="line">    startpos = pos</span><br><span class="line">    newitem = heap[pos]</span><br><span class="line">    <span class="comment"># Bubble up the smaller child until hitting a leaf.</span></span><br><span class="line">    childpos = <span class="number">2</span>*pos + <span class="number">1</span>    <span class="comment"># leftmost child position</span></span><br><span class="line">    <span class="keyword">while</span> childpos &lt; endpos:</span><br><span class="line">        <span class="comment"># Set childpos to index of smaller child.</span></span><br><span class="line">        rightpos = childpos + <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> rightpos &lt; endpos <span class="keyword">and</span> <span class="keyword">not</span> heap[childpos] &lt; heap[rightpos]:</span><br><span class="line">            childpos = rightpos</span><br><span class="line">        <span class="comment"># Move the smaller child up.</span></span><br><span class="line">        heap[pos] = heap[childpos]</span><br><span class="line">        pos = childpos</span><br><span class="line">        childpos = <span class="number">2</span>*pos + <span class="number">1</span></span><br><span class="line">    <span class="comment"># The leaf at pos is empty now.  Put newitem there, and bubble it up</span></span><br><span class="line">    <span class="comment"># to its final resting place (by sifting its parents down).</span></span><br><span class="line">    heap[pos] = newitem</span><br><span class="line">    _siftdown(heap, startpos, pos)</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/6/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
