@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,120 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/16/c++/is_array/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/16/c++/is_array/" class="post-title-link" itemprop="url">is_array</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-16 21:18:14" itemprop="dateCreated datePublished" datetime="2024-10-16T21:18:14+08:00">2024-10-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-17 09:40:11" itemprop="dateModified" datetime="2024-10-17T09:40:11+08:00">2024-10-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="1-is-array"><a href="#1-is-array" class="headerlink" title="1. is_array"></a>1. <code>is_array</code></h4><h5 id="1-1-简介"><a href="#1-1-简介" class="headerlink" title="1.1 简介"></a>1.1 简介</h5><p>​	<code>std::is_array</code>是一个用于检测类型是否为数组类型的模板类，它是标准库<code>&lt;type_traits&gt;</code>头文件中的一部分（<strong>since C++11</strong>）。</p>
+<blockquote>
+<p>  If the program adds specializations for <code>std::is_array</code> or <code>std::is_array_v</code>, the behavior is undefined.</p>
+</blockquote>
+<p><strong>示例</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;&#125;;</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;A&gt;::value == <span class="literal">false</span>);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;A[]&gt;::value == <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;A[<span class="number">3</span>]&gt;::value == <span class="literal">true</span>);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;<span class="type">float</span>&gt;::value == <span class="literal">false</span>);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;<span class="type">int</span>&gt;::value == <span class="literal">false</span>);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;<span class="type">int</span>[]&gt;::value == <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;<span class="type">int</span>[<span class="number">3</span>]&gt;::value == <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_array&lt;std::array&lt;<span class="type">int</span>, <span class="number">3</span>&gt;&gt;::value == <span class="literal">false</span>);</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-2-源码实现"><a href="#1-2-源码实现" class="headerlink" title="1.2 源码实现"></a>1.2 源码实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">is_array</span> : std::false_type &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">is_array</span>&lt;T[]&gt; : std::true_type &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::<span class="type">size_t</span> N&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">is_array</span>&lt;T[N]&gt; : std::true_type &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> _Tp&gt;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="type">bool</span> is_array_v = is_array&lt;_Tp&gt;::value;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-is-bounded-array"><a href="#2-is-bounded-array" class="headerlink" title="2. is_bounded_array"></a>2. <code>is_bounded_array</code></h4><h5 id="2-1-简介"><a href="#2-1-简介" class="headerlink" title="2.1 简介"></a>2.1 简介</h5><p>​	<code>std::is_bounded_array</code>是一个模板类，用于检查给定的类型是否是<strong>有界数组</strong>（<strong>since C++20</strong>）。</p>
+<p><strong>示例</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OUT(...) std::cout &lt;&lt; #__VA_ARGS__ &lt;&lt; <span class="string">&quot; : &quot;</span> &lt;&lt; __VA_ARGS__ &lt;&lt; <span class="string">&#x27;\n&#x27;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  std::cout &lt;&lt; std::boolalpha;</span><br><span class="line">  <span class="built_in">OUT</span>(std::is_bounded_array_v&lt;A&gt;);</span><br><span class="line">  <span class="built_in">OUT</span>(std::is_bounded_array_v&lt;A[]&gt;);</span><br><span class="line">  <span class="built_in">OUT</span>(std::is_bounded_array_v&lt;A[<span class="number">3</span>]&gt;);</span><br><span class="line">  <span class="built_in">OUT</span>(std::is_bounded_array_v&lt;<span class="type">float</span>&gt;);</span><br><span class="line">  <span class="built_in">OUT</span>(std::is_bounded_array_v&lt;<span class="type">int</span>&gt;);</span><br><span class="line">  <span class="built_in">OUT</span>(std::is_bounded_array_v&lt;<span class="type">int</span>[]&gt;);</span><br><span class="line">  <span class="built_in">OUT</span>(std::is_bounded_array_v&lt;<span class="type">int</span>[<span class="number">3</span>]&gt;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::is_bounded_array_v&lt;A&gt; : <span class="literal">false</span></span><br><span class="line">std::is_bounded_array_v&lt;A[]&gt; : <span class="literal">false</span></span><br><span class="line">std::is_bounded_array_v&lt;A[3]&gt; : <span class="literal">true</span></span><br><span class="line">std::is_bounded_array_v&lt;<span class="built_in">float</span>&gt; : <span class="literal">false</span></span><br><span class="line">std::is_bounded_array_v&lt;int&gt; : <span class="literal">false</span></span><br><span class="line">std::is_bounded_array_v&lt;int[]&gt; : <span class="literal">false</span></span><br><span class="line">std::is_bounded_array_v&lt;int[3]&gt; : <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2-2-源码实现"><a href="#2-2-源码实现" class="headerlink" title="2.2 源码实现"></a>2.2 源码实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">is_bounded_array</span> : std::false_type &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::<span class="type">size_t</span> N&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">is_bounded_array</span>&lt;T[N]&gt; : std::true_type &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-is-unbounded-array"><a href="#3-is-unbounded-array" class="headerlink" title="3. is_unbounded_array"></a>3. <code>is_unbounded_array</code></h4><h5 id="3-1-简介"><a href="#3-1-简介" class="headerlink" title="3.1 简介"></a>3.1 简介</h5><p>​	<code>std::is_unbounded_array</code>是一个模板类，用于检查给定的类型是否是<strong>无界数组</strong>（即数组的大小未在编译时确定）（<strong>since C++20</strong>）。</p>
+<p><strong>示例</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">static_assert</span></span><br><span class="line">(<span class="string">&quot;&quot;</span></span><br><span class="line">    &amp;&amp; std::is_unbounded_array_v&lt;A&gt; == <span class="literal">false</span></span><br><span class="line">    &amp;&amp; std::is_unbounded_array_v&lt;A[]&gt; == <span class="literal">true</span></span><br><span class="line">    &amp;&amp; std::is_unbounded_array_v&lt;A[<span class="number">3</span>]&gt; == <span class="literal">false</span></span><br><span class="line">    &amp;&amp; std::is_unbounded_array_v&lt;<span class="type">float</span>&gt; == <span class="literal">false</span></span><br><span class="line">    &amp;&amp; std::is_unbounded_array_v&lt;<span class="type">int</span>&gt; == <span class="literal">false</span></span><br><span class="line">    &amp;&amp; std::is_unbounded_array_v&lt;<span class="type">int</span>[]&gt; == <span class="literal">true</span></span><br><span class="line">    &amp;&amp; std::is_unbounded_array_v&lt;<span class="type">int</span>[<span class="number">3</span>]&gt; == <span class="literal">false</span></span><br><span class="line">);</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-2-源码实现"><a href="#3-2-源码实现" class="headerlink" title="3.2 源码实现"></a>3.2 源码实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">is_unbounded_array</span>: std::false_type &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">is_unbounded_array</span>&lt;T[]&gt; : std::true_type &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-extent"><a href="#4-extent" class="headerlink" title="4. extent"></a>4. <code>extent</code></h4><h5 id="4-1-简介"><a href="#4-1-简介" class="headerlink" title="4.1 简介"></a>4.1 简介</h5><p>​	<code>std::extent</code>是一个模板类，用于获取数组类型在某个维度上的大小。</p>
+<p><strong>示例</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">static_assert</span>(</span><br><span class="line">  std::extent_v&lt;<span class="type">int</span>[<span class="number">3</span>]&gt; == <span class="number">3</span> &amp;&amp; 		<span class="comment">// default dimension is 0</span></span><br><span class="line">  std::extent_v&lt;<span class="type">int</span>[<span class="number">3</span>], <span class="number">0</span>&gt; == <span class="number">3</span> &amp;&amp; 	<span class="comment">// the same as above</span></span><br><span class="line">  std::extent_v&lt;<span class="type">int</span>[<span class="number">3</span>][<span class="number">4</span>], <span class="number">0</span>&gt; == <span class="number">3</span> &amp;&amp;</span><br><span class="line">  std::extent_v&lt;<span class="type">int</span>[<span class="number">3</span>][<span class="number">4</span>], <span class="number">1</span>&gt; == <span class="number">4</span> &amp;&amp;</span><br><span class="line">  std::extent_v&lt;<span class="type">int</span>[<span class="number">3</span>][<span class="number">4</span>], <span class="number">2</span>&gt; == <span class="number">0</span> &amp;&amp;</span><br><span class="line">  std::extent_v&lt;<span class="type">int</span>[]&gt; == <span class="number">0</span></span><br><span class="line">);</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="type">const</span> <span class="keyword">auto</span> ext = std::extent&lt;<span class="type">int</span>[<span class="string">&#x27;*&#x27;</span>]&gt;&#123;&#125;;</span><br><span class="line">  <span class="built_in">static_assert</span>(ext == <span class="number">42</span>); <span class="comment">// with implicit conversion to std::size_t</span></span><br><span class="line"></span><br><span class="line">  <span class="type">const</span> <span class="type">int</span> ints[]&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line">  <span class="built_in">static_assert</span>(std::extent_v&lt;<span class="keyword">decltype</span>(ints)&gt; == <span class="number">4</span>); <span class="comment">// array size</span></span><br><span class="line"></span><br><span class="line">  [[maybe_unused]] <span class="type">int</span> ary[][<span class="number">3</span>] = &#123;&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ary[0] is of type reference to &#x27;int[3]&#x27;, so, the extent</span></span><br><span class="line">  <span class="comment">// cannot be calculated correctly and it returns 0</span></span><br><span class="line">  <span class="built_in">static_assert</span>(std::is_same_v&lt;<span class="keyword">decltype</span>(ary[<span class="number">0</span>]), <span class="built_in">int</span>(&amp;)[<span class="number">3</span>]&gt;);</span><br><span class="line">  <span class="built_in">static_assert</span>(std::extent_v&lt;<span class="keyword">decltype</span>(ary[<span class="number">0</span>])&gt; == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// removing reference gives correct extent value 3</span></span><br><span class="line">  <span class="built_in">static_assert</span>(std::extent_v&lt;std::<span class="type">remove_cvref_t</span>&lt;<span class="keyword">decltype</span>(ary[<span class="number">0</span>])&gt;&gt; == <span class="number">3</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-2-源码实现"><a href="#4-2-源码实现" class="headerlink" title="4.2 源码实现"></a>4.2 源码实现</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="type">unsigned</span> N = <span class="number">0</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> extent : std::integral_constant&lt;std::<span class="type">size_t</span>, <span class="number">0</span>&gt; &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">extent</span>&lt;T[], <span class="number">0</span>&gt; : std::integral_constant&lt;std::<span class="type">size_t</span>, <span class="number">0</span>&gt; &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 处理类似int arr[][5]无界数组</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="type">unsigned</span> N&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">extent</span>&lt;T[], N&gt; : std::extent&lt;T, N - <span class="number">1</span>&gt; &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::<span class="type">size_t</span> I&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">extent</span>&lt;T[I], <span class="number">0</span>&gt; : std::integral_constant&lt;std::<span class="type">size_t</span>, I&gt; &#123;&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::<span class="type">size_t</span> I, <span class="type">unsigned</span> N&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">extent</span>&lt;T[I], N&gt; : std::extent&lt;T, N - <span class="number">1</span>&gt; &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1245,119 +1359,6 @@
 <p>类似命令<code>python -m site</code></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sys.path = [</span><br><span class="line">    <span class="string">&#x27;/home/gc/Desktop&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;/usr/lib/python2.7&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;/usr/lib/python2.7/plat-x86_64-linux-gnu&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;/usr/lib/python2.7/lib-tk&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;/usr/lib/python2.7/lib-old&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;/usr/lib/python2.7/lib-dynload&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;/usr/local/lib/python2.7/dist-packages&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;/usr/lib/python2.7/dist-packages&#x27;</span>,</span><br><span class="line">]</span><br><span class="line">USER_BASE: <span class="string">&#x27;/home/gc/.local&#x27;</span> (exists)</span><br><span class="line">USER_SITE: <span class="string">&#x27;/home/gc/.local/lib/python2.7/site-packages&#x27;</span> (doesn<span class="string">&#x27;t exist)</span></span><br><span class="line"><span class="string">ENABLE_USER_SITE: True</span></span><br></pre></td></tr></table></figure>
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/" class="post-title-link" itemprop="url">矩阵LU分解</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-14 16:48:46 / Modified: 19:43:00" itemprop="dateCreated datePublished" datetime="2024-10-14T16:48:46+08:00">2024-10-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linear-algebra/" itemprop="url" rel="index"><span itemprop="name">linear algebra</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="LU分解"><a href="#LU分解" class="headerlink" title="LU分解"></a>LU分解</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	<strong>LU分解</strong>（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。</p>
-<h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：<br>$$<br>A &#x3D; LU<br>$$</p>
-<h4 id="2-例题"><a href="#2-例题" class="headerlink" title="2. 例题"></a>2. 例题</h4><p>设矩阵$A$为：<br>$$<br>A &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$<br>我们希望找到$L$和$U$，使得$A&#x3D;LU$。</p>
-<p>首先初始化$U$为矩阵$A$，并将$L$初始化为单位矩阵：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; 0 &amp; 1 &amp; 0 \<br>1.25 &amp; 0 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$</p>
-<p>对第1行对系数进行消元，将第2、3、4行的首列元素消为0。</p>
-<ul>
-<li>$L_{21}&#x3D;\frac{U_{21}}{U_{11}}&#x3D;\frac{2}{4}&#x3D;0.5$</li>
-<li>$L_{21}&#x3D;\frac{U_{31}}{U_{11}}&#x3D;\frac{1}{4}&#x3D;0.25$</li>
-<li>$L_{41}&#x3D;\frac{U_{41}}{U_{11}}&#x3D;\frac{5}{4}&#x3D;1.25$</li>
-</ul>
-<p>使用这些系数对第2、3、4行进行变换，并更新$U$：</p>
-<ul>
-<li>$U_2 \Rightarrow U_2 - 0.5 \times U_1$</li>
-<li>$U_3 \Rightarrow U_3 - 0.25 \times U_1$</li>
-<li>$U_4 \Rightarrow U_4 - 1.25 \times U_1$</li>
-</ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 1.25 &amp; 4.25 &amp; -3.5 \<br>0 &amp; 0.25 &amp; 4.25 &amp; -1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：</p>
-<p>接下来对第2列进行消元，使$U$中第3、4行的第二列元素为0：</p>
-<ul>
-<li>$L_{32}&#x3D;\frac{U_{32}}{U_{22}}&#x3D;\frac{1.25}{-0.5}&#x3D;-2.5$</li>
-<li>$L_{42}&#x3D;\frac{U_{42}}{U_{22}}&#x3D;\frac{0.25}{-0.5}&#x3D;-0.5$</li>
-</ul>
-<p>进行行变换，更新$U$：</p>
-<ul>
-<li>$U_3 \Rightarrow U_3 + 2.5 \times U_2$</li>
-<li>$U_4 \Rightarrow U_4 + 0.5 \times U_2$</li>
-</ul>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 7 &amp; 1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$<br>最后，对第3列进行消元：</p>
-<ul>
-<li>$L_{43}&#x3D;\frac{U_{43}}{U_{33}}&#x3D;\frac{7}{18} \approx 0.389$</li>
-</ul>
-<p>进行行变换，更新$U$：</p>
-<p>$U_4 \to U_4 - 0.389 \times U_3$</p>
-<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 0 &amp; -2.972<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0.389 &amp; 1<br>\end{pmatrix}<br>$$</p>
 
       
     </div>

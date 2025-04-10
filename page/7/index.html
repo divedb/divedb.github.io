@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,119 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/14/linear%20algebra/%E7%9F%A9%E9%98%B5LU%E5%88%86%E8%A7%A3/" class="post-title-link" itemprop="url">矩阵LU分解</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-14 16:48:46 / Modified: 19:43:00" itemprop="dateCreated datePublished" datetime="2024-10-14T16:48:46+08:00">2024-10-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linear-algebra/" itemprop="url" rel="index"><span itemprop="name">linear algebra</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="LU分解"><a href="#LU分解" class="headerlink" title="LU分解"></a>LU分解</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1. 概念"></a>1. 概念</h4><p>​	<strong>LU分解</strong>（LU Decomposition）是一种将一个矩阵分解为两个特定矩阵的方法，通常用于解决线性方程组、计算行列式以及求逆矩阵。LU 分解的主要思想是将一个给定的方阵$A$分解为两个矩阵的乘积：一个下三角矩阵$L$和一个上三角矩阵$U$。</p>
+<h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>如果$A$是一个$n \times n$的可逆矩阵，则可以表示为：<br>$$<br>A &#x3D; LU<br>$$</p>
+<h4 id="2-例题"><a href="#2-例题" class="headerlink" title="2. 例题"></a>2. 例题</h4><p>设矩阵$A$为：<br>$$<br>A &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$<br>我们希望找到$L$和$U$，使得$A&#x3D;LU$。</p>
+<p>首先初始化$U$为矩阵$A$，并将$L$初始化为单位矩阵：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; 0 &amp; 1 &amp; 0 \<br>1.25 &amp; 0 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$</p>
+<p>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>2 &amp; 1 &amp; 5 &amp; 7 \<br>1 &amp; 2 &amp; 4 &amp; -3 \<br>5 &amp; 4 &amp; 3 &amp; 1<br>\end{pmatrix}<br>$$</p>
+<p>对第1行对系数进行消元，将第2、3、4行的首列元素消为0。</p>
+<ul>
+<li>$L_{21}&#x3D;\frac{U_{21}}{U_{11}}&#x3D;\frac{2}{4}&#x3D;0.5$</li>
+<li>$L_{21}&#x3D;\frac{U_{31}}{U_{11}}&#x3D;\frac{1}{4}&#x3D;0.25$</li>
+<li>$L_{41}&#x3D;\frac{U_{41}}{U_{11}}&#x3D;\frac{5}{4}&#x3D;1.25$</li>
+</ul>
+<p>使用这些系数对第2、3、4行进行变换，并更新$U$：</p>
+<ul>
+<li>$U_2 \Rightarrow U_2 - 0.5 \times U_1$</li>
+<li>$U_3 \Rightarrow U_3 - 0.25 \times U_1$</li>
+<li>$U_4 \Rightarrow U_4 - 1.25 \times U_1$</li>
+</ul>
+<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 1.25 &amp; 4.25 &amp; -3.5 \<br>0 &amp; 0.25 &amp; 4.25 &amp; -1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：</p>
+<p>接下来对第2列进行消元，使$U$中第3、4行的第二列元素为0：</p>
+<ul>
+<li>$L_{32}&#x3D;\frac{U_{32}}{U_{22}}&#x3D;\frac{1.25}{-0.5}&#x3D;-2.5$</li>
+<li>$L_{42}&#x3D;\frac{U_{42}}{U_{22}}&#x3D;\frac{0.25}{-0.5}&#x3D;-0.5$</li>
+</ul>
+<p>进行行变换，更新$U$：</p>
+<ul>
+<li>$U_3 \Rightarrow U_3 + 2.5 \times U_2$</li>
+<li>$U_4 \Rightarrow U_4 + 0.5 \times U_2$</li>
+</ul>
+<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 7 &amp; 1.5<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0 &amp; 1<br>\end{pmatrix}<br>$$<br>最后，对第3列进行消元：</p>
+<ul>
+<li>$L_{43}&#x3D;\frac{U_{43}}{U_{33}}&#x3D;\frac{7}{18} \approx 0.389$</li>
+</ul>
+<p>进行行变换，更新$U$：</p>
+<p>$U_4 \to U_4 - 0.389 \times U_3$</p>
+<p>计算得出：<br>$$<br>U &#x3D; \begin{pmatrix}<br>4 &amp; 3 &amp; -1 &amp; 2 \<br>0 &amp; -0.5 &amp; 5.5 &amp; 6 \<br>0 &amp; 0 &amp; 18 &amp; 11.5 \<br>0 &amp; 0 &amp; 0 &amp; -2.972<br>\end{pmatrix}<br>$$<br>同时更新$L$：<br>$$<br>L &#x3D; \begin{pmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0.5 &amp; 1 &amp; 0 &amp; 0 \<br>0.25 &amp; -2.5 &amp; 1 &amp; 0 \<br>1.25 &amp; -0.5 &amp; 0.389 &amp; 1<br>\end{pmatrix}<br>$$</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1028,111 +1141,6 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="Support-Vector-Machines"><a href="#Support-Vector-Machines" class="headerlink" title="Support Vector Machines"></a>Support Vector Machines</h2>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/10/calculus/%E6%95%B0%E5%88%97%E6%9E%81%E9%99%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/10/calculus/%E6%95%B0%E5%88%97%E6%9E%81%E9%99%90/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-10-10 13:11:08 / Modified: 13:44:53" itemprop="dateCreated datePublished" datetime="2024-10-10T13:11:08+08:00">2024-10-10</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="数列极限"><a href="#数列极限" class="headerlink" title="数列极限"></a>数列极限</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1.  概念"></a>1.  概念</h4><p>数列是按一定规律排列的一列数。每个数称为数列的一个项，数列通常用符号$a_n$表示，其中$n$是项的索引。数列可以是有限的或无限的，常见的数列包括：</p>
-<ol>
-<li><strong>算术数列</strong>：相邻项之间的差是一个常数，如$a_n &#x3D; a_1 + (n - 1)d$</li>
-<li><strong>几何数列</strong>：相邻项之间的比是一个常数，如$a_n &#x3D; a_1r^{n-1}$。</li>
-<li><strong>递推数列</strong>：每一项通过前一项或几项的值定义，如Fibonacci数列。</li>
-</ol>
-<p>例1</p>
-<p>极限为0。</p>
-<p>$1, -\frac{1}{2}, \frac{1}{3}, -\frac{1}{4}, \ldots, \frac{(-1)^{n-1}}{n}$</p>
-<p>数列的极限定义如下：</p>
-<p>设${a_n}$是一个数列。如果对于任意的正数$\epsilon \gt 0$，存在一个正整数$N$，使得当$n \gt N$时，数列的项${a_n}$与某个实数$L$的距离小于$\epsilon$，即：<br>$$<br>|a_n-L|\lt \epsilon<br>$$<br>则称数列${a_n}$收敛于$L$，记作：<br>$$<br>\lim_{n \to \infty}a_n &#x3D; L<br>$$</p>
-<p>例题</p>
-<p>证明：其中（$a$是常数且$a \gt 0$）<br>$$<br>\lim_{n \to \infty}\sqrt[n] a &#x3D; 1<br>$$</p>
-<p>$$<br>a &#x3D; 1, \lim_{n \to \infty}\sqrt[n]1 &#x3D; \lim_{n \to \infty}1 &#x3D; 1 \<br>,<br>$$</p>
-<p>$a \gt 1, \forall \epsilon \gt 0$，若要$|\sqrt[n]a - 1| \lt \epsilon$成立，</p>
-<p>$\Leftrightarrow$</p>
-<p>$\sqrt[n]a - 1 \lt \epsilon$</p>
-<p>$\Leftrightarrow$</p>
-<p>$a^{\frac{1}{n}} \lt 1 + \epsilon$</p>
-<p>$\Leftrightarrow$</p>
-<p>$\ln a^{\frac{1}{n}} \lt \ln(1 +\epsilon)$</p>
-<p>$\Leftrightarrow$</p>
-<p>$\frac{1}{n}\ln a \lt \ln(1 + \epsilon)$</p>
-<p>$\Leftrightarrow$</p>
-<p>$\frac{1}{n} \lt \frac{\ln(1+\epsilon)}{\ln a}$</p>
-<p>$\Leftrightarrow$</p>
-<p>$n \gt \frac{\ln a}{\ln(1+\epsilon)}$</p>
-<p>取$N &#x3D; [\frac{\ln a}{\ln(1+\epsilon)}]$，当$n \gt N$时，都有$|\sqrt[n]a - 1| \lt \epsilon$</p>
-<h5 id="重要的数列极限"><a href="#重要的数列极限" class="headerlink" title="重要的数列极限"></a>重要的数列极限</h5><ul>
-<li>$\lim_{n \to \infty}C &#x3D; C$</li>
-<li>$\lim_{n \to \infty}\frac{1}{n^k} &#x3D; 0$（$k \gt 0$且为常数）</li>
-<li>$\lim_{n \to \infty}q^n &#x3D; 0$（$|q| \lt 1$且为常数）</li>
-<li>$\lim_{n \to \infty}\sqrt[n]a &#x3D; 1$（$a \gt 0$且为常数）</li>
-<li>$\lim_{n \to \infty}\frac{a^n}{n!} &#x3D; 0$（$a$为常数）</li>
-<li>$\lim_{n \to \infty}\sqrt[n]n &#x3D; 1$</li>
-</ul>
-
       
     </div>
 

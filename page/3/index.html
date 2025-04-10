@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,127 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/12/python/python%E6%A8%A1%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/12/12/python/python%E6%A8%A1%E5%9D%97/" class="post-title-link" itemprop="url">python模块</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-12-12 19:25:36 / Modified: 19:28:55" itemprop="dateCreated datePublished" datetime="2024-12-12T19:25:36+08:00">2024-12-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="python模块"><a href="#python模块" class="headerlink" title="python模块"></a>python模块</h2><p>要创建一个可以通过 <code>python3 -m</code> 执行的 Python 模块，你需要遵循一些标准的目录结构和文件组织规范。以下是如何制作一个符合要求的模块：</p>
+<h4 id="1-创建项目结构"><a href="#1-创建项目结构" class="headerlink" title="1. 创建项目结构"></a>1. 创建项目结构</h4><p>首先，你需要创建一个目录结构，确保模块符合 Python 的包规范。一个典型的目录结构如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">my_module/</span><br><span class="line">├── my_module/</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── my_script.py</span><br><span class="line">├── setup.py</span><br><span class="line">└── README.md</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>my_module/</code>：这是你的模块包目录，包含实际的 Python 代码。</li>
+<li><code>__init__.py</code>：标记目录 <code>my_module</code> 是一个 Python 包。</li>
+<li><code>my_script.py</code>：你的模块的主要代码，可以包含任何功能或类。</li>
+<li><code>setup.py</code>：这是一个可选文件，用于包装模块的安装，确保模块可以正确地安装到 Python 环境中。</li>
+</ul>
+<h4 id="2-编写模块代码"><a href="#2-编写模块代码" class="headerlink" title="2. 编写模块代码"></a>2. 编写模块代码</h4><p>在 <code>my_module/my_script.py</code> 中编写你希望通过 <code>python3 -m</code> 运行的代码。例如，假设你写一个简单的 <code>hello</code> 脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_module/my_script.py</span></span><br><span class="line">def main():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Hello from my_module!&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-添加-init-py"><a href="#3-添加-init-py" class="headerlink" title="3. 添加 __init__.py"></a>3. 添加 <code>__init__.py</code></h4><p>确保 <code>my_module/</code> 目录中有一个 <code>__init__.py</code> 文件，这样 Python 才能识别它作为一个包。即使 <code>__init__.py</code> 文件为空，它也是必须的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_module/__init__.py</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-通过-python3-m-运行"><a href="#4-通过-python3-m-运行" class="headerlink" title="4. 通过 python3 -m 运行"></a>4. 通过 <code>python3 -m</code> 运行</h4><p>如果你的目录结构已经设置好，并且代码正确，你可以通过以下命令运行你的模块：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m my_module.my_script</span><br></pre></td></tr></table></figure>
+
+<p>这将执行 <code>my_module.my_script</code> 中的 <code>main()</code> 函数，并打印出 <code>Hello from my_module!</code>。</p>
+<h4 id="5-可选：创建-setup-py-文件"><a href="#5-可选：创建-setup-py-文件" class="headerlink" title="5. 可选：创建 setup.py 文件"></a>5. 可选：创建 <code>setup.py</code> 文件</h4><p>如果你希望能够安装该模块并在任何地方使用它，你可以创建一个 <code>setup.py</code> 文件，内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup.py</span></span><br><span class="line">from setuptools import setup, find_packages</span><br><span class="line"></span><br><span class="line">setup(</span><br><span class="line">    name=<span class="string">&quot;my_module&quot;</span>,</span><br><span class="line">    version=<span class="string">&quot;0.1&quot;</span>,</span><br><span class="line">    packages=find_packages(),</span><br><span class="line">    entry_points=&#123;</span><br><span class="line">        <span class="string">&quot;console_scripts&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;my_module=my_module.my_script:main&quot;</span>,</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>setup.py</code> 文件允许你通过 <code>pip</code> 安装模块。使用以下命令来安装模块：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install .</span><br></pre></td></tr></table></figure>
+
+<p>安装后，你就可以在任何地方使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m my_module.my_script</span><br></pre></td></tr></table></figure>
+
+<p>或者，如果你在 <code>entry_points</code> 中添加了 <code>console_scripts</code>，你还可以直接执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">my_module</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-打包和发布（可选）"><a href="#6-打包和发布（可选）" class="headerlink" title="6. 打包和发布（可选）"></a>6. 打包和发布（可选）</h4><p>如果你希望将模块分发给其他人使用，或者上传到 PyPI，你可以使用以下命令进行打包和发布：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 setup.py sdist</span><br><span class="line">twine upload dist/*</span><br></pre></td></tr></table></figure>
+
+<p>这会将你的模块打包成一个可发布的格式，并上传到 PyPI。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>要使你的 Python 代码可以通过 <code>python3 -m</code> 运行，关键是：</p>
+<ol>
+<li>确保你的代码放在一个符合 Python 包结构的目录中。</li>
+<li>包内的文件需要有 <code>__init__.py</code>。</li>
+<li>创建一个主脚本并在其中定义一个 <code>main()</code> 函数，确保通过 <code>if __name__ == &quot;__main__&quot;:</code> 来启动。</li>
+<li>通过 <code>python3 -m my_module.my_script</code> 来运行你的模块。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1311,124 +1432,6 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,10,4,2,3,5]</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The shortest subarray we can remove is [10,4,2] of length 3. The remaining elements after that will be [1,2,3,3,5] <span class="built_in">which</span> are sorted.</span><br><span class="line">Another correct solution is to remove the subarray [3,10,4].</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">findLengthOfShortestSubarray</span>(<span class="params">self, arr</span>):</span><br><span class="line">        n = <span class="built_in">len</span>(arr)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Step 1: Find the longest non-decreasing prefix</span></span><br><span class="line">        prefix_end = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> prefix_end &lt; n - <span class="number">1</span> <span class="keyword">and</span> arr[prefix_end] &lt;= arr[prefix_end + <span class="number">1</span>]:</span><br><span class="line">            prefix_end += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># If the whole array is non-decreasing, no need to remove anything</span></span><br><span class="line">        <span class="keyword">if</span> prefix_end == n - <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Step 2: Find the longest non-decreasing suffix</span></span><br><span class="line">        suffix_start = n - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> suffix_start &gt; <span class="number">0</span> <span class="keyword">and</span> arr[suffix_start] &gt;= arr[suffix_start - <span class="number">1</span>]:</span><br><span class="line">            suffix_start -= <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Step 3: Try to remove the subarray by merging prefix and suffix</span></span><br><span class="line">        <span class="comment"># Case where we remove the suffix or prefix</span></span><br><span class="line">        ans = <span class="built_in">min</span>(n - prefix_end - <span class="number">1</span>, suffix_start)  </span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Step 4: Try merging the prefix and suffix</span></span><br><span class="line">        i, j = <span class="number">0</span>, suffix_start</span><br><span class="line">        <span class="keyword">while</span> i &lt;= prefix_end <span class="keyword">and</span> j &lt; n:</span><br><span class="line">            <span class="keyword">if</span> arr[i] &lt;= arr[j]:</span><br><span class="line">                ans = <span class="built_in">min</span>(ans, j - i - <span class="number">1</span>)</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                j += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> ans</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/12/machine%20learning/SVM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/12/machine%20learning/SVM/" class="post-title-link" itemprop="url">SVM</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-11-12 19:13:29 / Modified: 19:13:34" itemprop="dateCreated datePublished" datetime="2024-11-12T19:13:29+08:00">2024-11-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine learning</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="SVM"><a href="#SVM" class="headerlink" title="SVM"></a>SVM</h2><p>泰勒公式展开</p>
-<p>对于一个在点$a$处有$n$阶导数的函数$f(x)$，它的$n$阶泰勒展开式可以写成：</p>
-<p>$f(x) &#x3D; f(a) + f’(a)(x - a) + \frac{f’’(a)}{2!}(x - a)^2 + \cdots + \frac{f^{(n)}(a)}{n!}(x - a)^n + R_n(x)$</p>
-<p>其中：</p>
-<ul>
-<li>$f^{(k)}(a)$表示$f(x)$在点$a$的第$k$阶导数。</li>
-<li>$R_n(x)$表示泰勒余项，它反映了实际函数值与泰勒展开值之间的误差。</li>
-<li>如果$R_n(x) \to 0$当$n \to \infty$，则称函数$f(x)$在点$a$处的泰勒展开式可以无限逼近$f(x)$，此时称其为<strong>泰勒级数</strong>。</li>
-</ul>
-<h5 id="特殊情况：麦克劳林公式"><a href="#特殊情况：麦克劳林公式" class="headerlink" title="特殊情况：麦克劳林公式"></a>特殊情况：麦克劳林公式</h5><p>当展开点$a &#x3D; 0$时，泰勒公式称为<strong>麦克劳林公式</strong>，形式如下：</p>
-<p>$f(x) &#x3D; f(0) + f’(0)x + \frac{f’’(0)}{2!}x^2 + \cdots + \frac{f^{(n)}(0)}{n!}x^n + R_n(x)$</p>
-<h6 id="泰勒公式的例子"><a href="#泰勒公式的例子" class="headerlink" title="泰勒公式的例子"></a>泰勒公式的例子</h6><ol>
-<li><p><strong>指数函数</strong>$e^x$的麦克劳林展开：</p>
-<p>$e^x &#x3D; 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots$</p>
-</li>
-<li><p><strong>正弦函数</strong>$\sin(x)$的麦克劳林展开：</p>
-<p>$\sin(x) &#x3D; x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots$</p>
-</li>
-<li><p>**余弦函数$\cos(x)$**的麦克劳林展开：</p>
-<p>$\cos(x) &#x3D; 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots$</p>
-</li>
-</ol>
-<p>Support Vector Machine<br>$$<br>\overline{w} \cdot \overline{x_+} + b \ge 1<br>$$</p>
-<p>$$<br>\overline{w} \cdot \overline{x_-} + b \le -1<br>$$</p>
-<p>$y_i$ such that<br>$$<br>y_i &#x3D;<br>\begin{cases}<br>    +1, &amp; \text{for positive samples} \<br>    -1, &amp; \text{for negative samples}<br>\end{cases}<br>$$</p>
-<p>$$<br>y_i(\overline{w}\cdot x_i + b) - 1\ge 0<br>$$</p>
-<p>$$<br>\text{width} &#x3D; (\overline{x}<em>+ - \overline{x}</em>-) \cdot \frac{\overline{w}}{||w||}&#x3D;\frac{2}{||w||}<br>$$</p>
-<h5 id="SVM-中的拉格朗日乘子方法"><a href="#SVM-中的拉格朗日乘子方法" class="headerlink" title="SVM 中的拉格朗日乘子方法"></a>SVM 中的拉格朗日乘子方法</h5><p>SVM 的目标是求解如下的最优化问题：<br>$$<br>\min_{\mathbf{w}, b} \frac{1}{2} ||\mathbf{w}||^2\<br>\text{subject to } y_i (\mathbf{w}^T \mathbf{x}_i + b) \geq 1 \text{for all i}<br>$$<br>其中：</p>
-<ul>
-<li>$\mathbf{w}$是超平面的法向量，</li>
-<li>$b$是超平面的偏置项，</li>
-<li>$y_i$是样本的标签，取值为$+1$或$-1$，</li>
-<li>$\mathbf{x}_i$是样本特征。</li>
-</ul>
-<p>这就涉及到带有约束的优化问题，拉格朗日乘子方法可以帮助我们引入约束条件，将原始的最优化问题转化为一个无约束的优化问题。</p>
-<h5 id="拉格朗日对偶问题"><a href="#拉格朗日对偶问题" class="headerlink" title="拉格朗日对偶问题"></a>拉格朗日对偶问题</h5><p>通过构造拉格朗日函数来将约束条件引入：<br>$$<br>L(\mathbf{w}, b, \lambda) &#x3D; \frac{1}{2} ||\mathbf{w}||^2 - \sum_{i&#x3D;1}^N \lambda_i \left[ y_i (\mathbf{w}^T \mathbf{x}<em>i + b) - 1 \right]<br>$$<br>这里，$\lambda_i$是拉格朗日乘子，表示约束条件的重要性。接着，我们对拉格朗日函数分别对$\mathbf{w}$和$b$求偏导并设为零，得到最优条件：<br>$$<br>\frac{\partial L}{\partial \mathbf{w}} &#x3D; \mathbf{w} - \sum</em>{i&#x3D;1}^N \lambda_i y_i \mathbf{x}_i &#x3D; 0<br>$$</p>
-<p>$$<br>\frac{\partial L}{\partial b} &#x3D; \sum_{i&#x3D;1}^N \lambda_i<br>$$</p>
-<p>然后，我们可以得到对偶问题，通过对 λi\lambda_iλi 进行优化来求解。</p>
-<p>对偶问题的目标函数</p>
-<p>通过代入原始的拉格朗日函数，我们可以得到对偶问题的目标函数：<br>$$<br>\max_{\lambda} \left( \sum_{i&#x3D;1}^N \lambda_i - \frac{1}{2} \sum_{i,j&#x3D;1}^N \lambda_i \lambda_j y_i y_j \mathbf{x}_i^T \mathbf{x}<em>j \right) \ \text{subject to } \lambda_i \geq 0 \quad \text{and} \quad \sum</em>{i&#x3D;1}^N \lambda_i y_i &#x3D; 0<br>$$<br>通过求解这个对偶问题，我们可以得到每个拉格朗日乘子的最优值，从而求解出 w\mathbf{w}w 和 bbb 的最优解。</p>
-
       
     </div>
 

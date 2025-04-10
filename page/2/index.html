@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,108 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/02/01/gdb/HACK#26%20SIGSEGV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/01/gdb/HACK#26%20SIGSEGV/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-02-01 11:26:32 / Modified: 12:20:03" itemprop="dateCreated datePublished" datetime="2025-02-01T11:26:32+08:00">2025-02-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="HACK-26-发生SIGSEGV，应用程序异常停止"><a href="#HACK-26-发生SIGSEGV，应用程序异常停止" class="headerlink" title="HACK#26 发生SIGSEGV，应用程序异常停止"></a>HACK#26 发生SIGSEGV，应用程序异常停止</h2><p>由于栈溢出导致segmentation fault的调试。</p>
+<p>应用程序执行了非法访问内存等操作后，就会发生SIGSEGV异常而停止。SIGSEGV发生的情况包括：</p>
+<ol>
+<li>NULL指针访问</li>
+<li>指针被破坏等原因导致的非法地址访问</li>
+<li>栈溢出导致访问超出了已分配的地址空间</li>
+</ol>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ulimit</span> -a</span><br><span class="line">-t: cpu time (seconds)              unlimited</span><br><span class="line">-f: file size (blocks)              unlimited</span><br><span class="line">-d: data seg size (kbytes)          unlimited</span><br><span class="line">-s: stack size (kbytes)             8192</span><br><span class="line">-c: core file size (blocks)         0</span><br><span class="line">-m: resident <span class="built_in">set</span> size (kbytes)      unlimited</span><br><span class="line">-u: processes                       15171</span><br><span class="line">-n: file descriptors                1024</span><br><span class="line">-l: locked-in-memory size (kbytes)  495172</span><br><span class="line">-v: address space (kbytes)          unlimited</span><br><span class="line">-x: file locks                      unlimited</span><br><span class="line">-i: pending signals                 15171</span><br><span class="line">-q: bytes <span class="keyword">in</span> POSIX msg queues       819200</span><br><span class="line">-e: max <span class="built_in">nice</span>                        0</span><br><span class="line">-r: max rt priority                 0</span><br><span class="line">-N 15:                              unlimited</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cassert&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> array[<span class="number">1024</span>];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> array[<span class="number">0</span>] + <span class="built_in">foo</span>(n<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">assert</span>(argc &gt;= <span class="number">2</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> n = std::<span class="built_in">atoi</span>(argv[<span class="number">1</span>]);</span><br><span class="line">  std::cout &lt;&lt; <span class="built_in">foo</span>(n) &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>stack的大小是8Mb，理论上的递归次数$8 \times 1024 \times 1024 \div (1024 \times 4) &#x3D; 2048$，实际的值是在2020左右。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ./stack_overflow 2000</span><br><span class="line">144</span><br><span class="line">$ ./stack_overflow 2010</span><br><span class="line">144</span><br><span class="line">$ ./stack_overflow 2020</span><br><span class="line">[1]    4359 segmentation fault (core dumped)  ./stack_overflow 2020</span><br></pre></td></tr></table></figure>
+
+<p>解决方法：</p>
+<h5 id="1-方法一"><a href="#1-方法一" class="headerlink" title="1. 方法一"></a>1. 方法一</h5><p><strong>修改栈大小</strong></p>
+<p>如果需要调整栈的大小，可以使用<code>ulimit -s</code>命令来修改：</p>
+<p><strong>增加栈大小</strong></p>
+<p>例如，将栈大小增加到16MB：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -s 16384</span><br></pre></td></tr></table></figure>
+
+<p>该设置仅对当前 shell 会话有效。如果你希望这个设置在重启后仍然生效，可以将其添加到 shell 启动文件（例如 <code>.bashrc</code> 或 <code>.bash_profile</code>）中。</p>
+<p><strong>永久修改栈大小</strong></p>
+<p>对于永久修改栈大小，你可以编辑 <code>/etc/security/limits.conf</code> 文件，并添加以下行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* soft stack 16384</span><br><span class="line">* hard stack 16384</span><br></pre></td></tr></table></figure>
+
+<p>这样可以将所有用户的软限制和硬限制都设置为16MB。如果只想为特定用户设置，可以替换<code>*</code>为用户名。</p>
+<p><strong>注意</strong></p>
+<p>​	栈大小的增大虽然可以解决栈溢出问题，但同时也会增加程序的内存占用，因此要根据程序的需求合理设置。如果不确定，默认的8MB栈大小通常已经足够大。</p>
+<h5 id="2-方法二"><a href="#2-方法二" class="headerlink" title="2. 方法二"></a>2. 方法二</h5><p>​	一般而言，捕获到信号后应当准备信号处理程序并执行某种操作。但是，栈溢出导致SIGSEGV发生的情况下，栈空间已经溢出，已经出现了非法访问，就连启动信号处理程序所需的栈都无法保证，所以不能这样处理。因此，为捕获栈溢出，需要使用备用栈，相应的函数为<code>sigaltstack(2)</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cassert&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> array[<span class="number">1024</span>];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> array[<span class="number">0</span>] + <span class="built_in">foo</span>(n<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">register_sigaltstack</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ALT_STACK_SIZE (4 * 1024)</span></span><br><span class="line"></span><br><span class="line">  <span class="type">static</span> <span class="type">int</span> is_altstack_defined = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (is_altstack_defined) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">stack_t</span> new_ss;</span><br><span class="line">  <span class="type">stack_t</span> old_ss;</span><br><span class="line">  </span><br><span class="line">  new_ss.ss_sp = <span class="built_in">malloc</span>(ALT_STACK_SIZE);</span><br><span class="line">  <span class="built_in">assert</span>(new_ss.ss_sp != <span class="literal">nullptr</span>);</span><br><span class="line">  </span><br><span class="line">  new_ss.ss_size = ALT_STACK_SIZE;</span><br><span class="line">  new_ss.ss_flags = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaltstack</span>(&amp;new_ss, &amp;old_ss) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;error: register_sigaltstack.\n&quot;</span>;</span><br><span class="line">    std::<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  is_altstack_defined = <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line"><span class="meta">#<span class="keyword">undef</span> ALT_STACK_SIZE</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">sighandler_t</span> <span class="title">ruby_signal</span><span class="params">(<span class="type">int</span> signum, <span class="type">sighandler_t</span> handler)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sigaction</span> sigact;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sigaction</span> old;</span><br><span class="line">  </span><br><span class="line">  sigact.sa_handler = handler;</span><br><span class="line">  <span class="built_in">sigemptyset</span>(&amp;sigact.sa_mask);</span><br><span class="line">  sigact.sa_flags = SA_ONSTACK;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaction</span>(signum, &amp;sigact, &amp;old) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;sigaction error.\n&quot;</span>;</span><br><span class="line">    std::<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> old.sa_handler;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">signal_handler</span><span class="params">(<span class="type">int</span> signum)</span> </span>&#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Caught signal &quot;</span> &lt;&lt; signum &lt;&lt; <span class="string">&quot; on alternate stack\n&quot;</span>;</span><br><span class="line">  std::<span class="built_in">abort</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">assert</span>(argc &gt;= <span class="number">2</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">register_sigaltstack</span>();</span><br><span class="line">  <span class="built_in">ruby_signal</span>(SIGSEGV, signal_handler);</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> n = std::<span class="built_in">atoi</span>(argv[<span class="number">1</span>]);</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Result of foo(&quot;</span> &lt;&lt; n &lt;&lt; <span class="string">&quot;): &quot;</span> &lt;&lt; <span class="built_in">foo</span>(n) &lt;&lt; std::endl;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1007,127 +1109,6 @@ static void cleanup_oopsdemo() &#123;
 
 <ol>
 <li><a target="_blank" rel="noopener" href="https://eli.thegreenplace.net/2018/basics-of-futexes/">Basics of Futexes</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/12/python/python%E6%A8%A1%E5%9D%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/12/12/python/python%E6%A8%A1%E5%9D%97/" class="post-title-link" itemprop="url">python模块</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2024-12-12 19:25:36 / Modified: 19:28:55" itemprop="dateCreated datePublished" datetime="2024-12-12T19:25:36+08:00">2024-12-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="python模块"><a href="#python模块" class="headerlink" title="python模块"></a>python模块</h2><p>要创建一个可以通过 <code>python3 -m</code> 执行的 Python 模块，你需要遵循一些标准的目录结构和文件组织规范。以下是如何制作一个符合要求的模块：</p>
-<h4 id="1-创建项目结构"><a href="#1-创建项目结构" class="headerlink" title="1. 创建项目结构"></a>1. 创建项目结构</h4><p>首先，你需要创建一个目录结构，确保模块符合 Python 的包规范。一个典型的目录结构如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">my_module/</span><br><span class="line">├── my_module/</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── my_script.py</span><br><span class="line">├── setup.py</span><br><span class="line">└── README.md</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>my_module/</code>：这是你的模块包目录，包含实际的 Python 代码。</li>
-<li><code>__init__.py</code>：标记目录 <code>my_module</code> 是一个 Python 包。</li>
-<li><code>my_script.py</code>：你的模块的主要代码，可以包含任何功能或类。</li>
-<li><code>setup.py</code>：这是一个可选文件，用于包装模块的安装，确保模块可以正确地安装到 Python 环境中。</li>
-</ul>
-<h4 id="2-编写模块代码"><a href="#2-编写模块代码" class="headerlink" title="2. 编写模块代码"></a>2. 编写模块代码</h4><p>在 <code>my_module/my_script.py</code> 中编写你希望通过 <code>python3 -m</code> 运行的代码。例如，假设你写一个简单的 <code>hello</code> 脚本：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_module/my_script.py</span></span><br><span class="line">def main():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Hello from my_module!&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-添加-init-py"><a href="#3-添加-init-py" class="headerlink" title="3. 添加 __init__.py"></a>3. 添加 <code>__init__.py</code></h4><p>确保 <code>my_module/</code> 目录中有一个 <code>__init__.py</code> 文件，这样 Python 才能识别它作为一个包。即使 <code>__init__.py</code> 文件为空，它也是必须的。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_module/__init__.py</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="4-通过-python3-m-运行"><a href="#4-通过-python3-m-运行" class="headerlink" title="4. 通过 python3 -m 运行"></a>4. 通过 <code>python3 -m</code> 运行</h4><p>如果你的目录结构已经设置好，并且代码正确，你可以通过以下命令运行你的模块：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m my_module.my_script</span><br></pre></td></tr></table></figure>
-
-<p>这将执行 <code>my_module.my_script</code> 中的 <code>main()</code> 函数，并打印出 <code>Hello from my_module!</code>。</p>
-<h4 id="5-可选：创建-setup-py-文件"><a href="#5-可选：创建-setup-py-文件" class="headerlink" title="5. 可选：创建 setup.py 文件"></a>5. 可选：创建 <code>setup.py</code> 文件</h4><p>如果你希望能够安装该模块并在任何地方使用它，你可以创建一个 <code>setup.py</code> 文件，内容如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup.py</span></span><br><span class="line">from setuptools import setup, find_packages</span><br><span class="line"></span><br><span class="line">setup(</span><br><span class="line">    name=<span class="string">&quot;my_module&quot;</span>,</span><br><span class="line">    version=<span class="string">&quot;0.1&quot;</span>,</span><br><span class="line">    packages=find_packages(),</span><br><span class="line">    entry_points=&#123;</span><br><span class="line">        <span class="string">&quot;console_scripts&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;my_module=my_module.my_script:main&quot;</span>,</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p><code>setup.py</code> 文件允许你通过 <code>pip</code> 安装模块。使用以下命令来安装模块：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install .</span><br></pre></td></tr></table></figure>
-
-<p>安装后，你就可以在任何地方使用：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m my_module.my_script</span><br></pre></td></tr></table></figure>
-
-<p>或者，如果你在 <code>entry_points</code> 中添加了 <code>console_scripts</code>，你还可以直接执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">my_module</span><br></pre></td></tr></table></figure>
-
-<h4 id="6-打包和发布（可选）"><a href="#6-打包和发布（可选）" class="headerlink" title="6. 打包和发布（可选）"></a>6. 打包和发布（可选）</h4><p>如果你希望将模块分发给其他人使用，或者上传到 PyPI，你可以使用以下命令进行打包和发布：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 setup.py sdist</span><br><span class="line">twine upload dist/*</span><br></pre></td></tr></table></figure>
-
-<p>这会将你的模块打包成一个可发布的格式，并上传到 PyPI。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>要使你的 Python 代码可以通过 <code>python3 -m</code> 运行，关键是：</p>
-<ol>
-<li>确保你的代码放在一个符合 Python 包结构的目录中。</li>
-<li>包内的文件需要有 <code>__init__.py</code>。</li>
-<li>创建一个主脚本并在其中定义一个 <code>main()</code> 函数，确保通过 <code>if __name__ == &quot;__main__&quot;:</code> 来启动。</li>
-<li>通过 <code>python3 -m my_module.my_script</code> 来运行你的模块。</li>
 </ol>
 
       

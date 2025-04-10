@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,90 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/05/c++/faq/FAQ%E4%B9%8BTemplate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/07/05/c++/faq/FAQ%E4%B9%8BTemplate/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-07-05 14:12:41" itemprop="dateCreated datePublished" datetime="2024-07-05T14:12:41+08:00">2024-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-07-14 14:45:38" itemprop="dateModified" datetime="2024-07-14T14:45:38+08:00">2024-07-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="C-FAQ"><a href="#C-FAQ" class="headerlink" title="C++ FAQ"></a>C++ FAQ</h2><h5 id="1-模板"><a href="#1-模板" class="headerlink" title="1. 模板"></a>1. 模板</h5><p>Q1. 实现<code>integer_sequence</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T... Ints&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">IntegerSequence</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Concat</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T... Ints1, T... Ints2&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Concat</span>&lt;IntegerSequence&lt;T, Ints<span class="number">1.</span>..&gt;, IntegerSequence&lt;T, Ints<span class="number">2.</span>..&gt;&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = IntegerSequence&lt;T, Ints<span class="number">1.</span>.., Ints<span class="number">2.</span>..&gt;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right, <span class="type">int</span> Dist = Right - Left&gt;</span><br><span class="line"><span class="keyword">struct</span> IntegerSequenceImpl;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Base case.</span></span><br><span class="line"><span class="comment">// 只包括左边界</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IntegerSequenceImpl</span>&lt;T, Left, Right, <span class="number">1</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = IntegerSequence&lt;T, Left&gt;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IntegerSequenceImpl</span>&lt;T, Left, Right&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = <span class="keyword">typename</span> Concat&lt;</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left, Left + (Right - Left) / <span class="number">2</span>&gt;::type,</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left + (Right - Left) / <span class="number">2</span>,</span><br><span class="line">                                   Right&gt;::type&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T N&gt;</span><br><span class="line"><span class="keyword">using</span> MakeIntegerSequence = <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, <span class="number">0</span>, N + <span class="number">1</span>&gt;::type;</span><br></pre></td></tr></table></figure>
+
+<p>报错</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">In file included from integer_sequence_test.cpp:1:</span><br><span class="line">./integer_sequence.hpp:24:8: error: <span class="built_in">type</span> of specialized non-type template argument depends on a template parameter of the partial specialization</span><br><span class="line">struct IntegerSequenceImpl&lt;T, Left, Right&gt; &#123;</span><br><span class="line">       ^</span><br><span class="line">./integer_sequence.hpp:24:37: note: template parameter is used <span class="keyword">in</span> default argument declared here</span><br><span class="line">struct IntegerSequenceImpl&lt;T, Left, Right&gt; &#123;</span><br><span class="line">                                    ^~~~~</span><br><span class="line">./integer_sequence.hpp:32:1: error: implicit instantiation of undefined template <span class="string">&#x27;IntegerSequenceImpl&lt;int, 0, 4, 4&gt;&#x27;</span></span><br><span class="line">using MakeIntegerSequence = typename IntegerSequenceImpl&lt;T, 0, N + 1&gt;::<span class="built_in">type</span>;</span><br><span class="line">^</span><br><span class="line">integer_sequence_test.cpp:8:27: note: <span class="keyword">in</span> instantiation of template <span class="built_in">type</span> <span class="built_in">alias</span> <span class="string">&#x27;MakeIntegerSequence&#x27;</span> requested here</span><br><span class="line">                          MakeIntegerSequence&lt;int, 3&gt; &gt;);</span><br><span class="line">                          ^</span><br><span class="line">./integer_sequence.hpp:14:8: note: template is declared here</span><br><span class="line">struct IntegerSequenceImpl;</span><br><span class="line">       ^</span><br><span class="line">2 errors generated.</span><br></pre></td></tr></table></figure>
+
+<p>错误提示$L8$。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right, <span class="type">int</span> Dist = Right - Left&gt;</span><br><span class="line"><span class="keyword">struct</span> IntegerSequenceImpl &#123;</span><br><span class="line">  <span class="keyword">using</span> type = <span class="keyword">typename</span> Concat&lt;</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left, Left + (Right - Left) / <span class="number">2</span>&gt;::type,</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left + (Right - Left) / <span class="number">2</span>,</span><br><span class="line">                                   Right&gt;::type&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IntegerSequenceImpl</span>&lt;T, Left, Right, <span class="number">1</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = IntegerSequence&lt;T, Left&gt;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1069,81 +1153,6 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="iterator-trait"><a href="#iterator-trait" class="headerlink" title="iterator_trait"></a>iterator_trait</h2><h5 id="1-判断迭代器的类型"><a href="#1-判断迭代器的类型" class="headerlink" title="1. 判断迭代器的类型"></a>1. 判断迭代器的类型</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__is_exactly_cpp17_input_iterator</span></span><br><span class="line">    : <span class="keyword">public</span> integral_constant&lt;<span class="type">bool</span>,</span><br><span class="line">                               __has_iterator_category_convertible_to&lt;</span><br><span class="line">                                   _Tp, input_iterator_tag&gt;::value &amp;&amp;</span><br><span class="line">                                   !__has_iterator_category_convertible_to&lt;</span><br><span class="line">                                       _Tp, forward_iterator_tag&gt;::value&gt; &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__is_exactly_cpp17_forward_iterator</span></span><br><span class="line">    : <span class="keyword">public</span> integral_constant&lt;</span><br><span class="line">          <span class="type">bool</span>, __has_iterator_category_convertible_to&lt;</span><br><span class="line">                    _Tp, forward_iterator_tag&gt;::value &amp;&amp;</span><br><span class="line">                    !__has_iterator_category_convertible_to&lt;</span><br><span class="line">                        _Tp, bidirectional_iterator_tag&gt;::value&gt; &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__is_exactly_cpp17_bidirectional_iterator</span></span><br><span class="line">    : <span class="keyword">public</span> integral_constant&lt;</span><br><span class="line">          <span class="type">bool</span>, __has_iterator_category_convertible_to&lt;</span><br><span class="line">                    _Tp, bidirectional_iterator_tag&gt;::value &amp;&amp;</span><br><span class="line">                    !__has_iterator_category_convertible_to&lt;</span><br><span class="line">                        _Tp, random_access_iterator_tag&gt;::value&gt; &#123;&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/13/c++/faq/2023-12-13/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/12/13/c++/faq/2023-12-13/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2023-12-13 22:50:09 / Modified: 22:52:46" itemprop="dateCreated datePublished" datetime="2023-12-13T22:50:09+08:00">2023-12-13</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="2023-12-13"><a href="#2023-12-13" class="headerlink" title="2023-12-13"></a>2023-12-13</h2><h5 id="1-const-reference1和const-reference2"><a href="#1-const-reference1和const-reference2" class="headerlink" title="1. const_reference1和const_reference2"></a>1. const_reference1和const_reference2</h5><p><code>const_reference1</code>修饰的是<code>reference</code>，本身是不可变。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">warning: <span class="string">&#x27;const&#x27;</span> qualifier on reference <span class="built_in">type</span> <span class="string">&#x27;Vector::reference&#x27;</span> (aka <span class="string">&#x27;T &amp;&#x27;</span>) has no effect [-Wignored-reference-qualifiers]</span><br></pre></td></tr></table></figure>
-
-<p><code>const_reference1</code>修饰的是<code>value_type</code>。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> value_type = T;</span><br><span class="line"><span class="keyword">using</span> reference = value_type&amp;;</span><br><span class="line"><span class="keyword">using</span> const_reference1 = <span class="type">const</span> reference;</span><br><span class="line"><span class="keyword">using</span> const_reference2 = <span class="type">const</span> value_type&amp;;</span><br></pre></td></tr></table></figure>
 
 
       

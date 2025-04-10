@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,226 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/10/c++/Linux%E4%B8%8BCC++%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/10/c++/Linux%E4%B8%8BCC++%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" class="post-title-link" itemprop="url">iostream</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-04-10 08:25:28 / Modified: 09:11:44" itemprop="dateCreated datePublished" datetime="2025-04-10T08:25:28+08:00">2025-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/376099115">https://zhuanlan.zhihu.com/p/376099115</a></p>
+<h2 id="Linux下C-C-输入输出"><a href="#Linux下C-C-输入输出" class="headerlink" title="Linux下C&#x2F;C++输入输出"></a>Linux下C&#x2F;C++输入输出</h2><h4 id="1-3个文件描述符"><a href="#1-3个文件描述符" class="headerlink" title="1. 3个文件描述符"></a>1. 3个文件描述符</h4><p>​	在Linux下启动一个程序时， 会为其打开0，1，2三个文件描述符. Linux 内核会管理文件描述符， 及其背后的文件是什么. 所以我们可以使用系统调用<code>read/write</code>往0，1，2这三个文件描述符里读取&#x2F;写入内容。一般而言，这三个文件描述符都会连接到终端屏幕上。</p>
+<p>关于文件描述符和Linux内核：</p>
+<p><a href="https://link.zhihu.com/?target=https://kkc.github.io/2020/08/22/file-descriptor/">Linux 的 file descriptor 筆記kkc.github.io&#x2F;2020&#x2F;08&#x2F;22&#x2F;file-descriptor&#x2F;<img src="https://pic3.zhimg.com/v2-d8387dafdc714d31a917cf4133b2e490_180x120.jpg" alt="img"></a></p>
+<p>可以在终端输入<code>tty</code>命令， 看到自己的终端所绑定的输出位置. 可以在终端输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /proc/进程号/fd </span><br></pre></td></tr></table></figure>
+
+<p>查看该进程打开的所有<code>fd</code>。我们可以看到很多程序的0，1，2并没有连接到到终端，而是连接到了文件&#x2F;<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=171707707&content_type=Article&match_order=1&q=%E5%A5%97%E6%8E%A5%E5%AD%97&zhida_source=entity">套接字</a>中。</p>
+<p><strong>无论是输入&#x2F;输出， 其最终都是要通过系统调用， 读取0号fd， 或者写入1&#x2F;2号fd</strong></p>
+<h4 id="2-C标准输入输出"><a href="#2-C标准输入输出" class="headerlink" title="2. C标准输入输出"></a>2. C标准输入输出</h4><p>​	为了尽可能减少系统调用，聪明人想出了缓存，也就是我们熟悉的<code>stdin</code>，<code>stdout</code>，<code>stderr</code>三个东西。他们在C 标准库之中实现。这三个东西实际上对应的是<code>FILE*</code>，分别指向C标准库中的<code>_IO_2_1_stdin_，_IO_2_1_stdout_， _IO_2_1_stderr_</code>这三个 <code>FILE</code>。</p>
+<p>这三个<code>FILE</code>要做的事情很多，总结一下，就是<strong>负责管理缓存</strong>， 并在需要的时候<strong>进行<code>read/write</code>系统调用</strong>，得到新的输入，或者真正地进行输出。</p>
+<p>缓存的管理方式肯定也不一样。</p>
+<p>对于输入而言，缓存策略一般是把0号fd内容全拿回来， 然后consume耗尽以后再次读取0号fd，这样循环往复。缓冲区大小通常为4KB。</p>
+<p>对于输出而言，则有三种策略：</p>
+<ol>
+<li>Fully Buffered这种策略的意思就是往缓冲区里写， <strong>写满了</strong>就把内容写入相应的fd。典型的缓冲区大小是 4KB。</li>
+<li>Line Buffered这种策略的意思就是往缓冲区里写，<strong>遇到换行</strong>或<strong>写满了</strong>就把内容写入相应的fd。典型的缓冲区大小是1KB.</li>
+<li>Unbuffered这种策略的意思就是<strong>不缓冲</strong>，写进来什么就往相应的fd之中写。</li>
+</ol>
+<p>我们最熟悉的<code>stdout</code>同时具有前两种模式。<strong>如果你是在terminal之中打开， 那就是Line Buffered，否则就是Fully Buffered</strong>。</p>
+<p>而<code>stderr</code>则是Unbuffered的。</p>
+<p>如果你想刷新一下缓存， 可以用C标准库提供的<code>fflush</code>函数。<code>fflush()</code>就会把当前缓冲区的内容和fd的内容进行一次同步。比如<code>fflush(stdout)</code>会把缓存写入 fd 所对应的文件。</p>
+<p>对于我们常见的<code>putchar</code>，<code>puts</code>，<code>printf</code>等函数，把字符写入<code>stdout</code>缓冲区以后他们就不管了。</p>
+<h4 id="3-FILE-的锁"><a href="#3-FILE-的锁" class="headerlink" title="3. FILE* 的锁"></a>3. FILE* 的锁</h4><p>​	实际上，POSIX标准为stdio提供了线程安全性。我们可以通过<code>flockfile</code>等函数来给<code>stdin/stdout/stderr</code>等<code>FILE*</code>来加锁和解锁。每个流都有自己的锁，并且这个锁在同一个线程内部可重入的，不用担心加锁次数超过 1。</p>
+<p>glibc的底层也提供了未加锁的操作<code>FILE*</code>的函数， 比如<code>fputc_unlocked</code>。但对于像<code>printf</code>这类通常的函数，他们内部都会锁上相应的流。</p>
+<p>所以我们可以说<code>printf</code>是线程安全的。每次调用<code>printf</code>都能完整输出，但是两次调用<code>printf</code>之间可能被别人插入一些什么。</p>
+<h4 id="4-C-标准流式输入输出"><a href="#4-C-标准流式输入输出" class="headerlink" title="4. C++标准流式输入输出"></a>4. C++标准流式输入输出</h4><p>​	<code>cin</code>是全局<code>istream</code>对象， <code>cout/cerr/clog</code>是全局<code>ostream</code>对象。在进入<code>main</code>之前会完成对其的初始化。</p>
+<p>这些对象都会间接持有一个<code>streambuf</code>的指针。<code>streambuf</code>对象可以定制自己的缓冲区。</p>
+<p>在默认的情况下， <code>cin</code>就会使用<code>stdin</code>的缓冲区，<code>cout</code>使用<code>stdout</code>的缓冲区，<code>cerr/clog</code>就使用<code>stderr</code>的缓冲区。所有的操作在底层会变成对<code>stdin/stdout/stderr</code>的操作。所以说<code>cout</code>等完全可以和<code>printf</code>混合使用。</p>
+<h4 id="5-用自己的缓冲区"><a href="#5-用自己的缓冲区" class="headerlink" title="5. 用自己的缓冲区"></a>5. 用自己的缓冲区</h4><p>如果不想让<code>c*</code>和<code>std*</code> 共用缓冲区，那么可以使用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::ios_base::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这个是一个单行道，它会在本程序永远地切断和<code>stdio</code>缓冲区的联系，转而用自己的<code>cin，cout，cerr</code>缓冲区直接和fd进行同步 (<code>clog</code>和<code>cerr</code>共用一个缓冲区)。用了这个也就不会遇到Line Buffered情况。典型的缓冲区大小是 8K。</p>
+<h4 id="6-标准流的刷新"><a href="#6-标准流的刷新" class="headerlink" title="6. 标准流的刷新"></a>6. 标准流的刷新</h4><p>​	这些<code>istream/ostream</code>对象也具有刷新功能。刷新意味着缓冲区和fd同步了，比如你的<code>cout</code>正在用着<code>stdout</code>的缓冲区。你刷新一下<code>cout</code>就会作用于<code>stdout</code>的缓冲区。</p>
+<p>如果你<code>cout</code>正好用着<code>stdout</code>的缓冲区， 然后<code>stdout</code>正好又是Line Buffered的话， 那用<code>cout &lt;&lt; endl;</code> 就会刷新两次 <code>stdout</code>，而用<code>cout &lt;&lt; &quot;\n&quot;</code>只刷新一次<code>stdout</code>的缓冲区。</p>
+<p><code>cerr</code> 和 <code>clog</code> 最大的区别就是 <code>cerr</code> 每次往缓冲区里写完都会刷新一下自己. 而 <code>clog</code> 不会. 如果用的不是 <code>stderr</code> 的缓冲区的话， 这两者区别会比较明显。</p>
+<h4 id="7-标准流的同步"><a href="#7-标准流的同步" class="headerlink" title="7. 标准流的同步"></a>7. 标准流的同步</h4><p>​	当你使用<code>cin</code>的时候，你在等待用户的反馈。所以你会希望在使用<code>cin</code>之前，用户能看到你<code>cout</code>出来的信息。默认情况下，<code>cin</code>会绑着<code>cout</code> 。这样每次使用<code>cin</code>之前都会刷新一下<code>cout</code>。</p>
+<p>如果这个不是你想要的行为，你可以用<code>cin.tie(NULL);</code>关掉这个特性。此外，<code>cerr</code>也绑着<code>cout</code>。</p>
+<h4 id="8-istream-ostream的线程安全"><a href="#8-istream-ostream的线程安全" class="headerlink" title="8. istream&#x2F;ostream的线程安全"></a>8. istream&#x2F;ostream的线程安全</h4><p>​	C++标准说：多线程共同访问是不安全的[<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/376099115#ref_1">1]</a>， 除了一个特例[<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/376099115#ref_2">2]</a>， 就是iostream与stdio同步的时候。比如<code>cin/cout/cerr</code> 正好用的是<code>stdin/stdout/stderr</code>的缓冲区的话（sync with stdio）。</p>
+<p>但是不像<code>printf</code>能保证每次调用都能完整输出，<code>cout</code>做的保证只有每个字符能完整地输出。(实际上底层调用了<code>fwrite</code>进行写入，而<code>fwrite</code>是保证完整写入的。但是<code>cout</code>可能会分批调用<code>fwrite</code>，所以无法保证整个<code>cout</code>调用的输出能完整。）</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>​	其实这些都还挺复杂的，而且他们并不是输入输出速度的极限，更快速的方案应该是在编译期处理好格式，并且尽量避免虚函数的使用（在printf和ostream之中均广泛使用）在实验中，fmtlib的性能就比他们要好。</p>
+<p>fmtlib在github上有11k个 stars，284个开发者共同开发（也有我）， 其<code>format</code>还进入了 C++20标准库，是一个现代化的格式化库。</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/380043139">孙孟越：C++ 格式化输出库 fmtlib307 赞同 · 28 评论文章</a></p>
+<p>如果我们不需要格式化字符串的功能， 只想输出。我们可以做一个小实验:</p>
+<p>如果fd 1连着一个txt文件，那么</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>输出内容</th>
+<th>是否有独立缓冲区</th>
+<th>平均时间（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>printf</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>4</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>12</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td>是</td>
+<td>9.3</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td></td>
+<td>655</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td>是</td>
+<td>641</td>
+</tr>
+</tbody></table>
+<p>因为只有最后两行在刷新缓冲区， 所以成绩比较拉跨。</p>
+<p>如果fd 1连着一个控制台， 那么</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>输出内容</th>
+<th>是否有独立缓冲区</th>
+<th>平均时间（ms）</th>
+<th>标准差(ms)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>printf</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>2768</td>
+<td>119</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>2843</td>
+<td>113</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td>是</td>
+<td>2317</td>
+<td>96</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td></td>
+<td>2834</td>
+<td>158</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td>是</td>
+<td>2863</td>
+<td>135</td>
+</tr>
+</tbody></table>
+<p>除了第三行都在不停刷新缓冲区，所以成绩比较优秀.</p>
+<p>所以说，最后这个性能还是得看你的使用场景了。不要轻易刷新缓冲区。对了，<code>stdout</code>其实也是可以把Line Buffered改成 Fully Bufferd的，有兴趣的读者可以上网搜索一下。</p>
+<hr/>
+
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/376099115#ref_1_0">^</a>见 C++ 标准 [iostreams.threadsafety] <a target="_blank" rel="noopener" href="https://www.ida.liu.se/~TDDD38/ISOCPP/iostreams.threadsafety.html">https://www.ida.liu.se/~TDDD38/ISOCPP/iostreams.threadsafety.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/376099115#ref_2_0">^</a>见 C++ 标准 [iostream.objects.overview] <a target="_blank" rel="noopener" href="https://www.ida.liu.se/~TDDD38/ISOCPP/iostream.objects.html">https://www.ida.liu.se/~TDDD38/ISOCPP/iostream.objects.html</a></li>
+</ol>
+<p>送礼物</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1572,108 +1792,6 @@ c
     <div class="post-body" itemprop="articleBody">
           <h2 id="HACK-27-backtrace无法正确显示"><a href="#HACK-27-backtrace无法正确显示" class="headerlink" title="HACK#27 backtrace无法正确显示"></a>HACK#27 backtrace无法正确显示</h2><h4 id="1-概要"><a href="#1-概要" class="headerlink" title="1. 概要"></a>1. 概要</h4><p>​	栈破坏有时会导致问题难以分析。特别是，由于无法获取<code>backtrace</code>信息，追溯问题现象发生的路径就变得异常困难。此外，由于存在栈破坏，可以说<code>backtrace</code>信息也并不完整。要记住，调试器的<code>backtrace</code>并非万能钥匙。</p>
 <h4 id="2-问题内容"><a href="#2-问题内容" class="headerlink" title="2. 问题内容"></a>2. 问题内容</h4><p>​	某个进行线程间通信的程序中含有bug，生成了core文件（内核转储文件）。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/02/01/gdb/HACK#26%20SIGSEGV/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/01/gdb/HACK#26%20SIGSEGV/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2025-02-01 11:26:32 / Modified: 12:20:03" itemprop="dateCreated datePublished" datetime="2025-02-01T11:26:32+08:00">2025-02-01</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="HACK-26-发生SIGSEGV，应用程序异常停止"><a href="#HACK-26-发生SIGSEGV，应用程序异常停止" class="headerlink" title="HACK#26 发生SIGSEGV，应用程序异常停止"></a>HACK#26 发生SIGSEGV，应用程序异常停止</h2><p>由于栈溢出导致segmentation fault的调试。</p>
-<p>应用程序执行了非法访问内存等操作后，就会发生SIGSEGV异常而停止。SIGSEGV发生的情况包括：</p>
-<ol>
-<li>NULL指针访问</li>
-<li>指针被破坏等原因导致的非法地址访问</li>
-<li>栈溢出导致访问超出了已分配的地址空间</li>
-</ol>
-<p>示例：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ulimit</span> -a</span><br><span class="line">-t: cpu time (seconds)              unlimited</span><br><span class="line">-f: file size (blocks)              unlimited</span><br><span class="line">-d: data seg size (kbytes)          unlimited</span><br><span class="line">-s: stack size (kbytes)             8192</span><br><span class="line">-c: core file size (blocks)         0</span><br><span class="line">-m: resident <span class="built_in">set</span> size (kbytes)      unlimited</span><br><span class="line">-u: processes                       15171</span><br><span class="line">-n: file descriptors                1024</span><br><span class="line">-l: locked-in-memory size (kbytes)  495172</span><br><span class="line">-v: address space (kbytes)          unlimited</span><br><span class="line">-x: file locks                      unlimited</span><br><span class="line">-i: pending signals                 15171</span><br><span class="line">-q: bytes <span class="keyword">in</span> POSIX msg queues       819200</span><br><span class="line">-e: max <span class="built_in">nice</span>                        0</span><br><span class="line">-r: max rt priority                 0</span><br><span class="line">-N 15:                              unlimited</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cassert&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> array[<span class="number">1024</span>];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> array[<span class="number">0</span>] + <span class="built_in">foo</span>(n<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">assert</span>(argc &gt;= <span class="number">2</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> n = std::<span class="built_in">atoi</span>(argv[<span class="number">1</span>]);</span><br><span class="line">  std::cout &lt;&lt; <span class="built_in">foo</span>(n) &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>stack的大小是8Mb，理论上的递归次数$8 \times 1024 \times 1024 \div (1024 \times 4) &#x3D; 2048$，实际的值是在2020左右。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ./stack_overflow 2000</span><br><span class="line">144</span><br><span class="line">$ ./stack_overflow 2010</span><br><span class="line">144</span><br><span class="line">$ ./stack_overflow 2020</span><br><span class="line">[1]    4359 segmentation fault (core dumped)  ./stack_overflow 2020</span><br></pre></td></tr></table></figure>
-
-<p>解决方法：</p>
-<h5 id="1-方法一"><a href="#1-方法一" class="headerlink" title="1. 方法一"></a>1. 方法一</h5><p><strong>修改栈大小</strong></p>
-<p>如果需要调整栈的大小，可以使用<code>ulimit -s</code>命令来修改：</p>
-<p><strong>增加栈大小</strong></p>
-<p>例如，将栈大小增加到16MB：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -s 16384</span><br></pre></td></tr></table></figure>
-
-<p>该设置仅对当前 shell 会话有效。如果你希望这个设置在重启后仍然生效，可以将其添加到 shell 启动文件（例如 <code>.bashrc</code> 或 <code>.bash_profile</code>）中。</p>
-<p><strong>永久修改栈大小</strong></p>
-<p>对于永久修改栈大小，你可以编辑 <code>/etc/security/limits.conf</code> 文件，并添加以下行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* soft stack 16384</span><br><span class="line">* hard stack 16384</span><br></pre></td></tr></table></figure>
-
-<p>这样可以将所有用户的软限制和硬限制都设置为16MB。如果只想为特定用户设置，可以替换<code>*</code>为用户名。</p>
-<p><strong>注意</strong></p>
-<p>​	栈大小的增大虽然可以解决栈溢出问题，但同时也会增加程序的内存占用，因此要根据程序的需求合理设置。如果不确定，默认的8MB栈大小通常已经足够大。</p>
-<h5 id="2-方法二"><a href="#2-方法二" class="headerlink" title="2. 方法二"></a>2. 方法二</h5><p>​	一般而言，捕获到信号后应当准备信号处理程序并执行某种操作。但是，栈溢出导致SIGSEGV发生的情况下，栈空间已经溢出，已经出现了非法访问，就连启动信号处理程序所需的栈都无法保证，所以不能这样处理。因此，为捕获栈溢出，需要使用备用栈，相应的函数为<code>sigaltstack(2)</code>。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cassert&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> array[<span class="number">1024</span>];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> array[<span class="number">0</span>] + <span class="built_in">foo</span>(n<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">register_sigaltstack</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ALT_STACK_SIZE (4 * 1024)</span></span><br><span class="line"></span><br><span class="line">  <span class="type">static</span> <span class="type">int</span> is_altstack_defined = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (is_altstack_defined) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">stack_t</span> new_ss;</span><br><span class="line">  <span class="type">stack_t</span> old_ss;</span><br><span class="line">  </span><br><span class="line">  new_ss.ss_sp = <span class="built_in">malloc</span>(ALT_STACK_SIZE);</span><br><span class="line">  <span class="built_in">assert</span>(new_ss.ss_sp != <span class="literal">nullptr</span>);</span><br><span class="line">  </span><br><span class="line">  new_ss.ss_size = ALT_STACK_SIZE;</span><br><span class="line">  new_ss.ss_flags = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaltstack</span>(&amp;new_ss, &amp;old_ss) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;error: register_sigaltstack.\n&quot;</span>;</span><br><span class="line">    std::<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  is_altstack_defined = <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line"><span class="meta">#<span class="keyword">undef</span> ALT_STACK_SIZE</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">sighandler_t</span> <span class="title">ruby_signal</span><span class="params">(<span class="type">int</span> signum, <span class="type">sighandler_t</span> handler)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sigaction</span> sigact;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sigaction</span> old;</span><br><span class="line">  </span><br><span class="line">  sigact.sa_handler = handler;</span><br><span class="line">  <span class="built_in">sigemptyset</span>(&amp;sigact.sa_mask);</span><br><span class="line">  sigact.sa_flags = SA_ONSTACK;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaction</span>(signum, &amp;sigact, &amp;old) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;sigaction error.\n&quot;</span>;</span><br><span class="line">    std::<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> old.sa_handler;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">signal_handler</span><span class="params">(<span class="type">int</span> signum)</span> </span>&#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Caught signal &quot;</span> &lt;&lt; signum &lt;&lt; <span class="string">&quot; on alternate stack\n&quot;</span>;</span><br><span class="line">  std::<span class="built_in">abort</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">assert</span>(argc &gt;= <span class="number">2</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">register_sigaltstack</span>();</span><br><span class="line">  <span class="built_in">ruby_signal</span>(SIGSEGV, signal_handler);</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> n = std::<span class="built_in">atoi</span>(argv[<span class="number">1</span>]);</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Result of foo(&quot;</span> &lt;&lt; n &lt;&lt; <span class="string">&quot;): &quot;</span> &lt;&lt; <span class="built_in">foo</span>(n) &lt;&lt; std::endl;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 
       
     </div>

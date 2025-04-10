@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,118 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/06/leetcode/leetcode%201497/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/06/leetcode/leetcode%201497/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-06 21:43:30" itemprop="dateCreated datePublished" datetime="2024-10-06T21:43:30+08:00">2024-10-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-08 16:50:08" itemprop="dateModified" datetime="2024-10-08T16:50:08+08:00">2024-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="leetcode-1497"><a href="#leetcode-1497" class="headerlink" title="leetcode 1497"></a>leetcode 1497</h2><h5 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h5><p>Given an array of integers <code>arr</code> of even length <code>n</code> and an integer <code>k</code>.</p>
+<p>We want to divide the array into exactly <code>n / 2</code> pairs such that the sum of each pair is divisible by <code>k</code>.</p>
+<p>Return <code>true</code> <em>If you can find a way to do that or</em> <code>false</code> <em>otherwise</em>. </p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,4,5,10,6,7,8,9], k = 5</span><br><span class="line">Output: true</span><br><span class="line">Explanation: Pairs are (1,9),(2,8),(3,7),(4,6) and (5,10).</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,4,5,6], k = 7</span><br><span class="line">Output: true</span><br><span class="line">Explanation: Pairs are (1,6),(2,5) and(3,4).</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 3:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,4,5,6], k = 10</span><br><span class="line">Output: false</span><br><span class="line">Explanation: You can try all possible pairs to see that there is no way to divide arr into 3 pairs each with sum divisible by 10.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>arr.length == n</code></li>
+<li><code>1 &lt;= n &lt;= 105</code></li>
+<li><code>n</code> is even.</li>
+<li><code>-109 &lt;= arr[i] &lt;= 109</code></li>
+<li><code>1 &lt;= k &lt;= 105</code></li>
+</ul>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>Let the array be $A&#x3D;[a_1, a_2, … , a_n]$ and the divisor be <em>k</em>. We need to form pairs such that:</p>
+<p>$(a_i+a_j)\mod k &#x3D; 0$</p>
+<p>This can be rewritten as:</p>
+<p>$(a_i\mod k + a_j\mod k) \mod k&#x3D;0$</p>
+<p>For each element in the array, its remainder when divided by <em>k</em> lies in the range [0,<em>k</em>−1]. Let’s denote the remainder of an element $a_i$ by $mod_i &#x3D; a_i\mod k$. To form a valid pair ($a_i$,$a_j$), we need:</p>
+<p>$(mod_i + mod_j)\mod k &#x3D; 0$</p>
+<p>This implies:</p>
+<p>$mod_i &#x3D; k - mod_j$  </p>
+<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">bool</span> <span class="title">canArrange</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; arr, <span class="type">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">count</span><span class="params">(k)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> a : arr) &#123;</span><br><span class="line">      <span class="type">int</span> m = ((a % k) + k) % k;</span><br><span class="line">      count[m]++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> n = arr.<span class="built_in">size</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt;= k/<span class="number">2</span>; ++i) &#123;</span><br><span class="line">      <span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (count[i] % <span class="number">2</span> != <span class="number">0</span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (count[i] != count[k-i]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -995,90 +1107,6 @@
 
 <p><code>__thread_struct_imp</code>结构</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__hidden_allocator</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">typedef</span> T  value_type;</span><br><span class="line"></span><br><span class="line">  <span class="function">T* <span class="title">allocate</span><span class="params">(<span class="type">size_t</span> __n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;T*&gt;(::<span class="keyword">operator</span> <span class="built_in">new</span>(__n * <span class="built_in">sizeof</span>(T)));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">deallocate</span><span class="params">(T* __p, <span class="type">size_t</span>)</span> </span>&#123;::<span class="function"><span class="keyword">operator</span> <span class="title">delete</span><span class="params">(<span class="keyword">static_cast</span>&lt;<span class="type">void</span>*&gt;(__p))</span></span>;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">size_t</span> <span class="title">max_size</span><span class="params">()</span> <span class="type">const</span> </span>&#123;<span class="keyword">return</span> <span class="built_in">size_t</span>(~<span class="number">0</span>) / <span class="built_in">sizeof</span>(T);&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__thread_struct_imp</span> &#123;</span><br><span class="line">	<span class="keyword">typedef</span> vector&lt;__assoc_sub_state*,</span><br><span class="line">  	__hidden_allocator&lt;__assoc_sub_state*&gt; &gt; _AsyncStates;</span><br><span class="line">	<span class="keyword">typedef</span> vector&lt;pair&lt;condition_variable*, mutex*&gt;,</span><br><span class="line">  	__hidden_allocator&lt;pair&lt;condition_variable*, mutex*&gt; &gt; &gt; _Notify;</span><br><span class="line"></span><br><span class="line">  _AsyncStates async_states_;</span><br><span class="line">  _Notify notify_;</span><br><span class="line"></span><br><span class="line">  __thread_struct_imp(<span class="type">const</span> __thread_struct_imp&amp;);</span><br><span class="line">  __thread_struct_imp&amp; <span class="keyword">operator</span>=(<span class="type">const</span> __thread_struct_imp&amp;);</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  __thread_struct_imp() &#123;&#125;</span><br><span class="line">  ~__thread_struct_imp();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">notify_all_at_thread_exit</span><span class="params">(condition_variable* cv, mutex* m)</span></span>;</span><br><span class="line">  <span class="type">void</span> __make_ready_at_thread_exit(__assoc_sub_state* __s);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">__thread_struct_imp::~__thread_struct_imp() &#123;</span><br><span class="line">  <span class="keyword">for</span> (_Notify::iterator i = notify_.<span class="built_in">begin</span>(), e = notify_.<span class="built_in">end</span>(); i != e; ++i) &#123;</span><br><span class="line">    i-&gt;second-&gt;<span class="built_in">unlock</span>();</span><br><span class="line">    i-&gt;first-&gt;<span class="built_in">notify_all</span>();</span><br><span class="line">	&#125;</span><br><span class="line">  <span class="keyword">for</span> (_AsyncStates::iterator i = async_states_.<span class="built_in">begin</span>(), e = async_states_.<span class="built_in">end</span>();</span><br><span class="line">			 i != e; ++i) &#123;</span><br><span class="line">    (*i)-&gt;__make_ready();</span><br><span class="line">    (*i)-&gt;__release_shared();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">__thread_struct_imp::notify_all_at_thread_exit</span><span class="params">(condition_variable* cv, mutex* m)</span> </span>&#123;</span><br><span class="line">	notify_.<span class="built_in">push_back</span>(<span class="built_in">pair</span>&lt;condition_variable*, mutex*&gt;(cv, m));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line">__thread_struct_imp::__make_ready_at_thread_exit(__assoc_sub_state* __s) &#123;</span><br><span class="line">	async_states_.<span class="built_in">push_back</span>(__s);</span><br><span class="line">  __s-&gt;__add_shared();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/05/c++/faq/FAQ%E4%B9%8BTemplate/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/07/05/c++/faq/FAQ%E4%B9%8BTemplate/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-07-05 14:12:41" itemprop="dateCreated datePublished" datetime="2024-07-05T14:12:41+08:00">2024-07-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-07-14 14:45:38" itemprop="dateModified" datetime="2024-07-14T14:45:38+08:00">2024-07-14</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="C-FAQ"><a href="#C-FAQ" class="headerlink" title="C++ FAQ"></a>C++ FAQ</h2><h5 id="1-模板"><a href="#1-模板" class="headerlink" title="1. 模板"></a>1. 模板</h5><p>Q1. 实现<code>integer_sequence</code></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T... Ints&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">IntegerSequence</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Concat</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T... Ints1, T... Ints2&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Concat</span>&lt;IntegerSequence&lt;T, Ints<span class="number">1.</span>..&gt;, IntegerSequence&lt;T, Ints<span class="number">2.</span>..&gt;&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = IntegerSequence&lt;T, Ints<span class="number">1.</span>.., Ints<span class="number">2.</span>..&gt;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right, <span class="type">int</span> Dist = Right - Left&gt;</span><br><span class="line"><span class="keyword">struct</span> IntegerSequenceImpl;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Base case.</span></span><br><span class="line"><span class="comment">// 只包括左边界</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IntegerSequenceImpl</span>&lt;T, Left, Right, <span class="number">1</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = IntegerSequence&lt;T, Left&gt;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IntegerSequenceImpl</span>&lt;T, Left, Right&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = <span class="keyword">typename</span> Concat&lt;</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left, Left + (Right - Left) / <span class="number">2</span>&gt;::type,</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left + (Right - Left) / <span class="number">2</span>,</span><br><span class="line">                                   Right&gt;::type&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T N&gt;</span><br><span class="line"><span class="keyword">using</span> MakeIntegerSequence = <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, <span class="number">0</span>, N + <span class="number">1</span>&gt;::type;</span><br></pre></td></tr></table></figure>
-
-<p>报错</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">In file included from integer_sequence_test.cpp:1:</span><br><span class="line">./integer_sequence.hpp:24:8: error: <span class="built_in">type</span> of specialized non-type template argument depends on a template parameter of the partial specialization</span><br><span class="line">struct IntegerSequenceImpl&lt;T, Left, Right&gt; &#123;</span><br><span class="line">       ^</span><br><span class="line">./integer_sequence.hpp:24:37: note: template parameter is used <span class="keyword">in</span> default argument declared here</span><br><span class="line">struct IntegerSequenceImpl&lt;T, Left, Right&gt; &#123;</span><br><span class="line">                                    ^~~~~</span><br><span class="line">./integer_sequence.hpp:32:1: error: implicit instantiation of undefined template <span class="string">&#x27;IntegerSequenceImpl&lt;int, 0, 4, 4&gt;&#x27;</span></span><br><span class="line">using MakeIntegerSequence = typename IntegerSequenceImpl&lt;T, 0, N + 1&gt;::<span class="built_in">type</span>;</span><br><span class="line">^</span><br><span class="line">integer_sequence_test.cpp:8:27: note: <span class="keyword">in</span> instantiation of template <span class="built_in">type</span> <span class="built_in">alias</span> <span class="string">&#x27;MakeIntegerSequence&#x27;</span> requested here</span><br><span class="line">                          MakeIntegerSequence&lt;int, 3&gt; &gt;);</span><br><span class="line">                          ^</span><br><span class="line">./integer_sequence.hpp:14:8: note: template is declared here</span><br><span class="line">struct IntegerSequenceImpl;</span><br><span class="line">       ^</span><br><span class="line">2 errors generated.</span><br></pre></td></tr></table></figure>
-
-<p>错误提示$L8$。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right, <span class="type">int</span> Dist = Right - Left&gt;</span><br><span class="line"><span class="keyword">struct</span> IntegerSequenceImpl &#123;</span><br><span class="line">  <span class="keyword">using</span> type = <span class="keyword">typename</span> Concat&lt;</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left, Left + (Right - Left) / <span class="number">2</span>&gt;::type,</span><br><span class="line">      <span class="keyword">typename</span> IntegerSequenceImpl&lt;T, Left + (Right - Left) / <span class="number">2</span>,</span><br><span class="line">                                   Right&gt;::type&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T Left, T Right&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IntegerSequenceImpl</span>&lt;T, Left, Right, <span class="number">1</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> type = IntegerSequence&lt;T, Left&gt;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 
       

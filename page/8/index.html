@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -139,6 +139,111 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/10/calculus/%E6%95%B0%E5%88%97%E6%9E%81%E9%99%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/10/calculus/%E6%95%B0%E5%88%97%E6%9E%81%E9%99%90/" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2024-10-10 13:11:08 / Modified: 13:44:53" itemprop="dateCreated datePublished" datetime="2024-10-10T13:11:08+08:00">2024-10-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="数列极限"><a href="#数列极限" class="headerlink" title="数列极限"></a>数列极限</h2><h4 id="1-概念"><a href="#1-概念" class="headerlink" title="1.  概念"></a>1.  概念</h4><p>数列是按一定规律排列的一列数。每个数称为数列的一个项，数列通常用符号$a_n$表示，其中$n$是项的索引。数列可以是有限的或无限的，常见的数列包括：</p>
+<ol>
+<li><strong>算术数列</strong>：相邻项之间的差是一个常数，如$a_n &#x3D; a_1 + (n - 1)d$</li>
+<li><strong>几何数列</strong>：相邻项之间的比是一个常数，如$a_n &#x3D; a_1r^{n-1}$。</li>
+<li><strong>递推数列</strong>：每一项通过前一项或几项的值定义，如Fibonacci数列。</li>
+</ol>
+<p>例1</p>
+<p>极限为0。</p>
+<p>$1, -\frac{1}{2}, \frac{1}{3}, -\frac{1}{4}, \ldots, \frac{(-1)^{n-1}}{n}$</p>
+<p>数列的极限定义如下：</p>
+<p>设${a_n}$是一个数列。如果对于任意的正数$\epsilon \gt 0$，存在一个正整数$N$，使得当$n \gt N$时，数列的项${a_n}$与某个实数$L$的距离小于$\epsilon$，即：<br>$$<br>|a_n-L|\lt \epsilon<br>$$<br>则称数列${a_n}$收敛于$L$，记作：<br>$$<br>\lim_{n \to \infty}a_n &#x3D; L<br>$$</p>
+<p>例题</p>
+<p>证明：其中（$a$是常数且$a \gt 0$）<br>$$<br>\lim_{n \to \infty}\sqrt[n] a &#x3D; 1<br>$$</p>
+<p>$$<br>a &#x3D; 1, \lim_{n \to \infty}\sqrt[n]1 &#x3D; \lim_{n \to \infty}1 &#x3D; 1 \<br>,<br>$$</p>
+<p>$a \gt 1, \forall \epsilon \gt 0$，若要$|\sqrt[n]a - 1| \lt \epsilon$成立，</p>
+<p>$\Leftrightarrow$</p>
+<p>$\sqrt[n]a - 1 \lt \epsilon$</p>
+<p>$\Leftrightarrow$</p>
+<p>$a^{\frac{1}{n}} \lt 1 + \epsilon$</p>
+<p>$\Leftrightarrow$</p>
+<p>$\ln a^{\frac{1}{n}} \lt \ln(1 +\epsilon)$</p>
+<p>$\Leftrightarrow$</p>
+<p>$\frac{1}{n}\ln a \lt \ln(1 + \epsilon)$</p>
+<p>$\Leftrightarrow$</p>
+<p>$\frac{1}{n} \lt \frac{\ln(1+\epsilon)}{\ln a}$</p>
+<p>$\Leftrightarrow$</p>
+<p>$n \gt \frac{\ln a}{\ln(1+\epsilon)}$</p>
+<p>取$N &#x3D; [\frac{\ln a}{\ln(1+\epsilon)}]$，当$n \gt N$时，都有$|\sqrt[n]a - 1| \lt \epsilon$</p>
+<h5 id="重要的数列极限"><a href="#重要的数列极限" class="headerlink" title="重要的数列极限"></a>重要的数列极限</h5><ul>
+<li>$\lim_{n \to \infty}C &#x3D; C$</li>
+<li>$\lim_{n \to \infty}\frac{1}{n^k} &#x3D; 0$（$k \gt 0$且为常数）</li>
+<li>$\lim_{n \to \infty}q^n &#x3D; 0$（$|q| \lt 1$且为常数）</li>
+<li>$\lim_{n \to \infty}\sqrt[n]a &#x3D; 1$（$a \gt 0$且为常数）</li>
+<li>$\lim_{n \to \infty}\frac{a^n}{n!} &#x3D; 0$（$a$为常数）</li>
+<li>$\lim_{n \to \infty}\sqrt[n]n &#x3D; 1$</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1042,118 +1147,6 @@
 <li><a target="_blank" rel="noopener" href="https://lemire.me/blog/2018/09/07/avx-512-when-and-how-to-use-these-new-instructions/">AVX-512: when and how to use these new instructions</a></li>
 </ol>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/06/leetcode/leetcode%201497/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/06/leetcode/leetcode%201497/" class="post-title-link" itemprop="url">Untitled</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2024-10-06 21:43:30" itemprop="dateCreated datePublished" datetime="2024-10-06T21:43:30+08:00">2024-10-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-10-08 16:50:08" itemprop="dateModified" datetime="2024-10-08T16:50:08+08:00">2024-10-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="leetcode-1497"><a href="#leetcode-1497" class="headerlink" title="leetcode 1497"></a>leetcode 1497</h2><h5 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h5><p>Given an array of integers <code>arr</code> of even length <code>n</code> and an integer <code>k</code>.</p>
-<p>We want to divide the array into exactly <code>n / 2</code> pairs such that the sum of each pair is divisible by <code>k</code>.</p>
-<p>Return <code>true</code> <em>If you can find a way to do that or</em> <code>false</code> <em>otherwise</em>. </p>
-<p><strong>Example 1:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,4,5,10,6,7,8,9], k = 5</span><br><span class="line">Output: true</span><br><span class="line">Explanation: Pairs are (1,9),(2,8),(3,7),(4,6) and (5,10).</span><br></pre></td></tr></table></figure>
-
-<p><strong>Example 2:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,4,5,6], k = 7</span><br><span class="line">Output: true</span><br><span class="line">Explanation: Pairs are (1,6),(2,5) and(3,4).</span><br></pre></td></tr></table></figure>
-
-<p><strong>Example 3:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,4,5,6], k = 10</span><br><span class="line">Output: false</span><br><span class="line">Explanation: You can try all possible pairs to see that there is no way to divide arr into 3 pairs each with sum divisible by 10.</span><br></pre></td></tr></table></figure>
-
-<p><strong>Constraints:</strong></p>
-<ul>
-<li><code>arr.length == n</code></li>
-<li><code>1 &lt;= n &lt;= 105</code></li>
-<li><code>n</code> is even.</li>
-<li><code>-109 &lt;= arr[i] &lt;= 109</code></li>
-<li><code>1 &lt;= k &lt;= 105</code></li>
-</ul>
-<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>Let the array be $A&#x3D;[a_1, a_2, … , a_n]$ and the divisor be <em>k</em>. We need to form pairs such that:</p>
-<p>$(a_i+a_j)\mod k &#x3D; 0$</p>
-<p>This can be rewritten as:</p>
-<p>$(a_i\mod k + a_j\mod k) \mod k&#x3D;0$</p>
-<p>For each element in the array, its remainder when divided by <em>k</em> lies in the range [0,<em>k</em>−1]. Let’s denote the remainder of an element $a_i$ by $mod_i &#x3D; a_i\mod k$. To form a valid pair ($a_i$,$a_j$), we need:</p>
-<p>$(mod_i + mod_j)\mod k &#x3D; 0$</p>
-<p>This implies:</p>
-<p>$mod_i &#x3D; k - mod_j$  </p>
-<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">bool</span> <span class="title">canArrange</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; arr, <span class="type">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">count</span><span class="params">(k)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> a : arr) &#123;</span><br><span class="line">      <span class="type">int</span> m = ((a % k) + k) % k;</span><br><span class="line">      count[m]++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> n = arr.<span class="built_in">size</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt;= k/<span class="number">2</span>; ++i) &#123;</span><br><span class="line">      <span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (count[i] % <span class="number">2</span> != <span class="number">0</span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (count[i] != count[k-i]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
       
     </div>
 
