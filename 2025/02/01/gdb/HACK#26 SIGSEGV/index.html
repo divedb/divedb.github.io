@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="HACK#26 发生SIGSEGV，应用程序异常停止由于栈溢出导致segmentation fault的调试。 应用程序执行了非法访问内存等操作后，就会发生SIGSEGV异常而停止。SIGSEGV发生的情况包括：  NULL指针访问 指针被破坏等原因导致的非法地址访问 栈溢出导致访问超出了已分配的地址空间  示例： 1234567891011121314151617$ ulimit -a-t: c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rockyの博客">
+<meta property="og:url" content="https://huangpiao.tech/2025/02/01/gdb/HACK#26%20SIGSEGV/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="HACK#26 发生SIGSEGV，应用程序异常停止由于栈溢出导致segmentation fault的调试。 应用程序执行了非法访问内存等操作后，就会发生SIGSEGV异常而停止。SIGSEGV发生的情况包括：  NULL指针访问 指针被破坏等原因导致的非法地址访问 栈溢出导致访问超出了已分配的地址空间  示例： 1234567891011121314151617$ ulimit -a-t: c">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-01T03:26:32.216Z">
+<meta property="article:modified_time" content="2025-02-01T04:20:03.848Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/02/01/gdb/HACK#26%20SIGSEGV/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/02/01/gdb/HACK#26%20SIGSEGV/","path":"2025/02/01/gdb/HACK#26 SIGSEGV/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HACK-26-%E5%8F%91%E7%94%9FSIGSEGV%EF%BC%8C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%BC%82%E5%B8%B8%E5%81%9C%E6%AD%A2"><span class="nav-number">1.</span> <span class="nav-text">HACK#26 发生SIGSEGV，应用程序异常停止</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%96%B9%E6%B3%95%E4%B8%80"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">1. 方法一</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%96%B9%E6%B3%95%E4%BA%8C"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">2. 方法二</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/02/01/gdb/HACK#26%20SIGSEGV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-02-01 11:26:32 / 修改时间：12:20:03" itemprop="dateCreated datePublished" datetime="2025-02-01T11:26:32+08:00">2025-02-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="HACK-26-发生SIGSEGV，应用程序异常停止"><a href="#HACK-26-发生SIGSEGV，应用程序异常停止" class="headerlink" title="HACK#26 发生SIGSEGV，应用程序异常停止"></a>HACK#26 发生SIGSEGV，应用程序异常停止</h2><p>由于栈溢出导致segmentation fault的调试。</p>
+<p>应用程序执行了非法访问内存等操作后，就会发生SIGSEGV异常而停止。SIGSEGV发生的情况包括：</p>
+<ol>
+<li>NULL指针访问</li>
+<li>指针被破坏等原因导致的非法地址访问</li>
+<li>栈溢出导致访问超出了已分配的地址空间</li>
+</ol>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ulimit</span> -a</span><br><span class="line">-t: cpu time (seconds)              unlimited</span><br><span class="line">-f: file size (blocks)              unlimited</span><br><span class="line">-d: data seg size (kbytes)          unlimited</span><br><span class="line">-s: stack size (kbytes)             8192</span><br><span class="line">-c: core file size (blocks)         0</span><br><span class="line">-m: resident <span class="built_in">set</span> size (kbytes)      unlimited</span><br><span class="line">-u: processes                       15171</span><br><span class="line">-n: file descriptors                1024</span><br><span class="line">-l: locked-in-memory size (kbytes)  495172</span><br><span class="line">-v: address space (kbytes)          unlimited</span><br><span class="line">-x: file locks                      unlimited</span><br><span class="line">-i: pending signals                 15171</span><br><span class="line">-q: bytes <span class="keyword">in</span> POSIX msg queues       819200</span><br><span class="line">-e: max <span class="built_in">nice</span>                        0</span><br><span class="line">-r: max rt priority                 0</span><br><span class="line">-N 15:                              unlimited</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cassert&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> array[<span class="number">1024</span>];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> array[<span class="number">0</span>] + <span class="built_in">foo</span>(n<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">assert</span>(argc &gt;= <span class="number">2</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> n = std::<span class="built_in">atoi</span>(argv[<span class="number">1</span>]);</span><br><span class="line">  std::cout &lt;&lt; <span class="built_in">foo</span>(n) &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>stack的大小是8Mb，理论上的递归次数$8 \times 1024 \times 1024 \div (1024 \times 4) &#x3D; 2048$，实际的值是在2020左右。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ./stack_overflow 2000</span><br><span class="line">144</span><br><span class="line">$ ./stack_overflow 2010</span><br><span class="line">144</span><br><span class="line">$ ./stack_overflow 2020</span><br><span class="line">[1]    4359 segmentation fault (core dumped)  ./stack_overflow 2020</span><br></pre></td></tr></table></figure>
+
+<p>解决方法：</p>
+<h5 id="1-方法一"><a href="#1-方法一" class="headerlink" title="1. 方法一"></a>1. 方法一</h5><p><strong>修改栈大小</strong></p>
+<p>如果需要调整栈的大小，可以使用<code>ulimit -s</code>命令来修改：</p>
+<p><strong>增加栈大小</strong></p>
+<p>例如，将栈大小增加到16MB：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -s 16384</span><br></pre></td></tr></table></figure>
+
+<p>该设置仅对当前 shell 会话有效。如果你希望这个设置在重启后仍然生效，可以将其添加到 shell 启动文件（例如 <code>.bashrc</code> 或 <code>.bash_profile</code>）中。</p>
+<p><strong>永久修改栈大小</strong></p>
+<p>对于永久修改栈大小，你可以编辑 <code>/etc/security/limits.conf</code> 文件，并添加以下行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* soft stack 16384</span><br><span class="line">* hard stack 16384</span><br></pre></td></tr></table></figure>
+
+<p>这样可以将所有用户的软限制和硬限制都设置为16MB。如果只想为特定用户设置，可以替换<code>*</code>为用户名。</p>
+<p><strong>注意</strong></p>
+<p>​	栈大小的增大虽然可以解决栈溢出问题，但同时也会增加程序的内存占用，因此要根据程序的需求合理设置。如果不确定，默认的8MB栈大小通常已经足够大。</p>
+<h5 id="2-方法二"><a href="#2-方法二" class="headerlink" title="2. 方法二"></a>2. 方法二</h5><p>​	一般而言，捕获到信号后应当准备信号处理程序并执行某种操作。但是，栈溢出导致SIGSEGV发生的情况下，栈空间已经溢出，已经出现了非法访问，就连启动信号处理程序所需的栈都无法保证，所以不能这样处理。因此，为捕获栈溢出，需要使用备用栈，相应的函数为<code>sigaltstack(2)</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cassert&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> array[<span class="number">1024</span>];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> array[<span class="number">0</span>] + <span class="built_in">foo</span>(n<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">register_sigaltstack</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ALT_STACK_SIZE (4 * 1024)</span></span><br><span class="line"></span><br><span class="line">  <span class="type">static</span> <span class="type">int</span> is_altstack_defined = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (is_altstack_defined) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">stack_t</span> new_ss;</span><br><span class="line">  <span class="type">stack_t</span> old_ss;</span><br><span class="line">  </span><br><span class="line">  new_ss.ss_sp = <span class="built_in">malloc</span>(ALT_STACK_SIZE);</span><br><span class="line">  <span class="built_in">assert</span>(new_ss.ss_sp != <span class="literal">nullptr</span>);</span><br><span class="line">  </span><br><span class="line">  new_ss.ss_size = ALT_STACK_SIZE;</span><br><span class="line">  new_ss.ss_flags = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaltstack</span>(&amp;new_ss, &amp;old_ss) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;error: register_sigaltstack.\n&quot;</span>;</span><br><span class="line">    std::<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  is_altstack_defined = <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line"><span class="meta">#<span class="keyword">undef</span> ALT_STACK_SIZE</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">sighandler_t</span> <span class="title">ruby_signal</span><span class="params">(<span class="type">int</span> signum, <span class="type">sighandler_t</span> handler)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sigaction</span> sigact;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sigaction</span> old;</span><br><span class="line">  </span><br><span class="line">  sigact.sa_handler = handler;</span><br><span class="line">  <span class="built_in">sigemptyset</span>(&amp;sigact.sa_mask);</span><br><span class="line">  sigact.sa_flags = SA_ONSTACK;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaction</span>(signum, &amp;sigact, &amp;old) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;sigaction error.\n&quot;</span>;</span><br><span class="line">    std::<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> old.sa_handler;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">signal_handler</span><span class="params">(<span class="type">int</span> signum)</span> </span>&#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Caught signal &quot;</span> &lt;&lt; signum &lt;&lt; <span class="string">&quot; on alternate stack\n&quot;</span>;</span><br><span class="line">  std::<span class="built_in">abort</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">assert</span>(argc &gt;= <span class="number">2</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">register_sigaltstack</span>();</span><br><span class="line">  <span class="built_in">ruby_signal</span>(SIGSEGV, signal_handler);</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> n = std::<span class="built_in">atoi</span>(argv[<span class="number">1</span>]);</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Result of foo(&quot;</span> &lt;&lt; n &lt;&lt; <span class="string">&quot;): &quot;</span> &lt;&lt; <span class="built_in">foo</span>(n) &lt;&lt; std::endl;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/31/c++/template/README/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/01/gdb/HACK#27%20backtrace/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

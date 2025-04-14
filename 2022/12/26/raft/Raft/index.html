@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="raft1. 为什么要学习raft？ 学习共识算法  2. 目前对raft的了解程度2.1 raft角色在raft共识算法中，有3种角色  Leader Candidate Follower  2.2 角色转变​	开始，所有节点都是Follower。每个节点会有一个随机的定时器。如果在这个时间之内没有收到Leader的消息，Follower角色变成Candidate。这个时候每个候选者就开始为自己">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rockyの博客">
+<meta property="og:url" content="https://huangpiao.tech/2022/12/26/raft/Raft/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="raft1. 为什么要学习raft？ 学习共识算法  2. 目前对raft的了解程度2.1 raft角色在raft共识算法中，有3种角色  Leader Candidate Follower  2.2 角色转变​	开始，所有节点都是Follower。每个节点会有一个随机的定时器。如果在这个时间之内没有收到Leader的消息，Follower角色变成Candidate。这个时候每个候选者就开始为自己">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://huangpiao.tech/.tech//request_vote1.png">
+<meta property="og:image" content="https://huangpiao.tech/.tech//request_vote2.png">
+<meta property="og:image" content="https://huangpiao.tech/.tech//request_vote3.png">
+<meta property="og:image" content="https://huangpiao.tech/.tech//transition.png">
+<meta property="article:published_time" content="2022-12-26T05:05:55.174Z">
+<meta property="article:modified_time" content="2024-04-17T12:57:30.789Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://huangpiao.tech/.tech//request_vote1.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2022/12/26/raft/Raft/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2022/12/26/raft/Raft/","path":"2022/12/26/raft/Raft/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#raft"><span class="nav-number">1.</span> <span class="nav-text">raft</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AD%A6%E4%B9%A0raft%EF%BC%9F"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">1. 为什么要学习raft？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%9B%AE%E5%89%8D%E5%AF%B9raft%E7%9A%84%E4%BA%86%E8%A7%A3%E7%A8%8B%E5%BA%A6"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">2. 目前对raft的了解程度</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-raft%E8%A7%92%E8%89%B2"><span class="nav-number">1.0.0.2.1.</span> <span class="nav-text">2.1 raft角色</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-%E8%A7%92%E8%89%B2%E8%BD%AC%E5%8F%98"><span class="nav-number">1.0.0.2.2.</span> <span class="nav-text">2.2 角色转变</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Case"><span class="nav-number">1.0.0.2.2.1.</span> <span class="nav-text">Case</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%AC%AC1%E8%BD%AE%E9%80%89%E4%B8%BE"><span class="nav-number">1.0.0.2.2.2.</span> <span class="nav-text">第1轮选举</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%AC%AC2%E8%BD%AE%E9%80%89%E4%B8%BE"><span class="nav-number">1.0.0.2.2.3.</span> <span class="nav-text">第2轮选举</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-%E8%A7%92%E8%89%B2%E8%BD%AC%E6%8D%A2%E5%9B%BE"><span class="nav-number">1.0.0.2.3.</span> <span class="nav-text">2.3 角色转换图</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Hashicorp-raft%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">3. Hashicorp raft源码分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">日志复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BC%AA%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E3%80%904%E3%80%91"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">1. 伪代码实现【4】</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.0.0.5.1.</span> <span class="nav-text">1.1 初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-%E6%8E%A5%E6%94%B6%E5%88%B0Vote%E8%AF%B7%E6%B1%82"><span class="nav-number">1.0.0.5.2.</span> <span class="nav-text">1.2 接收到Vote请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-%E6%94%B6%E9%9B%86%E6%8A%95%E7%A5%A8%E4%BF%A1%E6%81%AF"><span class="nav-number">1.0.0.5.3.</span> <span class="nav-text">1.3 收集投票信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-%E5%B9%BF%E6%92%AD%E6%B6%88%E6%81%AF%EF%BC%9Abroadcasting-messages"><span class="nav-number">1.0.0.5.4.</span> <span class="nav-text">1.4 广播消息：broadcasting messages</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-5-replicating-from-leader-to-followers"><span class="nav-number">1.0.0.5.5.</span> <span class="nav-text">1.5 replicating from leader to followers</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%97%A5%E5%BF%97%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 日志压缩</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%97%A5%E5%BF%97%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">1.1 为什么需要日志压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Raft-leaders-commit-a-no-op-entry-at-the-beginning-of-their-term"><span class="nav-number">1.0.1.2.1.</span> <span class="nav-text">1. Raft leaders commit a no-op entry at the beginning of their term</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83-1"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#etcd%E4%B8%ADraft%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.0.2.</span> <span class="nav-text">etcd中raft实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83-2"><span class="nav-number">1.0.3.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2022/12/26/raft/Raft/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-26 13:05:55" itemprop="dateCreated datePublished" datetime="2022-12-26T13:05:55+08:00">2022-12-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-17 20:57:30" itemprop="dateModified" datetime="2024-04-17T20:57:30+08:00">2024-04-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="raft"><a href="#raft" class="headerlink" title="raft"></a>raft</h1><h4 id="1-为什么要学习raft？"><a href="#1-为什么要学习raft？" class="headerlink" title="1. 为什么要学习raft？"></a>1. 为什么要学习raft？</h4><ul>
+<li>学习共识算法</li>
+</ul>
+<h4 id="2-目前对raft的了解程度"><a href="#2-目前对raft的了解程度" class="headerlink" title="2. 目前对raft的了解程度"></a>2. 目前对raft的了解程度</h4><h5 id="2-1-raft角色"><a href="#2-1-raft角色" class="headerlink" title="2.1 raft角色"></a>2.1 raft角色</h5><p>在raft共识算法中，有<strong>3</strong>种角色</p>
+<ul>
+<li>Leader</li>
+<li>Candidate</li>
+<li>Follower</li>
+</ul>
+<h5 id="2-2-角色转变"><a href="#2-2-角色转变" class="headerlink" title="2.2 角色转变"></a>2.2 角色转变</h5><p>​	开始，所有节点都是Follower。每个节点会有一个<strong>随机</strong>的定时器。如果在这个时间之内没有收到Leader的消息，Follower角色变成Candidate。这个时候每个候选者就开始为自己拉票了，给所有其他的节点发送<strong>Request Vote</strong>请求。其他节点在收到Request Vote请求之后会基于一定的条件选择拒绝还是同意（看下文）。需要注意每个节点<strong>最多只能</strong>投票给其中一个人。每个Request Vote的发起者肯定厚颜无耻的投给了自己。假设有5个节点，每个candidate只需要拿到其他两个节点的票加上自己的一票就可以称为Leader了（$2+1 &gt; 5&#x2F;2$多数派原理）。如果在一个任期内没有选出Leader，会继续开始下一届选举（<strong>任期数加1</strong>）。需要注意，节点如果在上一个任期给其他节点投过票，在新的任期可以重新投票。</p>
+<h6 id="Case"><a href="#Case" class="headerlink" title="Case"></a>Case</h6><h6 id="第1轮选举"><a href="#第1轮选举" class="headerlink" title="第1轮选举"></a>第1轮选举</h6><p>当前任期：2</p>
+<p>节点$S_4$收到投票：{$S_4, S_1$}</p>
+<p>节点$S_2$收到投票：{$S_2, S_5$}</p>
+<p>没有节点收到半数以上的票，开始新的选举。</p>
+<p><img src="/.tech//request_vote1.png"></p>
+<h6 id="第2轮选举"><a href="#第2轮选举" class="headerlink" title="第2轮选举"></a>第2轮选举</h6><p>节点$S_5$遥遥领先。</p>
+<p>当前任期：3</p>
+<p><img src="/.tech//request_vote2.png"></p>
+<p>节点$S_5$收到半数以上的投票，成为Leader。</p>
+<p><img src="/.tech//request_vote3.png"></p>
+<h5 id="2-3-角色转换图"><a href="#2-3-角色转换图" class="headerlink" title="2.3 角色转换图"></a>2.3 角色转换图</h5><p><img src="/.tech//transition.png" alt="transition"></p>
+<h4 id="3-Hashicorp-raft源码分析"><a href="#3-Hashicorp-raft源码分析" class="headerlink" title="3. Hashicorp raft源码分析"></a>3. Hashicorp raft源码分析</h4><p>初始状态是Follower。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: api.go</span></span><br><span class="line"><span class="comment">// NewRaft is used to construct a new Raft node. It takes a configuration, as well</span></span><br><span class="line"><span class="comment">// as implementations of various interfaces that are required. If we have any</span></span><br><span class="line"><span class="comment">// old state, such as snapshots, logs, peers, etc, all those will be restored</span></span><br><span class="line"><span class="comment">// when creating the Raft node.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRaft</span><span class="params">(conf *Config, fsm FSM, logs LogStore, stable StableStore, snaps SnapshotStore, trans Transport)</span></span> (*Raft, <span class="type">error</span>) &#123;</span><br><span class="line">  </span><br><span class="line">  ...</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Initialize as a follower.</span></span><br><span class="line">	r.setState(Follower)</span><br><span class="line">  </span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>心跳包期间如果没有收到Leader的小心，从Follower转变成Candidate。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// runFollower runs the FSM for a follower.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Raft)</span></span> runFollower() &#123;</span><br><span class="line">	...</span><br><span class="line">	heartbeatTimer := randomTimeout(r.conf.HeartbeatTimeout)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> r.getState() == Follower &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		...</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> &lt;-heartbeatTimer:</span><br><span class="line">			<span class="comment">// Restart the heartbeat timer</span></span><br><span class="line">			heartbeatTimer = randomTimeout(r.conf.HeartbeatTimeout)</span><br><span class="line"></span><br><span class="line">			<span class="comment">// Check if we have had a successful contact</span></span><br><span class="line">			lastContact := r.LastContact()</span><br><span class="line">			<span class="keyword">if</span> time.Now().Sub(lastContact) &lt; r.conf.HeartbeatTimeout &#123;</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// Heartbeat failed! Transition to the candidate state</span></span><br><span class="line">			lastLeader := r.Leader()</span><br><span class="line">			r.setLeader(<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> r.configurations.latestIndex == <span class="number">0</span> &#123;</span><br><span class="line">				<span class="keyword">if</span> !didWarn &#123;</span><br><span class="line">					r.logger.Warn(<span class="string">&quot;no known peers, aborting election&quot;</span>)</span><br><span class="line">					didWarn = <span class="literal">true</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> r.configurations.latestIndex == r.configurations.committedIndex &amp;&amp;</span><br><span class="line">				!hasVote(r.configurations.latest, r.localID) &#123;</span><br><span class="line">				<span class="keyword">if</span> !didWarn &#123;</span><br><span class="line">					r.logger.Warn(<span class="string">&quot;not part of stable configuration, aborting election&quot;</span>)</span><br><span class="line">					didWarn = <span class="literal">true</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				r.logger.Warn(fmt.Sprintf(<span class="string">&quot;Heartbeat timeout from %q reached, starting election&quot;</span>, lastLeader))</span><br><span class="line">				metrics.IncrCounter([]<span class="type">string</span>&#123;<span class="string">&quot;raft&quot;</span>, <span class="string">&quot;transition&quot;</span>, <span class="string">&quot;heartbeat_timeout&quot;</span>&#125;, <span class="number">1</span>)</span><br><span class="line">				r.setState(Candidate)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> &lt;-r.shutdownCh:</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h4 id="日志复制"><a href="#日志复制" class="headerlink" title="日志复制"></a>日志复制</h4><p>领导选举结束后，可以开始服务客户端的请求。客户端发送命令（例如x&#x3D;2）给raft模块，Leader会将命令添加到自己的日志中。然后开始通知其他节点复制这条日志（并行）。</p>
+<p><strong>思考1</strong>：日志的格式应该是怎么样的。对于x&#x3D;2这样一条命令，日志格式应该是怎么样的。</p>
+<p><strong>思考2</strong>：如果对于读请求，例如读取x的值，是否有必要将它写入到日志。</p>
+<p><strong>思考3</strong>：如果Leader在等待其他节点的回复始终少于一半 应该怎么办？是一直等待么。</p>
+<p><strong>思考4</strong>：Leader收到客户端的请求，这条命令还在内存中，是先将它持久化到日志中还是等待多数的replicate之后再持久化到日志中。之后通过appendEntries或者heartbeat请求，其他节点才将这条日志持久化。如果这个时候Leader crash了，有没有影响。</p>
+<p>在论文3.5节（P36）中提到</p>
+<blockquote>
+<p>  If followers crash or run slowly, or if network packets are lost, the leader retries AppendEntries RPCs indefinitely (even after it has responded to the client) until all followers eventally store all log entries.</p>
+</blockquote>
+<p>![log](&#x2F;Users&#x2F;zlh&#x2F;Documents&#x2F;Distributed System&#x2F;Note&#x2F;log.png)</p>
+<p>![figure3.2](&#x2F;Users&#x2F;zlh&#x2F;Documents&#x2F;Distributed System&#x2F;Note&#x2F;figure3.2.png)</p>
+<p>思考：关于Leader Completeness。如果一条日志在某个任期提交了（<strong>这个地方是不是应该强调是Leader的提交而不是其他节点的提交</strong>），那么这条日志一定会出现在更高任期领导者的日志中？</p>
+<p>假设有A，B，C，D，E一共5个节点，其中A是Leader。</p>
+<p>所以Leader在发送AppendEntries请求给其他节点。其他节点是立刻持久化到日志中。Leader只有收到多数节点的TRUE回复之后，才会持久化到他自己的日志中。假如只有C成功持久化这条日志了，如果这个时候Leader crash了。那么会开始新的一轮选举，因为C的任期和日志长度，B，D和E是没有机会得到Leader的？如果A crash之后，同时网络出现了分区。B、D和E为一个区而C单独一个区，那么之前C持久化的命令是否有问题？</p>
+<p>snapshot需要保存什么</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: raft/raftpb/raft.proto</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">SnapshotMetadata</span> &#123;</span><br><span class="line">	<span class="keyword">optional</span> ConfState conf_state = <span class="number">1</span> [(gogoproto.nullable) = <span class="literal">false</span>];</span><br><span class="line">	<span class="keyword">optional</span> <span class="type">uint64</span>    index      = <span class="number">2</span> [(gogoproto.nullable) = <span class="literal">false</span>];</span><br><span class="line">	<span class="keyword">optional</span> <span class="type">uint64</span>    term       = <span class="number">3</span> [(gogoproto.nullable) = <span class="literal">false</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">Snapshot</span> &#123;</span><br><span class="line">	<span class="keyword">optional</span> <span class="type">bytes</span>            data     = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">optional</span> SnapshotMetadata metadata = <span class="number">2</span> [(gogoproto.nullable) = <span class="literal">false</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">ConfState</span> &#123;</span><br><span class="line">	<span class="keyword">repeated</span> <span class="type">uint64</span> nodes = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<ol>
+<li><p>复制状态机</p>
+<ul>
+<li>相同的初始状态+相同的输入&#x3D;相同的结束状态</li>
+<li>多个节点上，从相同的初始状态开始，执行相同的一串命令，产生相同的最终状态。</li>
+<li>在Raft中，leader将客户端请求（command）封装到一个个log entry中，将这些log entries复制到所有follow节点，然后大家按相同顺序应用log entries中的command，根据复制状态机的理论，大家的结束状态肯定是一致的。</li>
+<li>可以说，我们使用共识算法，就是为了实现复制状态机。一个分布式场景下的各节点间，就是通过共识算法来保证命令序列的一致，从而始终保持它们的状态一致，从而实现高可用的。（投票选主使一种特殊的命令）</li>
+<li>这里所谓拓展一点，复制状态机的功能可以更加强大。比如两个副本一个采用行存储的数据结构存储数据，另一个采用列存储，只要它们初始数据相同，并持续发给他们相同的命令，那么同一时刻从两个副本中读取到的结果也是一样的，这就是一种HTAP的实现方法（比如TiDB）。</li>
+</ul>
+</li>
+<li><p>状态简化</p>
+<ul>
+<li><p>在任何时刻，每一个服务器节点都处于leader，follower或candidate这三个状态之一。</p>
+</li>
+<li><p>相比于Paxos，这一点就极大简化了算法的实现，因为Raft只需考虑状态的<strong>切换</strong>，而不用像Paxos那样考虑状态之间的<strong>共存和互相影响</strong>。</p>
+</li>
+<li><p>Raft把时间分割成任意长度的<strong>任期（term）</strong>，任期用连续的整数标记。</p>
+</li>
+<li><p>每一段任期从一次选举开始。在某些情况下，一次选举无法选出leader（比如两个节点收到了相同的票数），在这种情况下，这一任期会以没有leader结束；一个新的任期（包含一次新的选举）会很快重新开始。Raft保证在任意一个任期内，最多只有一个leader。</p>
+<ul>
+<li>选举新的领导者：在Raft协议中，领导者的选举是通过选举超时和投票来实现的。每个节点都有一个当前的任期号，节点会在选举超时后开始选举过程，递增当前的任期号，并发送请求投票消息给其他节点。通过更新任期号，可以触发新一轮的选举，选出新的领导者。</li>
+<li>防止过时的领导者产生冲突：如果一个过时的领导者（例如，任期号较小的领导者）试图在网络分区或故障恢复后继续操作，可能会与其他节点的领导者发生冲突，导致数据的不一致。通过更新任期号，可以防止过时的领导者继续操作，并确保新的领导者在网络重新连接后能够正确地处理请求。</li>
+<li>提供一致的视图：任期号用于标识一个特定的任期，所有节点都通过任期号来维护一致的视图。当一个节点接收到具有较新任期号的请求时，它会更新自己的任期号，以确保所有节点都具有相同的任期号，并且能够按照相同的规则进行操作。</li>
+<li>安全性和一致性保证：更新任期号有助于确保Raft协议的安全性和一致性。通过在每个任期中进行领导者选举，保证了领导者的合法性和合理性。同时，通过在任期号上达成一致，可以避免多个领导者同时存在，从而维持一致的操作和数据状态。</li>
+</ul>
+<p>总而言之，更新任期号在Raft协议中是为了维护领导者的稳定性和一致性，并提供安全性保证。通过更新任期号，可以触发选举过程、防止过时的领导者产生冲突、提供一致的视图，并确保协议的正常运行。</p>
+</li>
+<li><p>Raft算法中服务器节点之间使用<strong>RPC</strong>进行通信，并且Raft只有两种主要的RPC：</p>
+<ul>
+<li><code>RequestVote RPC（请求投票）</code>: 由candidate在选举期间发起。</li>
+<li><code>AppendEntries RPC（追加条目）</code>：由leader发起，用来复制日志和提供一条心跳机制。</li>
+</ul>
+</li>
+<li><p>服务器之间通信的时候会交换当前任期号；如果一个服务器上的当前任期号比其他的小，该服务器会将自己的任期号更新为较大的那个值。</p>
+</li>
+<li><p>如果一个candidate或者leader发现自己的任期号过期了，它会立即回到follower状态。</p>
+</li>
+<li><p>如果一个节点接收到一个包含过期的任期号的请求，它会直接拒绝这个请求。</p>
+</li>
+</ul>
+</li>
+<li><p>领导者选举</p>
+<ul>
+<li>Raft内部有一种<strong>心跳机制</strong>，如果存在leader，那么它就会周期性的向所有follower发送心跳，来维持自己的地位。如果follower一段时间没有收到心跳，那么它就会认为系统中没有可用的leader，然后开始进行选举。</li>
+<li>开始一个选举过程后，follower先增加自己的当前任期号，并转换为candidate状态。然后投票给自己，并且并行的向集群中的其他服务器节点发送投票请求（RequestVote RPC）。</li>
+</ul>
+</li>
+<li><p>日志复制</p>
+</li>
+<li><p>安全性</p>
+</li>
+<li><p>集群成员变更</p>
+</li>
+<li><p>总结与性能测试</p>
+</li>
+</ol>
+<hr>
+
+<p>Raft本身是一个状态机<sup>9</sup>。</p>
+<ul>
+<li><p>State</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> raft <span class="keyword">struct</span> &#123;</span><br><span class="line">  id 			<span class="type">uint64</span></span><br><span class="line">  Term 		<span class="type">uint64</span></span><br><span class="line">  Vote		<span class="type">uint64</span></span><br><span class="line">  ...</span><br><span class="line">  raftLog *raftLog <span class="comment">// replicated WAL</span></span><br><span class="line">  ...</span><br><span class="line">  state		StateType <span class="comment">// Leader, Candidate, Follower</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stepFunc <span class="function"><span class="keyword">func</span><span class="params">(r *raft, m pb.Message)</span></span> <span class="type">error</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stepLeader</span><span class="params">(r *raft, m pb.Message)</span></span> <span class="type">error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stepFollower</span><span class="params">(r *raft, m pb.Message)</span></span> <span class="type">error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stepCandidate</span><span class="params">(r *raft, m pb.Message)</span></span> <span class="type">error</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Input</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Message <span class="keyword">struct</span> &#123;</span><br><span class="line">  Type 		MessageType</span><br><span class="line">  To			<span class="type">uint64</span></span><br><span class="line">  From		<span class="type">uint64</span></span><br><span class="line">  Term		<span class="type">uint64</span></span><br><span class="line">  LogTerm <span class="type">uint64</span></span><br><span class="line">  Index		<span class="type">uint64</span></span><br><span class="line">  Entries []Entry</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="1-伪代码实现【4】"><a href="#1-伪代码实现【4】" class="headerlink" title="1. 伪代码实现【4】"></a>1. 伪代码实现【4】</h4><h5 id="1-1-初始化"><a href="#1-1-初始化" class="headerlink" title="1.1 初始化"></a>1.1 初始化</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">on initialization do</span><br><span class="line">	currentTerm 		:= 0;</span><br><span class="line">	votedFor				:= null;</span><br><span class="line">	log							:= [];</span><br><span class="line">	commitedLength 	:= 0;</span><br><span class="line">	currentRole			:= follower;</span><br><span class="line">	currentLeader		:= null;</span><br><span class="line">	votesReceived		:= &#123;&#125;;</span><br><span class="line">	sentLength			:= &lt;&gt;;</span><br><span class="line">	ackedLength			:= &lt;&gt;;</span><br><span class="line">end on</span><br><span class="line"></span><br><span class="line">on recovery from crash do</span><br><span class="line">	currentRole			:= follower;</span><br><span class="line">	currentLeader		:= null;</span><br><span class="line">	votesReceived		:= &#123;&#125;;</span><br><span class="line">	sentLength			:= [];</span><br><span class="line">	ackedLength			:= [];</span><br><span class="line">end on</span><br><span class="line"></span><br><span class="line">on node nodeId suspects leader has failed, or on election timeout do</span><br><span class="line">	currentTerm 		:= currentTerm + 1;</span><br><span class="line">	currentRole			:= candiate;</span><br><span class="line">	votedFor				:= nodeId;</span><br><span class="line">	votesReceived		:= &#123;nodeId&#125;;</span><br><span class="line">	lastTerm				:= 0;</span><br><span class="line">	</span><br><span class="line">	if log.length &gt; 0 then</span><br><span class="line">		lastTerm := log[log.length - 1].term;</span><br><span class="line">	end if</span><br><span class="line">	// TODO: 为什么要发送log的长度和最后一个任期</span><br><span class="line">	msg := (VoteRequest, nodeId, currentTerm, log.length, lastTerm)</span><br><span class="line">	</span><br><span class="line">	for each node ∈ nodes then</span><br><span class="line">		send msg to node;</span><br><span class="line">	end for</span><br><span class="line">	</span><br><span class="line">	start election timer;</span><br><span class="line">end on</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-2-接收到Vote请求"><a href="#1-2-接收到Vote请求" class="headerlink" title="1.2 接收到Vote请求"></a>1.2 接收到Vote请求</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">on receiving (VoteRequest, cId, cTerm, cLogLength, cLogTerm)</span><br><span class="line">	if cTerm &gt; currentTerm then</span><br><span class="line">		currentTerm := cTerm;</span><br><span class="line">		// TODO: 不管当前是什么角色都改成follower</span><br><span class="line">		currentRole := follower;</span><br><span class="line">		votedFor		:= null;</span><br><span class="line">	end if</span><br><span class="line">	</span><br><span class="line">	lastTerm := 0;</span><br><span class="line">	if log.length &gt; 0 then</span><br><span class="line">		lastTerm := log[log.length - 1].term;</span><br><span class="line">	end if</span><br><span class="line">	// TODO: we don&#x27;t want outdated log to become the leader</span><br><span class="line">	logOk := (cLogTerm &gt; lastTerm) or (cLogTerm = lastTerm and cLogLength &gt;= log.length);</span><br><span class="line">	</span><br><span class="line">	if cTerm = currentTerm and logOk and votedFor ∈ &#123;cId, null&#125; then</span><br><span class="line">		votedFor := cId;</span><br><span class="line">		send (VoteResponse, nodeId, currentTerm, true) to node cId</span><br><span class="line">	else</span><br><span class="line">		send (VoteResponse, nodeId, currentTerm, false) to node cId</span><br><span class="line">	end if</span><br><span class="line">end on</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-3-收集投票信息"><a href="#1-3-收集投票信息" class="headerlink" title="1.3 收集投票信息"></a>1.3 收集投票信息</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">on receiving (VoteResponse, voterId, term, granted) at nodeId do</span><br><span class="line">	if currentRole = candidate and term = currentTerm and granted then</span><br><span class="line">		votesReceived := votesReceived ∪ &#123;voterId&#125;;</span><br><span class="line">		if |votesReceived| &gt;= ⌈(|nodes| + 1)/2⌉ then</span><br><span class="line">			currentRole 	:= leader;</span><br><span class="line">			currentLeader := nodeId;</span><br><span class="line">			cancel election timer;</span><br><span class="line">			</span><br><span class="line">			for each follower ∈ nodes \ &#123;nodeId&#125; do</span><br><span class="line">				sentLength[follower] 	:= log.length;</span><br><span class="line">				ackedLength[follower] := 0;</span><br><span class="line">				REPLICATELOG(nodeId, follower);</span><br><span class="line">			end for</span><br><span class="line">		end if</span><br><span class="line">	else if term &gt; currentTerm then</span><br><span class="line">		currentTerm := term;</span><br><span class="line">		currentRole := follower;</span><br><span class="line">		votedFor 		:= null;</span><br><span class="line">		cancel election timer;</span><br><span class="line">	end if</span><br><span class="line">end on</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-4-广播消息：broadcasting-messages"><a href="#1-4-广播消息：broadcasting-messages" class="headerlink" title="1.4 广播消息：broadcasting messages"></a>1.4 广播消息：broadcasting messages</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">on request to broadcast msg at node nodeId do</span><br><span class="line">	if currentRole = leader then</span><br><span class="line">		append the record (msg: msg, term: currentTerm) to log;</span><br><span class="line">		ackedLength[nodeId] := log.length;</span><br><span class="line">		for each follower ∈ nodes \ &#123;nodeId&#125; do</span><br><span class="line">			REPLICATELOG(nodeId, follower);</span><br><span class="line">		end for</span><br><span class="line">	else</span><br><span class="line">		forward the request to currentLeader via a FIFO link;</span><br><span class="line">	end if</span><br><span class="line">end on</span><br><span class="line"></span><br><span class="line">periodically at node nodeId do</span><br><span class="line">	if currentRole = leadr then</span><br><span class="line">		for each follower ∈ nodes \ &#123;nodeId&#125; do</span><br><span class="line">			REPLICATELOG(nodeId, follower);</span><br><span class="line">		end for</span><br><span class="line">	end if</span><br><span class="line">end do</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-5-replicating-from-leader-to-followers"><a href="#1-5-replicating-from-leader-to-followers" class="headerlink" title="1.5 replicating from leader to followers"></a>1.5 replicating from leader to followers</h5><p>​	Called on the leader whenever there is a new message in the log, and also periodically. If there are no new messages, suffix is the empty list. LogRequest messages with suffix &#x3D; &lt;&gt; serve as heartbeats, letting followers know that the leader is still alive.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function REPLICATELOG(leaderId, followerId)</span><br><span class="line">	prefixLen 	:= sentLength[followerId];</span><br><span class="line">	suffix 			:= &lt;log[prefixLen], log[prefixLen + 1], ..., log[log.length - 1]&gt;;</span><br><span class="line">	prefixTerm 	:= 0;</span><br><span class="line">	</span><br><span class="line">	if prefixLen &gt; 0 then</span><br><span class="line">		prefixTerm := log[prefixLen - 1].term</span><br><span class="line">	end if</span><br><span class="line">	</span><br><span class="line">	send (LogRequest, leaderId, currentTerm, prefixLen, prefixTerm, commitLength, suffix) to followerId</span><br><span class="line">end function</span><br></pre></td></tr></table></figure>
+
+<p>followers receiving message</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">on receiving (LogRequest, leaderId, term, prefixLen, prefixTerm, leaderCommit, suffix) at node nodeId do</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">end on</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>分布式共识算法(consensus algorithm)通常的做法就是在多个节点上复制状态机。分布在不同服务器上的状态机执行着相同的状态变化，即使其中几台机器挂掉，整个集群还能继续运作。</p>
+<p>复制状态机正确运行的核心的同步日志，日志是保证各节点状态同步的关键，日志中保存了一系列状态机命令，共识算法的核心是保证这些不同节点上的日志以相同的顺序保存相同的命令，由于状态机是确定的，所以相同的命令以相同的顺序执行，会得到相同的结果。</p>
+<h3 id="1-日志压缩"><a href="#1-日志压缩" class="headerlink" title="1. 日志压缩"></a>1. 日志压缩</h3><h4 id="1-1-为什么需要日志压缩"><a href="#1-1-为什么需要日志压缩" class="headerlink" title="1.1 为什么需要日志压缩"></a>1.1 为什么需要日志压缩</h4><p>​	Raft’s log grows during normal operation as it incorporates more client requests. As it grows larger, it occupies more space and takes more time to replay. Without some way to compact the log, this will eventually cause availability problems: servers will either run out of space, or they will take too long to start. Thus, some form of log compaction is necessary for any practical system.（原论文p66）</p>
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>优化</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/366661148">Raft优化之PreVote</a></li>
+</ol>
+<p>FAQ</p>
+<h5 id="1-Raft-leaders-commit-a-no-op-entry-at-the-beginning-of-their-term"><a href="#1-Raft-leaders-commit-a-no-op-entry-at-the-beginning-of-their-term" class="headerlink" title="1. Raft leaders commit a no-op entry at the beginning of their term"></a>1. Raft leaders commit a no-op entry at the beginning of their term</h5><p>no-op 日志即只有 index 和 term 信息，command 信息为空。也是要写到磁盘存储的。</p>
+<p>具体流程是在 Leader 刚选举成功的时候，立即追加一条 no-op 日志，并立即复制到其它节点，no-op 日志一经提交，Leader 前面那些未提交的日志全部间接提交，问题就解决了。像上面的 kv 数据库，有了 no-op 日志之后，Leader 就能快速响应客户端查询了。</p>
+<p>本质上，no-op 日志使 Leader 隐式地快速提交之前任期未提交的日志，确认当前 commitIndex，这样系统才会快速对外正常工作。</p>
+<h4 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a href="https://www.51cto.com/article/660963.html">Raft 的 Figure 8 讲了什么问题？为什么需要 no-op 日志？</a></li>
+</ol>
+<p>节点收到消息先判断Term还是Message Type</p>
+<p>这是因为 Raft 算法的核心思想是基于任期（Term）的选举和领导者的角色确定。在任一给定的任期内，只有一个领导者可以被选举出来，其他节点则处于跟随者（Follower）状态。因此，处理消息时首先要确认消息的 Term 是否比当前节点的 Term 大。如果消息的 Term 比当前节点小，说明该消息可能是过期的，可以忽略。如果消息的 Term 比当前节点大，那么当前节点需要更新自己的 Term，并且切换到跟随者状态。</p>
+<p>在确认 Term 合适后，才会考虑消息的 Type。Raft 消息的类型通常包括：</p>
+<ol>
+<li><strong>Request Vote（选举投票请求）：</strong> 如果收到的消息是选举投票请求，那么节点会根据一定的规则（如候选者的 Term 大于等于自己的 Term）来判断是否投票给该候选者。</li>
+<li><strong>Append Entries（日志追加请求）：</strong> 如果收到的消息是日志追加请求，通常需要对消息中的信息进行验证，如比较日志的索引和任期等。如果验证通过，跟随者会将该消息中的日志追加到自己的日志中。</li>
+<li><strong>Response（响应消息）：</strong> 对于领导者发送的请求，收到的是对应的响应消息。领导者会根据响应来判断是否需要继续发送数据或者执行其他操作。</li>
+</ol>
+<p>总之，首要的是通过消息的 Term 来判断是否需要更新节点状态，并在 Term 适当的情况下，根据消息的类型来执行相应的操作。这个处理流程保证了算法的正确性和一致性。</p>
+<h3 id="etcd中raft实践"><a href="#etcd中raft实践" class="headerlink" title="etcd中raft实践"></a>etcd中raft实践</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: raftexample/main.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  proposeC := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">string</span>)</span><br><span class="line">	<span class="keyword">defer</span> <span class="built_in">close</span>(proposeC)</span><br><span class="line">	confChangeC := <span class="built_in">make</span>(<span class="keyword">chan</span> raftpb.ConfChange)</span><br><span class="line">	<span class="keyword">defer</span> <span class="built_in">close</span>(confChangeC)</span><br><span class="line">  </span><br><span class="line">  	<span class="comment">// raft provides a commit stream for the proposals from the http api</span></span><br><span class="line">	<span class="keyword">var</span> kvs *kvstore</span><br><span class="line">	getSnapshot := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> ([]<span class="type">byte</span>, <span class="type">error</span>) &#123; <span class="keyword">return</span> kvs.getSnapshot() &#125;</span><br><span class="line">	commitC, errorC, snapshotterReady := newRaftNode(</span><br><span class="line">    *id, strings.Split(*cluster, <span class="string">&quot;,&quot;</span>), *join, getSnapshot, proposeC, confChangeC</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">	kvs = newKVStore(&lt;-snapshotterReady, proposeC, commitC, errorC)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: raftexample/raft.go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// A key-value stream backed by raft</span></span><br><span class="line"><span class="keyword">type</span> raftNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	proposeC    &lt;-<span class="keyword">chan</span> <span class="type">string</span>            <span class="comment">// proposed messages (k,v)</span></span><br><span class="line">	confChangeC &lt;-<span class="keyword">chan</span> raftpb.ConfChange <span class="comment">// proposed cluster config changes</span></span><br><span class="line">	commitC     <span class="keyword">chan</span>&lt;- *<span class="type">string</span>           <span class="comment">// entries committed to log (k,v)</span></span><br><span class="line">	errorC      <span class="keyword">chan</span>&lt;- <span class="type">error</span>             <span class="comment">// errors from raft session</span></span><br><span class="line"></span><br><span class="line">	id          <span class="type">int</span>      <span class="comment">// client ID for raft session</span></span><br><span class="line">	peers       []<span class="type">string</span> <span class="comment">// raft peer URLs</span></span><br><span class="line">	join        <span class="type">bool</span>     <span class="comment">// node is joining an existing cluster</span></span><br><span class="line">	waldir      <span class="type">string</span>   <span class="comment">// path to WAL directory</span></span><br><span class="line">	snapdir     <span class="type">string</span>   <span class="comment">// path to snapshot directory</span></span><br><span class="line">	getSnapshot <span class="function"><span class="keyword">func</span><span class="params">()</span></span> ([]<span class="type">byte</span>, <span class="type">error</span>)</span><br><span class="line">	lastIndex   <span class="type">uint64</span> <span class="comment">// index of log at start</span></span><br><span class="line"></span><br><span class="line">	confState     raftpb.ConfState</span><br><span class="line">	snapshotIndex <span class="type">uint64</span></span><br><span class="line">	appliedIndex  <span class="type">uint64</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// raft backing for the commit/error channel</span></span><br><span class="line">	node        raft.Node</span><br><span class="line">	raftStorage *raft.MemoryStorage</span><br><span class="line">	wal         *wal.WAL</span><br><span class="line"></span><br><span class="line">	snapshotter      *snap.Snapshotter</span><br><span class="line">	snapshotterReady <span class="keyword">chan</span> *snap.Snapshotter <span class="comment">// signals when snapshotter is ready</span></span><br><span class="line"></span><br><span class="line">	snapCount <span class="type">uint64</span></span><br><span class="line">	transport *rafthttp.Transport</span><br><span class="line">	stopc     <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">// signals proposal channel closed</span></span><br><span class="line">	httpstopc <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">// signals http server to shutdown</span></span><br><span class="line">	httpdonec <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">// signals http server shutdown complete</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// newRaftNode initiates a raft instance and returns a committed log entry</span></span><br><span class="line"><span class="comment">// channel and error channel. Proposals for log updates are sent over the</span></span><br><span class="line"><span class="comment">// provided the proposal channel. All log entries are replayed over the</span></span><br><span class="line"><span class="comment">// commit channel, followed by a nil message (to indicate the channel is</span></span><br><span class="line"><span class="comment">// current), then new log entries. To shutdown, close proposeC and read errorC.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newRaftNode</span><span class="params">(id <span class="type">int</span>, peers []<span class="type">string</span>, join <span class="type">bool</span>, getSnapshot <span class="keyword">func</span>()</span></span> ([]<span class="type">byte</span>, <span class="type">error</span>), proposeC &lt;-<span class="keyword">chan</span> <span class="type">string</span>,</span><br><span class="line">	confChangeC &lt;-<span class="keyword">chan</span> raftpb.ConfChange) (&lt;-<span class="keyword">chan</span> *<span class="type">string</span>, &lt;-<span class="keyword">chan</span> <span class="type">error</span>, &lt;-<span class="keyword">chan</span> *snap.Snapshotter) &#123;</span><br><span class="line"></span><br><span class="line">	commitC := <span class="built_in">make</span>(<span class="keyword">chan</span> *<span class="type">string</span>)</span><br><span class="line">	errorC := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line">	rc := &amp;raftNode&#123;</span><br><span class="line">		proposeC:    proposeC,</span><br><span class="line">		confChangeC: confChangeC,</span><br><span class="line">		commitC:     commitC,</span><br><span class="line">		errorC:      errorC,</span><br><span class="line">		id:          id,</span><br><span class="line">		peers:       peers,</span><br><span class="line">		join:        join,</span><br><span class="line">		waldir:      fmt.Sprintf(<span class="string">&quot;raftexample-%d&quot;</span>, id),</span><br><span class="line">		snapdir:     fmt.Sprintf(<span class="string">&quot;raftexample-%d-snap&quot;</span>, id),</span><br><span class="line">		getSnapshot: getSnapshot,</span><br><span class="line">		snapCount:   defaultSnapCount,</span><br><span class="line">		stopc:       <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line">		httpstopc:   <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line">		httpdonec:   <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line"></span><br><span class="line">		snapshotterReady: <span class="built_in">make</span>(<span class="keyword">chan</span> *snap.Snapshotter, <span class="number">1</span>),</span><br><span class="line">		<span class="comment">// rest of structure populated after WAL replay</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">go</span> rc.startRaft()</span><br><span class="line">	<span class="keyword">return</span> commitC, errorC, rc.snapshotterReady</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 核心是startRaft方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rc *raftNode)</span></span> startRaft() &#123;</span><br><span class="line">  <span class="comment">// 如果存放快照的目录不存在则创建</span></span><br><span class="line">	<span class="keyword">if</span> !fileutil.Exist(rc.snapdir) &#123;</span><br><span class="line">		<span class="keyword">if</span> err := os.Mkdir(rc.snapdir, <span class="number">0750</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Fatalf(<span class="string">&quot;raftexample: cannot create dir for snapshot (%v)&quot;</span>, err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	rc.snapshotter = snap.New(rc.snapdir)</span><br><span class="line">  <span class="comment">// 这个时候&lt;-snapshotterReady就可以返回</span></span><br><span class="line">	rc.snapshotterReady &lt;- rc.snapshotter</span><br><span class="line"></span><br><span class="line">	oldwal := wal.Exist(rc.waldir)</span><br><span class="line">	rc.wal = rc.replayWAL()</span><br><span class="line"></span><br><span class="line">	rpeers := <span class="built_in">make</span>([]raft.Peer, <span class="built_in">len</span>(rc.peers))</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> rpeers &#123;</span><br><span class="line">		rpeers[i] = raft.Peer&#123;ID: <span class="type">uint64</span>(i + <span class="number">1</span>)&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	c := &amp;raft.Config&#123;</span><br><span class="line">		ID:              <span class="type">uint64</span>(rc.id),</span><br><span class="line">		ElectionTick:    <span class="number">10</span>,</span><br><span class="line">		HeartbeatTick:   <span class="number">1</span>,</span><br><span class="line">		Storage:         rc.raftStorage,</span><br><span class="line">		MaxSizePerMsg:   <span class="number">1024</span> * <span class="number">1024</span>,</span><br><span class="line">		MaxInflightMsgs: <span class="number">256</span>,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> oldwal &#123;</span><br><span class="line">		rc.node = raft.RestartNode(c)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		startPeers := rpeers</span><br><span class="line">		<span class="keyword">if</span> rc.join &#123;</span><br><span class="line">			startPeers = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">		rc.node = raft.StartNode(c, startPeers)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ss := &amp;stats.ServerStats&#123;&#125;</span><br><span class="line">	ss.Initialize()</span><br><span class="line"></span><br><span class="line">	rc.transport = &amp;rafthttp.Transport&#123;</span><br><span class="line">		ID:          types.ID(rc.id),</span><br><span class="line">		ClusterID:   <span class="number">0x1000</span>,</span><br><span class="line">		Raft:        rc,</span><br><span class="line">		ServerStats: ss,</span><br><span class="line">		LeaderStats: stats.NewLeaderStats(strconv.Itoa(rc.id)),</span><br><span class="line">		ErrorC:      <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>),</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	rc.transport.Start()</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> rc.peers &#123;</span><br><span class="line">		<span class="keyword">if</span> i+<span class="number">1</span> != rc.id &#123;</span><br><span class="line">			rc.transport.AddPeer(types.ID(i+<span class="number">1</span>), []<span class="type">string</span>&#123;rc.peers[i]&#125;)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> rc.serveRaft()</span><br><span class="line">	<span class="keyword">go</span> rc.serveChannels()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>replayWAL</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rc *raftNode)</span></span> loadSnapshot() *raftpb.Snapshot &#123;</span><br><span class="line">	snapshot, err := rc.snapshotter.Load()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err != snap.ErrNoSnapshot &#123;</span><br><span class="line">		log.Fatalf(<span class="string">&quot;raftexample: error loading snapshot (%v)&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> snapshot</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// openWAL returns a WAL ready for reading.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rc *raftNode)</span></span> openWAL(snapshot *raftpb.Snapshot) *wal.WAL &#123;</span><br><span class="line">	<span class="keyword">if</span> !wal.Exist(rc.waldir) &#123;</span><br><span class="line">		<span class="keyword">if</span> err := os.Mkdir(rc.waldir, <span class="number">0750</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Fatalf(<span class="string">&quot;raftexample: cannot create dir for wal (%v)&quot;</span>, err)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		w, err := wal.Create(rc.waldir, <span class="literal">nil</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Fatalf(<span class="string">&quot;raftexample: create wal error (%v)&quot;</span>, err)</span><br><span class="line">		&#125;</span><br><span class="line">		w.Close()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	walsnap := walpb.Snapshot&#123;&#125;</span><br><span class="line">	<span class="keyword">if</span> snapshot != <span class="literal">nil</span> &#123;</span><br><span class="line">		walsnap.Index, walsnap.Term = snapshot.Metadata.Index, snapshot.Metadata.Term</span><br><span class="line">	&#125;</span><br><span class="line">	log.Printf(<span class="string">&quot;loading WAL at term %d and index %d&quot;</span>, walsnap.Term, walsnap.Index)</span><br><span class="line">	w, err := wal.Open(rc.waldir, walsnap)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">&quot;raftexample: error loading wal (%v)&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> w</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// replayWAL replays WAL entries into the raft instance.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rc *raftNode)</span></span> replayWAL() *wal.WAL &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;replaying WAL of member %d&quot;</span>, rc.id)</span><br><span class="line">	snapshot := rc.loadSnapshot()</span><br><span class="line">	w := rc.openWAL(snapshot)</span><br><span class="line">	_, st, ents, err := w.ReadAll()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">&quot;raftexample: failed to read WAL (%v)&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	rc.raftStorage = raft.NewMemoryStorage()</span><br><span class="line">	<span class="keyword">if</span> snapshot != <span class="literal">nil</span> &#123;</span><br><span class="line">		rc.raftStorage.ApplySnapshot(*snapshot)</span><br><span class="line">	&#125;</span><br><span class="line">	rc.raftStorage.SetHardState(st)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// append to storage so raft starts at the right place in log</span></span><br><span class="line">	rc.raftStorage.Append(ents)</span><br><span class="line">	<span class="comment">// send nil once lastIndex is published so client knows commit channel is current</span></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(ents) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		rc.lastIndex = ents[<span class="built_in">len</span>(ents)<span class="number">-1</span>].Index</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		rc.commitC &lt;- <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> w</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><a href="https://juejin.cn/post/7183604423673774139">Etcd WAL关键流程分析</a></p>
+<hr>
+
+<h3 id="参考-2"><a href="#参考-2" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a href="https://raft.github.io/">https://raft.github.io/</a></li>
+<li><a href="https://thesecretlivesofdata.com/raft/">https://thesecretlivesofdata.com/raft/</a></li>
+<li><a href="http://www.hollischuang.com/archives/666">http://www.hollischuang.com/archives/666</a></li>
+<li>youtube.com&#x2F;watch?v&#x3D;uXEYuDwm7e4&amp;t&#x3D;554s</li>
+<li><a href="https://www.youtube.com/watch?v=64Zp3tzNbpE&list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB&index=6">https://www.youtube.com/watch?v=64Zp3tzNbpE&amp;list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB&amp;index=6</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/36547283">别再怀疑自己的智商了，Raft协议本来就不好理解</a></li>
+<li><a href="https://www.youtube.com/watch?v=64Zp3tzNbpE&list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB&index=6">Lecture 6: Fault Tolerance: Raft (1)</a></li>
+<li><a href="https://jack-vanlightly.com/blog/2022/6/9/applying-flexible-paxos-to-raft"><strong>Applying Flexible Paxos To Raft</strong></a></li>
+<li><a href="https://www.youtube.com/watch?v=DrtdrdwDpZE">Deep Dive: etcd - Jingyi Hu, Google</a></li>
+<li><a href="https://www.codedump.info/post/20180922-etcd-raft/">etcd Raft库解析</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/29/c++/faq/%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/29/c++/std/STL%E4%B9%8Bdeque/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

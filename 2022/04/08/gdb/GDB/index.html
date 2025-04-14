@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="GDBRunning Programs Under gdb12345678910&#x2F;&#x2F; file: main.c#include &lt;stdio.h&gt;int main(int argc, char** argv) &#123;	for (int i &#x3D; 0; i &lt; argc; ++i) &#123;		printf(&quot;%s\n&quot;, argv[i]);	&amp;#125">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GDB常用命令">
+<meta property="og:url" content="https://huangpiao.tech/2022/04/08/gdb/GDB/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="GDBRunning Programs Under gdb12345678910&#x2F;&#x2F; file: main.c#include &lt;stdio.h&gt;int main(int argc, char** argv) &#123;	for (int i &#x3D; 0; i &lt; argc; ++i) &#123;		printf(&quot;%s\n&quot;, argv[i]);	&amp;#125">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-08T05:08:43.529Z">
+<meta property="article:modified_time" content="2025-04-09T05:29:53.804Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2022/04/08/gdb/GDB/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2022/04/08/gdb/GDB/","path":"2022/04/08/gdb/GDB/","title":"GDB常用命令"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>GDB常用命令 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#GDB"><span class="nav-number">1.</span> <span class="nav-text">GDB</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Running-Programs-Under-gdb"><span class="nav-number">1.0.1.</span> <span class="nav-text">Running Programs Under gdb</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#4-1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">4.1 环境变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-2-%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">4.2 工作目录</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-3-%E8%BE%93%E5%85%A5%E5%92%8C%E8%BE%93%E5%87%BA"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">4.3 输入和输出</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#9-Examine-Source-Files"><span class="nav-number">1.0.2.</span> <span class="nav-text">9. Examine Source Files</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#8-Examining-the-Stack"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">8. Examining the Stack</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#10-Examining-Data"><span class="nav-number">1.0.3.</span> <span class="nav-text">10. Examining Data</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#10-1-%E6%89%93%E5%8D%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F-f%E5%8F%AF%E4%BB%A5%E6%8C%87%E5%AE%9A%E6%A0%BC%E5%BC%8F-%E5%8F%82%E8%80%83Example1"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">10.1 打印表达式&#x2F;f可以指定格式(参考Example1)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-2-%E6%89%93%E5%8D%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">10.2 打印类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-1"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">Example 1</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TUI-specific-Commands"><span class="nav-number">1.0.4.</span> <span class="nav-text">TUI-specific Commands</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jump%E6%8C%87%E4%BB%A4"><span class="nav-number">1.0.5.</span> <span class="nav-text">jump指令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Move-With-Zero-Extend-movzb"><span class="nav-number">2.</span> <span class="nav-text">Move With Zero Extend (movzb)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-IMUL-Instruction"><span class="nav-number"></span> <span class="nav-text">6. IMUL Instruction</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">0.0.1.</span> <span class="nav-text">补充</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%89%93%E5%8D%B0%E5%B1%80%E9%83%A8%E5%92%8C%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="nav-number">0.0.1.1.</span> <span class="nav-text">1. 打印局部和全局变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Valgrind%E6%A3%80%E6%B5%8B%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">0.0.1.2.</span> <span class="nav-text">2. Valgrind检测内存泄漏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-segfault-only-when-NOT-using-debugger"><span class="nav-number">0.0.1.3.</span> <span class="nav-text">3. segfault only when NOT using debugger</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2022/04/08/gdb/GDB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="GDB常用命令 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GDB常用命令
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-08 13:08:43" itemprop="dateCreated datePublished" datetime="2022-04-08T13:08:43+08:00">2022-04-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-09 13:29:53" itemprop="dateModified" datetime="2025-04-09T13:29:53+08:00">2025-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/gdb/" itemprop="url" rel="index"><span itemprop="name">gdb</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="GDB"><a href="#GDB" class="headerlink" title="GDB"></a>GDB</h2><h4 id="Running-Programs-Under-gdb"><a href="#Running-Programs-Under-gdb" class="headerlink" title="Running Programs Under gdb"></a>Running Programs Under gdb</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: main.c</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> &#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; argc; ++i) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, argv[i]);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -g main.c -o main</span><br><span class="line">$ gdb main</span><br></pre></td></tr></table></figure>
+
+<p><strong>show args</strong>: 查看命令行参数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) show args</span><br><span class="line">Argument list to give program being debugged when it is started is <span class="string">&quot;&quot;</span>.</span><br></pre></td></tr></table></figure>
+
+<p><strong>set args</strong>: 设置命令行参数</p>
+<p>带空格的参数需要使用引号</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">set</span> args 1 2 3 4 I am ok <span class="string">&quot;how about you&quot;</span> <span class="string">&#x27;How do you do&#x27;</span></span><br><span class="line">(gdb) show args</span><br><span class="line">Argument list to give program being debugged when it is started is <span class="string">&quot;1 2 3 4 I am ok &quot;</span>how about you<span class="string">&quot; &#x27;How do you do&#x27;&quot;</span>.</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-1-环境变量"><a href="#4-1-环境变量" class="headerlink" title="4.1 环境变量"></a>4.1 环境变量</h5><ul>
+<li><p><strong>show paths</strong>: 打印搜索路径（就是<code>PATH</code>环境变量值）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) show paths</span><br><span class="line">Executable and object file path: /usr/local/pgsql/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>path directory</strong>: 添加搜索路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) path .</span><br><span class="line">Executable and object file path: /home/g/Desktop/gdb:/usr/local/pgsql/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>show environment [varname]</strong>: 打印某个环境变量值，<code>environment</code>可以简写为<code>env</code>. 可选参数<code>[varname]</code>不给，输出所有环境变量。<code>varname</code>区分大小写。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(gdb) show <span class="built_in">env</span> name</span><br><span class="line">Environment variable <span class="string">&quot;name&quot;</span> not defined.</span><br><span class="line">(gdb) show <span class="built_in">env</span> SHELL</span><br><span class="line">SHELL = /bin/bash</span><br><span class="line">(gdb) show <span class="built_in">env</span> shell</span><br><span class="line">Environment variable <span class="string">&quot;shell&quot;</span> not defined.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>set environment varname [&#x3D;value]</strong>: 对被调试的程序设置环境变量值。可选参数<code>value</code>不给定，默认为<code>null</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">set</span> <span class="built_in">env</span> name</span><br><span class="line">Setting environment variable <span class="string">&quot;name&quot;</span> to null value.</span><br><span class="line">(gdb) show <span class="built_in">env</span> name</span><br><span class="line">name = </span><br><span class="line">(gdb) <span class="built_in">set</span> <span class="built_in">env</span> name = <span class="string">&quot;JACK is a bad boy!&quot;</span></span><br><span class="line">(gdb) show <span class="built_in">env</span> name</span><br><span class="line">name = <span class="string">&quot;JACK is a bad boy!&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>unset environment varname</strong>: 删除环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">unset</span> <span class="built_in">env</span> name</span><br><span class="line">(gdb) show <span class="built_in">env</span> name</span><br><span class="line">Environment variable <span class="string">&quot;name&quot;</span> not defined.</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="4-2-工作目录"><a href="#4-2-工作目录" class="headerlink" title="4.2 工作目录"></a>4.2 工作目录</h5><ul>
+<li><p><strong>pwd</strong>: 打印<code>GDB</code>工作目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">pwd</span></span><br><span class="line">Working directory /home/g/Desktop/gdb.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>cd</strong>: 改变<code>GDB</code>工作目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">cd</span> ..</span><br><span class="line">Working directory /home/g/Desktop.</span><br><span class="line">(gdb) <span class="built_in">pwd</span></span><br><span class="line">Working directory /home/g/Desktop.</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="4-3-输入和输出"><a href="#4-3-输入和输出" class="headerlink" title="4.3 输入和输出"></a>4.3 输入和输出</h5><ul>
+<li><p><strong><code>info terminal</code></strong>: Displays information recorded by gdb about the terminal modes your program is using.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info terminal</span><br><span class="line">No saved terminal information.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: redirect_in_out.c</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> &#123;</span><br><span class="line">  <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line">  <span class="keyword">while</span> (fgets(buf, <span class="keyword">sizeof</span>(buf), <span class="built_in">stdin</span>)) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, buf);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> in.txt </span><br><span class="line">He is a good programmer</span><br><span class="line">I love C++</span><br><span class="line">I love Java</span><br><span class="line">I love Go</span><br><span class="line">I love Rust</span><br><span class="line">I love Javascript</span><br><span class="line">I love Lua</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) run &lt; in.txt</span><br><span class="line">Starting program: /home/g/Desktop/gdb/redirect_in_out &lt; in.txt</span><br><span class="line">[Thread debugging using libthread_db enabled]</span><br><span class="line">Using host libthread_db library <span class="string">&quot;/lib/x86_64-linux-gnu/libthread_db.so.1&quot;</span>.</span><br><span class="line">He is a good programmer</span><br><span class="line">I love C++</span><br><span class="line">I love Java</span><br><span class="line">I love Go</span><br><span class="line">I love Rust</span><br><span class="line">I love Javascript</span><br><span class="line">I love Lua</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="9-Examine-Source-Files"><a href="#9-Examine-Source-Files" class="headerlink" title="9. Examine Source Files"></a>9. Examine Source Files</h4><p>To print lines from a source file, use the list command (abbreviated l). By default, ten lines are printed.</p>
+<ul>
+<li><p><strong>list linenum</strong>: 展示前后5行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) list 300</span><br><span class="line">295		<span class="keyword">if</span> ( !(m4 = getenv(<span class="string">&quot;M4&quot;</span>))) &#123;</span><br><span class="line">296			m4 = M4;</span><br><span class="line">297		&#125;</span><br><span class="line">298		filter_create_ext(output_chain, m4, <span class="string">&quot;-P&quot;</span>, 0);</span><br><span class="line">299		filter_create_int(output_chain, filter_fix_linedirs, NULL);</span><br><span class="line">300	</span><br><span class="line">301		/* For debugging, only run the requested number of filters. */</span><br><span class="line">302		<span class="keyword">if</span> (preproc_level &gt; 0) &#123;</span><br><span class="line">303			filter_truncate(output_chain, preproc_level);</span><br><span class="line">304			filter_apply_chain(output_chain);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>list function</strong>: 展示函数前后5行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) list main</span><br><span class="line">270		<span class="built_in">return</span> 0;		/* keep compilers/lint happy */</span><br><span class="line">271	&#125;</span><br><span class="line">272	</span><br><span class="line">273	/* Wrapper around flex_main, so flex_main can be built as a library. */</span><br><span class="line">274	int main (int argc, char *argv[])</span><br><span class="line">275	&#123;</span><br><span class="line">276	<span class="comment">#if defined(ENABLE_NLS) &amp;&amp; ENABLE_NLS</span></span><br><span class="line">277	<span class="comment">#if HAVE_LOCALE_H</span></span><br><span class="line">278		setlocale (LC_MESSAGES, <span class="string">&quot;&quot;</span>);</span><br><span class="line">279	        setlocale (LC_CTYPE, <span class="string">&quot;&quot;</span>);</span><br><span class="line">(gdb) </span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>list</strong>: Print more lines. If the last lines printed were printed with a list command, this prints lines following the last lines printed; however, if the last line printed was a solitary line printed as part of displaying a stack frame, this prints lines centered around that line.</p>
+</li>
+</ul>
+<hr>
+
+<h5 id="8-Examining-the-Stack"><a href="#8-Examining-the-Stack" class="headerlink" title="8. Examining the Stack"></a>8. Examining the Stack</h5><p>栈帧（stack frame）包括函数参数（arguments），函数局部变量（local variables）和函数地址（address）。</p>
+<p><strong>Example 1</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file stack_demo.cpp</span></span><br><span class="line"><span class="comment">// clang++ -g -fno-omit-frame-pointer -std=c++20 stack_demo.cpp -o stack_demo</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">fibonacci</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span> || n == <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">fibonacci</span>(n - <span class="number">1</span>) + <span class="built_in">fibonacci</span>(n - <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">cfunc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> b = <span class="number">2</span>; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">bfunc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> b = <span class="number">2</span>;</span><br><span class="line">    <span class="type">int</span> c = <span class="number">3</span>;</span><br><span class="line">    <span class="type">int</span> d = <span class="number">4</span>;</span><br><span class="line">    <span class="built_in">cfunc</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">afunc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> b = <span class="number">2</span>;</span><br><span class="line">    <span class="type">int</span> c = <span class="number">3</span>;</span><br><span class="line">    <span class="type">int</span> d = <span class="number">4</span>;</span><br><span class="line">    <span class="type">int</span> e = <span class="number">5</span>;</span><br><span class="line">    <span class="type">int</span> f = <span class="number">6</span>;</span><br><span class="line">    <span class="type">int</span> g = <span class="number">7</span>;</span><br><span class="line">    <span class="type">int</span> h = <span class="number">8</span>;</span><br><span class="line">    <span class="built_in">bfunc</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">afunc</span>();</span><br><span class="line">    <span class="built_in">fibonacci</span>(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>调试代码（已经移除部分无用信息，{}内是注释）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$sudo</span> gdb stack_demo</span><br><span class="line">(gdb) b main</span><br><span class="line">Breakpoint 1 at 0x1000032a6: file stack_demo.cpp, line 40.</span><br><span class="line">(gdb) r</span><br><span class="line">Thread 2 hit Breakpoint 1, main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span><br><span class="line">40	    afunc();</span><br><span class="line">(gdb) frame																								&#123;frame没有参数，默认是当前栈帧&#125;</span><br><span class="line"><span class="comment">#0  main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line">40	    afunc();</span><br><span class="line">(gdb) frame 0																							&#123;frame默认是从0开始，从最里层开始&#125;</span><br><span class="line"><span class="comment">#0  main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line">40	    afunc();</span><br><span class="line">(gdb) frame 1</span><br><span class="line">No frame at level 1.</span><br><span class="line">(gdb) bt																									&#123;backtrace简写，从里层向外层打印&#125;</span><br><span class="line"><span class="comment">#0  main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line">(gdb) s																										&#123;单步执行&#125;</span><br><span class="line">afunc () at stack_demo.cpp:27</span><br><span class="line">27	    cout &lt;&lt; <span class="string">__PRETTY_FUNCTION__ &lt;&lt; endl;</span></span><br><span class="line"><span class="string">(gdb) s																										&#123;this指针作参数，endl其实是函数，通过&lt;&lt;重载函数指针&#125;</span></span><br><span class="line"><span class="string">std::__1::basic_ostream&lt;char, std::__1::char_traits&lt;char&gt; &gt;::operator&lt;&lt; (this=0x7fff806c8240, __pf=0x100003170 &lt;std::__1::endl&lt;char, std::__1::char_traits&lt;char&gt; &gt;(std::__1::basic_ostream&lt;char, std::__1::char_traits&lt;char&gt; &gt;&amp;)&gt;) at /usr/local/opt/llvm/bin/../include/c++/v1/ostream:189</span></span><br><span class="line"><span class="string">189	    &#123; return __pf(*this); &#125;</span></span><br><span class="line"><span class="string">(gdb) s</span></span><br><span class="line"><span class="string">std::__1::endl&lt;char, std::__1::char_traits&lt;char&gt; &gt; (__os=...) at /usr/local/opt/llvm/bin/../include/c++/v1/ostream:994</span></span><br><span class="line"><span class="string">994	    __os.put(__os.widen(&#x27;\n&#x27;));</span></span><br><span class="line"><span class="string">(gdb) s</span></span><br><span class="line"><span class="string">std::__1::basic_ios&lt;char, std::__1::char_traits&lt;char&gt; &gt;::widen (this=0x7fff806c8248, __c=10 &#x27;\n&#x27;) at /usr/local/opt/llvm/bin/../include/c++/v1/ios:766</span></span><br><span class="line"><span class="string">766	    return use_facet&lt;ctype&lt;char_type&gt; &gt;(getloc()).widen(__c);</span></span><br><span class="line"><span class="string">(gdb) s</span></span><br><span class="line"><span class="string">std::__1::use_facet&lt;std::__1::ctype&lt;char&gt; &gt; (__l=...) at /usr/local/opt/llvm/bin/../include/c++/v1/__locale:254</span></span><br><span class="line"><span class="string">254	    return static_cast&lt;const _Facet&amp;&gt;(*__l.use_facet(_Facet::id));</span></span><br><span class="line"><span class="string">(gdb) s</span></span><br><span class="line"><span class="string">std::__1::ctype&lt;char&gt;::widen (this=0x7fff806c8940, __c=10 &#x27;\n&#x27;) at /usr/local/opt/llvm/bin/../include/c++/v1/__locale:693</span></span><br><span class="line"><span class="string">693	        return do_widen(__c);</span></span><br><span class="line"><span class="string">(gdb) s</span></span><br><span class="line"><span class="string">void afunc()</span></span><br><span class="line"><span class="string">std::__1::endl&lt;char, std::__1::char_traits&lt;char&gt; &gt; (__os=...) at /usr/local/opt/llvm/bin/../include/c++/v1/ostream:995</span></span><br><span class="line"><span class="string">995	    __os.flush();</span></span><br><span class="line"><span class="string">(gdb) s</span></span><br><span class="line"><span class="string">996	    return __os;</span></span><br><span class="line"><span class="string">(gdb) s</span></span><br><span class="line"><span class="string">afunc () at stack_demo.cpp:28</span></span><br><span class="line"><span class="string">28	    int a = 1;</span></span><br><span class="line"><span class="string">(gdb) bt																									&#123;当前是frame0，bt从内向外打印输出&#125;</span></span><br><span class="line"><span class="string">#0  afunc () at stack_demo.cpp:28</span></span><br><span class="line"><span class="string">#1  0x00000001000032ab in main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line"><span class="string">(gdb) b 13																								&#123;在cfunc断点&#125;</span></span><br><span class="line"><span class="string">Breakpoint 2 at 0x1000030fa: file stack_demo.cpp, line 13.</span></span><br><span class="line"><span class="string">(gdb) c																										&#123;运行到前面断点处&#125;</span></span><br><span class="line"><span class="string">Continuing.</span></span><br><span class="line"><span class="string">void bfunc()</span></span><br><span class="line"><span class="string">void cfunc()</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Thread 2 hit Breakpoint 2, cfunc () at stack_demo.cpp:13	</span></span><br><span class="line"><span class="string">13	    int a = 1;</span></span><br><span class="line"><span class="string">(gdb) bt</span></span><br><span class="line"><span class="string">#0  cfunc () at stack_demo.cpp:13</span></span><br><span class="line"><span class="string">#1  0x000000010000320b in bfunc () at stack_demo.cpp:23</span></span><br><span class="line"><span class="string">#2  0x0000000100003287 in afunc () at stack_demo.cpp:36</span></span><br><span class="line"><span class="string">#3  0x00000001000032ab in main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line"><span class="string">(gdb) bt 1																								&#123;从最里层打印栈帧，语法为bt n&#125;</span></span><br><span class="line"><span class="string">#0  cfunc () at stack_demo.cpp:13</span></span><br><span class="line"><span class="string">(More stack frames follow...)</span></span><br><span class="line"><span class="string">(gdb) bt -1																								&#123;从最外层打印栈帧，语法为bt -n&#125;</span></span><br><span class="line"><span class="string">#3  0x00000001000032ab in main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line"><span class="string">(gdb) bt full																							&#123;打印各个栈帧的局部变量值&#125;</span></span><br><span class="line"><span class="string">#0  cfunc () at stack_demo.cpp:13</span></span><br><span class="line"><span class="string">        a = 32767</span></span><br><span class="line"><span class="string">        b = -2140372416</span></span><br><span class="line"><span class="string">#1  0x000000010000320b in bfunc () at stack_demo.cpp:23</span></span><br><span class="line"><span class="string">        a = 1</span></span><br><span class="line"><span class="string">        b = 2</span></span><br><span class="line"><span class="string">        c = 3</span></span><br><span class="line"><span class="string">        d = 4</span></span><br><span class="line"><span class="string">#2  0x0000000100003287 in afunc () at stack_demo.cpp:36</span></span><br><span class="line"><span class="string">        a = 1</span></span><br><span class="line"><span class="string">        b = 2</span></span><br><span class="line"><span class="string">        c = 3</span></span><br><span class="line"><span class="string">        d = 4</span></span><br><span class="line"><span class="string">        e = 5</span></span><br><span class="line"><span class="string">        f = 6</span></span><br><span class="line"><span class="string">        g = 7</span></span><br><span class="line"><span class="string">        h = 8</span></span><br><span class="line"><span class="string">#3  0x00000001000032ab in main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line"><span class="string">No locals.</span></span><br><span class="line"><span class="string">(gdb) bt full 1</span></span><br><span class="line"><span class="string">#0  cfunc () at stack_demo.cpp:13</span></span><br><span class="line"><span class="string">        a = 32767</span></span><br><span class="line"><span class="string">        b = -2140372416</span></span><br><span class="line"><span class="string">(More stack frames follow...)</span></span><br><span class="line"><span class="string">(gdb) bt full -1</span></span><br><span class="line"><span class="string">#3  0x00000001000032ab in main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line"><span class="string">No locals.</span></span><br><span class="line"><span class="string">(gdb) info s																								&#123;info stack和where是backtrace别名&#125;</span></span><br><span class="line"><span class="string">#0  cfunc () at stack_demo.cpp:13</span></span><br><span class="line"><span class="string">#1  0x000000010000320b in bfunc () at stack_demo.cpp:23</span></span><br><span class="line"><span class="string">#2  0x0000000100003287 in afunc () at stack_demo.cpp:36</span></span><br><span class="line"><span class="string">#3  0x00000001000032ab in main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br><span class="line"><span class="string">(gdb) where</span></span><br><span class="line"><span class="string">#0  cfunc () at stack_demo.cpp:13</span></span><br><span class="line"><span class="string">#1  0x000000010000320b in bfunc () at stack_demo.cpp:23</span></span><br><span class="line"><span class="string">#2  0x0000000100003287 in afunc () at stack_demo.cpp:36</span></span><br><span class="line"><span class="string">#3  0x00000001000032ab in main (argc=1, argv=0x7ffeefbffa08) at stack_demo.cpp:40</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+
+<h4 id="10-Examining-Data"><a href="#10-Examining-Data" class="headerlink" title="10. Examining Data"></a>10. Examining Data</h4><h5 id="10-1-打印表达式-f可以指定格式-参考Example1"><a href="#10-1-打印表达式-f可以指定格式-参考Example1" class="headerlink" title="10.1 打印表达式/f可以指定格式(参考Example1)"></a>10.1 打印表达式<code>/f</code>可以指定格式(参考Example1)</h5><ul>
+<li><p><code>print expr</code></p>
+</li>
+<li><p><code>print /f expr</code></p>
+</li>
+<li><p><code>print</code></p>
+</li>
+<li><p><code>print /f</code></p>
+</li>
+</ul>
+<h5 id="10-2-打印类型"><a href="#10-2-打印类型" class="headerlink" title="10.2 打印类型"></a>10.2 打印类型</h5><ul>
+<li><code>ptype exp</code></li>
+</ul>
+<h5 id="Example-1"><a href="#Example-1" class="headerlink" title="Example 1"></a>Example 1</h5><p><strong>头文件</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: demo.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SIZE_OF_TYPE(type) \</span></span><br><span class="line"><span class="meta">    <span class="string">&quot;size of &quot;</span> #type <span class="string">&quot;: &quot;</span> + std::to_string(sizeof(type))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Person</span>(<span class="type">unsigned</span> <span class="type">int</span> age) : age_&#123;age&#125; &#123;&#125;</span><br><span class="line">  <span class="function"><span class="type">unsigned</span> <span class="type">int</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> age_; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">operator</span> <span class="type">unsigned</span> <span class="title">int</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> age_; &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> age_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span> : <span class="keyword">public</span> Person &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Teacher</span>(<span class="type">unsigned</span> <span class="type">int</span> age, <span class="type">int</span> salary) : Person&#123;age&#125;, salary_&#123;salary&#125; &#123;&#125;</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">get_salary</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> salary_; &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="type">int</span> salary_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Engine</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Engine</span>(<span class="type">float</span> power) : power_&#123;power&#125; &#123;&#125;</span><br><span class="line">  <span class="keyword">friend</span> std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp; os, <span class="type">const</span> Engine&amp; rhs) &#123;</span><br><span class="line">    <span class="keyword">return</span> os &lt;&lt; rhs.power_;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">friend</span> <span class="keyword">class</span> <span class="title class_">Car</span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="type">float</span> power_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Car</span> : <span class="keyword">private</span> Engine &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Car</span>(<span class="type">int</span> year, <span class="type">const</span> std::string&amp; brand, <span class="type">float</span> power)</span><br><span class="line">      : Engine&#123;power&#125;, year_&#123;year&#125;, brand_&#123;brand&#125; &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Year: &quot;</span> &lt;&lt; year_ &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Brand: &quot;</span> &lt;&lt; brand_ &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Power: &quot;</span> &lt;&lt; power_ &lt;&lt; std::endl;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="type">int</span> year_;</span><br><span class="line">  std::string brand_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>源文件</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: demo.cpp</span></span><br><span class="line"><span class="comment">// clang++ -g -std=c++20 demo.cpp -o demo</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;demo.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">thread_local</span> <span class="type">int</span> tl_int = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">routine1</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">  tl_int = <span class="number">300</span>;</span><br><span class="line">  cout &lt;&lt; this_thread::<span class="built_in">get_id</span>() &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; tl_int &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">routine2</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">  this_thread::<span class="built_in">sleep_for</span>(chrono::<span class="built_in">seconds</span>(<span class="number">2</span>));</span><br><span class="line">  cout &lt;&lt; this_thread::<span class="built_in">get_id</span>() &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; tl_int &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(T <span class="comment">/* ignored */</span>)</span> </span>&#123;</span><br><span class="line">  cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(T* <span class="comment">/* ignored */</span>)</span> </span>&#123;</span><br><span class="line">  cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  <span class="type">bool</span> b1 = <span class="literal">true</span>;</span><br><span class="line">  <span class="type">char</span> c1 = <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line">  <span class="type">int</span> i1 = <span class="number">2147483647</span>;</span><br><span class="line">  <span class="type">int</span> i2 = <span class="number">-2147483648</span>;</span><br><span class="line">  <span class="type">long</span> <span class="type">long</span> ll1 = <span class="number">9223372036854775807</span>;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;b1 = &quot;</span> &lt;&lt; b1 &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;c1 = &quot;</span> &lt;&lt; c1 &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;i1 = &quot;</span> &lt;&lt; i1 &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;i2 = &quot;</span> &lt;&lt; i2 &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;ll1 = &quot;</span> &lt;&lt; ll1 &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">  cout &lt;&lt; <span class="built_in">SIZE_OF_TYPE</span>(<span class="type">int</span>) &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="built_in">SIZE_OF_TYPE</span>(<span class="type">long</span>) &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="built_in">SIZE_OF_TYPE</span>(<span class="type">long</span> <span class="type">double</span>) &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">  <span class="function">thread <span class="title">t1</span><span class="params">(routine1)</span></span>;</span><br><span class="line">  <span class="function">thread <span class="title">t2</span><span class="params">(routine2)</span></span>;</span><br><span class="line">  t<span class="number">1.</span><span class="built_in">join</span>();</span><br><span class="line">  t<span class="number">2.</span><span class="built_in">join</span>();</span><br><span class="line"></span><br><span class="line">  Person p1&#123;<span class="number">18</span>&#125;;</span><br><span class="line">  cout &lt;&lt; p1 &lt;&lt; endl;</span><br><span class="line">  Teacher t3&#123;<span class="number">45</span>, <span class="number">18000</span>&#125;;</span><br><span class="line">  cout &lt;&lt; t<span class="number">3.</span><span class="built_in">get_salary</span>() &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">foo</span>(<span class="number">3</span>);</span><br><span class="line">  <span class="built_in">foo</span>(<span class="literal">nullptr</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>调试</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> gdb ./demo</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+
+<h4 id="TUI-specific-Commands"><a href="#TUI-specific-Commands" class="headerlink" title="TUI-specific Commands"></a>TUI-specific Commands</h4><ul>
+<li><p><code>info win</code></p>
+<p>List and give the size of all displayed windows.</p>
+</li>
+<li><p><code>layout next</code></p>
+<p>Display the previous layout.</p>
+</li>
+<li><p><code>layout prev</code></p>
+<p>Display the previous layout.</p>
+</li>
+<li><p><code>layout src</code></p>
+<p>Display the source window only.</p>
+</li>
+<li><p><code>layout asm</code></p>
+<p>Display the assembly window only.</p>
+</li>
+</ul>
+<p>Display the next layout.</p>
+<p>layout prev</p>
+<p>Display the previous layout.</p>
+<h4 id="jump指令"><a href="#jump指令" class="headerlink" title="jump指令"></a>jump指令</h4><table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>Description</th>
+<th>signed-ness</th>
+<th>Flags</th>
+<th>short jump opcodes</th>
+<th>near jump opcodes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JO</td>
+<td>Jump if overflow</td>
+<td></td>
+<td>OF &#x3D; 1</td>
+<td>70</td>
+<td>0F 80</td>
+</tr>
+<tr>
+<td>JNO</td>
+<td>Jump if not overflow</td>
+<td></td>
+<td>OF &#x3D; 0</td>
+<td>71</td>
+<td>0F 81</td>
+</tr>
+<tr>
+<td>JS</td>
+<td>Jump if sign</td>
+<td></td>
+<td>SF &#x3D; 1</td>
+<td>78</td>
+<td>0F 88</td>
+</tr>
+<tr>
+<td>JNS</td>
+<td>Jump if not sign</td>
+<td></td>
+<td>SF &#x3D; 0</td>
+<td>79</td>
+<td>0F 89</td>
+</tr>
+<tr>
+<td>JE JZ</td>
+<td>Jump if equal Jump if zero</td>
+<td></td>
+<td>ZF &#x3D; 1</td>
+<td>74</td>
+<td>0F 84</td>
+</tr>
+<tr>
+<td>JNE JNZ</td>
+<td>Jump if not equal Jump if not zero</td>
+<td></td>
+<td>ZF &#x3D; 0</td>
+<td>75</td>
+<td>0F 85</td>
+</tr>
+<tr>
+<td>JB JNAE JC</td>
+<td>Jump if below Jump if not above or equal Jump if carry</td>
+<td>unsigned</td>
+<td>CF &#x3D; 1</td>
+<td>72</td>
+<td>0F 82</td>
+</tr>
+<tr>
+<td>JNB JAE JNC</td>
+<td>Jump if not below Jump if above or equal Jump if not carry</td>
+<td>unsigned</td>
+<td>CF &#x3D; 0</td>
+<td>73</td>
+<td>0F 83</td>
+</tr>
+<tr>
+<td>JBE JNA</td>
+<td>Jump if below or equal Jump if not above</td>
+<td>unsigned</td>
+<td>CF &#x3D; 1 or ZF &#x3D; 1</td>
+<td>76</td>
+<td>0F 86</td>
+</tr>
+<tr>
+<td>JA JNBE</td>
+<td>Jump if above Jump if not below or equal</td>
+<td>unsigned</td>
+<td>CF &#x3D; 0 and ZF &#x3D; 0</td>
+<td>77</td>
+<td>0F 87</td>
+</tr>
+<tr>
+<td>JL JNGE</td>
+<td>Jump if less Jump if not greater or equal</td>
+<td>signed</td>
+<td>SF &lt;&gt; OF</td>
+<td>7C</td>
+<td>0F 8C</td>
+</tr>
+<tr>
+<td>JGE JNL</td>
+<td>Jump if greater or equal Jump if not less</td>
+<td>signed</td>
+<td>SF &#x3D; OF</td>
+<td>7D</td>
+<td>0F 8D</td>
+</tr>
+<tr>
+<td>JLE JNG</td>
+<td>Jump if less or equal Jump if not greater</td>
+<td>signed</td>
+<td>ZF &#x3D; 1 or SF &lt;&gt; OF</td>
+<td>7E</td>
+<td>0F 8E</td>
+</tr>
+<tr>
+<td>JG JNLE</td>
+<td>Jump if greater Jump if not less or equal</td>
+<td>signed</td>
+<td>ZF &#x3D; 0 and SF &#x3D; OF</td>
+<td>7F</td>
+<td>0F 8F</td>
+</tr>
+<tr>
+<td>JP JPE</td>
+<td>Jump if parity Jump if parity even</td>
+<td></td>
+<td>PF &#x3D; 1</td>
+<td>7A</td>
+<td>0F 8A</td>
+</tr>
+<tr>
+<td>JNP JPO</td>
+<td>Jump if not parity Jump if parity odd</td>
+<td></td>
+<td>PF &#x3D; 0</td>
+<td>7B</td>
+<td>0F 8B</td>
+</tr>
+<tr>
+<td>JCXZ JECXZ</td>
+<td>Jump if %CX register is 0 Jump if %ECX register is 0</td>
+<td></td>
+<td>%CX &#x3D; 0 %ECX &#x3D; 0</td>
+<td>E3</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="Move-With-Zero-Extend-movzb"><a href="#Move-With-Zero-Extend-movzb" class="headerlink" title="Move With Zero Extend (movzb)"></a>Move With Zero Extend (movzb)</h2><h1 id="6-IMUL-Instruction"><a href="#6-IMUL-Instruction" class="headerlink" title="6. IMUL Instruction"></a>6. IMUL Instruction</h1><hr>
+<ul>
+<li>The IMUL (signed multiply) instruction performs signed integer multiplication.</li>
+<li>It has the same syntax and uses the same operands as the MUL instruction.</li>
+<li>What is different is that it preserves the sign of the product.</li>
+<li>IMUL sets the <strong>Carry</strong> and <strong>Overflow</strong> flags if the high-order product <em>is not</em> just a sign extension of the low-order product.</li>
+<li>The <strong>Overflow</strong> flag OF is normally used for interpreting signed arithmetic.</li>
+</ul>
+<p>clt指令</p>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><h5 id="1-打印局部和全局变量"><a href="#1-打印局部和全局变量" class="headerlink" title="1. 打印局部和全局变量"></a>1. 打印局部和全局变量</h5><ul>
+<li><p><strong>info variables</strong></p>
+</li>
+<li><p><strong>info locals</strong></p>
+</li>
+<li><p><strong>info args</strong></p>
+</li>
+</ul>
+<h5 id="2-Valgrind检测内存泄漏"><a href="#2-Valgrind检测内存泄漏" class="headerlink" title="2. Valgrind检测内存泄漏"></a>2. Valgrind检测内存泄漏</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">valgrind --leak-check=full \</span><br><span class="line">         --show-leak-kinds=all \</span><br><span class="line">         --track-origins=<span class="built_in">yes</span> \</span><br><span class="line">         --verbose \</span><br><span class="line">         --log-file=valgrind-out.txt \</span><br><span class="line">         ./executable exampleParam1</span><br></pre></td></tr></table></figure>
+
+<p>The flags are, in short:</p>
+<ul>
+<li><code>--leak-check=full</code>: “each individual leak will be shown in detail”</li>
+<li><code>--show-leak-kinds=all</code>: Show all of “definite, indirect, possible, reachable” leak kinds in the “full” report.</li>
+<li><code>--track-origins=yes</code>: Favor useful output over speed. This tracks the origins of uninitialized values, which could be very useful for memory errors. Consider turning off if Valgrind is unacceptably slow.</li>
+<li><code>--verbose</code>: Can tell you about unusual behavior of your program. Repeat for more verbosity.</li>
+<li><code>--log-file</code>: Write to a file. Useful when output exceeds terminal space.</li>
+</ul>
+<h5 id="3-segfault-only-when-NOT-using-debugger"><a href="#3-segfault-only-when-NOT-using-debugger" class="headerlink" title="3. segfault only when NOT using debugger"></a>3. segfault only when NOT using debugger</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> disable-randomization off</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><a href="https://stackoverflow.com/questions/4628521/segfault-only-when-not-using-debugger">https://stackoverflow.com/questions/4628521/segfault-only-when-not-using-debugger</a></li>
+<li><a href="https://www.youtube.com/watch?v=PorfLSr3DDI">https://www.youtube.com/watch?v=PorfLSr3DDI</a></li>
+</ul>
+<p><strong>MacOS上GDB设置</strong></p>
+<ul>
+<li><a href="https://sourceware.org/gdb/wiki/PermissionsDarwin">https://sourceware.org/gdb/wiki/PermissionsDarwin</a></li>
+</ul>
+<p><code>info threads</code></p>
+<p><code>thread &lt;n&gt;</code></p>
+<p><code>thread apply all bt</code></p>
+<p><code>x/&lt;n&gt;a &lt;address&gt;</code></p>
+<p>生成<code>coredump</code></p>
+<ol>
+<li><a href="https://askubuntu.com/questions/966407/where-do-i-find-the-core-dump-in-ubuntu-16-04lts">Where do I find the core dump in ubuntu 16.04LTS?</a></li>
+</ol>
+<p><a href="http://ifeve.com/gdb-script/">http://ifeve.com/gdb-script/</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/19/c++/faq/faq/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

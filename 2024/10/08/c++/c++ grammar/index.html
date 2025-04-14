@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="C++ Grammar[stmt.stmt]123456789statement ::&#x3D; 		labeled-statement  | attribute-specifier-seq? expression-statement  | attribute-specifier-seq? compound-statement  | attribute-specifier-seq? selection-s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rockyの博客">
+<meta property="og:url" content="https://huangpiao.tech/2024/10/08/c++/c++%20grammar/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="C++ Grammar[stmt.stmt]123456789statement ::&#x3D; 		labeled-statement  | attribute-specifier-seq? expression-statement  | attribute-specifier-seq? compound-statement  | attribute-specifier-seq? selection-s">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-10-08T03:41:33.220Z">
+<meta property="article:modified_time" content="2024-10-09T01:05:06.067Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2024/10/08/c++/c++%20grammar/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2024/10/08/c++/c++%20grammar/","path":"2024/10/08/c++/c++ grammar/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-Grammar"><span class="nav-number">1.</span> <span class="nav-text">C++ Grammar</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-stmt"><span class="nav-number">1.0.0.0.1.</span> <span class="nav-text">[stmt.stmt]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-label"><span class="nav-number">1.0.0.0.2.</span> <span class="nav-text">[stmt.label]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-expr"><span class="nav-number">1.0.0.0.3.</span> <span class="nav-text">[stmt.expr]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-block"><span class="nav-number">1.0.0.0.4.</span> <span class="nav-text">[stmt.block]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-select"><span class="nav-number">1.0.0.0.5.</span> <span class="nav-text">[stmt.select]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-iter"><span class="nav-number">1.0.0.0.6.</span> <span class="nav-text">[stmt.iter]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-jump"><span class="nav-number">1.0.0.0.7.</span> <span class="nav-text">[stmt.jump]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#stmt-dcl"><span class="nav-number">1.0.0.0.8.</span> <span class="nav-text">[stmt.dcl]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dcl-dcl"><span class="nav-number">1.0.0.0.9.</span> <span class="nav-text">[dcl.dcl]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dcl-spec"><span class="nav-number">1.0.0.0.10.</span> <span class="nav-text">[dcl.spec]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dcl-stc"><span class="nav-number">1.0.0.0.11.</span> <span class="nav-text">[dcl.stc]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dcl-fct-spec"><span class="nav-number">1.0.0.0.12.</span> <span class="nav-text">[dcl.fct.spec]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dcl-typedef"><span class="nav-number">1.0.0.0.13.</span> <span class="nav-text">[dcl.typedef]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dcl-type"><span class="nav-number">1.0.0.0.14.</span> <span class="nav-text">[dcl.type]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dcl-type-simple"><span class="nav-number">1.0.0.0.15.</span> <span class="nav-text">[dcl.type.simple]</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.0.1.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/10/08/c++/c++%20grammar/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-08 11:41:33" itemprop="dateCreated datePublished" datetime="2024-10-08T11:41:33+08:00">2024-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-10-09 09:05:06" itemprop="dateModified" datetime="2024-10-09T09:05:06+08:00">2024-10-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="C-Grammar"><a href="#C-Grammar" class="headerlink" title="C++ Grammar"></a>C++ Grammar</h2><h6 id="stmt-stmt"><a href="#stmt-stmt" class="headerlink" title="[stmt.stmt]"></a>[stmt.stmt]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">statement ::= </span><br><span class="line">		labeled-statement</span><br><span class="line">  | attribute-specifier-seq? expression-statement</span><br><span class="line">  | attribute-specifier-seq? compound-statement</span><br><span class="line">  | attribute-specifier-seq? selection-statement</span><br><span class="line">  | attribute-specifier-seq? iteration-statement</span><br><span class="line">  | attribute-specifier-seq? jump-statement</span><br><span class="line">  | declaration-statement</span><br><span class="line">  | attribute-specifier-seq? try-block</span><br></pre></td></tr></table></figure>
+
+<h6 id="stmt-label"><a href="#stmt-label" class="headerlink" title="[stmt.label]"></a>[stmt.label]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">labeled-statement ::= </span><br><span class="line">		attribute-specifier-seq? identifier <span class="string">&quot;:&quot;</span> statement</span><br><span class="line">  | attribute-specifier-seq? <span class="string">&quot;case&quot;</span> constant-expression <span class="string">&quot;:&quot;</span> statement</span><br><span class="line">  | attribute-specifier-seq? <span class="string">&quot;default&quot;</span> <span class="string">&quot;:&quot;</span> statement</span><br></pre></td></tr></table></figure>
+
+<h6 id="stmt-expr"><a href="#stmt-expr" class="headerlink" title="[stmt.expr]"></a>[stmt.expr]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">expression-statement ::= expression? <span class="string">&quot;;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="stmt-block"><a href="#stmt-block" class="headerlink" title="[stmt.block]"></a>[stmt.block]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">compound-statement ::= <span class="string">&quot;&#123;&quot;</span> statement-seq? <span class="string">&quot;&#125;&quot;</span></span><br><span class="line">statement-seq ::=</span><br><span class="line">		statement </span><br><span class="line">	| statement-seq statement</span><br></pre></td></tr></table></figure>
+
+<h6 id="stmt-select"><a href="#stmt-select" class="headerlink" title="[stmt.select]"></a>[stmt.select]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">selection-statement ::= </span><br><span class="line">		<span class="string">&quot;if&quot;</span> <span class="string">&quot;(&quot;</span> condition <span class="string">&quot;)&quot;</span> statement</span><br><span class="line">	| <span class="string">&quot;if&quot;</span> <span class="string">&quot;(&quot;</span> condition <span class="string">&quot;)&quot;</span> statement <span class="string">&quot;else&quot;</span> statement</span><br><span class="line">  | <span class="string">&quot;switch&quot;</span> <span class="string">&quot;(&quot;</span> condition <span class="string">&quot;)&quot;</span> statement</span><br><span class="line"></span><br><span class="line">condition ::= </span><br><span class="line">		expression</span><br><span class="line">  | attribute-specifier-seq? decl-specifier-seq declarator <span class="string">&quot;=&quot;</span> initializer-clause</span><br><span class="line">  | attribute-specifier-seq? decl-specifier-seq declarator braced-init-list</span><br></pre></td></tr></table></figure>
+
+<h6 id="stmt-iter"><a href="#stmt-iter" class="headerlink" title="[stmt.iter]"></a>[stmt.iter]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">iteration-statement ::=</span><br><span class="line">		<span class="string">&quot;while&quot;</span> <span class="string">&quot;(&quot;</span> condition <span class="string">&quot;)&quot;</span> statement</span><br><span class="line">	| <span class="string">&quot;do&quot;</span> statement <span class="string">&quot;while&quot;</span> <span class="string">&quot;(&quot;</span> expression <span class="string">&quot;)&quot;</span> <span class="string">&quot;;&quot;</span></span><br><span class="line">  | <span class="string">&quot;for&quot;</span> <span class="string">&quot;(&quot;</span> for-init-statement condition? <span class="string">&quot;;&quot;</span> expression? <span class="string">&quot;)&quot;</span> statement</span><br><span class="line">  | <span class="string">&quot;for&quot;</span> <span class="string">&quot;(&quot;</span> for-range-declaration <span class="string">&quot;:&quot;</span> for-range-initializer <span class="string">&quot;)&quot;</span> statement</span><br><span class="line"></span><br><span class="line">for-init-statement ::=</span><br><span class="line">		expression-statement</span><br><span class="line">	| simple-declaration</span><br><span class="line"></span><br><span class="line">for-range-declaration ::= attribute-specifier-seq? type-specifier-seq declarator</span><br><span class="line"></span><br><span class="line">for-range-initializer ::=</span><br><span class="line">		expression</span><br><span class="line">  | braced-init-list</span><br></pre></td></tr></table></figure>
+
+<h6 id="stmt-jump"><a href="#stmt-jump" class="headerlink" title="[stmt.jump]"></a>[stmt.jump]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">jump-statement ::= </span><br><span class="line">		<span class="string">&quot;break&quot;</span> <span class="string">&quot;;&quot;</span></span><br><span class="line">  | <span class="string">&quot;continue&quot;</span> <span class="string">&quot;;&quot;</span></span><br><span class="line">  | <span class="string">&quot;return&quot;</span> expression? <span class="string">&quot;;&quot;</span></span><br><span class="line">  | <span class="string">&quot;return&quot;</span> braced-init-list?</span><br><span class="line">  | <span class="string">&quot;goto&quot;</span> identifier <span class="string">&quot;;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="stmt-dcl"><a href="#stmt-dcl" class="headerlink" title="[stmt.dcl]"></a>[stmt.dcl]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">declaration-statement ::= block-declaration</span><br></pre></td></tr></table></figure>
+
+<h6 id="dcl-dcl"><a href="#dcl-dcl" class="headerlink" title="[dcl.dcl]"></a>[dcl.dcl]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">declaration-seq ::= </span><br><span class="line">		declaration</span><br><span class="line">  | declaration-seq declaration</span><br><span class="line"></span><br><span class="line">declaration ::=</span><br><span class="line">		block-declaration</span><br><span class="line">	| function-definition</span><br><span class="line">  | template-declaration</span><br><span class="line">  | explicit-instantiation</span><br><span class="line">  | explicit-specialization</span><br><span class="line">  | linkage-specialization</span><br><span class="line">  | namespace-definition</span><br><span class="line">  | empty-declaration</span><br><span class="line">  | attribute-declaration</span><br><span class="line">  </span><br><span class="line">block-declaration ::=</span><br><span class="line">		simple-declaration</span><br><span class="line">	| asm-definition</span><br><span class="line">	| namespace-alias-definition</span><br><span class="line">	| using-declaration</span><br><span class="line">	| using-directive</span><br><span class="line">	| static_assert-declaration</span><br><span class="line">	| alias-declaration</span><br><span class="line">	| opaque-enum-declaration</span><br><span class="line"></span><br><span class="line">alias-declaration ::=</span><br><span class="line">	<span class="string">&quot;using&quot;</span> identifier <span class="string">&quot;=&quot;</span> type-id <span class="string">&quot;;&quot;</span></span><br><span class="line"></span><br><span class="line">simple-declaration ::=</span><br><span class="line">	attribute-specifier-seq? decl-specifier-seq? init-declarator-list? <span class="string">&quot;;&quot;</span></span><br><span class="line"></span><br><span class="line">static_assert-declaration ::=</span><br><span class="line">	<span class="string">&quot;static_assert&quot;</span> <span class="string">&quot;(&quot;</span> constant-expression <span class="string">&quot;,&quot;</span> string-literal <span class="string">&quot;)&quot;</span></span><br><span class="line"></span><br><span class="line">empty-declaration ::=</span><br><span class="line">	<span class="string">&quot;;&quot;</span></span><br><span class="line">	</span><br><span class="line">attribute-declaration ::=</span><br><span class="line">	attribute-specifier-seq <span class="string">&quot;;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="dcl-spec"><a href="#dcl-spec" class="headerlink" title="[dcl.spec]"></a>[dcl.spec]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">decl-specifier ::=</span><br><span class="line">		storage-class-specifier</span><br><span class="line">	| type-specifier</span><br><span class="line">  | function-specifier</span><br><span class="line">  | <span class="string">&quot;friend&quot;</span></span><br><span class="line">  | <span class="string">&quot;typedef&quot;</span></span><br><span class="line">  | <span class="string">&quot;constexpr&quot;</span></span><br><span class="line">  </span><br><span class="line">decl-specifier-seq ::=</span><br><span class="line">		decl-specifier attribute-specifier-seq?</span><br><span class="line">	| decl-specifier decl-specifier-seq</span><br></pre></td></tr></table></figure>
+
+<h6 id="dcl-stc"><a href="#dcl-stc" class="headerlink" title="[dcl.stc]"></a>[dcl.stc]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">storage-class-specifier ::=</span><br><span class="line">		<span class="string">&quot;auto&quot;</span> (Removed)</span><br><span class="line">	| <span class="string">&quot;register&quot;</span></span><br><span class="line">  | <span class="string">&quot;static&quot;</span></span><br><span class="line">  | <span class="string">&quot;thread_local&quot;</span></span><br><span class="line">  | <span class="string">&quot;extern&quot;</span></span><br><span class="line">  | <span class="string">&quot;mutable&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="dcl-fct-spec"><a href="#dcl-fct-spec" class="headerlink" title="[dcl.fct.spec]"></a>[dcl.fct.spec]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function-specifier ::=</span><br><span class="line">		<span class="string">&quot;inline&quot;</span></span><br><span class="line">  | <span class="string">&quot;virtual&quot;</span></span><br><span class="line">  | <span class="string">&quot;explicit&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="dcl-typedef"><a href="#dcl-typedef" class="headerlink" title="[dcl.typedef]"></a>[dcl.typedef]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef-name ::= identifier</span><br></pre></td></tr></table></figure>
+
+<h6 id="dcl-type"><a href="#dcl-type" class="headerlink" title="[dcl.type]"></a>[dcl.type]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">type-specifier ::=</span><br><span class="line">		trailing-type-specifier</span><br><span class="line">	| class-specifier</span><br><span class="line">	| enum-specifier</span><br><span class="line"></span><br><span class="line">trailing-type-specifier ::=</span><br><span class="line">		simple-type-specifier</span><br><span class="line">	| elaborated-type-specifier</span><br><span class="line">	| typename-specifier</span><br><span class="line">	| cv-qualifier</span><br><span class="line"></span><br><span class="line">type-specifier-seq ::=</span><br><span class="line">		type-specifier attribute-specifier-seq?</span><br><span class="line">	| type-specifier type-specifier-seq</span><br><span class="line"></span><br><span class="line">trailing-type-specifier-seq ::=</span><br><span class="line">		trailing-type-specifier attribute-specifier-seq?</span><br><span class="line">	| trailing-type-specifier trailing-type-specifier-seq</span><br></pre></td></tr></table></figure>
+
+<h6 id="dcl-type-simple"><a href="#dcl-type-simple" class="headerlink" title="[dcl.type.simple]"></a>[dcl.type.simple]</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">simple-type-specifier ::=</span><br><span class="line">		<span class="string">&quot;::&quot;</span>? nested-name-specifier? type-name</span><br><span class="line">	| <span class="string">&quot;::&quot;</span>? nested-name-specifier? <span class="string">&quot;template&quot;</span> simple-template-id</span><br><span class="line">	| <span class="string">&quot;char&quot;</span></span><br><span class="line">	| <span class="string">&quot;char16_t&quot;</span></span><br><span class="line">	| <span class="string">&quot;char32_t&quot;</span></span><br><span class="line">	| <span class="string">&quot;wchar_t&quot;</span></span><br><span class="line">	| <span class="string">&quot;bool&quot;</span></span><br><span class="line">	| <span class="string">&quot;short&quot;</span></span><br><span class="line">	| <span class="string">&quot;int&quot;</span></span><br><span class="line">	| <span class="string">&quot;long&quot;</span></span><br><span class="line">	| <span class="string">&quot;signed&quot;</span></span><br><span class="line">	| <span class="string">&quot;unsigned&quot;</span></span><br><span class="line">	| <span class="string">&quot;float&quot;</span></span><br><span class="line">	| <span class="string">&quot;double&quot;</span></span><br><span class="line">	| <span class="string">&quot;void&quot;</span></span><br><span class="line">	| <span class="string">&quot;auto&quot;</span></span><br><span class="line">	| decltype-specifier</span><br><span class="line">	</span><br><span class="line">type-name	::=</span><br><span class="line">		class-name</span><br><span class="line">	| enum-name</span><br><span class="line">	| typedef-name</span><br><span class="line">	| simple-template-id</span><br><span class="line"></span><br><span class="line">decltype-specifier ::= <span class="string">&quot;decltype&quot;</span> <span class="string">&quot;(&quot;</span> expression <span class="string">&quot;)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>elaborated-type-specifier</code></p>
+<blockquote>
+<p>  Elaborated type specifiers may be used to refer to a previously-declared class name (class, struct, or union) or to a previously-declared enum name even if the name was <a href="https://en.cppreference.com/w/cpp/language/lookup">hidden by a non-type declaration</a>. They may also be used to declare new class names.</p>
+</blockquote>
+<p>考虑</p>
+<p>情况1</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Foo</span> &#123; A, B &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">bar</span><span class="params">(Foo foo)</span></span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">baz</span><span class="params">(<span class="keyword">enum</span> Foo foo)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> Foo;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123; <span class="built_in">bar</span>(Foo::A); &#125;</span><br></pre></td></tr></table></figure>
+
+<p>情况2</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">Node</span>* Next; <span class="comment">// OK: lookup of Node finds the injected-class-name</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">Data</span>* Data; <span class="comment">// OK: declares type Data at global scope</span></span><br><span class="line">                     <span class="comment">// and also declares the data member Data</span></span><br><span class="line">  <span class="keyword">friend</span> <span class="keyword">class</span> ::List; <span class="comment">// error: cannot introduce a qualified name</span></span><br><span class="line">  <span class="keyword">enum</span> <span class="title class_">Kind</span>* kind; <span class="comment">// error: cannot introduce an enum</span></span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line">Data* p; <span class="comment">// OK: struct Data has been declared</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a href="https://stackoverflow.com/questions/10902518/when-should-i-use-an-elaborated-type-specifier">When should I use an elaborated type specifier?</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/07/leetcode/leetcode%202696/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/08/leetcode/leetcode%201963/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="2023-12-29Q1. 在模板类中声明友元函数，友元函数参数依赖模板参数导致链接失败1234567template &lt;typename InputIt&gt;class ParserState &#123;  private:  template &lt;std::size_t N, typename InputIt, typename Predicate&gt;  friend inl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rockyの博客">
+<meta property="og:url" content="https://huangpiao.tech/2023/12/29/c++/faq/2023-12-29/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="2023-12-29Q1. 在模板类中声明友元函数，友元函数参数依赖模板参数导致链接失败1234567template &lt;typename InputIt&gt;class ParserState &#123;  private:  template &lt;std::size_t N, typename InputIt, typename Predicate&gt;  friend inl">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-29T01:32:35.158Z">
+<meta property="article:modified_time" content="2023-12-29T12:46:38.858Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2023/12/29/c++/faq/2023-12-29/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2023/12/29/c++/faq/2023-12-29/","path":"2023/12/29/c++/faq/2023-12-29/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2023-12-29"><span class="nav-number">1.</span> <span class="nav-text">2023-12-29</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Q1-%E5%9C%A8%E6%A8%A1%E6%9D%BF%E7%B1%BB%E4%B8%AD%E5%A3%B0%E6%98%8E%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0%EF%BC%8C%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BE%9D%E8%B5%96%E6%A8%A1%E6%9D%BF%E5%8F%82%E6%95%B0%E5%AF%BC%E8%87%B4%E9%93%BE%E6%8E%A5%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">Q1. 在模板类中声明友元函数，友元函数参数依赖模板参数导致链接失败</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Q2-%E5%AF%B9PipeZeroOrOne%E4%B8%8D%E8%BF%9B%E8%A1%8CCTAD"><span class="nav-number">1.0.0.1.1.</span> <span class="nav-text">Q2. 对PipeZeroOrOne不进行CTAD</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Q3-%E7%A7%81%E6%9C%89%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.0.0.1.2.</span> <span class="nav-text">Q3. 私有析构函数</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2023/12/29/c++/faq/2023-12-29/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-12-29 09:32:35 / 修改时间：20:46:38" itemprop="dateCreated datePublished" datetime="2023-12-29T09:32:35+08:00">2023-12-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="2023-12-29"><a href="#2023-12-29" class="headerlink" title="2023-12-29"></a>2023-12-29</h2><h5 id="Q1-在模板类中声明友元函数，友元函数参数依赖模板参数导致链接失败"><a href="#Q1-在模板类中声明友元函数，友元函数参数依赖模板参数导致链接失败" class="headerlink" title="Q1. 在模板类中声明友元函数，友元函数参数依赖模板参数导致链接失败"></a>Q1. 在模板类中声明友元函数，友元函数参数依赖模板参数导致链接失败</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> InputIt&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ParserState</span> &#123;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">template</span> &lt;std::<span class="type">size_t</span> N, <span class="keyword">typename</span> InputIt, <span class="keyword">typename</span> Predicate&gt;</span><br><span class="line">  <span class="function"><span class="keyword">friend</span> <span class="keyword">inline</span> <span class="keyword">constexpr</span> ParserState&lt;InputIt&gt; <span class="title">has_fixed</span><span class="params">(ParserState&lt;InputIt&gt;, Predicate&amp;&amp;)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Undefined symbols <span class="keyword">for</span> architecture x86_64:</span><br><span class="line">  <span class="string">&quot;json::ParserState&lt;std::__1::__wrap_iter&lt;char*&gt;&gt; json::has_fixed&lt;1ul, bool (&amp;)(int)&gt;(json::ParserState&lt;std::__1::__wrap_iter&lt;char*&gt;&gt;, bool (&amp;)(int))&quot;</span>, referenced from:</span><br><span class="line">      json::ParserState&lt;std::__1::__wrap_iter&lt;char*&gt;&gt; json::has_one&lt;std::__1::__wrap_iter&lt;char*&gt;, bool (&amp;)(int)&gt;(json::ParserState&lt;std::__1::__wrap_iter&lt;char*&gt;&gt;, bool (&amp;)(int)) <span class="keyword">in</span> parser_state_test.cc.o</span><br><span class="line">ld: symbol(s) not found <span class="keyword">for</span> architecture x86_64</span><br><span class="line">clang: error: linker <span class="built_in">command</span> failed with <span class="built_in">exit</span> code 1 (use -v to see invocation)</span><br><span class="line">make[2]: *** [<span class="built_in">test</span>/parser_state_test] Error 1</span><br><span class="line">make[1]: *** [<span class="built_in">test</span>/CMakeFiles/parser_state_test.dir/all] Error 2</span><br><span class="line">make: *** [all] Error 2</span><br></pre></td></tr></table></figure>
+
+<h6 id="Q2-对PipeZeroOrOne不进行CTAD"><a href="#Q2-对PipeZeroOrOne不进行CTAD" class="headerlink" title="Q2. 对PipeZeroOrOne不进行CTAD"></a>Q2. 对PipeZeroOrOne不进行CTAD</h6><p><strong>Example 1</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> UnaryPredicate&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PipeOne</span> : <span class="keyword">public</span> Pipe&lt;UnaryPredicate&gt; &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">using</span> Base = Pipe&lt;UnaryPredicate&gt;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">constexpr</span> <span class="keyword">explicit</span> <span class="title">PipeOne</span><span class="params">(UnaryPredicate&amp;&amp; up)</span> : Base(<span class="number">1</span>, std::move(up)) &#123;</span>&#125;</span><br><span class="line">  <span class="function"><span class="keyword">constexpr</span> <span class="keyword">explicit</span> <span class="title">PipeOne</span><span class="params">(<span class="type">const</span> UnaryPredicate&amp; up)</span> : Base(<span class="number">1</span>, up) &#123;</span>&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">constexpr</span> PipeResult <span class="title">operator</span><span class="params">()</span><span class="params">(u8 data)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Base::<span class="built_in">operator</span>()(data);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> UnaryPredicate&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PipeZeroOrOne</span> : <span class="keyword">public</span> PipeOne&lt;UnaryPredicate&gt; &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">using</span> Base = PipeOne&lt;UnaryPredicate&gt;;</span><br><span class="line">  <span class="keyword">using</span> Base::Base;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">constexpr</span> PipeResult <span class="title">operator</span><span class="params">()</span><span class="params">(u8 data)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (Base::<span class="built_in">operator</span>()(data) == PipeResult::kPipeBad) &#123;</span><br><span class="line">      <span class="keyword">return</span> PipeResult::kPipeOpt;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> PipeResult::kPipeOk;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Ret, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="built_in">Pipe</span>(<span class="type">int</span>, <span class="built_in">Ret</span>(Args...)) -&gt; Pipe&lt;<span class="built_in">Ret</span> (*)(Args...)&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Ret, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="built_in">PipeOne</span>(<span class="built_in">Ret</span>(Args...)) -&gt; PipeOne&lt;<span class="built_in">Ret</span> (*)(Args...)&gt;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// template &lt;typename Ret, typename... Args&gt;</span></span><br><span class="line"><span class="comment">// PipeZeroOrOne(Ret(Args...)) -&gt; PipeZeroOrOne&lt;Ret (*)(Args...)&gt;;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/Users/zlh/Documents/Git/json/test/nparser_state_test.cc:<span class="number">15</span>:<span class="number">17</span>: error: no viable constructor <span class="keyword">or</span> deduction guide <span class="keyword">for</span> deduction of <span class="keyword">template</span> arguments of <span class="string">&#x27;PipeZeroOrOne&#x27;</span></span><br><span class="line">  <span class="function">PipeZeroOrOne <span class="title">pipe</span><span class="params">(is_digit)</span></span>;</span><br><span class="line">                ^</span><br><span class="line">/Users/zlh/Documents/Git/json/src/include/json/nparser_state.h:<span class="number">53</span>:<span class="number">7</span>: note: candidate <span class="keyword">template</span> ignored: could <span class="keyword">not</span> match <span class="string">&#x27;PipeZeroOrOne&lt;UnaryPredicate&gt;&#x27;</span> against <span class="string">&#x27;bool (*)(int)&#x27;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PipeZeroOrOne</span> : <span class="keyword">public</span> PipeOne&lt;UnaryPredicate&gt; &#123;</span><br><span class="line">      ^</span><br><span class="line">/Users/zlh/Documents/Git/json/src/include/json/nparser_state.h:<span class="number">53</span>:<span class="number">7</span>: note: candidate function <span class="keyword">template</span> <span class="keyword">not</span> viable: <span class="keyword">requires</span> <span class="number">0</span> arguments, but <span class="number">1</span> was provided</span><br><span class="line"><span class="number">1</span> error generated.</span><br><span class="line">make[<span class="number">2</span>]: *** [test/CMakeFiles/nparser_state_test.dir/nparser_state_test.cc.o] Error <span class="number">1</span></span><br><span class="line">make[<span class="number">1</span>]: *** [test/CMakeFiles/nparser_state_test.dir/all] Error <span class="number">2</span></span><br><span class="line">make: *** [all] Error <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="Q3-私有析构函数"><a href="#Q3-私有析构函数" class="headerlink" title="Q3. 私有析构函数"></a>Q3. 私有析构函数</h6><p>基类析构函数声明成<code>protected</code>，子类即使<code>private</code>继承也可以实例化。</p>
+<p><strong>Example 1</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">P</span> &#123;</span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  ~<span class="built_in">P</span>() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  P p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">demo2.cpp:12:5: error: variable of <span class="built_in">type</span> <span class="string">&#x27;P&#x27;</span> has private destructor</span><br><span class="line">  P p;</span><br><span class="line">    ^</span><br><span class="line">demo2.cpp:8:3: note: declared private here</span><br><span class="line">  ~<span class="function"><span class="title">P</span></span>() &#123;&#125;</span><br><span class="line">  ^</span><br><span class="line">1 error generated.</span><br><span class="line">make: *** [demo2] Error 1</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">P</span> &#123;</span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  ~<span class="built_in">P</span>() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> : <span class="keyword">public</span> P &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">B</span>() = <span class="keyword">default</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  B b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">demo2.cpp:13:3: warning: explicitly defaulted default constructor is implicitly deleted [-Wdefaulted-function-deleted]</span><br><span class="line">  B() = default;</span><br><span class="line">  ^</span><br><span class="line">demo2.cpp:11:11: note: default constructor of <span class="string">&#x27;B&#x27;</span> is implicitly deleted because base class <span class="string">&#x27;P&#x27;</span> has an inaccessible destructor</span><br><span class="line">class B : public P &#123;</span><br><span class="line">          ^</span><br><span class="line">demo2.cpp:17:5: error: call to implicitly-deleted default constructor of <span class="string">&#x27;B&#x27;</span></span><br><span class="line">  B b;</span><br><span class="line">    ^</span><br><span class="line">demo2.cpp:13:3: note: explicitly defaulted <span class="keyword">function</span> was implicitly deleted here</span><br><span class="line">  B() = default;</span><br><span class="line">  ^</span><br><span class="line">demo2.cpp:11:11: note: default constructor of <span class="string">&#x27;B&#x27;</span> is implicitly deleted because base class <span class="string">&#x27;P&#x27;</span> has an inaccessible destructor</span><br><span class="line">class B : public P &#123;</span><br><span class="line">          ^</span><br><span class="line">1 warning and 1 error generated.</span><br><span class="line">make: *** [demo2] Error 1</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 3</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">P</span> &#123;</span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  ~<span class="built_in">P</span>() &#123; cout &lt;&lt; __PRETTY_FUNCTION__ &lt;&lt; endl; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> : <span class="keyword">private</span> P &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  B b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/27/c++/std/iterator/istream_iterator/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/04/c++/faq/2024-01-04/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="转载：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;376099115 Linux下C&#x2F;C++输入输出1. 3个文件描述符​	在Linux下启动一个程序时， 会为其打开0，1，2三个文件描述符. Linux 内核会管理文件描述符， 及其背后的文件是什么. 所以我们可以使用系统调用read&#x2F;write往0，1，2这三个文件描述符里读取&#x2F;写入内容。一般而言，这三个文件描">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iostream">
+<meta property="og:url" content="https://huangpiao.tech/2025/04/10/c++/Linux%E4%B8%8BCC++%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="转载：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;376099115 Linux下C&#x2F;C++输入输出1. 3个文件描述符​	在Linux下启动一个程序时， 会为其打开0，1，2三个文件描述符. Linux 内核会管理文件描述符， 及其背后的文件是什么. 所以我们可以使用系统调用read&#x2F;write往0，1，2这三个文件描述符里读取&#x2F;写入内容。一般而言，这三个文件描">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-d8387dafdc714d31a917cf4133b2e490_180x120.jpg">
+<meta property="article:published_time" content="2025-04-10T00:25:28.016Z">
+<meta property="article:modified_time" content="2025-04-10T01:11:44.012Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic3.zhimg.com/v2-d8387dafdc714d31a917cf4133b2e490_180x120.jpg">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/04/10/c++/Linux%E4%B8%8BCC++%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/10/c++/Linux%E4%B8%8BCC++%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/","path":"2025/04/10/c++/Linux下CC++输入输出/","title":"iostream"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>iostream | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E4%B8%8BC-C-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">Linux下C&#x2F;C++输入输出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3%E4%B8%AA%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 3个文件描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-C%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. C标准输入输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-FILE-%E7%9A%84%E9%94%81"><span class="nav-number">1.0.3.</span> <span class="nav-text">3. FILE* 的锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-C-%E6%A0%87%E5%87%86%E6%B5%81%E5%BC%8F%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="nav-number">1.0.4.</span> <span class="nav-text">4. C++标准流式输入输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E7%94%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">1.0.5.</span> <span class="nav-text">5. 用自己的缓冲区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E6%A0%87%E5%87%86%E6%B5%81%E7%9A%84%E5%88%B7%E6%96%B0"><span class="nav-number">1.0.6.</span> <span class="nav-text">6. 标准流的刷新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E6%A0%87%E5%87%86%E6%B5%81%E7%9A%84%E5%90%8C%E6%AD%A5"><span class="nav-number">1.0.7.</span> <span class="nav-text">7. 标准流的同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-istream-ostream%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">1.0.8.</span> <span class="nav-text">8. istream&#x2F;ostream的线程安全</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.0.9.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.0.10.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/c++/Linux%E4%B8%8BCC++%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="iostream | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iostream
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-04-10 08:25:28 / 修改时间：09:11:44" itemprop="dateCreated datePublished" datetime="2025-04-10T08:25:28+08:00">2025-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>转载：<a href="https://zhuanlan.zhihu.com/p/376099115">https://zhuanlan.zhihu.com/p/376099115</a></p>
+<h2 id="Linux下C-C-输入输出"><a href="#Linux下C-C-输入输出" class="headerlink" title="Linux下C&#x2F;C++输入输出"></a>Linux下C&#x2F;C++输入输出</h2><h4 id="1-3个文件描述符"><a href="#1-3个文件描述符" class="headerlink" title="1. 3个文件描述符"></a>1. 3个文件描述符</h4><p>​	在Linux下启动一个程序时， 会为其打开0，1，2三个文件描述符. Linux 内核会管理文件描述符， 及其背后的文件是什么. 所以我们可以使用系统调用<code>read/write</code>往0，1，2这三个文件描述符里读取&#x2F;写入内容。一般而言，这三个文件描述符都会连接到终端屏幕上。</p>
+<p>关于文件描述符和Linux内核：</p>
+<p><a href="https://link.zhihu.com/?target=https://kkc.github.io/2020/08/22/file-descriptor/">Linux 的 file descriptor 筆記kkc.github.io&#x2F;2020&#x2F;08&#x2F;22&#x2F;file-descriptor&#x2F;<img src="https://pic3.zhimg.com/v2-d8387dafdc714d31a917cf4133b2e490_180x120.jpg" alt="img"></a></p>
+<p>可以在终端输入<code>tty</code>命令， 看到自己的终端所绑定的输出位置. 可以在终端输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /proc/进程号/fd </span><br></pre></td></tr></table></figure>
+
+<p>查看该进程打开的所有<code>fd</code>。我们可以看到很多程序的0，1，2并没有连接到到终端，而是连接到了文件&#x2F;<a href="https://zhida.zhihu.com/search?content_id=171707707&content_type=Article&match_order=1&q=%E5%A5%97%E6%8E%A5%E5%AD%97&zhida_source=entity">套接字</a>中。</p>
+<p><strong>无论是输入&#x2F;输出， 其最终都是要通过系统调用， 读取0号fd， 或者写入1&#x2F;2号fd</strong></p>
+<h4 id="2-C标准输入输出"><a href="#2-C标准输入输出" class="headerlink" title="2. C标准输入输出"></a>2. C标准输入输出</h4><p>​	为了尽可能减少系统调用，聪明人想出了缓存，也就是我们熟悉的<code>stdin</code>，<code>stdout</code>，<code>stderr</code>三个东西。他们在C 标准库之中实现。这三个东西实际上对应的是<code>FILE*</code>，分别指向C标准库中的<code>_IO_2_1_stdin_，_IO_2_1_stdout_， _IO_2_1_stderr_</code>这三个 <code>FILE</code>。</p>
+<p>这三个<code>FILE</code>要做的事情很多，总结一下，就是<strong>负责管理缓存</strong>， 并在需要的时候<strong>进行<code>read/write</code>系统调用</strong>，得到新的输入，或者真正地进行输出。</p>
+<p>缓存的管理方式肯定也不一样。</p>
+<p>对于输入而言，缓存策略一般是把0号fd内容全拿回来， 然后consume耗尽以后再次读取0号fd，这样循环往复。缓冲区大小通常为4KB。</p>
+<p>对于输出而言，则有三种策略：</p>
+<ol>
+<li>Fully Buffered这种策略的意思就是往缓冲区里写， <strong>写满了</strong>就把内容写入相应的fd。典型的缓冲区大小是 4KB。</li>
+<li>Line Buffered这种策略的意思就是往缓冲区里写，<strong>遇到换行</strong>或<strong>写满了</strong>就把内容写入相应的fd。典型的缓冲区大小是1KB.</li>
+<li>Unbuffered这种策略的意思就是<strong>不缓冲</strong>，写进来什么就往相应的fd之中写。</li>
+</ol>
+<p>我们最熟悉的<code>stdout</code>同时具有前两种模式。<strong>如果你是在terminal之中打开， 那就是Line Buffered，否则就是Fully Buffered</strong>。</p>
+<p>而<code>stderr</code>则是Unbuffered的。</p>
+<p>如果你想刷新一下缓存， 可以用C标准库提供的<code>fflush</code>函数。<code>fflush()</code>就会把当前缓冲区的内容和fd的内容进行一次同步。比如<code>fflush(stdout)</code>会把缓存写入 fd 所对应的文件。</p>
+<p>对于我们常见的<code>putchar</code>，<code>puts</code>，<code>printf</code>等函数，把字符写入<code>stdout</code>缓冲区以后他们就不管了。</p>
+<h4 id="3-FILE-的锁"><a href="#3-FILE-的锁" class="headerlink" title="3. FILE* 的锁"></a>3. FILE* 的锁</h4><p>​	实际上，POSIX标准为stdio提供了线程安全性。我们可以通过<code>flockfile</code>等函数来给<code>stdin/stdout/stderr</code>等<code>FILE*</code>来加锁和解锁。每个流都有自己的锁，并且这个锁在同一个线程内部可重入的，不用担心加锁次数超过 1。</p>
+<p>glibc的底层也提供了未加锁的操作<code>FILE*</code>的函数， 比如<code>fputc_unlocked</code>。但对于像<code>printf</code>这类通常的函数，他们内部都会锁上相应的流。</p>
+<p>所以我们可以说<code>printf</code>是线程安全的。每次调用<code>printf</code>都能完整输出，但是两次调用<code>printf</code>之间可能被别人插入一些什么。</p>
+<h4 id="4-C-标准流式输入输出"><a href="#4-C-标准流式输入输出" class="headerlink" title="4. C++标准流式输入输出"></a>4. C++标准流式输入输出</h4><p>​	<code>cin</code>是全局<code>istream</code>对象， <code>cout/cerr/clog</code>是全局<code>ostream</code>对象。在进入<code>main</code>之前会完成对其的初始化。</p>
+<p>这些对象都会间接持有一个<code>streambuf</code>的指针。<code>streambuf</code>对象可以定制自己的缓冲区。</p>
+<p>在默认的情况下， <code>cin</code>就会使用<code>stdin</code>的缓冲区，<code>cout</code>使用<code>stdout</code>的缓冲区，<code>cerr/clog</code>就使用<code>stderr</code>的缓冲区。所有的操作在底层会变成对<code>stdin/stdout/stderr</code>的操作。所以说<code>cout</code>等完全可以和<code>printf</code>混合使用。</p>
+<h4 id="5-用自己的缓冲区"><a href="#5-用自己的缓冲区" class="headerlink" title="5. 用自己的缓冲区"></a>5. 用自己的缓冲区</h4><p>如果不想让<code>c*</code>和<code>std*</code> 共用缓冲区，那么可以使用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::ios_base::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这个是一个单行道，它会在本程序永远地切断和<code>stdio</code>缓冲区的联系，转而用自己的<code>cin，cout，cerr</code>缓冲区直接和fd进行同步 (<code>clog</code>和<code>cerr</code>共用一个缓冲区)。用了这个也就不会遇到Line Buffered情况。典型的缓冲区大小是 8K。</p>
+<h4 id="6-标准流的刷新"><a href="#6-标准流的刷新" class="headerlink" title="6. 标准流的刷新"></a>6. 标准流的刷新</h4><p>​	这些<code>istream/ostream</code>对象也具有刷新功能。刷新意味着缓冲区和fd同步了，比如你的<code>cout</code>正在用着<code>stdout</code>的缓冲区。你刷新一下<code>cout</code>就会作用于<code>stdout</code>的缓冲区。</p>
+<p>如果你<code>cout</code>正好用着<code>stdout</code>的缓冲区， 然后<code>stdout</code>正好又是Line Buffered的话， 那用<code>cout &lt;&lt; endl;</code> 就会刷新两次 <code>stdout</code>，而用<code>cout &lt;&lt; &quot;\n&quot;</code>只刷新一次<code>stdout</code>的缓冲区。</p>
+<p><code>cerr</code> 和 <code>clog</code> 最大的区别就是 <code>cerr</code> 每次往缓冲区里写完都会刷新一下自己. 而 <code>clog</code> 不会. 如果用的不是 <code>stderr</code> 的缓冲区的话， 这两者区别会比较明显。</p>
+<h4 id="7-标准流的同步"><a href="#7-标准流的同步" class="headerlink" title="7. 标准流的同步"></a>7. 标准流的同步</h4><p>​	当你使用<code>cin</code>的时候，你在等待用户的反馈。所以你会希望在使用<code>cin</code>之前，用户能看到你<code>cout</code>出来的信息。默认情况下，<code>cin</code>会绑着<code>cout</code> 。这样每次使用<code>cin</code>之前都会刷新一下<code>cout</code>。</p>
+<p>如果这个不是你想要的行为，你可以用<code>cin.tie(NULL);</code>关掉这个特性。此外，<code>cerr</code>也绑着<code>cout</code>。</p>
+<h4 id="8-istream-ostream的线程安全"><a href="#8-istream-ostream的线程安全" class="headerlink" title="8. istream&#x2F;ostream的线程安全"></a>8. istream&#x2F;ostream的线程安全</h4><p>​	C++标准说：多线程共同访问是不安全的[<a href="https://zhuanlan.zhihu.com/p/376099115#ref_1">1]</a>， 除了一个特例[<a href="https://zhuanlan.zhihu.com/p/376099115#ref_2">2]</a>， 就是iostream与stdio同步的时候。比如<code>cin/cout/cerr</code> 正好用的是<code>stdin/stdout/stderr</code>的缓冲区的话（sync with stdio）。</p>
+<p>但是不像<code>printf</code>能保证每次调用都能完整输出，<code>cout</code>做的保证只有每个字符能完整地输出。(实际上底层调用了<code>fwrite</code>进行写入，而<code>fwrite</code>是保证完整写入的。但是<code>cout</code>可能会分批调用<code>fwrite</code>，所以无法保证整个<code>cout</code>调用的输出能完整。）</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>​	其实这些都还挺复杂的，而且他们并不是输入输出速度的极限，更快速的方案应该是在编译期处理好格式，并且尽量避免虚函数的使用（在printf和ostream之中均广泛使用）在实验中，fmtlib的性能就比他们要好。</p>
+<p>fmtlib在github上有11k个 stars，284个开发者共同开发（也有我）， 其<code>format</code>还进入了 C++20标准库，是一个现代化的格式化库。</p>
+<p><a href="https://zhuanlan.zhihu.com/p/380043139">孙孟越：C++ 格式化输出库 fmtlib307 赞同 · 28 评论文章</a></p>
+<p>如果我们不需要格式化字符串的功能， 只想输出。我们可以做一个小实验:</p>
+<p>如果fd 1连着一个txt文件，那么</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>输出内容</th>
+<th>是否有独立缓冲区</th>
+<th>平均时间（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>printf</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>4</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>12</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td>是</td>
+<td>9.3</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td></td>
+<td>655</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td>是</td>
+<td>641</td>
+</tr>
+</tbody></table>
+<p>因为只有最后两行在刷新缓冲区， 所以成绩比较拉跨。</p>
+<p>如果fd 1连着一个控制台， 那么</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>输出内容</th>
+<th>是否有独立缓冲区</th>
+<th>平均时间（ms）</th>
+<th>标准差(ms)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>printf</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>2768</td>
+<td>119</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td></td>
+<td>2843</td>
+<td>113</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个’\n’</td>
+<td>是</td>
+<td>2317</td>
+<td>96</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td></td>
+<td>2834</td>
+<td>158</td>
+</tr>
+<tr>
+<td>cout</td>
+<td>百万个endl</td>
+<td>是</td>
+<td>2863</td>
+<td>135</td>
+</tr>
+</tbody></table>
+<p>除了第三行都在不停刷新缓冲区，所以成绩比较优秀.</p>
+<p>所以说，最后这个性能还是得看你的使用场景了。不要轻易刷新缓冲区。对了，<code>stdout</code>其实也是可以把Line Buffered改成 Fully Bufferd的，有兴趣的读者可以上网搜索一下。</p>
+<hr>
+
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/376099115#ref_1_0">^</a>见 C++ 标准 [iostreams.threadsafety] <a href="https://www.ida.liu.se/~TDDD38/ISOCPP/iostreams.threadsafety.html">https://www.ida.liu.se/~TDDD38/ISOCPP/iostreams.threadsafety.html</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/376099115#ref_2_0">^</a>见 C++ 标准 [iostream.objects.overview] <a href="https://www.ida.liu.se/~TDDD38/ISOCPP/iostream.objects.html">https://www.ida.liu.se/~TDDD38/ISOCPP/iostream.objects.html</a></li>
+</ol>
+<p>送礼物</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/04/08/c++/bitset/" rel="prev" title="bitset">
+                  <i class="fa fa-angle-left"></i> bitset
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/04/10/c++/asio%E7%9A%84%E5%BC%82%E6%AD%A5%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%A7%A3%E6%9E%90/" rel="next" title="asio的异步与线程模型解析">
+                  asio的异步与线程模型解析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

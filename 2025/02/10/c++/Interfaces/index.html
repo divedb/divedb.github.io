@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Interfaces概要接口是程序中两个部分之间的约定。明确提供者和使用者的期望是十分重要的。拥有良好的接口（易于理解、高效使用、减少出错、支持测试等）可能是代码组织中最重要的一方面。  I.1: Make interfaces explicit I.2: Avoid non-const global variables I.3: Avoid singletons I.4: Make interf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rockyの博客">
+<meta property="og:url" content="https://huangpiao.tech/2025/02/10/c++/Interfaces/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="Interfaces概要接口是程序中两个部分之间的约定。明确提供者和使用者的期望是十分重要的。拥有良好的接口（易于理解、高效使用、减少出错、支持测试等）可能是代码组织中最重要的一方面。  I.1: Make interfaces explicit I.2: Avoid non-const global variables I.3: Avoid singletons I.4: Make interf">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-10T10:25:55.707Z">
+<meta property="article:modified_time" content="2025-02-26T04:28:05.183Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/02/10/c++/Interfaces/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/02/10/c++/Interfaces/","path":"2025/02/10/c++/Interfaces/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Interfaces"><span class="nav-number">1.</span> <span class="nav-text">Interfaces</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.0.1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-1-Make-interfaces-explicit%EF%BC%88%E8%AE%A9%E6%8E%A5%E5%8F%A3%E6%98%BE%E5%BC%8F%EF%BC%89"><span class="nav-number">1.0.2.</span> <span class="nav-text">I.1 Make interfaces explicit（让接口显式）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-2-Avoid-non-const-global-variables%EF%BC%88%E9%81%BF%E5%85%8D%E9%9D%9E%E5%B8%B8%E9%87%8F%E7%9A%84%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%EF%BC%89"><span class="nav-number">1.0.3.</span> <span class="nav-text">I.2: Avoid non-const global variables（避免非常量的全局变量）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-3-Avoid-singletons%EF%BC%88%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">1.0.4.</span> <span class="nav-text">I.3: Avoid singletons（避免使用单例模式）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-4-Make-interfaces-precisely-and-strongly-typed%EF%BC%88%E7%A1%AE%E4%BF%9D%E6%8E%A5%E5%8F%A3%E7%B2%BE%E7%A1%AE%E4%B8%94%E5%BC%BA%E7%B1%BB%E5%9E%8B%EF%BC%89"><span class="nav-number">1.0.5.</span> <span class="nav-text">I.4: Make interfaces precisely and strongly typed（确保接口精确且强类型）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-5-State-preconditions-%E5%A3%B0%E6%98%8E%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.0.6.</span> <span class="nav-text">I.5: State preconditions (声明前置条件)</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/02/10/c++/Interfaces/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-10 18:25:55" itemprop="dateCreated datePublished" datetime="2025-02-10T18:25:55+08:00">2025-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-26 12:28:05" itemprop="dateModified" datetime="2025-02-26T12:28:05+08:00">2025-02-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Interfaces"><a href="#Interfaces" class="headerlink" title="Interfaces"></a>Interfaces</h2><h4 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h4><p>接口是程序中两个部分之间的约定。明确提供者和使用者的期望是十分重要的。拥有良好的接口（易于理解、高效使用、减少出错、支持测试等）可能是代码组织中最重要的一方面。</p>
+<ul>
+<li>I.1: Make interfaces explicit</li>
+<li>I.2: Avoid non-<code>const</code> global variables</li>
+<li>I.3: Avoid singletons</li>
+<li>I.4: Make interfaces precisely and strongly typed</li>
+<li>I.5: State preconditions (if any)</li>
+<li>I.6: Prefer <code>Expects()</code> for expressing preconditions</li>
+<li>I.7: State postconditions</li>
+<li>I.8: Prefer <code>Ensures()</code> for expressing postconditions</li>
+<li>I.9: If an interface is a template, document its parameters using concepts</li>
+<li>I.10: Use exceptions to signal a failure to perform a required task</li>
+<li>I.11: Never transfer ownership by a raw pointer (<code>T*</code>) or reference (<code>T&amp;</code>)</li>
+<li>I.12: Declare a pointer that must not be null as <code>not_null</code></li>
+<li>I.13: Do not pass an array as a single pointer</li>
+<li>I.22: Avoid complex initialization of global objects</li>
+<li>I.23: Keep the number of function arguments low</li>
+<li>I.24: Avoid adjacent parameters that can be invoked by the same arguments in either order with different meaning</li>
+<li>I.25: Prefer empty abstract classes as interfaces to class hierarchies</li>
+<li>I.26: If you want a cross-compiler ABI, use a C-style subset</li>
+<li>I.27: For stable library ABI, consider the Pimpl idiom</li>
+<li>I.30: Encapsulate rule violations</li>
+</ul>
+<h4 id="I-1-Make-interfaces-explicit（让接口显式）"><a href="#I-1-Make-interfaces-explicit（让接口显式）" class="headerlink" title="I.1 Make interfaces explicit（让接口显式）"></a>I.1 Make interfaces explicit（让接口显式）</h4><p><strong>原因</strong>：正确性。接口中未声明的假设很容易被忽视且难以测试。</p>
+<p>示例：<strong>坏的做法</strong>通过全局（命名空间作用域）变量控制函数行为是隐式的，可能会造成混淆。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">round</span><span class="params">(<span class="type">double</span> d)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (round_up) ? <span class="built_in">ceil</span>(d) : d;    <span class="comment">// 错误：存在“隐形”依赖</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用两次<code>round(7.2)</code>可能会得到不同的结果。</p>
+<p><strong>例外</strong>：有时需要通过<strong>环境变量</strong>来控制细节，例如：日志输出（info和debug）、debug和release模式。</p>
+<p><strong>示例，坏的做法</strong>通过非本地变量（如 <code>errno</code>）进行报告很容易被忽视。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 错误：没有测试 fprintf 的返回值</span></span><br><span class="line"><span class="built_in">fprintf</span>(connection, <span class="string">&quot;logging: %d %d %d\n&quot;</span>, x, y, s);</span><br></pre></td></tr></table></figure>
+
+<p><strong>替代方案</strong>：抛出异常。异常不能被忽视。</p>
+<p><strong>替代表述</strong>：避免通过非本地或隐式状态传递信息。如果注意到，非<code>const</code>成员函数有可能调用其他函数修改状态休息。</p>
+<p><strong>替代表述</strong>：接口应该是一个函数（包括模板）或一组函数。</p>
+<p><strong>强制执行</strong>：</p>
+<ul>
+<li>函数不应该根据命名空间作用域中声明的变量的值做出控制流决策。</li>
+<li>函数不应该写入命名空间作用域中声明的变量。</li>
+</ul>
+<hr>
+
+<h4 id="I-2-Avoid-non-const-global-variables（避免非常量的全局变量）"><a href="#I-2-Avoid-non-const-global-variables（避免非常量的全局变量）" class="headerlink" title="I.2: Avoid non-const global variables（避免非常量的全局变量）"></a>I.2: Avoid non-<code>const</code> global variables（避免非常量的全局变量）</h4><p><strong>原因</strong>：非<code>const</code>全局变量隐藏了依赖关系，这些依赖关系容易引起不可预测的变化。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Data</span> &#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125; data;	<span class="comment">// 非 const 数据</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">compute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">// ... 使用 data ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">output</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">// ... 使用 data ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>警告</strong>：全局对象的初始化顺序<strong>不是完全有序</strong>的。如果使用全局对象，应该用常量来初始化它。注意，即使是<code>const</code>对象，也可能会遇到<strong>未定义</strong>的初始化顺序问题。</p>
+<p><strong>例外</strong>：全局对象通常比单例模式更好。</p>
+<p><strong>注意</strong>：全局常量是有用的。</p>
+<p><strong>注意</strong>：反对使用全局变量的规则同样适用于命名空间作用域的变量。</p>
+<p><strong>替代方案</strong>：如果使用全局数据来避免复制，考虑将数据作为常量引用传递。另一种解决方案是将数据定义为某个对象的状态，并将操作定义为成员函数。</p>
+<p><strong>警告</strong>：小心数据竞争：如果一个线程可以访问非本地数据（或通过引用传递的数据），而另一个线程执行被调用函数，就可能发生数据竞争。每一个指向可变数据的指针或引用都是潜在的数据竞争源。</p>
+<p>使用全局指针或引用来访读写非<code>const</code>且不是全局的数据，不能替代非<code>const</code>全局变量，因为仍然没有解决隐藏的依赖关系或潜在的竞争条件问题。</p>
+<p><strong>注意</strong>：对于不可变数据，不会遇到竞争条件。</p>
+<p><strong>注意</strong>：规则是“避免”，而不是“绝不使用”。当然，仍然会有一些例外，例如<code>cin</code>、<code>cout</code>和<code>cerr</code>。</p>
+<p><strong>强制执行</strong>：</p>
+<ul>
+<li>报告所有在命名空间作用域中声明的非<code>const</code>变量和指向非<code>const</code>数据的全局指针&#x2F;引用。</li>
+</ul>
+<hr>
+
+<h4 id="I-3-Avoid-singletons（避免使用单例模式）"><a href="#I-3-Avoid-singletons（避免使用单例模式）" class="headerlink" title="I.3: Avoid singletons（避免使用单例模式）"></a>I.3: Avoid singletons（避免使用单例模式）</h4><p><strong>原因</strong>：单例模式本质上是复杂的全局对象。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">  <span class="comment">// ... 许多确保只创建一个Singleton对象的机制，</span></span><br><span class="line">  <span class="comment">// 使其正确初始化等。</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>单例模式有很多变种，这正是问题所在。</p>
+<p><strong>注意</strong>：如果不希望全局对象发生变化，应该将其声明为<code>const</code>或<code>constexpr</code>。</p>
+<p><strong>例外</strong>：可以使用最简单的“单例”模式（如此简单以至于常常不被认为是单例）来实现首次使用时初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">X&amp; <span class="title">myX</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">static</span> X my_x &#123;<span class="number">3</span>&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> my_x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是解决与初始化顺序相关问题的最有效方案之一。在多线程环境中，静态对象的初始化<strong>不会引入竞争条件</strong>（除非在构造函数内部不小心访问了共享对象）。</p>
+<p>请注意，局部静态变量的初始化并不意味着存在竞争条件。然而，如果<code>X</code>的析构涉及需要同步的操作，那么我们必须使用更复杂的解决方案。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">X&amp; <span class="title">myX</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">static</span> <span class="keyword">auto</span> p = <span class="keyword">new</span> X &#123;<span class="number">3</span>&#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> *p;  <span class="comment">// 可能导致内存泄漏</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，必须以某种适当的线程安全方式删除该对象。这是容易出错的，因此除非满足以下条件，否则不使用这种技术：</p>
+<ul>
+<li><p><code>myX</code> 位于多线程代码中，</p>
+</li>
+<li><p>该 <code>X</code> 对象需要被销毁（例如，因为它释放了某个资源），</p>
+</li>
+<li><p><code>X</code>的析构函数需要同步。</p>
+</li>
+</ul>
+<p><strong>强制执行</strong>：一般来说非常困难。</p>
+<ul>
+<li>查找类名中包含<code>singleton</code>的类。</li>
+<li>查找只创建单个对象的类（可以通过计算对象数量或检查构造函数来进行）。</li>
+<li>如果类<code>X</code>包含一个返回类型为<code>X</code>引用的静态函数，禁止使用这种做法。</li>
+</ul>
+<hr>
+
+<h4 id="I-4-Make-interfaces-precisely-and-strongly-typed（确保接口精确且强类型）"><a href="#I-4-Make-interfaces-precisely-and-strongly-typed（确保接口精确且强类型）" class="headerlink" title="I.4: Make interfaces precisely and strongly typed（确保接口精确且强类型）"></a>I.4: Make interfaces precisely and strongly typed（确保接口精确且强类型）</h4><p><strong>原因</strong>：类型是最简单且最好的文档，能提高可读性，因为它们有明确的含义，并且在编译时会进行检查。此外，精确定义的代码通常可以得到更好的优化。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不推荐</span></span><br><span class="line"><span class="comment">// 弱且不明确的类型void*</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">pass</span><span class="params">(<span class="type">void</span>* data)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>调用者不确定允许哪些类型，以及数据是否可能被修改，因为没有指定<code>const</code>。请注意，所有指针类型会隐式转换为 <code>void*</code>，因此调用者很容易提供该值。</p>
+<p>被调用者必须使用<code>static_cast</code>将<code>data</code>转换为未经验证的类型。这容易出错且冗长。</p>
+<p><strong>替代方案</strong>：通常，可以通过模板参数来消除<code>void*</code>，将其转变为<code>T*</code>或<code>T&amp;</code>。对于通用代码，这些<code>T</code>可以是一般类型或有约束的模板参数。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不推荐</span></span><br><span class="line"><span class="built_in">draw_rect</span>(<span class="number">100</span>, <span class="number">200</span>, <span class="number">100</span>, <span class="number">500</span>); 	<span class="comment">// 这些数字表示什么？</span></span><br><span class="line"><span class="built_in">draw_rect</span>(p.x, p.y, <span class="number">10</span>, <span class="number">20</span>); 		<span class="comment">// 10和20的单位是什么？</span></span><br></pre></td></tr></table></figure>
+
+<p>显然，调用者需要画一个矩形，但不清楚参数是描述矩形的哪个部分。此外，<code>int</code>可以携带任意形式的信息，包括许多单位的值，因此我们必须猜测4个<code>int</code>的含义。最可能的情况是前两个是<code>x</code>、<code>y</code>坐标对，但后两个是什么？</p>
+<p>注释和参数名称有帮助，但可以更加明确：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">draw_rectangle</span><span class="params">(Point top_left, Point bottom_right)</span></span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">draw_rectangle</span><span class="params">(Point top_left, Size height_width)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">draw_rectangle</span>(p, Point&#123;<span class="number">10</span>, <span class="number">20</span>&#125;);  <span class="comment">// 两个角</span></span><br><span class="line"><span class="built_in">draw_rectangle</span>(p, Size&#123;<span class="number">10</span>, <span class="number">20</span>&#125;);   <span class="comment">// 一个角和 (高度, 宽度) 对</span></span><br></pre></td></tr></table></figure>
+
+<p>显然，我们没法通过静态类型系统捕获所有错误（例如，第一个参数应该是左上角点这一点只能通过约定（命名和注释）来表示）。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不推荐</span></span><br><span class="line"><span class="built_in">set_settings</span>(<span class="literal">true</span>, <span class="literal">false</span>, <span class="number">42</span>); <span class="comment">// 这些数字表示什么？</span></span><br></pre></td></tr></table></figure>
+
+<p>参数类型和值未能明确传达设置的意义。</p>
+<p>更明确的设计、安全且可读。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">alarm_settings s&#123;&#125;;</span><br><span class="line">s.enabled = <span class="literal">true</span>;</span><br><span class="line">s.displayMode = alarm_settings::mode::spinning_light;</span><br><span class="line">s.frequency = alarm_settings::every_10_seconds;</span><br><span class="line"><span class="built_in">set_settings</span>(s);</span><br></pre></td></tr></table></figure>
+
+<p>对于一组布尔值的情况，考虑使用标志枚举，这是表示一组布尔值的模式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enable_lamp_options</span>(lamp_option::on | lamp_option::animate_state_transitions);</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不推荐 -- 单位不明确</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">blink_led</span><span class="params">(<span class="type">int</span> time_to_blink)</span>  </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="comment">// 使用 time_to_blink</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">use</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">blink_led</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例</strong>:</p>
+<p>使用<code>std::chrono::duration</code>类型可以使时间单位变得明确：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐 -- 单位明确</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">blink_led</span><span class="params">(milliseconds time_to_blink)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="comment">// 使用 time_to_blink</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">use</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">blink_led</span>(<span class="number">1500</span>ms);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数也可以编写成接受任何时间单位：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐 -- 接受任何单位 </span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">rep</span>, <span class="keyword">class</span> <span class="title class_">period</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">blink_led</span><span class="params">(duration&lt;rep, period&gt; time_to_blink)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 假设毫秒是最小的相关单位</span></span><br><span class="line">  <span class="keyword">auto</span> milliseconds_to_blink = <span class="built_in">duration_cast</span>&lt;milliseconds&gt;(time_to_blink);</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="comment">// 使用 milliseconds_to_blink</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">use</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">blink_led</span>(<span class="number">2</span>s);</span><br><span class="line">  <span class="built_in">blink_led</span>(<span class="number">1500</span>ms);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>强制执行</strong>：</p>
+<ul>
+<li>报告使用<code>void*</code>作为参数或返回类型的情况。</li>
+<li>报告使用多个<code>bool</code>参数的情况。</li>
+<li>查找使用过多原始类型参数的函数。</li>
+</ul>
+<hr>
+
+<h4 id="I-5-State-preconditions-声明前置条件"><a href="#I-5-State-preconditions-声明前置条件" class="headerlink" title="I.5: State preconditions (声明前置条件)"></a>I.5: State preconditions (声明前置条件)</h4><p><strong>原因</strong>：参数如果有含义可能会限制它们在被调用者中的正确使用。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">sqrt</span><span class="params">(<span class="type">double</span> x)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>x</code>必须是非负的。类型系统无法表达这一点，所以必须使用其他方式。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">sqrt</span><span class="params">(<span class="type">double</span> x)</span></span>; <span class="comment">// x 必须是非负的</span></span><br></pre></td></tr></table></figure>
+
+<p>某些前置条件可以通过断言表达。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">sqrt</span><span class="params">(<span class="type">double</span> x)</span> </span>&#123; <span class="built_in">Expects</span>(x &gt;= <span class="number">0</span>); <span class="comment">/* ... */</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>理想情况下，<code>Expects(x &gt;= 0)</code>应该是<code>sqrt()</code>接口的一部分，但这不容易做到。目前，我们将其放在函数体中。</p>
+<p><strong>参考</strong>：<code>Expects()</code>在GSL中有描述。</p>
+<p><strong>注意</strong>：优先使用正式的需求规范，例如<code>Expects(p);</code>。如果不可行，使用英文注释说明。</p>
+<p><strong>注意</strong>：大多数成员函数的前置条件是某个类的不变式必须成立。这个不变式由构造函数建立，并且每个从类外部调用的成员函数在退出时都必须重新建立该不变式。我们不需要为每个成员函数单独提及它。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/01/linux/driver/module_init%E5%92%8Cmodule_exit/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/11/gdb/HACK%20#29%20%E6%95%B0%E7%BB%84%E9%9D%9E%E6%B3%95%E8%AE%BF%E9%97%AE/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

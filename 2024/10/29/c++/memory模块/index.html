@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="memory模块1. 简介​	&lt;memory&gt;头文件提供了一些与内存管理相关的功能，包括智能指针、内存分配器和一些内存操作的工具。 类 pointer_traits  ​	std::pointer_traits是C++标准库中的一个模板类，用于为自定义指针类型或fancy pointer提供统一的接口。它定义了许多与指针相关的属性和操作，可以在泛型编程中提供更强的扩展性。 源码实现 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c++ memory模块">
+<meta property="og:url" content="https://huangpiao.tech/2024/10/29/c++/memory%E6%A8%A1%E5%9D%97/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="memory模块1. 简介​	&lt;memory&gt;头文件提供了一些与内存管理相关的功能，包括智能指针、内存分配器和一些内存操作的工具。 类 pointer_traits  ​	std::pointer_traits是C++标准库中的一个模板类，用于为自定义指针类型或fancy pointer提供统一的接口。它定义了许多与指针相关的属性和操作，可以在泛型编程中提供更强的扩展性。 源码实现 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-10-29T12:03:53.558Z">
+<meta property="article:modified_time" content="2024-11-25T01:28:37.329Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2024/10/29/c++/memory%E6%A8%A1%E5%9D%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2024/10/29/c++/memory%E6%A8%A1%E5%9D%97/","path":"2024/10/29/c++/memory模块/","title":"c++ memory模块"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>c++ memory模块 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#memory%E6%A8%A1%E5%9D%97"><span class="nav-number">1.</span> <span class="nav-text">memory模块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B1%BB"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">类</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E5%99%A8%E7%9B%B8%E5%85%B3"><span class="nav-number">1.0.1.1.1.</span> <span class="nav-text">分配器相关</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">1.0.1.1.2.</span> <span class="nav-text">智能指针</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E7%B1%BB"><span class="nav-number">1.0.1.1.3.</span> <span class="nav-text">辅助类</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">1.0.1.1.4.</span> <span class="nav-text">智能指针适配器</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE"><span class="nav-number">1.0.1.1.5.</span> <span class="nav-text">标签</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%94%A8%E5%88%86%E9%85%8D%E5%99%A8%E5%8F%82%E6%95%B0%E6%9E%84%E9%80%A0"><span class="nav-number">1.0.1.2.1.</span> <span class="nav-text">用分配器参数构造</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9D%82%E9%A1%B9"><span class="nav-number">1.0.1.2.2.</span> <span class="nav-text">杂项</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="nav-number">1.0.1.2.3.</span> <span class="nav-text">生命周期管理</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%97%A0%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AD%98%E5%82%A8"><span class="nav-number">1.0.1.2.4.</span> <span class="nav-text">无初始化存储</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%9B%B8%E5%85%B3%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">1.0.1.2.5.</span> <span class="nav-text">智能指针相关的操作</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">123</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/10/29/c++/memory%E6%A8%A1%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="c++ memory模块 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          c++ memory模块
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-29 20:03:53" itemprop="dateCreated datePublished" datetime="2024-10-29T20:03:53+08:00">2024-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-11-25 09:28:37" itemprop="dateModified" datetime="2024-11-25T09:28:37+08:00">2024-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="memory模块"><a href="#memory模块" class="headerlink" title="memory模块"></a>memory模块</h2><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p>​	<code>&lt;memory&gt;</code>头文件提供了一些与内存管理相关的功能，包括智能指针、内存分配器和一些内存操作的工具。</p>
+<h5 id="类"><a href="#类" class="headerlink" title="类"></a>类</h5><ul>
+<li><code>pointer_traits</code></li>
+</ul>
+<p>​	<code>std::pointer_traits</code>是C++标准库中的一个模板类，用于为自定义指针类型或fancy pointer提供统一的接口。它定义了许多与指针相关的属性和操作，可以在泛型编程中提供更强的扩展性。</p>
+<p><strong>源码实现</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _LIBCPP_CLASS_TRAITS_HAS_XXX(NAME, PROPERTY) \</span></span><br><span class="line"><span class="meta">  template <span class="string">&lt;class _Tp, class = void&gt;</span>                 \</span></span><br><span class="line"><span class="meta">  struct NAME : false_type &#123;&#125;;                       \</span></span><br><span class="line"><span class="meta">  template <span class="string">&lt;class _Tp&gt;</span>                               \</span></span><br><span class="line"><span class="meta">  struct NAME<span class="string">&lt;_Tp, __void_t&lt;typename _Tp::PROPERTY&gt;</span> &gt; : true_type &#123;&#125;</span></span><br><span class="line"></span><br><span class="line">_LIBCPP_CLASS_TRAITS_HAS_XXX(__has_pointer, pointer);</span><br><span class="line">_LIBCPP_CLASS_TRAITS_HAS_XXX(__has_element_type, element_type);</span><br></pre></td></tr></table></figure>
+
+<p>判断指针类型是否有<code>element_type</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ptr</span>, <span class="type">bool</span> = __has_element_type&lt;_Ptr&gt;::value&gt;</span><br><span class="line"><span class="keyword">struct</span> __pointer_traits_element_type &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ptr</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__pointer_traits_element_type</span>&lt;_Ptr, <span class="literal">true</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> _Ptr::element_type type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 偏特化智能指针</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">class</span>, <span class="keyword">class</span>...&gt; <span class="keyword">class</span> <span class="title class_">_Sp</span>, <span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span>... _Args&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__pointer_traits_element_type</span>&lt;_Sp&lt;_Tp, _Args...&gt;, <span class="literal">true</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> _Sp&lt;_Tp, _Args...&gt;::element_type type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">template</span> &lt;<span class="keyword">class</span>, <span class="keyword">class</span>...&gt; <span class="keyword">class</span> <span class="title class_">_Sp</span>, <span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span>... _Args&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__pointer_traits_element_type</span>&lt;_Sp&lt;_Tp, _Args...&gt;, <span class="literal">false</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">typedef</span> _Tp type;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>判断类型是否有<code>difference_type</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span> = <span class="type">void</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> __has_difference_type : false_type &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__has_difference_type</span>&lt;_Tp, <span class="type">__void_t</span>&lt;<span class="keyword">typename</span> _Tp::difference_type&gt; &gt; : true_type &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ptr</span>, <span class="type">bool</span> = __has_difference_type&lt;_Ptr&gt;::value&gt;</span><br><span class="line"><span class="keyword">struct</span> __pointer_traits_difference_type &#123;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="type">ptrdiff_t</span> type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ptr</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__pointer_traits_difference_type</span>&lt;_Ptr, <span class="literal">true</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">typedef</span> <span class="keyword">typename</span> _Ptr::difference_type type;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h6 id="分配器相关"><a href="#分配器相关" class="headerlink" title="分配器相关"></a>分配器相关</h6><ul>
+<li><code>allocator</code></li>
+<li><code>allocator_traits</code></li>
+<li><code>allocation_result</code></li>
+<li><code>uses_allocator</code></li>
+</ul>
+<h6 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h6><ul>
+<li><code>unique_ptr</code></li>
+<li><code>shared_ptr</code></li>
+<li><code>weak_ptr</code></li>
+</ul>
+<h6 id="辅助类"><a href="#辅助类" class="headerlink" title="辅助类"></a>辅助类</h6><ul>
+<li><code>std::atomic&lt;std::shared_ptr&gt;</code></li>
+<li><code>std::atomic&lt;std::weak_ptr&gt;</code></li>
+<li><code>owner_less</code></li>
+<li><code>owner_hash</code></li>
+<li><code>owner_equal</code></li>
+<li><code>enable_shared_from_this</code></li>
+<li><code>bad_weak_ptr</code></li>
+<li><code>default_delete</code></li>
+<li><code>std::hash&lt;std::unique_ptr&gt;</code></li>
+<li><code>std::hash&lt;std::shared_ptr&gt;</code></li>
+</ul>
+<h6 id="智能指针适配器"><a href="#智能指针适配器" class="headerlink" title="智能指针适配器"></a>智能指针适配器</h6><ul>
+<li><code>out_ptr_t</code></li>
+<li><code>inout_ptr_t</code></li>
+</ul>
+<h6 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h6><ul>
+<li><code>allocator_arg</code></li>
+<li><code>allocator_arg_t</code></li>
+</ul>
+<h5 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h5><h6 id="用分配器参数构造"><a href="#用分配器参数构造" class="headerlink" title="用分配器参数构造"></a>用分配器参数构造</h6><ul>
+<li><code>uses_allocator_construction_args</code></li>
+<li><code>make_obj_using_allocator</code></li>
+<li><code>uninitialized_construct_using_allocator</code></li>
+</ul>
+<h6 id="杂项"><a href="#杂项" class="headerlink" title="杂项"></a>杂项</h6><ul>
+<li><code>to_address</code></li>
+<li><code>addressof</code></li>
+<li><code>align</code></li>
+<li><code>assume_aligned</code></li>
+</ul>
+<h6 id="生命周期管理"><a href="#生命周期管理" class="headerlink" title="生命周期管理"></a>生命周期管理</h6><ul>
+<li><code>start_lifetime_as</code></li>
+<li><code>start_lifetime_as_array</code></li>
+</ul>
+<h6 id="无初始化存储"><a href="#无初始化存储" class="headerlink" title="无初始化存储"></a>无初始化存储</h6><ul>
+<li><code>uninitialized_copy</code></li>
+<li><code>uninitialized_copy_n</code></li>
+<li><code>uninitialized_fill</code></li>
+<li><code>uninitialized_fill_n</code></li>
+<li><code>uninitialized_move</code></li>
+<li><code>uninitialized_move_n</code></li>
+<li><code>uninitialized_default_construct</code></li>
+<li><code>uninitialized_default_construct_n</code></li>
+<li><code>uninitialized_value_construct</code></li>
+<li><code>uninitialized_value_construct_n</code></li>
+<li><code>construct_at</code></li>
+<li><code>destroy_at</code></li>
+<li><code>destroy</code></li>
+<li><code>destroy_n</code></li>
+</ul>
+<h6 id="智能指针相关的操作"><a href="#智能指针相关的操作" class="headerlink" title="智能指针相关的操作"></a>智能指针相关的操作</h6><ul>
+<li><code>make_unique</code></li>
+<li><code>make_unique_for_overwrite</code></li>
+<li><code>operator &lt;=&gt;</code></li>
+<li><code>allocate_shared</code></li>
+<li><code>allocate_shared_for_overwrite</code></li>
+<li><code>static_pointer_cast</code></li>
+<li><code>dynamic_pointer_cast</code></li>
+<li><code>const_pointer_cast</code></li>
+<li><code>reinterpret_pointer_cast</code></li>
+<li><code>get_deleter</code></li>
+<li><code>operator&lt;&lt;(std::shared_ptr)</code></li>
+<li><code>operator&lt;&lt;(std::unique_ptr)</code></li>
+<li><code>std::swap(std::unique_ptr)</code></li>
+<li><code>std::swap(std::shared_ptr)</code></li>
+<li><code>std::swap(std::weak_ptr)</code></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/29/deeplearning/%E5%8A%A8%E6%89%8B%E5%AD%A6%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0v2/" rel="prev" title="01-简介">
+                  <i class="fa fa-angle-left"></i> 01-简介
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/30/deeplearning/torch-backward/" rel="next" title="torch backward">
+                  torch backward <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
