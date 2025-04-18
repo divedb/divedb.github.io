@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="代表物理页面的page数据结构是在文件include&#x2F;linux&#x2F;mm.h中定义的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="存储管理">
+<meta property="og:url" content="https://huangpiao.tech/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="代表物理页面的page数据结构是在文件include&#x2F;linux&#x2F;mm.h中定义的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-15T04:49:03.969Z">
+<meta property="article:modified_time" content="2025-04-18T23:34:33.749Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/","path":"2025/04/15/linux/存储管理/","title":"存储管理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>存储管理 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="存储管理 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          存储管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-15 12:49:03" itemprop="dateCreated datePublished" datetime="2025-04-15T12:49:03+08:00">2025-04-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-19 07:34:33" itemprop="dateModified" datetime="2025-04-19T07:34:33+08:00">2025-04-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>代表物理页面的<code>page</code>数据结构是在文件<code>include/linux/mm.h</code>中定义的。</p>
+<span id="more"></span>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Try to keep the most commonly accessed fields in single cache lines</span></span><br><span class="line"><span class="comment"> * here (16 bytes or greater).  This ordering should be particularly</span></span><br><span class="line"><span class="comment"> * beneficial on 32-bit processors.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The first line is data used in page cache lookup, the second line</span></span><br><span class="line"><span class="comment"> * is used for linear searches (eg. clock algorithm scans).</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">page</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>     <span class="title">list</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">address_space</span> *<span class="title">mapping</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>        index;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">page</span>          *<span class="title">next_hash</span>;</span></span><br><span class="line">  <span class="type">atomic_t</span>             count;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>        flags; <span class="comment">/* atomic flags, some possibly updated asynchronously */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>     <span class="title">lru</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>        age;</span><br><span class="line">  <span class="type">wait_queue_head_t</span>    wait;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">page</span>          **<span class="title">pprev_hash</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">buffer_head</span>   *<span class="title">buffers</span>;</span></span><br><span class="line">  <span class="type">void</span>                 *virtual; <span class="comment">/* non-NULL if kmapped */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">zone_struct</span>   *<span class="title">zone</span>;</span></span><br><span class="line">&#125; <span class="type">mem_map_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>当页面的内容来自一个文件时，<code>index</code>代表着该页面在文件中的序号；当页面的内容被换出到交换设备上、但还保留着内容作为缓冲时候，<code>index</code>指明了页面的去向。结构体中各个字段的次序是有讲究的，目的是尽量使得联系紧密的若干成分在执行时被装填入高速缓存的同一缓冲线（16个字节）中。</p>
+<p>​	系统中的每一个物理页面都有一个<code>page</code>结构（或<code>mem_map_t</code>）。系统在初始化时根据物理内存的大小建立起一个<code>page</code>结构数组<code>mem_map</code>，作为物理页面的“仓库”，里面的每个<code>page</code>数据结构都代表着系统中的一个物理页面。每个物理页面的<code>page</code>结构在这个数组里的下表就是该物理页面的序号。“仓库”里的物理页面划分成<code>ZONE_DMA</code>和<code>ZONE_NORMAL</code>两个管理区（根据系统配置，还可能有第三个管理区<code>ZONE_HIGHMEM</code>，用于物理地址超过<code>1GB</code>的存储空间）。</p>
+<p>​	管理区<code>ZONE_DMQ</code>里的页面是专供DMA使用的。为什么供<code>DMA</code>使用的页面要单独加以管理呢？首先，<code>DMA</code>使用的页面是磁盘<code>I/O</code>锁必需的。如果把仓库中所有的物理页面都分配光了，那就无法进行页面与盘区交换了。此外，还有些特殊的原因。在<code>i386 CPU</code>中，页式存储管理的硬件支持是在<code>CPU</code>内部实现的，而不像另有些<code>CPU</code>那样由一个单独的<code>MMU</code>提供，所以<code>DMA</code>不经过<code>MMU</code>提供的地址映射。这样，外部设备就要直接提供访问物理页面的地址，可以有些外设（特别是插在<code>ISA</code>总线上的外设接口卡）在这方面往往有些限制，要求用于<code>DMA</code>的物理地址不能过高。另一方面，正因为<code>DMA</code>不经过<code>MMU</code>提供的地址映射，当<code>DMA</code>所需的缓冲区超过一个物理页面的大小时，就要求两个页面在物理上连续，因为此时<code>DMA</code>控制器不能依靠在<code>CPU</code>内部的<code>MMU</code>将连续的虚存页面映射到物理上不连续的页面。所以，用于<code>DMA</code>的物理页面是要单独加以管理的。</p>
+<p>​	每个管理区都有一个数据结构，即<code>zone_struct</code>结构。在<code>zone_struct</code>数据结构中有一组“空闲区间”（<code>free_area_t</code>）队列。为什么是“一组”队列，而不是“一个”队列呢？这也是因为常常需要成“块”地分配在物理空间内连续的多个页面，所以要按块的大小分别加以管理。因此，在管理区数据结构中既要有一个队列来保持一些离散（连续长度为1）的物理页面，还要有一个队列来保持一个连续长度为2的页面块以及连续长度为4、8、16直至$2^{\text{MAX_ORDER}}$的页面块。常熟<code>MAX_ORDER</code>定义为10，也就是说最大的连续页面块可以达到$2^{10}&#x3D;1024$个页面，即<code>4M</code>字节。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">free_area_struct</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">free_list</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> *<span class="built_in">map</span>;</span><br><span class="line">&#125; <span class="type">free_area_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pglist_data</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zone_struct</span> &#123;</span></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * Commonly accessed fields:</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="type">spinlock_t</span> lock;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> offset;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> free_pages;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> inactive_clean_pages;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> inactive_dirty_pages;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> pages_min, pages_low, pages_high;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * free areas of different sizes</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">inactive_clean_list</span>;</span></span><br><span class="line">  <span class="type">free_area_t</span> free_area[MAX_ORDER];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * rarely used fields:</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="type">char</span> *name;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> size;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * Discontig memory support fields.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">pglist_data</span> *<span class="title">zone_pgdat</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> zone_start_paddr;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> zone_start_mapnr;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">page</span> *<span class="title">zone_mem_map</span>;</span></span><br><span class="line">&#125; <span class="type">zone_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​	在传统的计算机结构中，整个物理空间都是均匀一致的，<code>CPU</code>访问这个空间中的任何一个地址所需的时间都相同，所以称为“均质存储结构”（<code>Uniform Memory Architecture</code>），简称<code>UMA</code>。可是，在一些新的系统结构中，特别是在多CPU结构的系统中，物理存储空间在这方面的一致性却成了问题。试想有这么一种系统结构：</p>
+<ul>
+<li>系统的中心是一条纵线，例如<code>PCI</code>总线。</li>
+<li>有多个<code>CPU</code>模块连接在系统总线上，每个<code>CPU</code>模块都有本地的物理内存，但是也可以通过系统总线访问其他<code>CPU</code>模块上的内存。</li>
+<li>系统总线上还连接着一个公用的存储模块，所有的<code>CPU</code>模块都可以通过系统总线访问它。</li>
+<li>所有这些物理内存的地址互相连续而形成一个连续的物理地址空间。</li>
+</ul>
+<p>由于NUMA结构的引入，对于上述的物理页面管理机制也作了相应的修正。管理区不再是属于最高层的机构，而是在每个存储节点中都有至少两个管理区。而且前述的<code>page</code>结构数组也不再是全局性的，而是从属于具体的节点了。从而，在<code>zone_struct</code>结构（以及<code>page</code>结构数组）智商又有了另一层代表着存储节点的<code>pglist_data</code>数据结构，定义于<code>include/linux/mmzone.h</code>中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * One allocation request operates on a zonelist. A zonelist</span></span><br><span class="line"><span class="comment"> * is a list of zones, the first one is the &#x27;goal&#x27; of the</span></span><br><span class="line"><span class="comment"> * allocation, the other zones are fallback zones, in decreasing</span></span><br><span class="line"><span class="comment"> * priority.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Right now a zonelist takes up less than a cacheline. We never</span></span><br><span class="line"><span class="comment"> * modify it apart from boot-up, and only a few indices are used,</span></span><br><span class="line"><span class="comment"> * so despite the zonelist table being relatively big, the cache</span></span><br><span class="line"><span class="comment"> * footprint of this construct is very small.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zonelist_struct</span> &#123;</span></span><br><span class="line">  <span class="type">zone_t</span> *zones[MAX_NR_ZONES + <span class="number">1</span>];  <span class="comment">// NULL delimited</span></span><br><span class="line">  <span class="type">int</span>    gfp_mask;</span><br><span class="line">&#125; <span class="type">zonelist_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NR_GFPINDEX 0x100</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bootmem_data</span>;</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">pglist_data</span> &#123;</span></span><br><span class="line">  <span class="type">zone_t</span>              node_zones[MAX_NR_ZONES];</span><br><span class="line">  <span class="type">zonelist_t</span>          node_zonelists[NR_GFPINDEX];</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">page</span>         *<span class="title">node_mem_map</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>       *valid_addr_bitmap;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">bootmem_data</span> *<span class="title">bdata</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>       node_start_paddr;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>       node_start_mapnr;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>       node_size;</span><br><span class="line">  <span class="type">int</span>                 node_id;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">pglist_data</span>  *<span class="title">node_next</span>;</span></span><br><span class="line">&#125; <span class="type">pg_data_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>核心字段说明：</p>
+<ol>
+<li><p><code>zone_t node_zones[MAX_NR_ZONES]</code></p>
+<p><code>Linux</code>将每个节点的内存划分为不同的<code>zone</code>（区域），常见的<code>zone</code>包括<code>ZONE_DMA</code>，<code>ZONE_NORMAL</code>，<code>ZONE_HIGHMEM</code>等。</p>
+</li>
+<li><p><code>zonelist_t node_zonelists[NR_GFPINDEX]</code></p>
+</li>
+</ol>
+<p>​	当首选<code>zone</code>内存不足时的备用分配顺序，<code>NR_GFPINDEX</code>是不同的<code>GFP(Get Free Page)</code>标志组合数量用于实现内存分配  </p>
+<p>​	<code>fallback</code>机制。</p>
+<ol start="3">
+<li><code>struct page *node_mem_map</code></li>
+</ol>
+<p>​	数组中的每个元素对应一个物理页框（<code>frame</code>）用于快速访问页面的元数据。</p>
+<ol start="4">
+<li><p><code>unsigned long *valid_addr_bitmap</code></p>
+<p> 有效内存地址的位图，标记哪些物理地址是实际可用的。</p>
+</li>
+<li><p><code>struct bootmem_data *bdata</code></p>
+<p> 在系统启动初期使用的简单内存分配器，内核完全初始化后会迁移到<code>buddy</code>分配器，只在启动阶段有效。</p>
+</li>
+<li><p><code>unsigned long node_start_paddr</code></p>
+<p> 该节点的起始物理地址</p>
+</li>
+<li><p><code>unsigned long node_start_mapnr</code></p>
+<p> 该节点起始页框号（全局编号）</p>
+</li>
+<li><p><code>unsigned long node_size</code></p>
+<p> 该节点包含的物理页框总数</p>
+</li>
+<li><p><code>int node_id</code></p>
+<p> 节点标识符</p>
+</li>
+<li><p><code>struct pglist_data *node_next</code></p>
+<p>指向下一个内存节点的指针</p>
+</li>
+</ol>
+<p>如果说物理空间是从“供”的角度来管理的，也就是：“仓库中还有些什么”；则虚存空间的管理是从“需”的角度来管理的，就是“我们需要用虚存空间中的哪些部分”。拿虚存空间中的“用户空间”部分来说，大概没有一个进程会真的需要使用全部的<code>3G</code>字节的空间。同时，一个进程所需要使用的虚存空间中的各个部位又未必是连续的，通常形成若干离散的虚存“区间”。很自然的，对虚存空间的抽象是一个重要的数据结构。在<code>Linux</code>内核中，这就是<code>vm_area_struct</code>数据结构，定义于<code>include/linux/mm.h</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * This struct defines a memory VMM memory area. There is one of these</span></span><br><span class="line"><span class="comment"> * per VM-area/task.  A VM area is any part of the process virtual memory</span></span><br><span class="line"><span class="comment"> * space that has a special rule for the page-fault handlers (ie a shared</span></span><br><span class="line"><span class="comment"> * library, the executable area etc).</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span> *<span class="title">vm_mm</span>;</span> <span class="comment">/* VM area parameters */</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>    vm_start;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>    vm_end;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* linked list of VM areas per task, sorted by address */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">vm_next</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="type">pgprot_t</span>      vm_page_prot;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> vm_flags;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* AVL tree of VM areas per task, sorted by address */</span></span><br><span class="line">  <span class="type">short</span>                 vm_avl_height;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">vm_avl_left</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">vm_avl_right</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* For areas with an address space and backing store,</span></span><br><span class="line"><span class="comment">   * one of the address_space-&gt;i_mmap&#123;,shared&#125; lists,</span></span><br><span class="line"><span class="comment">   * for shm areas, the list of attaches, otherwise unused.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">vm_next_share</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> **<span class="title">vm_pprev_share</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vm_operations_struct</span> *<span class="title">vm_ops</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>               vm_pgoff; <span class="comment">/* offset in PAGE_SIZE units, *not* PAGE_CACHE_SIZE */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span>                 *<span class="title">vm_file</span>;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span>               vm_raend;</span><br><span class="line">  <span class="type">void</span>                        *vm_private_data; <span class="comment">/* was vm_pte (shared mem) */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在内核的代码中，用于这个数据结构的变量名常常是<code>vma</code>。</p>
+<p>结构中的<code>vm_start</code>和<code>vm_end</code>决定了一个虚存区间。<code>vm_start</code>是包含在区间内的，而<code>vm_end</code>则不包含在区间内。区间的划分并不仅仅取决于地址的连续性，也取决于区间的其它属性，主要是对虚存页面的访问权限。如果一个地址范围内的前一半页面和后一半页面有不同的访问权限或其它属性，就得分成两个区间。所以，包含在同一个区间里的所有页面都应有相同的访问权限（或者说保护属性）和其它一些属性，也就是结构中的成分<code>vm_page_prot</code>和<code>vm_flags</code>的用途。属于同一个进程的所有区间都要按虚存地址的高低次序链接在一起，结构中的<code>vm_next</code>指针就是用于这个目的。由于区间的划分并不仅仅取决了地址的连续性，一个进程的虚存（用户）空间很可能会被划分成大量的区间。内核中给定一个虚拟地址而要找出其所属的区间是一个频繁用到的操作，如果每次都要顺着<code>vm_next</code>在链中作线性搜索的话，势必会显著地影响到内核的效率。所以，除了通过<code>vm_next</code>指针把所有区间串成一个线性队列以外，还可以在区间数量较大时为之建立一个<code>AVL</code>树。 </p>
+<p>​	在两种情况下虚存页面（或区间）或跟磁盘文件发生关系。一种是盘区交换（<code>swap</code>），当内存页面不够分配时，一些久未使用的页面可以被交换到磁盘上去，腾出物理页面以供更急需的进程使用，这就是大家所知道的一般意义上的“按需调度”页式虚存管理（<code>demand paging</code>）。另一种情况则是将一个磁盘文件映射到一个进程的用户空间中。<code>Linux</code>提供了一个系统调用<code>mmap()</code>，使一个进程可以将一个已经打开的文件映射到其用户空间中，此后就可以像访问内存中一个字符数组那样来访问这个文件的内容，而不必通过<code>lseek()</code>、<code>read()</code>或<code>write()</code>等进行文件操作。</p>
+<p>​	由于虚存空间（最终是页面）与磁盘文件的这种联系，在<code>vm_area_struct</code>结构中相应地设置了一些成分，如<code>vm_next_share</code>、<code>vm_pprev_share</code>、<code>vm_file</code>等，用以记录和管理此种联系。</p>
+<p>​	虚存区间结构中另一个重要的成分是<code>vm_ops</code>，这是指向一个<code>vm_operations_struct</code>数据结构的指针。这种数据结构也是在<code>include/linux/mm.h</code>中定义的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * These are the virtual MM functions - opening of an area, closing and</span></span><br><span class="line"><span class="comment"> * unmapping it (needed to keep files on disk up-to-date etc), pointer</span></span><br><span class="line"><span class="comment"> * to the functions called when a no-page or a wp-page exception occurs.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vm_operations_struct</span> &#123;</span></span><br><span class="line">  <span class="type">void</span> (*open)(<span class="keyword">struct</span> vm_area_struct *area);</span><br><span class="line">  <span class="type">void</span> (*close)(<span class="keyword">struct</span> vm_area_struct *area);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">page</span> *(*<span class="title">nopage</span>)(<span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">area</span>, <span class="title">unsigned</span> <span class="title">long</span> <span class="title">address</span>,</span></span><br><span class="line"><span class="class">                         <span class="title">int</span> <span class="title">write_access</span>);</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>​	结构中全是函数指针。其中<code>open</code>、<code>close</code>、<code>nopage</code>分别用于虚存区间的打开、关闭和建立映射。函数指针<code>nopage</code>指示当因（虚存）页面不在内存中而引起“页面出错”（<code>page fault</code>）异常时所应调用的函数。</p>
+<p>​	最后，<code>vm_area_struct</code>中还有一个指针<code>vm_mm</code>，该指针指向一个<code>mm_struct</code>数据结构，那是在<code>include/linux/sched.h</code>中定义的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> * <span class="title">mmap</span>;</span>				<span class="comment">/* list of VMAs */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> * <span class="title">mmap_avl</span>;</span>		<span class="comment">/* tree of VMAs */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> * <span class="title">mmap_cache</span>;</span>	<span class="comment">/* last find_vma result */</span></span><br><span class="line">	<span class="type">pgd_t</span> * pgd;</span><br><span class="line">	<span class="type">atomic_t</span> mm_users;				<span class="comment">/* How many users with user space? */</span></span><br><span class="line">	<span class="type">atomic_t</span> mm_count;				<span class="comment">/* How many references to &quot;struct mm_struct&quot; (users count as 1) */</span></span><br><span class="line">	<span class="type">int</span> map_count;						<span class="comment">/* number of VMAs */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">semaphore</span> <span class="title">mmap_sem</span>;</span></span><br><span class="line">	<span class="type">spinlock_t</span> page_table_lock;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">mmlist</span>;</span>		<span class="comment">/* List of all active mm&#x27;s */</span></span><br><span class="line"></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> start_code, end_code, start_data, end_data;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> start_brk, brk, start_stack;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> arg_start, arg_end, env_start, env_end;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> rss, total_vm, locked_vm;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> def_flags;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> cpu_vm_mask;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> swap_cnt;	<span class="comment">/* number of pages to swap on next pass */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> swap_address;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Architecture-specific MM context */</span></span><br><span class="line">	<span class="type">mm_context_t</span> context;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>核心字段解释</strong>：</p>
+<ul>
+<li><p><code>mmap</code>：</p>
+<p>指向进程的虚拟内存区域链表，表示进程地址空间中已映射的区域（如代码段、堆、栈、共享库、文件映射等）。每个 <code>vma</code>描述了一段连续的虚拟地址范围及其权限（读&#x2F;写&#x2F;执行）和属性（如文件映射、匿名内存等）。</p>
+</li>
+<li><p><code>mmap_avl</code>（旧版内核）：</p>
+<p>早期内核中用于加速<code>vma</code>查找的<code>AV</code>树结构，现代内核已改用红黑树（<code>rb_root</code>）或其他高效数据结构替代。</p>
+</li>
+<li><p><code>mmap_cache</code>：</p>
+<p>缓存最后一次通过<code>find_vma()</code>查找到的<code>vma</code>，利用局部性原理加速后续访问。</p>
+</li>
+<li><p><code>pgd</code>：</p>
+<p>指向进程的页全局目录（<code>Page Global Directory</code>），即顶级页表，用于将虚拟地址转换为物理地址（在<code>x86</code>中为 <code>CR3</code>寄存器指向的页表基址）。</p>
+</li>
+<li><p><code>mm_users</code>与<code>mm_count</code>：</p>
+<ul>
+<li><p><code>mm_users</code>：记录共享该内存空间的用户线程数（如线程组中的线程）。</p>
+</li>
+<li><p><code>mm_count</code>：表示对<code>mm_struct</code>本身的引用计数（包括<code>mm_users</code>、内核临时引用等），当<code>mm_count=0</code>时释放该结构。</p>
+</li>
+</ul>
+</li>
+<li><p><code>map_count</code>：</p>
+<p>统计进程当前拥有的<code>VMA</code>数量（即<code>mmap</code>链表中的条目数），限制由<code>sysctl_max_map_count</code>控制。</p>
+</li>
+<li><p><code>mmap_sem</code>与<code>page_table_lock</code>：</p>
+<ul>
+<li><p><code>mmap_sem</code>：读写信号量，保护<code>vma</code>链表&#x2F;树的并发修改（如<code>mmap()</code>、<code>munmap()</code>等系统调用）。</p>
+</li>
+<li><p><code>page_table_lock</code>：自旋锁，保护页表（如<code>PTE</code>修改）的并发访问。</p>
+</li>
+</ul>
+</li>
+<li><p><code>mmlist</code>：</p>
+<p>链接到全局的<code>init_mm.mmlist</code>链表，用于跟踪系统中所有活跃的<code>mm_struct</code>（如<code>ps</code>命令遍历进程时使用）。</p>
+</li>
+</ul>
+<p><strong>地址范围字段</strong>：</p>
+<ul>
+<li><code>start_code</code>&#x2F;<code>end_code</code>：进程代码段（<code>ELF</code>的<code>.text</code>）的起止地址。</li>
+<li><code>start_data</code>&#x2F;<code>end_data</code>：数据段（<code>ELF</code>的<code>.data</code>和<code>.bss</code>）的起止地址。</li>
+<li><code>start_brk</code>&#x2F;<code>brk</code>：堆的起始地址和当前堆顶（通过<code>brk()</code>系统调用扩展）。</li>
+<li><code>start_stack</code>：用户态栈的起始地址（向下增长）。</li>
+<li><code>arg_start</code>&#x2F;<code>arg_end</code>与<code>env_start</code>&#x2F;<code>env_end</code>：命令行参数和环境变量的地址范围。</li>
+</ul>
+<p><strong>统计字段</strong>：</p>
+<ul>
+<li><code>rss</code>：进程的常驻内存页数（实际占用物理内存）。</li>
+<li><code>total_vm</code>：进程总虚拟内存页数（包括共享库等）。</li>
+<li><code>locked_vm</code>：被锁定（不可换出）的内存页数（如<code>mlock()</code>锁定）。</li>
+<li><code>swap_cnt</code>与<code>swap_address</code>：用于换出（<code>swap</code>）算法的计数和下一次换出的起始地址。</li>
+</ul>
+<p>在内核的代码中，用于这个数据结构（指针）的变量名常常是<code>mm</code>。</p>
+<p>显然，这是在比<code>vm_area_struct</code>更高层次上使用的数据结构。事实上，每个进程只有一个<code>mm_struct</code>结构，在每个进程的“进程控制块”，即<code>task_struct</code>结构中，有一个指针指向该进程的<code>mm_struct</code>结构。虽然一个进程只使用一个<code>mm_struct</code>结构，反过来一个<code>mm_struct</code>结构却可能为多个进程所共享。最简单的例子就是，当一个进程创建（<code>vfork()</code>或<code>clone()</code>）一个子进程时，其子进程就可能与父进程共享一个<code>mm_struct</code>结构。所以，在<code>mm_struct</code>结构中还为此设置了计数器<code>mm_users</code>和<code>mm_count</code>。</p>
+<p>​	如前所述，<code>mm_struct</code>结构及其属下的各个<code>vm_area_struct</code>只是表明了对虚存空间的需求。一个虚拟地址有相应的虚存区间存在，并不保证该地址所在的页面已经映射到某一个物理（内存或盘区）页面，更不保证该页面就在内存中。当一个未经映射的页面受到访问时，就会产生一个“<code>Page Fault</code>”异常（也称缺页异常、缺页中断），那时候<code>Page Fault</code>异常的服务程序就会来处理这个问题。所以，从这个意义上，<code>mm_struct</code>和<code>vm_area_struct</code>说明了对页面的需求；前面的<code>page</code>、<code>zone_struct</code>等结构则说明了对页面的供应；而页面目录、中间目录以及页面表则是二者中间的桥梁。</p>
+<p><a href="linux/vm_area_struct.png"></a></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: arch/i386/mm/init.c</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __init <span class="title function_">pagetable_init</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> vaddr, end;</span><br><span class="line">  <span class="type">pgd_t</span> *pgd, *pgd_base;</span><br><span class="line">  <span class="type">int</span> i, j, k;</span><br><span class="line">  <span class="type">pmd_t</span> *pmd;</span><br><span class="line">  <span class="type">pte_t</span> *pte;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 计算低端内存上限对应的虚拟地址</span></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * This can be zero as well - no problem, in that case we exit</span></span><br><span class="line"><span class="comment">   * the loops anyway due to the PTRS_PER_* conditions.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  end = (<span class="type">unsigned</span> <span class="type">long</span>)__va(max_low_pfn * PAGE_SIZE);</span><br><span class="line"></span><br><span class="line">  pgd_base = swapper_pg_dir;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> CONFIG_X86_PAE</span></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; PTRS_PER_PGD; i++) &#123;</span><br><span class="line">    pgd = pgd_base + i;</span><br><span class="line">    __pgd_clear(pgd);</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">  i = __pgd_offset(PAGE_OFFSET);</span><br><span class="line">  pgd = pgd_base + i;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (; i &lt; PTRS_PER_PGD; pgd++, i++) &#123;</span><br><span class="line">    <span class="comment">// PGDIR_SIZE在i386中等于1&lt;&lt;22</span></span><br><span class="line">    vaddr = i * PGDIR_SIZE;</span><br><span class="line">    <span class="keyword">if</span> (end &amp;&amp; (vaddr &gt;= end)) <span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> CONFIG_X86_PAE</span></span><br><span class="line">    pmd = (<span class="type">pmd_t</span> *)alloc_bootmem_low_pages(PAGE_SIZE);</span><br><span class="line">    set_pgd(pgd, __pgd(__pa(pmd) + <span class="number">0x1</span>));</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">    pmd = (<span class="type">pmd_t</span> *)pgd;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">    <span class="keyword">if</span> (pmd != pmd_offset(pgd, <span class="number">0</span>)) BUG();</span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; PTRS_PER_PMD; pmd++, j++) &#123;</span><br><span class="line">      vaddr = i * PGDIR_SIZE + j * PMD_SIZE;</span><br><span class="line">      <span class="keyword">if</span> (end &amp;&amp; (vaddr &gt;= end)) <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">if</span> (cpu_has_pse) &#123;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">long</span> __pe;</span><br><span class="line"></span><br><span class="line">        set_in_cr4(X86_CR4_PSE);</span><br><span class="line">        boot_cpu_data.wp_works_ok = <span class="number">1</span>;</span><br><span class="line">        __pe = _KERNPG_TABLE + _PAGE_PSE + __pa(vaddr);</span><br><span class="line">        <span class="comment">/* Make it &quot;global&quot; too if supported */</span></span><br><span class="line">        <span class="keyword">if</span> (cpu_has_pge) &#123;</span><br><span class="line">          set_in_cr4(X86_CR4_PGE);</span><br><span class="line">          __pe += _PAGE_GLOBAL;</span><br><span class="line">        &#125;</span><br><span class="line">        set_pmd(pmd, __pmd(__pe));</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      pte = (<span class="type">pte_t</span> *)alloc_bootmem_low_pages(PAGE_SIZE);</span><br><span class="line">      set_pmd(pmd, __pmd(_KERNPG_TABLE + __pa(pte)));</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (pte != pte_offset(pmd, <span class="number">0</span>)) BUG();</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (k = <span class="number">0</span>; k &lt; PTRS_PER_PTE; pte++, k++) &#123;</span><br><span class="line">        vaddr = i * PGDIR_SIZE + j * PMD_SIZE + k * PAGE_SIZE;</span><br><span class="line">        <span class="keyword">if</span> (end &amp;&amp; (vaddr &gt;= end)) <span class="keyword">break</span>;</span><br><span class="line">        *pte = mk_pte_phys(__pa(vaddr), PAGE_KERNEL);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * Fixed mappings, only the page table structure has to be</span></span><br><span class="line"><span class="comment">   * created - mappings will be set by set_fixmap():</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  vaddr = __fix_to_virt(__end_of_fixed_addresses - <span class="number">1</span>) &amp; PMD_MASK;</span><br><span class="line">  fixrange_init(vaddr, <span class="number">0</span>, pgd_base);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> CONFIG_HIGHMEM</span></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * Permanent kmaps:</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  vaddr = PKMAP_BASE;</span><br><span class="line">  fixrange_init(vaddr, vaddr + PAGE_SIZE * LAST_PKMAP, pgd_base);</span><br><span class="line"></span><br><span class="line">  pgd = swapper_pg_dir + __pgd_offset(vaddr);</span><br><span class="line">  pmd = pmd_offset(pgd, vaddr);</span><br><span class="line">  pte = pte_offset(pmd, vaddr);</span><br><span class="line">  pkmap_page_table = pte;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> CONFIG_X86_PAE</span></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * Add low memory identity-mappings - SMP needs it when</span></span><br><span class="line"><span class="comment">   * starting up on an AP from real-mode. In the non-PAE</span></span><br><span class="line"><span class="comment">   * case we already have these mappings through head.S.</span></span><br><span class="line"><span class="comment">   * All user-space mappings are explicitly cleared after</span></span><br><span class="line"><span class="comment">   * SMP startup.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  pgd_base[<span class="number">0</span>] = pgd_base[USER_PTRS_PER_PGD];</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>CPU</code>特性检测：<code>cpu_has_pse</code>和<code>cpu_has_pge</code></strong></p>
+<ul>
+<li><p><code>cpu_has_pse</code> - <strong>Page Size Extension</strong></p>
+<ul>
+<li><p><strong>作用</strong>：检测<code>CPU</code>是否支持<strong>4MB 大页</strong>（2MB if PAE enabled）</p>
+</li>
+<li><p><strong>意义</strong>：</p>
+<ul>
+<li>传统页大小为4KB，使用大页可减少页表项数量</li>
+<li>降低TLB（Translation Lookaside Buffer）未命中率，提升内存访问性能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>cpu_has_pge</code> - <strong>Page Global Enable</strong></p>
+<ul>
+<li><p><strong>作用</strong>：检测<code>CPU</code>是否支持 <strong>全局页（Global Pages）</strong></p>
+</li>
+<li><p><strong>意义</strong>：</p>
+<ul>
+<li>全局页不会被<code>TLB</code>刷新（如<code>INVLPG</code>或<code>CR3</code>重载）清除</li>
+<li>减少内核常用页（如内核代码）的<code>TLB</code>重载开销</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong><code>CR4</code>寄存器的作用</strong></p>
+<p><strong>CR4（Control Register 4）</strong> 是<code>x86</code>的控制寄存器之一，用于启用各种扩展功能：</p>
+<table>
+<thead>
+<tr>
+<th align="left">位域</th>
+<th align="left">名称</th>
+<th align="left">代码对应</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Bit 4</td>
+<td align="left">PSE</td>
+<td align="left"><code>X86_CR4_PSE</code></td>
+<td align="left">启用4MB&#x2F;2MB大页</td>
+</tr>
+<tr>
+<td align="left">Bit 7</td>
+<td align="left">PGE</td>
+<td align="left"><code>X86_CR4_PGE</code></td>
+<td align="left">启用全局页（<code>TLB</code>优化）</td>
+</tr>
+<tr>
+<td align="left">Bit 5</td>
+<td align="left">PAE</td>
+<td align="left"><code>X86_CR4_PAE</code></td>
+<td align="left">启用物理地址扩展（36位地址）</td>
+</tr>
+<tr>
+<td align="left">其他位</td>
+<td align="left">…</td>
+<td align="left">…</td>
+<td align="left">其他功能（如<code>SMEP</code>、<code>SMAP</code>等）</td>
+</tr>
+</tbody></table>
+<p><a href="https://blog.csdn.net/helloguoqijun/article/details/78966796">linux中高端内存和低端内存的理解</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="prev" title="虚拟内存管理">
+                  <i class="fa fa-angle-left"></i> 虚拟内存管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/04/18/linux/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/" rel="next" title="用户文件I/O">
+                  用户文件I/O <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

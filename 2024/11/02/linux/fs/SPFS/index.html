@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="SPFSModule Agenda Basic Linux filesystem information Where is the Linux filesystem code? Who uses what filesystems? Where do filesystems sit in the kernel? How to get started with filesystem developme">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SPFS">
+<meta property="og:url" content="https://huangpiao.tech/2024/11/02/linux/fs/SPFS/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="SPFSModule Agenda Basic Linux filesystem information Where is the Linux filesystem code? Who uses what filesystems? Where do filesystems sit in the kernel? How to get started with filesystem developme">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://huangpiao.tech/.tech//fig.1.png">
+<meta property="og:image" content="https://huangpiao.tech/.tech//fig.2.png">
+<meta property="article:published_time" content="2024-11-02T10:06:53.955Z">
+<meta property="article:modified_time" content="2024-11-05T14:26:32.184Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://huangpiao.tech/.tech//fig.1.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2024/11/02/linux/fs/SPFS/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2024/11/02/linux/fs/SPFS/","path":"2024/11/02/linux/fs/SPFS/","title":"SPFS"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SPFS | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SPFS"><span class="nav-number">1.</span> <span class="nav-text">SPFS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Module-Agenda"><span class="nav-number">1.0.1.</span> <span class="nav-text">Module Agenda</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-How-many-Filesystems"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">1. How many Filesystems?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Whre-Are-They"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">2. Whre Are They?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Which-Distributions-Use-Which-Filesystems"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">3. Which Distributions Use Which Filesystems?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-How-Much-Code"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">4. How Much Code?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-Complexity"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">5. Complexity</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-Where-Would-I-Normally-Start"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">6. Where Would I Normally Start?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-SPFS-was-Developed-for-Teaching"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">7. SPFS was Developed for Teaching</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Module-Agenda-1"><span class="nav-number">1.0.2.</span> <span class="nav-text">Module Agenda</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Basic-Information"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">1. Basic Information</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-SPFS-Features-Properties"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">2. SPFS Features &#x2F; Properties</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Some-Basic-SPFS-Concepts"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">3. Some Basic SPFS Concepts</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-What-Happens-During-mkfs"><span class="nav-number">1.0.2.4.</span> <span class="nav-text">4. What Happens During mkfs?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-Introducing-mkfs-and-fsdb"><span class="nav-number">1.0.2.5.</span> <span class="nav-text">5. Introducing mkfs and fsdb</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9%E5%92%8C%E7%94%A8%E9%80%94"><span class="nav-number">1.0.2.5.1.</span> <span class="nav-text">主要特点和用途</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Module-Agenda-2"><span class="nav-number">1.0.3.</span> <span class="nav-text">Module Agenda</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/11/02/linux/fs/SPFS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="SPFS | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SPFS
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-11-02 18:06:53" itemprop="dateCreated datePublished" datetime="2024-11-02T18:06:53+08:00">2024-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-11-05 22:26:32" itemprop="dateModified" datetime="2024-11-05T22:26:32+08:00">2024-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/filesystem/" itemprop="url" rel="index"><span itemprop="name">filesystem</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="SPFS"><a href="#SPFS" class="headerlink" title="SPFS"></a>SPFS</h2><h4 id="Module-Agenda"><a href="#Module-Agenda" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
+<li>Basic Linux filesystem information</li>
+<li>Where is the Linux filesystem code?</li>
+<li>Who uses what filesystems?</li>
+<li>Where do filesystems sit in the kernel?</li>
+<li>How to get started with filesystem development</li>
+<li>Some basic SPFS information</li>
+</ul>
+<h5 id="1-How-many-Filesystems"><a href="#1-How-many-Filesystems" class="headerlink" title="1. How many Filesystems?"></a>1. How many Filesystems?</h5><ul>
+<li>Linux has over 80 different filesystems</li>
+<li>They fall into several different categories:<ul>
+<li>Disk-based filesystems, filesystems with built-in fault-tolerance, filesystems optimized for flash memory, solid state media, record-oriented filesystems, shared-disk filesystems, distributed filesystems, distributed fault-tolerant filesystems, distributed parallel filesystems, distirbuted parallel fault-tolerant filesystems, peer-to-peer filesystems, special-purpose filesystems, pseudo filesystems, encrypted filesystems.</li>
+<li>There are many filesystems not in the source tree</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-Whre-Are-They"><a href="#2-Whre-Are-They" class="headerlink" title="2. Whre Are They?"></a>2. Whre Are They?</h5><ul>
+<li>All different kernels can be found at <a href="http://www.kernel.org/">www.kernel.org</a></li>
+<li>Filesystems are located under the <code>fs</code> directory, for example:<ul>
+<li><code>linux-6.5.5/fs</code></li>
+</ul>
+</li>
+</ul>
+<h5 id="3-Which-Distributions-Use-Which-Filesystems"><a href="#3-Which-Distributions-Use-Which-Filesystems" class="headerlink" title="3. Which Distributions Use Which Filesystems?"></a>3. Which Distributions Use Which Filesystems?</h5><table>
+<thead>
+<tr>
+<th>Distribution</th>
+<th>Fils System</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ubuntu&#x2F;Debian</td>
+<td>ext4</td>
+</tr>
+<tr>
+<td>Fedora</td>
+<td>btrfs</td>
+</tr>
+<tr>
+<td>CentOS</td>
+<td>XFS (CentOS EOL - Rocky?)</td>
+</tr>
+<tr>
+<td>RHEL</td>
+<td>XFS - was ext4 up to RHEL 6.0</td>
+</tr>
+<tr>
+<td>OpenSuSE</td>
+<td>btrfs</td>
+</tr>
+<tr>
+<td>SLES</td>
+<td>XFS</td>
+</tr>
+<tr>
+<td>Android</td>
+<td>ext4 or one of the flash-based filesystems such as YAFFS2</td>
+</tr>
+</tbody></table>
+<h5 id="4-How-Much-Code"><a href="#4-How-Much-Code" class="headerlink" title="4. How Much Code?"></a>4. How Much Code?</h5><ul>
+<li>High-end<ul>
+<li>XFS  - 73,000   LOC</li>
+<li>btrfs - 151,000 LOC</li>
+<li>ext4  - 63,000   LOC</li>
+<li>NFS  - 73,000   LOC</li>
+</ul>
+</li>
+<li>Low-end<ul>
+<li>bfs    - 1,000 LOC</li>
+<li>ext2  - 9,000 LOC</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-Complexity"><a href="#5-Complexity" class="headerlink" title="5. Complexity"></a>5. Complexity</h5><ul>
+<li>There are 4 vectors of (over 100) operations that filesystems can provide:<ul>
+<li><code>inode_operations</code>                    - 29 different operations</li>
+<li><code>super_operations</code>                    - 19 different operations</li>
+<li><code>file_operation</code>                        - 33 different operations</li>
+<li><code>address_space_operations</code> - 22 different operations</li>
+</ul>
+</li>
+<li>No filesystem provide all functions</li>
+<li>SPFS provides only a small number (depends on file type)</li>
+</ul>
+<p><img src="/.tech//fig.1.png"></p>
+<h5 id="6-Where-Would-I-Normally-Start"><a href="#6-Where-Would-I-Normally-Start" class="headerlink" title="6. Where Would I Normally Start?"></a>6. Where Would I Normally Start?</h5><ul>
+<li>bfs, sysvfs, fat, …</li>
+<li>Look at features. Less features the better!<ul>
+<li>Filesystems are optimized for performance</li>
+<li>This makes the code harder to understand</li>
+</ul>
+</li>
+<li>But no need. That’s what SPFS is for!</li>
+</ul>
+<h5 id="7-SPFS-was-Developed-for-Teaching"><a href="#7-SPFS-was-Developed-for-Teaching" class="headerlink" title="7. SPFS was Developed for Teaching"></a>7. SPFS was Developed for Teaching</h5><ul>
+<li>It’s as simple as you can get</li>
+<li>It will be updated once per year (Ubuntu x.04 releases)</li>
+<li>It has <code>prints()</code> calls for each function - viewed with <code>dmesg(1)</code></li>
+<li>It’s also backed by an online open-source filesystem book<ul>
+<li><code>https://github.com/stevedpate/linux-fs-book</code></li>
+<li>450 pages and counting… looking for help to move it forwards</li>
+<li>There is a chapter on SPFS</li>
+</ul>
+</li>
+</ul>
+<hr>
+
+<h4 id="Module-Agenda-1"><a href="#Module-Agenda-1" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
+<li>Basic SPFS information including features&#x2F;properties&#x2F;limitations</li>
+<li>Important SPFS structures</li>
+<li>SPFS disk layout</li>
+<li>What happens during filesystem creation</li>
+</ul>
+<h5 id="1-Basic-Information"><a href="#1-Basic-Information" class="headerlink" title="1. Basic Information"></a>1. Basic Information</h5><ul>
+<li>A Linux filesystem contains the following minimal items:<ul>
+<li>A kernel module</li>
+<li>A basic set of commands (<code>mkfs</code> and <code>fsdb</code> at a minimum)</li>
+</ul>
+</li>
+<li>There may be other commands to support filesystem features:<ul>
+<li><code>e2fsprogs</code> - <code>badblocks</code>, <code>blkid</code>, <code>chattr</code>, <code>debugfs</code>, <code>dumpe2fs</code>, <code>e2freefrag</code>, <code>e2fsck</code>, <code>e2image</code>, <code>e2label</code>, <code>e2undo</code>, <code>e4defrag</code>, <code>filefrag</code>, <code>findfs</code>, <code>findsuper</code>, <code>logsave</code>, <code>lsattr</code>, <code>mke2fs</code>, <code>resize2fs</code>, <code>tune2fs</code>.</li>
+</ul>
+</li>
+<li>SPFS only has the following:<ul>
+<li>A kernel module, <code>mkfs</code>, <code>fsdb</code> and <code>fillfs</code> commands plus test programs.</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-SPFS-Features-Properties"><a href="#2-SPFS-Features-Properties" class="headerlink" title="2. SPFS Features &#x2F; Properties"></a>2. SPFS Features &#x2F; Properties</h5><ul>
+<li>Single block size (2048 bytes)</li>
+<li>760 blocks in the whole filesystem (760 * 2048 byte block size &#x3D; ~1.5GB?MB)</li>
+<li>Maximum filename length of up to 28 characters</li>
+<li>Multi-level directories (directories within directories)</li>
+<li>File creation, deletion, rename, hard links, symlinks, …</li>
+<li>File undelete using the SPFS <code>fsdb</code> command</li>
+</ul>
+<h5 id="3-Some-Basic-SPFS-Concepts"><a href="#3-Some-Basic-SPFS-Concepts" class="headerlink" title="3. Some Basic SPFS Concepts"></a>3. Some Basic SPFS Concepts</h5><ul>
+<li><p>SPFS Superblock</p>
+<ul>
+<li><p>Contains information about the filesystem</p>
+</li>
+<li><p>Inode and data block usage</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_superblock</span> &#123;</span></span><br><span class="line">  __u32 s_magic; 								<span class="comment">// 0x53504653</span></span><br><span class="line">  __u32 s_mod;		</span><br><span class="line">  __u32 s_nifree;</span><br><span class="line">  __u32 s_inode[SP_MAXFILES];		<span class="comment">// 128</span></span><br><span class="line">  __u32 s_nbfree;</span><br><span class="line">  __u16 s_block[SP_MAXBLOCKS];	<span class="comment">// 760</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>Inodes</p>
+<ul>
+<li><p>1 inode per file regardless of file type</p>
+</li>
+<li><p>Holds file size, ownershop, time stamps, which blocks are allocated</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_inode</span> &#123;</span></span><br><span class="line">  __u32 i_mode;										<span class="comment">// file type and permissions</span></span><br><span class="line">  __u32 i_nlink;									<span class="comment">// e.g. (S_IFDIR | 0755)</span></span><br><span class="line">  __u32 i_atime;</span><br><span class="line">  __u32 i_mtime;</span><br><span class="line">  __u32 i_ctime;</span><br><span class="line">  __u32 i_uid;</span><br><span class="line">  __u32 i_gid;</span><br><span class="line">  __u32 i_size;</span><br><span class="line">  __u32 i_blocks;</span><br><span class="line">  __u32 i_addr[SP_DIRECT_BLOCKS];	<span class="comment">// 64</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Directory entries</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_dirent</span> &#123;</span></span><br><span class="line">  __u32 d_ino;</span><br><span class="line">  <span class="type">char</span>  d_name[SP_NAMELEN];	<span class="comment">// 28</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p><img src="/.tech//fig.2.png"></p>
+<h5 id="4-What-Happens-During-mkfs"><a href="#4-What-Happens-During-mkfs" class="headerlink" title="4. What Happens During mkfs?"></a>4. What Happens During <code>mkfs</code>?</h5><ul>
+<li>Fill in the superblock structure fields</li>
+<li>Write the superblock to disk</li>
+<li>Write inodes 2 (root) and 3 (lost+found) to disk</li>
+<li>Write directory entries for both directories<ul>
+<li>“.” and “..” for “lost+found”</li>
+<li>“.”, “..” and “lost+found” for the root inode</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-Introducing-mkfs-and-fsdb"><a href="#5-Introducing-mkfs-and-fsdb" class="headerlink" title="5. Introducing mkfs and fsdb"></a>5. Introducing <code>mkfs</code> and <code>fsdb</code></h5><ul>
+<li>Best way to learn the disk layout is to see it in action!</li>
+<li>We’ll create a filesystem with <code>mkfs</code> and use <code>fsdb</code> to explore what’s there</li>
+<li>Source code will be introduced soon</li>
+</ul>
+<p><code>lost+found</code> 目录是 Linux 和 Unix 文件系统中的一个特殊目录，通常存在于文件系统的根目录下。它的主要用途是存储在文件系统检查（例如，使用 <code>fsck</code> 命令）期间恢复的丢失文件或目录。</p>
+<h6 id="主要特点和用途"><a href="#主要特点和用途" class="headerlink" title="主要特点和用途"></a>主要特点和用途</h6><ol>
+<li><strong>恢复丢失的文件</strong>：<ul>
+<li>当文件系统发生损坏或崩溃时，文件系统检查工具会尝试修复错误，并可能找到一些无法与原有目录结构相匹配的孤立文件。这些文件会被放置在<code>lost+found</code>目录中。</li>
+</ul>
+</li>
+<li><strong>文件命名</strong>：<ul>
+<li>恢复的文件通常会被重命名为数字（例如，<code>#1</code>、<code>#2</code>），以便用户在恢复后可以检查它们。</li>
+</ul>
+</li>
+<li><strong>存在于不同的文件系统中</strong>：<ul>
+<li><code>lost+found</code>目录主要出现在使用<code>ext2</code>、<code>ext3</code>、<code>ext4</code>和其他一些Linux文件系统中。</li>
+</ul>
+</li>
+<li><strong>文件系统检查</strong>：<ul>
+<li><code>lost+found</code>目录是在文件系统创建时自动生成的，用户通常无需手动创建或删除它。运行文件系统检查（如<code>fsck</code>）时，工具会自动处理该目录中的文件。</li>
+</ul>
+</li>
+</ol>
+<hr>
+
+<h4 id="Module-Agenda-2"><a href="#Module-Agenda-2" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
+<li>How to downlaod the source code</li>
+<li>Looking through the directory structure</li>
+<li>Walking through the <code>mkfs</code> and <code>fsdb</code> source code</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/22/linux/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="prev" title="Ext2文件系统">
+                  <i class="fa fa-angle-left"></i> Ext2文件系统
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/" rel="next" title="双指针">
+                  双指针 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
