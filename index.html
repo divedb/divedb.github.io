@@ -123,17 +123,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -159,7 +159,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/18/linux/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/28/Address-Sanitizer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -177,7 +177,192 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/18/linux/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/" class="post-title-link" itemprop="url">用户文件I/O</a>
+          <a href="/2025/04/28/Address-Sanitizer/" class="post-title-link" itemprop="url">Address Sanitizer</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-28 17:52:37" itemprop="dateCreated datePublished" datetime="2025-04-28T17:52:37+08:00">2025-04-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-30 17:13:04" itemprop="dateModified" datetime="2025-04-30T17:13:04+08:00">2025-04-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载：<a href="https://blog.trailofbits.com/2024/05/16/understanding-addresssanitizer-better-memory-safety-for-your-code/">Understanding AddressSanitizer: Better memory safety for your code</a></p>
+<p>​	本文将带你了解如何使用<code>AddressSanitizer</code>（简称<code>ASan</code>）——一种编译器插件，专门用于帮助开发者检测代码中的内存问题，这类问题可能导致远程代码执行攻击（如<code>WannaCry</code>勒索病毒或某些<code>WebP</code>实现中的漏洞）。<code>ASan</code>在编译阶段会在内存访问操作周围插入检查代码，一旦发现非法内存访问，程序将立即崩溃。由于<code>ASan</code>能发现单元测试难以覆盖的漏洞，并且在性能上优于其他同类工具，因此在模糊测试（<code>fuzzing</code>）过程中被广泛采用。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/04/28/Address-Sanitizer/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/" class="post-title-link" itemprop="url">用户堆栈的扩展</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-22 17:27:22" itemprop="dateCreated datePublished" datetime="2025-04-22T17:27:22+08:00">2025-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-25 10:16:49" itemprop="dateModified" datetime="2025-04-25T10:16:49+08:00">2025-04-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>​	假设在进程运行的过程中，已经用尽了为本进程分配的堆栈区间，也就是从堆栈道“顶部”开始（记住，堆栈是从上向下伸展的），已经到达了已映射的堆栈区间的下沿。或者说，<code>CPU</code>中的堆栈指针<code>%esp</code>已经指向堆栈区间的起始地址。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/" class="post-title-link" itemprop="url">越界访问</a>
         </h2>
 
         <div class="post-meta-container">
@@ -189,7 +374,185 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-04-18 15:21:56 / 修改时间：19:39:20" itemprop="dateCreated datePublished" datetime="2025-04-18T15:21:56+08:00">2025-04-18</time>
+      <time title="创建时间：2025-04-22 14:04:57 / 修改时间：17:27:23" itemprop="dateCreated datePublished" datetime="2025-04-22T14:04:57+08:00">2025-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>​	页式存储管理机制通过页面目录和页面表将每个线性地址（也可以理解为虚拟地址）转换成物理地址。如果在这个过程中遇到某种阻碍而使<code>CPU</code>无法最终访问到相应的物理内存单元，映射便失败了，而当前的指令也就不能执行完成。此时<code>CPU</code>会产生一次页面错误（<code>Page Fault</code>）异常（<code>Exception</code>）（也称缺页中断），进而执行预定的页面异常处理程序，使应用程序得以从因映射失败而暂停的指令处开始恢复执行，或进行一些善后处理。这里所说的阻碍可以有以下几种情况：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/21/compiler/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AD%A6%E5%91%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/21/compiler/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AD%A6%E5%91%8A/" class="post-title-link" itemprop="url">编译器警告</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-04-21 13:57:29 / 修改时间：13:58:35" itemprop="dateCreated datePublished" datetime="2025-04-21T13:57:29+08:00">2025-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%96%E8%AF%91%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">编译器</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>几个常用的编译器警告（<code>Warning</code>）标志的含义：<code>-Wall</code>、<code>-Wextra</code>和<code>-Werror</code>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/04/21/compiler/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AD%A6%E5%91%8A/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/18/linux/fs/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/18/linux/fs/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/" class="post-title-link" itemprop="url">用户文件I/O</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-18 15:21:56" itemprop="dateCreated datePublished" datetime="2025-04-18T15:21:56+08:00">2025-04-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-01 00:09:30" itemprop="dateModified" datetime="2025-05-01T00:09:30+08:00">2025-05-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -220,7 +583,7 @@
 </ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/04/18/linux/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/#more" rel="contents">
+              <a class="btn" href="/2025/04/18/linux/fs/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -251,7 +614,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/15/linux/memory/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -269,7 +632,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">存储管理</a>
+          <a href="/2025/04/15/linux/memory/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">存储管理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -287,7 +650,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-19 08:06:46" itemprop="dateModified" datetime="2025-04-19T08:06:46+08:00">2025-04-19</time>
+      <time title="修改时间：2025-04-22 14:04:33" itemprop="dateModified" datetime="2025-04-22T14:04:33+08:00">2025-04-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -312,7 +675,7 @@
           <p>代表物理页面的<code>page</code>数据结构是在文件<code>include/linux/mm.h</code>中定义的。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/#more" rel="contents">
+              <a class="btn" href="/2025/04/15/linux/memory/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -343,7 +706,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -361,7 +724,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">虚拟内存管理</a>
+          <a href="/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">虚拟内存管理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -405,12 +768,180 @@
 <p>从本文开始我们就正式开启了 Linux内核内存管理子系统源码解析系列，笔者还是会秉承之前系列文章的风格，采用一步一图的方式先是详细介绍相关原理，在保证大家清晰理解原理的基础上，我们再来一步一步的解析相关内核源码的实现。有了源码的辅证，这样大家看得也安心，理解起来也放心，最起码可以证明笔者没有胡编乱造骗大家，哈哈~~</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#more" rel="contents">
+              <a class="btn" href="/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
           <!--/noindex-->
         
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/compiler/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8LTO%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/10/compiler/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8LTO%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">代码优化利器LTO介绍</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-04-10 12:04:19 / 修改时间：12:07:43" itemprop="dateCreated datePublished" datetime="2025-04-10T12:04:19+08:00">2025-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/compiler/" itemprop="url" rel="index"><span itemprop="name">compiler</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载：<a href="https://zhuanlan.zhihu.com/p/384160632">https://zhuanlan.zhihu.com/p/384160632</a></p>
+<h2 id="代码优化利器-LTO-介绍"><a href="#代码优化利器-LTO-介绍" class="headerlink" title="代码优化利器 LTO 介绍"></a>代码优化利器 LTO 介绍</h2><p>​	由于编译器一次只编译优化一个编译单元，所以只是在做局部优化，而利用 LTO，利用链接时的全局视角进行操作，从而得到能够进行更加极致的优化。</p>
+<h4 id="1-定义"><a href="#1-定义" class="headerlink" title="1. 定义"></a>1. 定义</h4><p>​	“Link-Time Optimization.” Any kind of optimization that requires looking at the whole program, LLVM features powerful intermodular optimizations which can be used at link time.</p>
+<p>LTO(Link-Time Optimization)就是对整个程序代码进行的一种优化，是LLVM里在链接时进行跨模块间的优化。</p>
+<p>LTO属于IPO(interprocedural optimization)当中的一种优化，根据维基百科的解释，IPO是优化代码的一系列编译器优化技术的集合，不同于其他的优化技术，IPO聚焦于分析整个程序代码。</p>
+<h4 id="2-实际操作"><a href="#2-实际操作" class="headerlink" title="2. 实际操作"></a>2. 实际操作</h4><p>​	The basic principle behind LTO is that some of LLVM’s optimization passes are pushed back to the linking stage. Why the linking stage? Because that is the point in the pipeline where the entire program (i.e. the whole set of compilation units) is available at once and thus optimizations across compilation unit boundaries become possible.</p>
+<p>即把一些 pass 的优化推迟到链接时再执行，从而使这些 pass 获得跨模块优化的能力。</p>
+<p><img src="https://pica.zhimg.com/v2-81a4a5d092754cb0b27fd921570d0e46_1440w.jpg" alt="img"></p>
+<p>Link-Time Optimization (LTO) addresses the problem where the compiler traditionally only sees one translation unit (e.g., a <code>.c</code> file with all its headers) at a time and therefore cannot do optimizations (like inlining) across file boundaries. LLVM compilers like <a href="https://zhida.zhihu.com/search?content_id=173499692&content_type=Article&match_order=1&q=Clang&zhida_source=entity">Clang</a> support this with the <code>-flto</code> or <code>-O4</code> command line option. This option instructs the compiler to emit LLVM bitcode to the <code>.o</code> file instead of writing out a native object file, and delays code generation to link time.</p>
+<p>LTO 指出了问题：编译器一次只能看到一个编译单元，因此没法跨文件范围做优化(如内联)。LLVM 的编译器比如 clang 支持 -flto 或者 -O4 命令。这个命令让编译器输出 bitcode 格式(LLVM IR 的其中一种格式)的 .o 文件而不是本地的目标文件，推迟代码生成到链接时。</p>
+<p><img src="https://pic2.zhimg.com/v2-fe3c3b528177a0dd94590e6f48353b75_1440w.jpg" alt="img"></p>
+<p><img src="https://pic3.zhimg.com/v2-f6553e9580e95f8f6703ea930c527a82_1440w.jpg" alt="img"></p>
+<p>Details differ depending on which operating system you’re on, but the important bit is that the linker detects that it has LLVM bitcode in the <code>.o</code> files instead of native object files. When it sees this, it reads all the bitcode files into memory, links them together, then runs the LLVM optimizer over the aggregate. Since the optimizer can now see across a much larger portion of the code, it can inline, propagate constants, do more aggressive dead code elimination, and more across file boundaries. While many modern compilers support LTO, most of them (e.g., GCC, Open64, the Intel compiler, etc.) do so by having an expensive and slow serialization process. In LLVM, LTO falls out naturally from the design of the system, and works across different source languages (unlike many other compilers) because the IR is truly source language neutral.</p>
+<p>具体细节会因操作系统而异，但链接器重要的一点是检查 .o 文件是 bitcode 格式还是本地目标格式。当看到是 bitcode 格式，它会把所有的 bitcode 文件读进内存，把他们链接到一起，然后在集成过程中执行 LLVM 的优化器。由于优化器可以看到更多的代码范围，它就能做到内联、常量传播、更激进的无用代码删除的优化。当现代编译器支持 LTO 时，大部分会有较高的代价和缓慢的序列化过程，在 LLVM 中 LTO 就自然得多，因为有 IR 这个中间格式。</p>
+<p>The linker uses libLTO, a shared object, to handle LLVM bitcode files.</p>
+<p>链接器会使用 libLTO 这个动态库来处理 LLVM bitcode 格式的文件。</p>
+<h5 id="2-1、为什么-LTO-采用-bitcode-的方式来实现？"><a href="#2-1、为什么-LTO-采用-bitcode-的方式来实现？" class="headerlink" title="2.1、为什么 LTO 采用 bitcode 的方式来实现？"></a>2.1、为什么 LTO 采用 bitcode 的方式来实现？</h5><p>LTO让编译器生产 bitcode 格式的文件，然后让链接器读取来进行优化，但为什么要这样实现呢？</p>
+<p>看下其他方法可能的问题：</p>
+<ul>
+<li><strong>Compiler driver invokes link time optimizer separately 让编译器来调用 LTO</strong></li>
+</ul>
+<p>这样的话，LTO 就没法在链接器解析符号阶段来收集信息了。由于某些符号是对外可见的(externally visible)，所以链接器没有足够的信息来处理这部分符号。</p>
+<ul>
+<li><strong>Use separate tool to collect symbol information from all object files 使用独立的工具来收集所有目标文件的符号信息</strong></li>
+</ul>
+<p>复制 LTO 的能力到一个单独的工具上，是不太合理的，不同平台链接器的语义和功能都不太一致，这样维护成本非常高，还需要与链接器的开发进度进行同步，这已经偏离 LTO 原本的开发了。而且还增加了编译的时间。</p>
+<h4 id="3、主要优化"><a href="#3、主要优化" class="headerlink" title="3、主要优化"></a>3、主要优化</h4><p>跨模块优化的效果，也即开启LTO主要有这几点好处：</p>
+<p>（<strong>1）将一些函数內联化</strong></p>
+<p><strong>（2）去除了一些无用代码</strong></p>
+<p><strong>（3）对程序有全局的优化作用</strong></p>
+<p>PGO(Profile Guided Optimization) 对于进行 LTO 优化也很有帮助。</p>
+<h4 id="4-monolithic-LTO-flto"><a href="#4-monolithic-LTO-flto" class="headerlink" title="4. monolithic LTO (-flto)"></a>4. monolithic LTO (-flto)</h4><p>Monolithic Link-Time Optimization: This mode performs monolithic link-time optimization of binaries, combining all executable code into a single unit and running aggressive compiler optimizations.</p>
+<p>大型 LTO：这种模式对二进制进行大型的链接时优化，合并所有的可执行代码到一个单元，并且执行更加激进的编译器优化。</p>
+<p>monolithic LTO implements this by merging all input into a single module, which is not scalable in time or memory, and also prevents fast incremental compiles.</p>
+<p>大型 LTO 的实现是把所有的输入合并到一个模块，并没有考虑时间和内存的问题，而且还阻碍了增量编译的执行。</p>
+<p><img src="https://pic3.zhimg.com/v2-080922c384de61ec3841b96bb1c3af16_1440w.jpg" alt="img"></p>
+<p>What this means in practice is that LTO often requires a large amount of memory (to hold all IR at once) and is very slow. And with debug information enabled via -g, the size of the IR and the resulting memory requirements are significantly larger. Even without debug information, this is prohibitive for very large applications, or when compiling on memory-constrained machines. It also makes incremental builds less effective, as everything from the LTO step on must be re-executed when any input source changes.</p>
+<p>这意味着 LTO 经常需要大量的内存，而且很慢。加上 -g 带来的调试信息，IR 的大小和内存需要都会非常大。即使没有调试信息，对于大型软件而言是难以执行的，或者在一台内存受限的机器上也是。同时它会导致增量编译变得低效，因为当源码改变时， LTO 的步骤中的所有东西都需要被重新执行。</p>
+<p><img src="https://pica.zhimg.com/v2-83775bd65b46f5291c81f3cd19b79fc0_1440w.jpg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-Xlinker -object_path_lto </span><br><span class="line">-Xlinker Release-iphoneos/test.build/Objects-normal/arm64/test_lto.o</span><br><span class="line">-flto</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-1-problem"><a href="#4-1-problem" class="headerlink" title="4.1. problem"></a>4.1. problem</h5><ul>
+<li>Not all passes are linear-time</li>
+<li>Memory usage explodes</li>
+</ul>
+<h4 id="5-ThinLTO-flto-thin"><a href="#5-ThinLTO-flto-thin" class="headerlink" title="5. ThinLTO (-flto&#x3D;thin)"></a>5. ThinLTO (-flto&#x3D;thin)</h4><p>Incremental Link-Time Optimization: This mode performs partitioned link-time optimization of binaries, inlining between compilation units and running aggressive compiler optimizations on each unit in parallel. This enables fast incremental builds and uses less memory than Monolithic LTO.</p>
+<p>增量 LTO：这个模式可以对二进制执行部分的链接时优化，在编译单元之间进行内联，并行地在每个单元里执行更激进的编译器优化。这个可以允许更快的增量编译，以及使用更少的内存。</p>
+<p>It utilizes compact summaries of each module for global analyses in the serial link step, as well as an index of function locations for later cross module importing. The function importing and other IPO transformations are performed later when the modules are optimized in fully parallel backends.</p>
+<p>在连续的链接阶段，它使用紧凑的描述来代表每个模块来进行全局的分析，包含有之后进行跨模块引入的函数位置的索引信息。函数引入和其他的 IPO 转换会在模块在并行优化时再执行。</p>
+<p>The key transformation enabled by ThinLTO global analyses is function importing, in which only those functions likely to be inlined are imported into each module. This minimizes the memory overhead in each ThinLTO backend, while maximizing the most impactful cross module optimization opportunities. The IPO transformations are therefore performed on each module extended with its imported functions.</p>
+<p>ThinLTO 全局分析的一个关键转换是函数引入，只有那些可能被内联的函数才会被引入到模块之中。这种方式最小化了内存的开销，同时最大化了跨模块优化的机会。IPO 转换因此会在每个使用了函数引入的扩展模块中执行。</p>
+<p><img src="https://picx.zhimg.com/v2-0abbfa42fd7fc9d0d41f1be52ee8a68f_1440w.jpg" alt="img"></p>
+<p>The ThinLTO process is divided into 3 phases: ThinLTO 被分成了三个步骤</p>
+<ol>
+<li>Compile: Generate IR as with full LTO mode, but extended with module summaries 编译：生成完全 LTO 模式的 IR，但是扩展以模块描述</li>
+<li>Thin Link: Thin linker plugin layer to combine summaries and perform global analyses 链接：thin 链接器插件层合并这些描述并执行全局分析</li>
+<li>ThinLTO backend: Parallel backends with summary-based importing and optimizations 后端：并行基于描述信息的引入和优化</li>
+</ol>
+<p><img src="https://pic2.zhimg.com/v2-18b044529a466b4eb5dab50669eeba71_1440w.jpg" alt="img"></p>
+<p>By default, linkers that support ThinLTO (see below) are set up to launch the ThinLTO backends in threads. So the distinction between the second and third phases is transparent to the user.</p>
+<p>默认情况下，链接器会支持 ThinLTO 被设置为在一个线程开启 ThinLTO 的后端，所以在第二步和第三步之间的差异对于用户是透明的。</p>
+<p>These summaries are emitted using the bitcode format, but designed so that they can be separately loaded without involving an LLVMContext or any other expensive construction. Each global variable and function has an entry in the module summary. An entry contains metadata that abstracts the symbol it is describing.</p>
+<p>描述信息是用 bitcode 格式生成的，但是经过设计以让他们可以分开各自地加载，而不用 LLVMContext 的参与以及其他开销较大的构造。每个全局变量和函数在模块描述文件中都有一个实体，一个实体包含有描述符号抽象的元信息。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-Xlinker -object_path_lto </span><br><span class="line">-Xlinker Release-iphoneos/test.build/Objects-normal/arm64/test_lto.o</span><br><span class="line">-flto=thin </span><br><span class="line">-Xlinker -cache_path_lto </span><br><span class="line">-Xlinker Build/Intermediates.noindex/LTOCache</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic4.zhimg.com/v2-3ac446e89b08c835d9c01092314e7789_1440w.jpg" alt="img"></p>
+<h4 id="6-cross-language-LTO"><a href="#6-cross-language-LTO" class="headerlink" title="6. cross language LTO"></a>6. cross language LTO</h4><p><img src="https://pic1.zhimg.com/v2-e3a1ec5ce22c8b80e57564be97fcec2e_1440w.jpg" alt="img"></p>
+<p>The compiler front-end generates an LLVM bitcode module (<code>.bc</code>) for each compilation unit. In C and C++ each source file will result in a single compilation unit. In Rust each crate is translated into at least one compilation unit. 编译器前端为每一个编译单元生成 LLVM bitcode 的模块。</p>
+<p>In the next step, LLVM’s optimization pipeline will optimize each LLVM module in isolation 下一步，LLVM 的优化器会单独地优化每一个 LLVM 模块。</p>
+<p>LLVM then lowers each module into machine code so that we get one object file per module 然后 LLVM 把每个模块转成机器码</p>
+<p>Finally, the linker will take the set of object files and link them together into a binary 最后链接成最终的二进制文件</p>
+<h5 id="6-1-Cross-language-link-time-optimization"><a href="#6-1-Cross-language-link-time-optimization" class="headerlink" title="6.1. Cross-language link time optimization"></a>6.1. Cross-language link time optimization</h5><p><img src="https://picx.zhimg.com/v2-989b414cb8baadce0a2b7e309053cd3d_1440w.jpg" alt="img"></p>
+<h4 id="7-LTO-的问题"><a href="#7-LTO-的问题" class="headerlink" title="7. LTO 的问题"></a>7. LTO 的问题</h4><p>开启 lto 后导致产生的 linkmap 可读性变差，如文件名信息可能会变成 8.arm64.thinlto.o 这样的数字，可以对 libLTO.dylib 的行为进行修改，使用 <code>-lto_library</code> 让链接器使用我们指定的 dylib 库。</p>
+<p>比较体验不好的是，LTO 会导致编译和链接变慢，以及会使用更多的内存，所以即使到现在，也没有看到 LTO 被广泛地使用。</p>
+<hr>
+
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><p>cross language LTO：**<a href="https://link.zhihu.com/?target=https://blog.llvm.org/2019/09/closing-gap-cross-language-lto-between.html">https://blog.llvm.org/2019/09/closing-gap-cross-language-lto-between.html</a>**</p>
+</li>
+<li><p>thisLTO：**<a href="https://link.zhihu.com/?target=http://blog.llvm.org/2016/06/thinlto-scalable-and-incremental-lto.html">http://blog.llvm.org/2016/06/thinlto-scalable-and-incremental-lto.html</a>**</p>
+</li>
+<li><p>LTO 有什么优化：**<a href="https://link.zhihu.com/?target=https://www.jianshu.com/p/58fef052291a">https://www.jianshu.com/p/58fef052291a</a>**</p>
+</li>
+<li><p>LLVM Link Time Optimization: Design and Implementation：**<a href="https://link.zhihu.com/?target=https://llvm.org/docs/LinkTimeOptimization.html%23example-of-link-time-optimization">https://llvm.org/docs/LinkTimeOptimization.html#example-of-link-time-optimization</a>**</p>
+</li>
+<li><p>Link Time Optimizations: New Way to Do Compiler Optimizations:<strong><a href="https://link.zhihu.com/?target=https://johnysswlab.com/link-time-optimizations-new-way-to-do-compiler-optimizations/">https://johnysswlab.com/link-ti</a></strong></p>
+</li>
+</ol>
+
       
     </div>
 
@@ -944,1189 +1475,9 @@ c
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/" class="post-title-link" itemprop="url">双指针</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-11-15 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-15T00:00:00+08:00">2024-11-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-18 13:02:25" itemprop="dateModified" datetime="2025-04-18T13:02:25+08:00">2025-04-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>​	<strong>双指针算法</strong>（Two-pointer technique）是一种常用的算法技巧，通常用来优化处理线性结构（如数组或链表）的问题。其基本思想是使用两个指针同时遍历数据结构，通常一个指针从左往右移动，另一个指针从右往左移动，或者两个指针一起从左到右遍历。双指针算法在解决一些问题时能够显著降低时间复杂度，特别是在解决 <strong>排序数组</strong>、<strong>滑动窗口</strong> 或 <strong>链表</strong> 等问题时非常有效。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/11/02/linux/fs/SPFS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/02/linux/fs/SPFS/" class="post-title-link" itemprop="url">SPFS</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-11-02 18:06:53" itemprop="dateCreated datePublished" datetime="2024-11-02T18:06:53+08:00">2024-11-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-05 22:26:32" itemprop="dateModified" datetime="2024-11-05T22:26:32+08:00">2024-11-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/filesystem/" itemprop="url" rel="index"><span itemprop="name">filesystem</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="SPFS"><a href="#SPFS" class="headerlink" title="SPFS"></a>SPFS</h2><h4 id="Module-Agenda"><a href="#Module-Agenda" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
-<li>Basic Linux filesystem information</li>
-<li>Where is the Linux filesystem code?</li>
-<li>Who uses what filesystems?</li>
-<li>Where do filesystems sit in the kernel?</li>
-<li>How to get started with filesystem development</li>
-<li>Some basic SPFS information</li>
-</ul>
-<h5 id="1-How-many-Filesystems"><a href="#1-How-many-Filesystems" class="headerlink" title="1. How many Filesystems?"></a>1. How many Filesystems?</h5><ul>
-<li>Linux has over 80 different filesystems</li>
-<li>They fall into several different categories:<ul>
-<li>Disk-based filesystems, filesystems with built-in fault-tolerance, filesystems optimized for flash memory, solid state media, record-oriented filesystems, shared-disk filesystems, distributed filesystems, distributed fault-tolerant filesystems, distributed parallel filesystems, distirbuted parallel fault-tolerant filesystems, peer-to-peer filesystems, special-purpose filesystems, pseudo filesystems, encrypted filesystems.</li>
-<li>There are many filesystems not in the source tree</li>
-</ul>
-</li>
-</ul>
-<h5 id="2-Whre-Are-They"><a href="#2-Whre-Are-They" class="headerlink" title="2. Whre Are They?"></a>2. Whre Are They?</h5><ul>
-<li>All different kernels can be found at <a href="http://www.kernel.org/">www.kernel.org</a></li>
-<li>Filesystems are located under the <code>fs</code> directory, for example:<ul>
-<li><code>linux-6.5.5/fs</code></li>
-</ul>
-</li>
-</ul>
-<h5 id="3-Which-Distributions-Use-Which-Filesystems"><a href="#3-Which-Distributions-Use-Which-Filesystems" class="headerlink" title="3. Which Distributions Use Which Filesystems?"></a>3. Which Distributions Use Which Filesystems?</h5><table>
-<thead>
-<tr>
-<th>Distribution</th>
-<th>Fils System</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Ubuntu&#x2F;Debian</td>
-<td>ext4</td>
-</tr>
-<tr>
-<td>Fedora</td>
-<td>btrfs</td>
-</tr>
-<tr>
-<td>CentOS</td>
-<td>XFS (CentOS EOL - Rocky?)</td>
-</tr>
-<tr>
-<td>RHEL</td>
-<td>XFS - was ext4 up to RHEL 6.0</td>
-</tr>
-<tr>
-<td>OpenSuSE</td>
-<td>btrfs</td>
-</tr>
-<tr>
-<td>SLES</td>
-<td>XFS</td>
-</tr>
-<tr>
-<td>Android</td>
-<td>ext4 or one of the flash-based filesystems such as YAFFS2</td>
-</tr>
-</tbody></table>
-<h5 id="4-How-Much-Code"><a href="#4-How-Much-Code" class="headerlink" title="4. How Much Code?"></a>4. How Much Code?</h5><ul>
-<li>High-end<ul>
-<li>XFS  - 73,000   LOC</li>
-<li>btrfs - 151,000 LOC</li>
-<li>ext4  - 63,000   LOC</li>
-<li>NFS  - 73,000   LOC</li>
-</ul>
-</li>
-<li>Low-end<ul>
-<li>bfs    - 1,000 LOC</li>
-<li>ext2  - 9,000 LOC</li>
-</ul>
-</li>
-</ul>
-<h5 id="5-Complexity"><a href="#5-Complexity" class="headerlink" title="5. Complexity"></a>5. Complexity</h5><ul>
-<li>There are 4 vectors of (over 100) operations that filesystems can provide:<ul>
-<li><code>inode_operations</code>                    - 29 different operations</li>
-<li><code>super_operations</code>                    - 19 different operations</li>
-<li><code>file_operation</code>                        - 33 different operations</li>
-<li><code>address_space_operations</code> - 22 different operations</li>
-</ul>
-</li>
-<li>No filesystem provide all functions</li>
-<li>SPFS provides only a small number (depends on file type)</li>
-</ul>
-<p><img src="/.tech//fig.1.png"></p>
-<h5 id="6-Where-Would-I-Normally-Start"><a href="#6-Where-Would-I-Normally-Start" class="headerlink" title="6. Where Would I Normally Start?"></a>6. Where Would I Normally Start?</h5><ul>
-<li>bfs, sysvfs, fat, …</li>
-<li>Look at features. Less features the better!<ul>
-<li>Filesystems are optimized for performance</li>
-<li>This makes the code harder to understand</li>
-</ul>
-</li>
-<li>But no need. That’s what SPFS is for!</li>
-</ul>
-<h5 id="7-SPFS-was-Developed-for-Teaching"><a href="#7-SPFS-was-Developed-for-Teaching" class="headerlink" title="7. SPFS was Developed for Teaching"></a>7. SPFS was Developed for Teaching</h5><ul>
-<li>It’s as simple as you can get</li>
-<li>It will be updated once per year (Ubuntu x.04 releases)</li>
-<li>It has <code>prints()</code> calls for each function - viewed with <code>dmesg(1)</code></li>
-<li>It’s also backed by an online open-source filesystem book<ul>
-<li><code>https://github.com/stevedpate/linux-fs-book</code></li>
-<li>450 pages and counting… looking for help to move it forwards</li>
-<li>There is a chapter on SPFS</li>
-</ul>
-</li>
-</ul>
-<hr>
-
-<h4 id="Module-Agenda-1"><a href="#Module-Agenda-1" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
-<li>Basic SPFS information including features&#x2F;properties&#x2F;limitations</li>
-<li>Important SPFS structures</li>
-<li>SPFS disk layout</li>
-<li>What happens during filesystem creation</li>
-</ul>
-<h5 id="1-Basic-Information"><a href="#1-Basic-Information" class="headerlink" title="1. Basic Information"></a>1. Basic Information</h5><ul>
-<li>A Linux filesystem contains the following minimal items:<ul>
-<li>A kernel module</li>
-<li>A basic set of commands (<code>mkfs</code> and <code>fsdb</code> at a minimum)</li>
-</ul>
-</li>
-<li>There may be other commands to support filesystem features:<ul>
-<li><code>e2fsprogs</code> - <code>badblocks</code>, <code>blkid</code>, <code>chattr</code>, <code>debugfs</code>, <code>dumpe2fs</code>, <code>e2freefrag</code>, <code>e2fsck</code>, <code>e2image</code>, <code>e2label</code>, <code>e2undo</code>, <code>e4defrag</code>, <code>filefrag</code>, <code>findfs</code>, <code>findsuper</code>, <code>logsave</code>, <code>lsattr</code>, <code>mke2fs</code>, <code>resize2fs</code>, <code>tune2fs</code>.</li>
-</ul>
-</li>
-<li>SPFS only has the following:<ul>
-<li>A kernel module, <code>mkfs</code>, <code>fsdb</code> and <code>fillfs</code> commands plus test programs.</li>
-</ul>
-</li>
-</ul>
-<h5 id="2-SPFS-Features-Properties"><a href="#2-SPFS-Features-Properties" class="headerlink" title="2. SPFS Features &#x2F; Properties"></a>2. SPFS Features &#x2F; Properties</h5><ul>
-<li>Single block size (2048 bytes)</li>
-<li>760 blocks in the whole filesystem (760 * 2048 byte block size &#x3D; ~1.5GB?MB)</li>
-<li>Maximum filename length of up to 28 characters</li>
-<li>Multi-level directories (directories within directories)</li>
-<li>File creation, deletion, rename, hard links, symlinks, …</li>
-<li>File undelete using the SPFS <code>fsdb</code> command</li>
-</ul>
-<h5 id="3-Some-Basic-SPFS-Concepts"><a href="#3-Some-Basic-SPFS-Concepts" class="headerlink" title="3. Some Basic SPFS Concepts"></a>3. Some Basic SPFS Concepts</h5><ul>
-<li><p>SPFS Superblock</p>
-<ul>
-<li><p>Contains information about the filesystem</p>
-</li>
-<li><p>Inode and data block usage</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_superblock</span> &#123;</span></span><br><span class="line">  __u32 s_magic; 								<span class="comment">// 0x53504653</span></span><br><span class="line">  __u32 s_mod;		</span><br><span class="line">  __u32 s_nifree;</span><br><span class="line">  __u32 s_inode[SP_MAXFILES];		<span class="comment">// 128</span></span><br><span class="line">  __u32 s_nbfree;</span><br><span class="line">  __u16 s_block[SP_MAXBLOCKS];	<span class="comment">// 760</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li><p>Inodes</p>
-<ul>
-<li><p>1 inode per file regardless of file type</p>
-</li>
-<li><p>Holds file size, ownershop, time stamps, which blocks are allocated</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_inode</span> &#123;</span></span><br><span class="line">  __u32 i_mode;										<span class="comment">// file type and permissions</span></span><br><span class="line">  __u32 i_nlink;									<span class="comment">// e.g. (S_IFDIR | 0755)</span></span><br><span class="line">  __u32 i_atime;</span><br><span class="line">  __u32 i_mtime;</span><br><span class="line">  __u32 i_ctime;</span><br><span class="line">  __u32 i_uid;</span><br><span class="line">  __u32 i_gid;</span><br><span class="line">  __u32 i_size;</span><br><span class="line">  __u32 i_blocks;</span><br><span class="line">  __u32 i_addr[SP_DIRECT_BLOCKS];	<span class="comment">// 64</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Directory entries</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_dirent</span> &#123;</span></span><br><span class="line">  __u32 d_ino;</span><br><span class="line">  <span class="type">char</span>  d_name[SP_NAMELEN];	<span class="comment">// 28</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-<p><img src="/.tech//fig.2.png"></p>
-<h5 id="4-What-Happens-During-mkfs"><a href="#4-What-Happens-During-mkfs" class="headerlink" title="4. What Happens During mkfs?"></a>4. What Happens During <code>mkfs</code>?</h5><ul>
-<li>Fill in the superblock structure fields</li>
-<li>Write the superblock to disk</li>
-<li>Write inodes 2 (root) and 3 (lost+found) to disk</li>
-<li>Write directory entries for both directories<ul>
-<li>“.” and “..” for “lost+found”</li>
-<li>“.”, “..” and “lost+found” for the root inode</li>
-</ul>
-</li>
-</ul>
-<h5 id="5-Introducing-mkfs-and-fsdb"><a href="#5-Introducing-mkfs-and-fsdb" class="headerlink" title="5. Introducing mkfs and fsdb"></a>5. Introducing <code>mkfs</code> and <code>fsdb</code></h5><ul>
-<li>Best way to learn the disk layout is to see it in action!</li>
-<li>We’ll create a filesystem with <code>mkfs</code> and use <code>fsdb</code> to explore what’s there</li>
-<li>Source code will be introduced soon</li>
-</ul>
-<p><code>lost+found</code> 目录是 Linux 和 Unix 文件系统中的一个特殊目录，通常存在于文件系统的根目录下。它的主要用途是存储在文件系统检查（例如，使用 <code>fsck</code> 命令）期间恢复的丢失文件或目录。</p>
-<h6 id="主要特点和用途"><a href="#主要特点和用途" class="headerlink" title="主要特点和用途"></a>主要特点和用途</h6><ol>
-<li><strong>恢复丢失的文件</strong>：<ul>
-<li>当文件系统发生损坏或崩溃时，文件系统检查工具会尝试修复错误，并可能找到一些无法与原有目录结构相匹配的孤立文件。这些文件会被放置在<code>lost+found</code>目录中。</li>
-</ul>
-</li>
-<li><strong>文件命名</strong>：<ul>
-<li>恢复的文件通常会被重命名为数字（例如，<code>#1</code>、<code>#2</code>），以便用户在恢复后可以检查它们。</li>
-</ul>
-</li>
-<li><strong>存在于不同的文件系统中</strong>：<ul>
-<li><code>lost+found</code>目录主要出现在使用<code>ext2</code>、<code>ext3</code>、<code>ext4</code>和其他一些Linux文件系统中。</li>
-</ul>
-</li>
-<li><strong>文件系统检查</strong>：<ul>
-<li><code>lost+found</code>目录是在文件系统创建时自动生成的，用户通常无需手动创建或删除它。运行文件系统检查（如<code>fsck</code>）时，工具会自动处理该目录中的文件。</li>
-</ul>
-</li>
-</ol>
-<hr>
-
-<h4 id="Module-Agenda-2"><a href="#Module-Agenda-2" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
-<li>How to downlaod the source code</li>
-<li>Looking through the directory structure</li>
-<li>Walking through the <code>mkfs</code> and <code>fsdb</code> source code</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/10/22/linux/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/22/linux/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">Ext2文件系统</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2024-10-22 12:08:04 / 修改时间：16:15:39" itemprop="dateCreated datePublished" datetime="2024-10-22T12:08:04+08:00">2024-10-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Ext2文件系统"><a href="#Ext2文件系统" class="headerlink" title="Ext2文件系统"></a>Ext2文件系统</h2><ul>
-<li>Blocks</li>
-<li>Block Groups</li>
-<li>Directories</li>
-<li>Inodes</li>
-<li>Superblocks</li>
-<li>Symbolic Links</li>
-</ul>
-<p><img src="/.tech//ext2_fs.png"></p>
-<p>Superblock结构</p>
-<table>
-<thead>
-<tr>
-<th>偏移（字节）</th>
-<th>大小（字节）</th>
-<th>字段</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td>4</td>
-<td><code>s_inodes_count</code></td>
-</tr>
-<tr>
-<td>4</td>
-<td>4</td>
-<td><code>s_blocks_count</code></td>
-</tr>
-<tr>
-<td>8</td>
-<td>4</td>
-<td><code>s_r_blocks_count</code></td>
-</tr>
-<tr>
-<td>12</td>
-<td>4</td>
-<td><code>s_free_blocks_count</code></td>
-</tr>
-<tr>
-<td>16</td>
-<td>4</td>
-<td><code>s_free_inodes_count</code></td>
-</tr>
-<tr>
-<td>20</td>
-<td>4</td>
-<td><code>s_first_data_block</code></td>
-</tr>
-<tr>
-<td>24</td>
-<td>4</td>
-<td><code>s_log_block_size</code></td>
-</tr>
-<tr>
-<td>28</td>
-<td>4</td>
-<td><code>s_log_frag_size</code></td>
-</tr>
-<tr>
-<td>32</td>
-<td>4</td>
-<td><code>s_blocks_per_group</code></td>
-</tr>
-<tr>
-<td>36</td>
-<td>4</td>
-<td><code>s_frags_per_group</code></td>
-</tr>
-<tr>
-<td>40</td>
-<td>4</td>
-<td><code>s_inodes_per_group</code></td>
-</tr>
-<tr>
-<td>44</td>
-<td>4</td>
-<td><code>s_mtime</code></td>
-</tr>
-<tr>
-<td>48</td>
-<td>4</td>
-<td><code>s_wtime</code></td>
-</tr>
-<tr>
-<td>52</td>
-<td>2</td>
-<td><code>s_mnt_count</code></td>
-</tr>
-<tr>
-<td>54</td>
-<td>2</td>
-<td><code>s_max_mnt_count</code></td>
-</tr>
-<tr>
-<td>56</td>
-<td>2</td>
-<td><code>s_magic</code></td>
-</tr>
-<tr>
-<td>58</td>
-<td>2</td>
-<td><code>s_state</code></td>
-</tr>
-<tr>
-<td>60</td>
-<td>2</td>
-<td><code>s_errors</code></td>
-</tr>
-<tr>
-<td>62</td>
-<td>2</td>
-<td><code>s_minor_rev_level</code></td>
-</tr>
-<tr>
-<td>64</td>
-<td>4</td>
-<td><code>s_lastcheck</code></td>
-</tr>
-<tr>
-<td>68</td>
-<td>4</td>
-<td><code>s_checkinterval</code></td>
-</tr>
-<tr>
-<td>72</td>
-<td>4</td>
-<td><code>s_creator_os</code></td>
-</tr>
-<tr>
-<td>76</td>
-<td>4</td>
-<td><code>s_rev_level</code></td>
-</tr>
-<tr>
-<td>80</td>
-<td>2</td>
-<td><code>s_def_resuid</code></td>
-</tr>
-<tr>
-<td>82</td>
-<td>2</td>
-<td><code>s_def_resgid</code></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p><code>s_inodes_count</code>: </p>
-<p>​	32bit value indicating the total number of inodes, both used and free, in the file system. This value must be lower or equal to (s_inodes_per_group * number of block groups). It must be equal to the sum of the inodes defined in each block group.</p>
-<p><code>s_blocks_count</code>: 32bit value indicating the total number of blocks in the system including all used, free and reserved. This value must be lower or equal to (s_blocks_per_group * number of block groups). It can be lower than the previous calculation if the last block group has a smaller number of blocks than s_blocks_per_group du to volume size. It must be equal to the sum of the blocks defined in each block group.</p>
-<p><code>s_r_blocks_count</code>: 32bit value indicating the total number of blocks reserved for the usage of the super user. This is most useful if for some reason a user, maliciously or not, fill the file system to capacity; the super user will have this specified amount of free blocks at his disposal so he can edit and save configuration files.</p>
-<p><code>s_free_blocks_count</code>: 32bit value indicating the total number of free blocks, including the number of reserved blocks (see <a href="https://www.nongnu.org/ext2-doc/ext2.html#s-r-blocks-count">s_r_blocks_count</a>). This is a sum of all free blocks of all the block groups.</p>
-<p><code>s_free_inodes_count</code>: 32bit value indicating the total number of free inodes. This is a sum of all free inodes of all the block groups.</p>
-<p><code>s_first_data_block</code>: 32bit value identifying the first data block, in other word the id of the block containing the superblock structure.</p>
-<p>Note that this value is always 0 for file systems with a block size larger than 1KB, and always 1 for file systems with a block size of 1KB. The superblock is <em>always</em> starting at the 1024th byte of the disk, which normally happens to be the first byte of the 3rd sector.</p>
-<p><code>s_log_block_size</code>: The block size is computed using this 32bit value as the number of bits to shift left the value 1024. This value may only be non-negative.</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">block size = <span class="number">1024</span> &lt;&lt; s_log_block_size;</span><br></pre></td></tr></table></figure>
-
-<p>Common block sizes include 1KiB, 2KiB, 4KiB and 8Kib. For information about the impact of selecting a block size, see <a href="https://www.nongnu.org/ext2-doc/ext2.html#block-size-impact">Impact of Block Sizes</a>.</p>
-<p>Note</p>
-<p>In Linux, at least up to 2.6.28, the block size must be at least as large as the sector size of the block device, and cannot be larger than the supported memory page of the architecture.</p>
-<p><code>s_log_frag_size</code>: </p>
-<p>The fragment size is computed using this 32bit value as the number of bits to shift left the value 1024. Note that a negative value would shift the bit right rather than left.</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (positive)</span><br><span class="line">  fragmnet size = <span class="number">1024</span> &lt;&lt; s_log_frag_size;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  framgnet size = <span class="number">1024</span> &gt;&gt; -s_log_frag_size;</span><br></pre></td></tr></table></figure>
-
-<p>Note</p>
-<p>As of <strong>Linux 2.6.28</strong> no support exists for an Ext2 partition with fragment size smaller than the block size, as this feature seems to not be available.</p>
-<p><code>s_blocks_per_group</code>:</p>
-<p>​	32bit value indicating the total number of blocks per group. This value in combination with <a href="https://www.nongnu.org/ext2-doc/ext2.html#s-first-data-block">s_first_data_block</a> can be used to determine the block groups boundaries. Due to volume size boundaries, the last block group might have a smaller number of blocks than what is specified in this field.</p>
-<p><code>s_frags_per_group</code>:</p>
-<p>​	32bit value indicating the total number of fragments per group. It is also used to determine the size of the block bitmap of each block group. 假设一个块的大小为 4096 字节，而碎片的大小为 1024 字节，则一个块可以包含 4 个碎片。</p>
-<p><code>s_inodes_per_group</code>:</p>
-<p>​	32bit value indicating the total number of inodes per group. This is also used to determine the size of the inode bitmap of each block group. Note that you cannot have more than (block size in bytes * 8) inodes per group as the inode bitmap must fit within a single block. This value must be a perfect multiple of the number of inodes that can fit in a block <code>((1024&lt;&lt;s_log_block_size)/s_inode_size)</code>.</p>
-<p><code>s_mtime</code>:</p>
-<p>​	Unix time, as defined by POSIX, of the last time the file system was mounted.</p>
-<p><code>s_wtime</code>:</p>
-<p>​	Unix time, as defined by POSIX, of the last write access to the file system.</p>
-<p><code>s_mnt_count</code>:</p>
-<p>​	16bit value indicating how many time the file system was mounted since the last time it was fully verified.</p>
-<p><code>s_max_mnt_count</code>:</p>
-<p>​	16bit value indicating the maximum number of times that the file system may be mounted before a full check is performed.</p>
-<p><code>s_magic</code>:</p>
-<p>​	16bit value identifying the file system as Ext2. The value is currently fixed to <code>EXT2_SUPER_MAGIC</code> of value 0xEF53.</p>
-<p><code>s_state</code>:</p>
-<p>​	16bit value indicating the file system state. When the file system is mounted, this state is set to <code>EXT2_ERROR_FS</code>. After the file system was cleanly unmounted, this value is set to <code>EXT2_VALID_FS</code>.</p>
-<p>When mounting the file system, if a valid of <code>EXT2_ERROR_FS</code> is encountered it means the file system was not cleanly unmounted and most likely contain errors that will need to be fixed. Typically under Linux this means running fsck.</p>
-<p><strong>Table 3.4. Defined s_state Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_VALID_FS</td>
-<td>1</td>
-<td>Unmounted cleanly</td>
-</tr>
-<tr>
-<td>EXT2_ERROR_FS</td>
-<td>2</td>
-<td>Errors detected</td>
-</tr>
-</tbody></table>
-<p><code>s_errors</code>:</p>
-<p>​	16bit value indicating what the file system driver should do when an error is detected. The following values have been defined:</p>
-<p><strong>Table 3.5. Defined s_errors Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_ERRORS_CONTINUE</td>
-<td>1</td>
-<td>continue as if nothing happened</td>
-</tr>
-<tr>
-<td>EXT2_ERRORS_RO</td>
-<td>2</td>
-<td>remount read-only</td>
-</tr>
-<tr>
-<td>EXT2_ERRORS_PANIC</td>
-<td>3</td>
-<td>cause a kernel panic</td>
-</tr>
-</tbody></table>
-<p><code>s_minor_rev_level</code>:</p>
-<p>​	16bit value identifying the minor revision level within its <a href="https://www.nongnu.org/ext2-doc/ext2.html#s-rev-level">revision level</a>.</p>
-<p>在 EXT2 文件系统的超级块中，<code>s_minor_rev_level</code> 字段用于指示文件系统的次要版本号。这一字段的作用主要体现在以下几个方面：</p>
-<p>作用</p>
-<ol>
-<li><strong>版本控制</strong>：<ul>
-<li><code>s_minor_rev_level</code> 用于跟踪 EXT2 文件系统的次要版本更新。这些次要版本通常涉及小的改进或bug修复，而不是大规模的功能改变。</li>
-</ul>
-</li>
-<li><strong>兼容性</strong>：<ul>
-<li>通过检查 <code>s_minor_rev_level</code>，操作系统可以确定文件系统的具体版本，从而确保兼容性。不同的次要版本可能在实现上存在细微差别，了解这一版本号有助于在读取或写入文件系统时采取适当的措施。</li>
-</ul>
-</li>
-<li><strong>扩展特性</strong>：<ul>
-<li>该字段为未来的扩展提供了灵活性，允许在不改变主要版本号的情况下，增加新的功能或特性。</li>
-</ul>
-</li>
-</ol>
-<p><code>s_lastcheck</code>:</p>
-<p>​	Unix time, as defined by POSIX, of the last file system check.</p>
-<p><code>s_checkinterval</code>:</p>
-<p>​	Maximum Unix time interval, as defined by POSIX, allowed between file system checks.</p>
-<p><code>s_creator_os</code>:</p>
-<p>​	32bit identifier of the os that created the file system. Defined values are:</p>
-<p><strong>Table 3.6. Defined s_creator_os Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_OS_LINUX</td>
-<td>0</td>
-<td>Linux</td>
-</tr>
-<tr>
-<td>EXT2_OS_HURD</td>
-<td>1</td>
-<td>GNU HURD</td>
-</tr>
-<tr>
-<td>EXT2_OS_MASIX</td>
-<td>2</td>
-<td>MASIX</td>
-</tr>
-<tr>
-<td>EXT2_OS_FREEBSD</td>
-<td>3</td>
-<td>FreeBSD</td>
-</tr>
-<tr>
-<td>EXT2_OS_LITES</td>
-<td>4</td>
-<td>Lites</td>
-</tr>
-</tbody></table>
-<p><code>s_rev_level</code>:</p>
-<p>​	32bit revision level value.</p>
-<p><strong>Table 3.7. Defined s_rev_level Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_GOOD_OLD_REV</td>
-<td>0</td>
-<td>Revision 0</td>
-</tr>
-<tr>
-<td>EXT2_DYNAMIC_REV</td>
-<td>1</td>
-<td>Revision 1 with variable inode sizes, extended attributes, etc.</td>
-</tr>
-</tbody></table>
-<p><code>s_def_resuid</code>:</p>
-<p>​	16bit value used as the default user id for reserved blocks.</p>
-<p>Note</p>
-<p>​	In Linux this defaults to <code>EXT2_DEF_RESUID</code> of 0.</p>
-<p><code>s_def_resgid</code>:</p>
-<p>​	16bit value used as the default group id for reserved blocks.</p>
-<p>Note</p>
-<p>​	In Linux this defaults to <code>EXT2_DEF_RESGID</code> of 0.</p>
-<h5 id="EXT2-DYNAMIC-REV-Specific"><a href="#EXT2-DYNAMIC-REV-Specific" class="headerlink" title="EXT2_DYNAMIC_REV Specific"></a>EXT2_DYNAMIC_REV Specific</h5><table>
-<thead>
-<tr>
-<th>偏移（字节）</th>
-<th>大小（字节）</th>
-<th>字段</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>84</td>
-<td>4</td>
-<td><code>s_first_ino</code></td>
-</tr>
-<tr>
-<td>88</td>
-<td>2</td>
-<td><code>s_inode_size</code></td>
-</tr>
-<tr>
-<td>90</td>
-<td>2</td>
-<td><code>s_block_gourp_nr</code></td>
-</tr>
-<tr>
-<td>92</td>
-<td>4</td>
-<td><code>s_feature_compat</code></td>
-</tr>
-<tr>
-<td>96</td>
-<td>4</td>
-<td><code>s_feature_incompat</code></td>
-</tr>
-<tr>
-<td>100</td>
-<td>4</td>
-<td><code>s_feature_ro_compat</code></td>
-</tr>
-<tr>
-<td>104</td>
-<td>16</td>
-<td><code>s_uuid</code></td>
-</tr>
-<tr>
-<td>120</td>
-<td>16</td>
-<td><code>s_volume_name</code></td>
-</tr>
-<tr>
-<td>136</td>
-<td>64</td>
-<td><code>s_last_mounted</code></td>
-</tr>
-<tr>
-<td>200</td>
-<td>4</td>
-<td><code>s_algo_bitmap</code></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p><code>s_first_ino</code>:</p>
-<p>​	32bit value used as index to the first inode useable for standard files. In revision 0, the first non-reserved inode is fixed to 11 (<code>EXT2_GOOD_OLD_FIRST_INO</code>). In revision 1 and later this value may be set to any value.</p>
-<p><code>s_inode_size</code>:</p>
-<p>​	16bit value indicating the size of the inode structure. In revision 0, this value is always 128 (<code>EXT2_GOOD_OLD_INODE_SIZE</code>). In revision 1 and later, this value must be a perfect power of 2 and must be smaller or equal to the block size <code>(1&lt;&lt;s_log_block_size)</code>.</p>
-<p><code>s_block_group_nr</code>:</p>
-<p>​	16bit value used to indicate the block group number hosting this superblock structure. This can be used to rebuild the file system from any superblock backup.</p>
-<p><code>s_feature_compat</code>:</p>
-<p>​	32bit bitmask of compatible features. The file system implementation is free to support them or not without risk of damaging the meta-data.</p>
-<p><strong>Table 3.8. Defined s_feature_compat Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_FEATURE_COMPAT_DIR_PREALLOC</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0001</td>
-<td>Block pre-allocation for new directories</td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_COMPAT_IMAGIC_INODES</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0002</td>
-<td></td>
-</tr>
-<tr>
-<td>EXT3_FEATURE_COMPAT_HAS_JOURNAL</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0004</td>
-<td>An Ext3 journal exists</td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_COMPAT_EXT_ATTR</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0008</td>
-<td>Extended inode attributes are present</td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_COMPAT_RESIZE_INO</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0010</td>
-<td>Non-standard inode size used</td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_COMPAT_DIR_INDEX</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0020</td>
-<td>Directory indexing (HTree)</td>
-</tr>
-</tbody></table>
-<p><code>s_feature_incompat</code>:</p>
-<p>32bit bitmask of incompatible features. The file system implementation should refuse to mount the file system if any of the indicated feature is unsupported.</p>
-<p>An implementation not supporting these features would be unable to properly use the file system. For example, if compression is being used and an executable file would be unusable after being read from the disk if the system does not know how to uncompress it.</p>
-<p><strong>Table 3.9. Defined s_feature_incompat Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_FEATURE_INCOMPAT_COMPRESSION</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0001</td>
-<td>Disk&#x2F;File compression is used</td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_INCOMPAT_FILETYPE</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0002</td>
-<td></td>
-</tr>
-<tr>
-<td>EXT3_FEATURE_INCOMPAT_RECOVER</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0004</td>
-<td></td>
-</tr>
-<tr>
-<td>EXT3_FEATURE_INCOMPAT_JOURNAL_DEV</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0008</td>
-<td></td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_INCOMPAT_META_BG</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0010</td>
-<td></td>
-</tr>
-</tbody></table>
-<p><code>s_feature_ro_compat</code>:</p>
-<p>​	32bit bitmask of “read-only” features. The file system implementation should mount as read-only if any of the indicated feature is unsupported.</p>
-<p><strong>Table 3.10. Defined s_feature_ro_compat Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0001</td>
-<td>Sparse Superblock</td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_RO_COMPAT_LARGE_FILE</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0002</td>
-<td>Large file support, 64-bit file size</td>
-</tr>
-<tr>
-<td>EXT2_FEATURE_RO_COMPAT_BTREE_DIR</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>0x0004</td>
-<td>Binary tree sorted directory files</td>
-</tr>
-</tbody></table>
-<p><code>s_uuid</code>:</p>
-<p>128bit value used as the volume id. This should, as much as possible, be unique for each file system formatted.</p>
-<p><code>s_volume_name</code>:</p>
-<p>16 bytes volume name, mostly unusued. A valid volume name would consist of only ISO-Latin-1 characters and be 0 terminated.</p>
-<p><code>s_last_mounted</code>:</p>
-<p>64 bytes directory path where the file system was last mounted. While not normally used, it could serve for auto-finding the mountpoint when not indicated on the command line. Again the path should be zero terminated for compatibility reasons. Valid path is constructed from ISO-Latin-1 characters.</p>
-<p><code>s_algo_bitmap</code>:</p>
-<p>​	32bit value used by compression algorithms to determine the compression method(s) used.</p>
-<p>Note</p>
-<p>Compression is supported in Linux 2.4 and 2.6 via the e2compr patch. For more information, visit <a href="http://e2compr.sourceforge.net/">http://e2compr.sourceforge.net/</a></p>
-<p><strong>Table 3.11. Defined s_algo_bitmap Values</strong></p>
-<table>
-<thead>
-<tr>
-<th>Constant Name</th>
-<th>Bit Number</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>EXT2_LZV1_ALG</td>
-<td>0</td>
-<td>Binary value of 0x00000001</td>
-</tr>
-<tr>
-<td>EXT2_LZRW3A_ALG</td>
-<td>1</td>
-<td>Binary value of 0x00000002</td>
-</tr>
-<tr>
-<td>EXT2_GZIP_ALG</td>
-<td>2</td>
-<td>Binary value of 0x00000004</td>
-</tr>
-<tr>
-<td>EXT2_BZIP2_ALG</td>
-<td>3</td>
-<td>Binary value of 0x00000008</td>
-</tr>
-<tr>
-<td>EXT2_LZO_ALG</td>
-<td>4</td>
-<td>Binary value of 0x00000010</td>
-</tr>
-</tbody></table>
-<h5 id="Performance-Hints"><a href="#Performance-Hints" class="headerlink" title="Performance Hints"></a>Performance Hints</h5><table>
-<thead>
-<tr>
-<th>偏移（字节）</th>
-<th>大小（字节）</th>
-<th>字段</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>204</td>
-<td>1</td>
-<td><code>s_prealloc_blocks</code></td>
-</tr>
-<tr>
-<td>205</td>
-<td>1</td>
-<td><code>s_prealloc_dir_blocks</code></td>
-</tr>
-<tr>
-<td>206</td>
-<td>2</td>
-<td>(alignment)</td>
-</tr>
-</tbody></table>
-<p><code>s_prealloc_blocks</code>:</p>
-<p>​	8-bit value representing the number of blocks the implementation should attempt to pre-allocate when creating a new regular file.</p>
-<p>Linux 2.6.28 will only perform pre-allocation using Ext4 although no problem is expected if any version of Linux encounters a file with more blocks present than required.</p>
-<p><code>s_prealloc_dir_blocks</code>:</p>
-<p>​	8-bit value representing the number of blocks the implementation should attempt to pre-allocate when creating a new directory.</p>
-<p>Linux 2.6.28 will only perform pre-allocation using Ext4 and only if the <code>EXT4_FEATURE_COMPAT_DIR_PREALLOC</code> flag is present. Since Linux does not de-allocate blocks from directories after they were allocated, it should be safe to perform pre-allocation and maintain compatibility with Linux.</p>
-<h5 id="Journaling-Support"><a href="#Journaling-Support" class="headerlink" title="Journaling Support"></a>Journaling Support</h5><table>
-<thead>
-<tr>
-<th>偏移（字节）</th>
-<th>大小（字节）</th>
-<th>字段</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>208</td>
-<td>16</td>
-<td>s_journal_uuid</td>
-</tr>
-<tr>
-<td>224</td>
-<td>4</td>
-<td>s_journal_inum</td>
-</tr>
-<tr>
-<td>228</td>
-<td>4</td>
-<td>s_journal_dev</td>
-</tr>
-<tr>
-<td>232</td>
-<td>4</td>
-<td>s_last_orphan</td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
 
 </div>
   </main>

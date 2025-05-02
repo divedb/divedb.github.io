@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="目录：  Blocks Block Groups Directories Inodes Superblocks Symbolic Links">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ext2文件系统">
+<meta property="og:url" content="https://huangpiao.tech/2024/10/22/linux/fs/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="目录：  Blocks Block Groups Directories Inodes Superblocks Symbolic Links">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://huangpiao.tech/.tech//ext2_fs.png">
+<meta property="article:published_time" content="2024-10-22T04:08:04.194Z">
+<meta property="article:modified_time" content="2025-04-30T14:31:23.373Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="filesystem">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://huangpiao.tech/.tech//ext2_fs.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2024/10/22/linux/fs/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2024/10/22/linux/fs/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/","path":"2024/10/22/linux/fs/Ext2文件系统/","title":"Ext2文件系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ext2文件系统 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%97%EF%BC%88Blocks%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">块（Blocks）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%97%E7%BB%84%EF%BC%88Block-Groups%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">块组（Block Groups）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%EF%BC%88Directories%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">目录（Directories）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Inodes"><span class="nav-number">4.</span> <span class="nav-text">Inodes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B6%85%E7%BA%A7%E5%9D%97%EF%BC%88Superblocks%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">超级块（Superblocks）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5%EF%BC%88Symbolic-Links%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">符号链接（Symbolic Links）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-3-Disk-Organization"><span class="nav-number"></span> <span class="nav-text">Chapter 3. Disk Organization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Superblock%EF%BC%88%E8%B6%85%E7%BA%A7%E5%9D%97%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">Superblock（超级块）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%97%E7%BB%84%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8%EF%BC%88Block-Group-Descriptor-Table%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">块组描述符表（Block Group Descriptor Table）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%97%E4%BD%8D%E5%9B%BE%EF%BC%88Block-Bitmap%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">块位图（Block Bitmap）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Inode-%E4%BD%8D%E5%9B%BE%EF%BC%88Inode-Bitmap%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">Inode 位图（Inode Bitmap）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Inode-%E8%A1%A8%EF%BC%88Inode-Table%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">Inode 表（Inode Table）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Inode-i-osd2%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">5.1.</span> <span class="nav-text">Inode i_osd2结构体</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E4%B8%80%E4%B8%AAInode"><span class="nav-number">5.2.</span> <span class="nav-text">如何定位一个Inode</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/10/22/linux/fs/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Ext2文件系统 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ext2文件系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-22 12:08:04" itemprop="dateCreated datePublished" datetime="2024-10-22T12:08:04+08:00">2024-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-30 22:31:23" itemprop="dateModified" datetime="2025-04-30T22:31:23+08:00">2025-04-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>目录：</p>
+<ul>
+<li>Blocks</li>
+<li>Block Groups</li>
+<li>Directories</li>
+<li>Inodes</li>
+<li>Superblocks</li>
+<li>Symbolic Links</li>
+</ul>
+<span id="more"></span>
+
+<p>​	<code>Ext2</code>文件系统使用<strong>块（block）</strong>作为基本的存储单位，使用<strong>inode（索引节点）</strong>来追踪文件和系统对象。它将磁盘逻辑上划分为更易管理的<strong>块组（block group）</strong>，使用<strong>目录（directory）</strong>来提供文件的层级组织结构，并通过<strong>块位图和inode位图</strong>来追踪哪些块和<code>inode</code>已被分配。此外，它还使用<strong>超级块（superblock）</strong>来定义文件系统的参数和整体状态。</p>
+<p><code>Ext2</code>与传统<code>Unix</code>文件系统有很多相似的特性。它的规范中预留了</p>
+<ul>
+<li>对<strong>访问控制列表（ACLs）</strong></li>
+<li><strong>文件碎片（fragments）</strong></li>
+<li><strong>反删除（undeletion）</strong></li>
+<li><strong>压缩（compression）</strong></li>
+</ul>
+<p>等功能的支持空间。同时，它还设计了一套<strong>版本机制</strong>，以尽可能兼容的方式引入新特性（比如日志功能），这也为后续如 <code>Ext3</code>和<code>Ext4</code>的发展打下了基础。</p>
+<p><img src="/.tech//ext2_fs.png"></p>
+<h4 id="块（Blocks）"><a href="#块（Blocks）" class="headerlink" title="块（Blocks）"></a>块（Blocks）</h4><p>​	被格式化为<code>Ext2</code>文件系统的分区、磁盘、文件或块设备会被划分为“块（block）”的扇区组。这些块进一步组合成更大的单元，称为<strong>块组（block groups）</strong>。</p>
+<p>块的大小通常在格式化磁盘时决定，这将影响<strong>性能</strong>、<strong>最大文件大小</strong>以及<strong>最大文件系统容量</strong>。常见的块大小包括<strong>1KB、2KB、4KB和8KB</strong>，不过在超级块（<code>superblock</code>）中预留了字段（如<code>s_log_block_size</code>），支持的块最大可达到 **1024 × (2³¹ - 1)**。</p>
+<p>根据具体实现的不同，一些体系结构可能会对支持的块大小加以限制。例如，在<strong>DEC Alpha架构上运行的Linux 2.6</strong> 实现可以使用<strong>8KB</strong>的块，而相同实现若运行在<strong>Intel 386处理器上</strong>，则最大支持的块大小为<strong>4KB</strong>。</p>
+<p><strong>Table 2.1. Impact of Block Sizes</strong></p>
+<table>
+<thead>
+<tr>
+<th>Upper Limits</th>
+<th>1KiB</th>
+<th>2KiB</th>
+<th>4KiB</th>
+<th>8KiB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>file system blocks</td>
+<td>2,147,483,647</td>
+<td>2,147,483,647</td>
+<td>2,147,483,647</td>
+<td>2,147,483,647</td>
+</tr>
+<tr>
+<td>blocks per block group</td>
+<td>8,192</td>
+<td>16,384</td>
+<td>32,768</td>
+<td>65,536</td>
+</tr>
+<tr>
+<td>inodes per block group</td>
+<td>8,192</td>
+<td>16,384</td>
+<td>32,768</td>
+<td>65,536</td>
+</tr>
+<tr>
+<td>bytes per block group</td>
+<td>8,388,608 (8MiB)</td>
+<td>33,554,432 (32MiB)</td>
+<td>134,217,728 (128MiB)</td>
+<td>536,870,912 (512MiB)</td>
+</tr>
+<tr>
+<td>file system size (real)</td>
+<td>4,398,046,509,056 (4TiB)</td>
+<td>8,796,093,018,112 (8TiB)</td>
+<td>17,592,186,036,224 (16TiB)</td>
+<td>35,184,372,080,640 (32TiB)</td>
+</tr>
+<tr>
+<td>file system size (Linux)</td>
+<td>2,199,023,254,528 (2TiB) [<a href="https://www.nongnu.org/ext2-doc/ext2.html#ftn.idm140660453588896">a]</a></td>
+<td>8,796,093,018,112 (8TiB)</td>
+<td>17,592,186,036,224 (16TiB)</td>
+<td>35,184,372,080,640 (32TiB)</td>
+</tr>
+<tr>
+<td>blocks per file</td>
+<td>16,843,020</td>
+<td>134,217,728</td>
+<td>1,074,791,436</td>
+<td>8,594,130,956</td>
+</tr>
+<tr>
+<td>file size (real)</td>
+<td>17,247,252,480 (16GiB)</td>
+<td>274,877,906,944 (256GiB)</td>
+<td>2,199,023,255,552 (2TiB)</td>
+<td>2,199,023,255,552 (2TiB)</td>
+</tr>
+<tr>
+<td>file size (Linux 2.6.28)</td>
+<td>17,247,252,480 (16GiB)</td>
+<td>274,877,906,944 (256GiB)</td>
+<td>2,199,023,255,552 (2TiB)</td>
+<td>2,199,023,255,552 (2TiB)</td>
+</tr>
+</tbody></table>
+<p>解释：</p>
+<ul>
+<li><p><code>file system blocks</code>：因为<code>Ext</code>文件系统使用32位整数存储块编号，因此最大编号是<code>INT_MAX</code>（2,147,483,647）。</p>
+</li>
+<li><p><code>blocks per block group</code>：每组最多包含<code>block_group_size = (块大小 * 8) </code>，一个<code>bit</code>表示一个块。</p>
+</li>
+<li><p><code>inodes per block group</code>：同上。</p>
+</li>
+<li><p><code>bytes per block group</code>：每个<code>block group</code>的实际字节数<code>bytes_per_group = blocks_per_group * block_size</code>。</p>
+</li>
+<li><p><code>file system size (real)</code>：理想上限，<code>max_blocks * block_size</code>。</p>
+<p>但这个是理想情况，<strong>Linux早期内核中对块设备的寻址有限制</strong>，比如：</p>
+<ul>
+<li>使用<code>loff_t</code>是 64 位才能支持<code>&gt;2TB</code>，否则只能到<code>2TB</code>。</li>
+<li>文件系统本身支持大于<code>2TB</code>，但文件系统所在设备（如<code>/dev/sda</code>）如果不支持，那也无效。</li>
+</ul>
+<p>所以有两个不同版本：</p>
+<ul>
+<li><strong>real</strong>表示规范或实现最大支持</li>
+<li><strong>Linux</strong>是某版本内核的实际支持</li>
+</ul>
+</li>
+<li><p><code>blocks per file</code>：文件的最大 block 数是基于 inode 结构中能引用多少个 block。</p>
+<p><code>Ext2</code>的<code>inode</code>结构中有：</p>
+<ul>
+<li>12个直接块指针</li>
+<li>1个间接块</li>
+<li>1个双重间接块</li>
+<li>1个三重间接块</li>
+</ul>
+<p>$$<br>\text{max_blocks_per_file} &#x3D; 12 + 1024 + 1024^2 + 1024^3<br>≈ 1,074,791,436 \text{blocks}<br>$$</p>
+</li>
+<li><p><code>file size (real) / file size (Linux)</code></p>
+<p>这个是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file_size = max_blocks_per_file * block_size</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>4KB block</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>,<span class="number">074</span>,<span class="number">791</span>,<span class="number">436</span> * <span class="number">4096</span> ≈ <span class="number">4</span>TiB</span><br></pre></td></tr></table></figure>
+
+<p><strong>Note</strong>: the 2TB file size is limited by the i_blocks value in the inode which indicates the number of 512-bytes sector rather than the actual number of ext2 blocks allocated.</p>
+</li>
+</ul>
+<h4 id="块组（Block-Groups）"><a href="#块组（Block-Groups）" class="headerlink" title="块组（Block Groups）"></a>块组（Block Groups）</h4><p>这一定义来自于<code>Linux</code>内核文档。</p>
+<p>为了减少碎片并最小化在读取大量连续数据时磁头的寻道次数，块（<code>Blocks</code>）被聚集成<strong>块组（<code>Block Groups</code>）</strong>。每个块组的信息保存在<strong>描述符表（<code>Descriptor Table</code>）</strong>中，该表位于超级块（<code>Superblock</code>）之后的一个或多个块中。</p>
+<p>在每个块组的起始处，保留了两个块用来存储：</p>
+<ul>
+<li>块使用位图（<code>Block Usage Bitmap</code>）</li>
+<li><code>inode</code>使用位图（<code>Inode Usage Bitmap</code>）</li>
+</ul>
+<p>它们分别表示哪些块和哪些<code>inode</code>正在被使用。由于每个位图仅限于一个块的大小，因此<strong>一个块组的最大大小是块大小的8倍</strong>。在每个块组中，位图之后的块被指定为该组的<code>inode</code>表（<code>Inode Table</code>），其余的则是数据块（<code>Data Blocks</code>）。</p>
+<p>当分配数据块时，系统会尝试将它们分配在与包含它们的<code>inode</code>属于同一个块组中，以此提高访问效率。</p>
+<h4 id="目录（Directories）"><a href="#目录（Directories）" class="headerlink" title="目录（Directories）"></a>目录（Directories）</h4><p>本定义来自<code>Linux</code>内核文档，略有修改。</p>
+<p>目录是文件系统中的一种对象，和普通文件一样拥有一个<code>inode</code>。目录文件<strong>包含若干记录，每条记录将一个名称与一个 <code>inode</code>编号关联起来</strong>。文件系统的后续版本还会在记录中编码对象的类型（如文件、目录、符号链接、设备、<code>FIFO</code>、套接字等），以避免必须通过<code>inode</code>本身来判断类型。</p>
+<p>在分配<code>inode</code>时，系统应尽量将新文件的<code>inode</code>分配在与其所在目录相同的块组中，以提高性能。</p>
+<p>最早的<code>Ext2</code>版本使用单向链表（<code>singly-linked list</code>）来存储目录下的文件名；而较新的版本则可以使用哈希表和二叉树来提高查找效率。</p>
+<p>另外还需要注意：当目录变大时，会分配额外的块来存储新增的文件记录；但当文件名被删除后，有些实现并不会回收这些额外的块。</p>
+<h4 id="Inodes"><a href="#Inodes" class="headerlink" title="Inodes"></a>Inodes</h4><p>本定义来自<code>Linux</code>内核文档，略有修改。</p>
+<p><code>inode</code>（索引节点）是<code>Ext2</code>文件系统中的一个基本概念。文件系统中的每个对象都由一个<code>inode</code>表示。<code>inode</code>结构中包含指向保存该对象数据的文件系统块的指针，以及该对象所有除名称之外的元数据。对象的元数据包括权限、所有者、所属组、标志、大小、所占用的块数、访问时间、更改时间、修改时间、删除时间、链接数、碎片信息、版本号（用于<code>NFS</code>）以及扩展属性（EAs）和&#x2F;或访问控制列表（ACLs）。</p>
+<p><code>inode</code>结构中有一些预留字段，目前尚未使用，还有一些字段被重载使用。其中有一个字段在<code>inode</code>为目录时用于存储目录 <code>ACL</code>，而当<code>inode</code>为常规文件时则用于存储文件大小的高32位（从而允许文件大小超过<code>2GB</code>）。另有一个<code>translator</code>字段在 <code>Linux</code>下未被使用，但在<code>HURD</code>中用于引用将用于解释该对象的程序的<code>inode</code>。大多数其他预留字段已被<code>Linux</code>和<code>HURD</code>用于扩展的所有者和组字段，<code>HURD</code>还需要一个更大的<code>mode</code>字段，因此利用剩余的字段存储额外的位。</p>
+<p>在<code>inode</code>中，有指向前12个块的指针，用以存放文件的数据。接着，还有一个指向间接块（该块包含下一组块的指针）的指针，一个指向双重间接块（存储间接块指针）的指针，以及一个指向三重间接块（存储双重间接块指针）的指针。</p>
+<p>此外，还存储有一些文件系统特定的行为标志，这些标志允许对每个文件实现特定的文件系统行为。这些标志包括安全删除、不可删除、压缩、同步更新、不可变性、只追加、可转储、无访问时间更新、索引目录以及数据日志记录等。</p>
+<p>许多文件系统特定的行为标志（例如日志功能）已在更新的文件系统如<code>Ext3</code>和<code>Ext4</code>中实现，而一些其他标志仍在开发中。</p>
+<p>所有<code>inode</code>都存储在<code>inode</code>表中，每个块组拥有一个<code>inode</code>表。</p>
+<h4 id="超级块（Superblocks）"><a href="#超级块（Superblocks）" class="headerlink" title="超级块（Superblocks）"></a>超级块（Superblocks）</h4><p>本定义来源于<code>Linux</code>内核文档，并作了一些小的改动。</p>
+<p><strong>超级块</strong>包含了文件系统配置的所有信息。超级块中的内容包括文件系统中<code>inode</code>和块的总数及空闲数量、每个块组中的<code>inode</code> 和块数量、文件系统的挂载时间（以及是否被干净卸载）、最后修改时间、文件系统版本及创建该文件系统的操作系统等信息。</p>
+<p>超级块的副本位于设备起始处偏移<strong>1024 字节</strong>的位置，这是挂载文件系统时必不可少的部分。由于超级块的重要性，文件系统会在各个块组中保存它的备份副本。</p>
+<p>在<code>Ext2</code>的第一个版本（修订版 0）中，每个块组的起始位置都会保存一份超级块副本，以及组描述符块的备份。但在大型文件系统中，这种做法会占用大量空间，因此后续的修订版本提供了“稀疏超级块（<code>sparse superblock</code>）”功能，仅在某些特定的块组中保存超级块的副本。被选中的块组通常是编号为<strong>0、1，以及 3、5、7 的幂次方</strong>的那些。</p>
+<p>文件系统的修订版1及更高版本还引入了额外的字段，例如卷名、唯一识别号、<code>inode</code>大小，以及用于可选文件系统功能的空间（用于存储配置数据）。</p>
+<p>超级块中的所有字段（就像<code>Ext2</code>中所有其他结构一样）都以<strong>小端格式（little endian）</strong>存储在磁盘上，因此文件系统可以在不同的机器之间移植，而无需关心最初是在哪种机器上创建的。</p>
+<h4 id="符号链接（Symbolic-Links）"><a href="#符号链接（Symbolic-Links）" class="headerlink" title="符号链接（Symbolic Links）"></a>符号链接（Symbolic Links）</h4><p>符号链接（也称为<code>symlink</code>或软链接）是一种特殊类型的文件，它包含一个指向另一个文件或目录的<strong>引用路径</strong>，可以是<strong>绝对路径</strong>或<strong>相对路径</strong>，并参与路径解析的过程。</p>
+<p>对于大多数操作而言，符号链接是<strong>透明</strong>的：程序在读取或写入一个由符号链接指定的文件时，会像直接操作目标文件那样工作。然而，一些需要特别处理符号链接的程序（如备份工具）则可能识别并直接操作它们。</p>
+<p>符号链接<strong>本身只包含一个文本字符串</strong>，该字符串会被操作系统解释为对其他文件或目录的路径引用。它本身是一个独立的文件，即使目标不存在也可以单独存在。符号链接<strong>不会影响<code>inode</code>的引用计数</strong>：</p>
+<ul>
+<li>如果删除一个符号链接，其指向的目标不会受到影响；</li>
+<li>如果目标被移动、重命名或删除，符号链接仍然存在，但会变成指向不存在对象的链接，这种链接通常被称为<strong>“孤立链接”</strong>或<strong>“悬空链接”（dangling link）</strong>。</li>
+</ul>
+<p>符号链接本身也是文件系统对象，<strong>也有<code>inode</code><strong>。对于</strong>小于60字节</strong>的符号链接，其链接路径数据会<strong>直接存储在<code>inode</code>的字段中</strong>（这些字段原本用于保存数据块指针）。这是一个非常有效的优化，因为它避免了为短链接额外分配磁盘块，而大多数符号链接本来就短于 60 个字符。</p>
+<p>此外，符号链接还可以<strong>跨分区或跨文件系统</strong>，指向其他位置的文件或目录。</p>
+<p><strong>为什么是“60 字节”？</strong></p>
+<p>这个数字取决于：</p>
+<ul>
+<li><code>inode</code>中“数据块指针字段”的总字节数（通常为15个指针 × 4字节 &#x3D; 60字节），</li>
+<li>所以，只要路径字符串小于这个长度，<strong>就可以塞进<code>inode</code>里</strong>。</li>
+</ul>
+<hr>
+
+<h3 id="Chapter-3-Disk-Organization"><a href="#Chapter-3-Disk-Organization" class="headerlink" title="Chapter 3. Disk Organization"></a>Chapter 3. Disk Organization</h3><p>​	一个<code>Ext2</code>文件系统从<strong>偏移1024字节处的超级块（<code>superblock</code>）</strong>开始。对于使用<code>1KB</code>块大小格式化的卷来说，这是<strong>第1块</strong>；而对于更大的块大小，该偏移位于<strong>第0块的内部</strong>。需要注意的是，<strong>无论块大小如何，超级块的大小始终是固定的</strong>。</p>
+<p>在超级块之后的块中，是<strong>块组描述符表（Block Group Descriptor Table）</strong>，它提供了关于卷如何划分为块组的信息，并指明了每个块组中的 inode 位图、块位图以及 inode 表的位置。</p>
+<p>在 Ext2 的<strong>修订版 0（revision 0）</strong>中，每个块组包含：</p>
+<ul>
+<li>一份超级块副本</li>
+<li>一份块组描述符表副本</li>
+<li>一个块位图</li>
+<li>一个<code>inode</code>位图</li>
+<li>一个<code>inode</code>表</li>
+<li>以及数据块（<code>data blocks</code>）。</li>
+</ul>
+<p>从<strong>修订版 1</strong>起，引入了<strong>稀疏超级块（<code>sparse superblock</code>）</strong>功能，仅在特定块组中保存超级块和块组描述符表的副本。<br> 所有块组仍然包含块位图、<code>inode</code>位图、<code>inode</code>表和数据块。超级块的副本通常保存在块组0、1以及3、5、7的幂次块组中。</p>
+<p>每个块组中的块位图和<code>inode</code>位图各被限制为<strong>1个块大小</strong>，这对每个块组内可包含的总块数做出了限制。（可参考“块大小影响表”以了解更多信息。）</p>
+<p>每个数据块还可以被进一步划分为“碎片（<code>fragments</code>）”。但截至<code>Linux</code>内核版本 <strong>2.6.28</strong>，碎片机制仍<strong>未被实现</strong>，因此建议将<strong>碎片大小设置为等于块大小</strong>，以保持系统兼容性。</p>
+<p><strong>Table 3.1. Sample Floppy Disk Layout, 1KiB blocks</strong></p>
+<table>
+<thead>
+<tr>
+<th>Block Offset</th>
+<th>Length</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>byte 0</td>
+<td>512 bytes</td>
+<td>boot record (if present)</td>
+</tr>
+<tr>
+<td>byte 512</td>
+<td>512 bytes</td>
+<td>additional boot record data (if present)</td>
+</tr>
+<tr>
+<td>– block group 0, blocks 1 to 1439 –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>byte 1024</td>
+<td>1024 bytes</td>
+<td>superblock</td>
+</tr>
+<tr>
+<td>block 2</td>
+<td>1 block</td>
+<td>block group descriptor table</td>
+</tr>
+<tr>
+<td>block 3</td>
+<td>1 block</td>
+<td>block bitmap</td>
+</tr>
+<tr>
+<td>block 4</td>
+<td>1 block</td>
+<td>inode bitmap</td>
+</tr>
+<tr>
+<td>block 5</td>
+<td>23 blocks</td>
+<td>inode table</td>
+</tr>
+<tr>
+<td>block 28</td>
+<td>1412 blocks</td>
+<td>data blocks</td>
+</tr>
+</tbody></table>
+<p><strong>思考</strong>：前1024字节的作用？</p>
+<blockquote>
+<p>  ✅ 在<code>Ext2</code>中，<strong>第一个超级块（superblock）总是从偏移量 1024 字节开始</strong>，也就是说：</p>
+<ul>
+<li>前<strong>1024 字节</strong>是留空的，通常不会由文件系统使用</li>
+<li>它们被称为<strong>Boot Sector &#x2F; Boot Record</strong></li>
+<li>如果这个分区是启动分区，<code>BIOS/UEFI</code>会在这段区域加载引导代码</li>
+</ul>
+</blockquote>
+<p>📦 那么，这前1024字节里都有什么？</p>
+<table>
+<thead>
+<tr>
+<th>区域范围（字节）</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0 ~ 510</td>
+<td>可选的<code>MBR</code>&#x2F;引导代码</td>
+<td>如果这是启动分区，可存放<code>bootloader</code></td>
+</tr>
+<tr>
+<td>511 ~ 512</td>
+<td>引导扇区签名（0x55AA）</td>
+<td>标志引导扇区有效</td>
+</tr>
+<tr>
+<td>512 ~ 1023</td>
+<td>可选的其他引导信息</td>
+<td>某些系统会放置二级引导程序</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>  ⚠️ 如果这个分区不打算启动，那么这1024字节可以是全0，文件系统不会使用这段区域。</p>
+</blockquote>
+<p>🧠为什么<code>Ext2</code>把<code>superblock</code>放在<code>offset</code> 1024？</p>
+<p>这是个历史遗产，目的是<strong>兼容引导加载器</strong>。历史上<code>DOS</code>&#x2F;<code>BIOS</code> 兼容分区会用前几个扇区做启动代码，<code>Ext</code>系列设计时为了兼容，也把文件系统真正的数据往后挪了一点。</p>
+<p>另外，这种设计也便于跨平台兼容，比如：</p>
+<ul>
+<li>多操作系统共存</li>
+<li><code>GRUB</code>&#x2F;<code>LILO</code>引导程序可以放心写前1024字节</li>
+<li>文件系统在偏移1024开始，不会被破坏</li>
+</ul>
+<p><strong>block 0总是指向磁盘或分区的第一个扇区</strong>，如果存在引导记录（<code>boot record</code>），它就会存储在这个位置。</p>
+<p><strong>超级块（superblock）始终位于磁盘或分区起始偏移量的1024字节处</strong>。</p>
+<ul>
+<li>在以<strong>1KB 块大小</strong>格式化的文件系统中，这个位置是<strong>block 1</strong>；</li>
+<li>而在更大的块大小中，它仍然在<code>block 0</code>的1024字节偏移处。</li>
+</ul>
+<p>下面是一个 <strong>使用1KB块的20MB Ext2文件系统的结构示例</strong>：</p>
+<p>表格 3.2：<code>20MB</code>分区布局示例（以<code>1KB blocks</code>为单位）</p>
+<table>
+<thead>
+<tr>
+<th>Block 偏移</th>
+<th>长度</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>byte 0</td>
+<td>512字节</td>
+<td>引导记录（如果存在）</td>
+</tr>
+<tr>
+<td>byte 512</td>
+<td>512字节</td>
+<td>额外引导记录数据（如果存在）</td>
+</tr>
+<tr>
+<td>— block group 0，blocks 1到8192 —</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>byte 1024</td>
+<td>1024字节</td>
+<td>超级块</td>
+</tr>
+<tr>
+<td>block 2</td>
+<td>1块</td>
+<td>块组描述符表</td>
+</tr>
+<tr>
+<td>block 3</td>
+<td>1块</td>
+<td>块位图</td>
+</tr>
+<tr>
+<td>block 4</td>
+<td>1块</td>
+<td><code>inode</code>位图</td>
+</tr>
+<tr>
+<td>block 5</td>
+<td>214块</td>
+<td><code>inode</code>表</td>
+</tr>
+<tr>
+<td>block 219</td>
+<td>7974块</td>
+<td>数据块</td>
+</tr>
+<tr>
+<td>— block group 1，blocks 8193到16384 —</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>block 8193</td>
+<td>1块</td>
+<td>超级块备份</td>
+</tr>
+<tr>
+<td>block 8194</td>
+<td>1块</td>
+<td>块组描述符表备份</td>
+</tr>
+<tr>
+<td>block 8195</td>
+<td>1块</td>
+<td>块位图</td>
+</tr>
+<tr>
+<td>block 8196</td>
+<td>1块</td>
+<td>inode位图</td>
+</tr>
+<tr>
+<td>block 8197</td>
+<td>214块</td>
+<td>inode表</td>
+</tr>
+<tr>
+<td>block 8408</td>
+<td>7974块</td>
+<td>数据块</td>
+</tr>
+<tr>
+<td>— block group 2，blocks 16385到24576 —</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>block 16385</td>
+<td>1块</td>
+<td>块位图</td>
+</tr>
+<tr>
+<td>block 16386</td>
+<td>1块</td>
+<td>inode位图</td>
+</tr>
+<tr>
+<td>block 16387</td>
+<td>214 块</td>
+<td>inode表</td>
+</tr>
+<tr>
+<td>block 16601</td>
+<td>3879 块</td>
+<td>数据块</td>
+</tr>
+</tbody></table>
+<p>磁盘上的布局是<strong>可预测的</strong>，前提是了解几个关键信息：</p>
+<ul>
+<li><code>block size</code>（块大小）</li>
+<li><code>blocks per group</code>（每个块组的块数）</li>
+<li><code>inodes per group</code>（每组的 inode 数量）</li>
+</ul>
+<p>这些信息都存储在超级块中，或可以由超级块结构推导出来。</p>
+<p>不过，<strong>除非镜像是以可控参数精心构建的，否则</strong>不要假定磁盘上各种结构的位置（除了超级块）。<strong>应该始终优先加载超级块</strong>。</p>
+<p>注意：在使用 1KiB block size 的文件系统中，<strong>block 0不属于块组 0</strong>。原因是块组 0 必须从包含超级块的块开始。因此：</p>
+<ul>
+<li>在 1KiB block 系统中，block group 0 从 <strong>block 1</strong> 开始；</li>
+<li>在更大 block size（比如 2KiB、4KiB）系统中，block group 0 从 <strong>block 0</strong> 开始（因为 1024 字节落在 block 0 中）。</li>
+</ul>
+<p>有关详细信息，可以参阅超级块字段 <code>s_first_data_block</code>。</p>
+<h4 id="Superblock（超级块）"><a href="#Superblock（超级块）" class="headerlink" title="Superblock（超级块）"></a>Superblock（超级块）</h4><p><code>Superblock</code>总是位于格式化为<code>Ext2</code>及其后续变种（<code>Ext3</code>、<code>Ext4</code>）的文件、块设备或分区的起始偏移1024字节处。</p>
+<p>其结构从<code>Ext2</code>到<code>Ext3</code>和<code>Ext4</code>基本保持一致，仅做了些小的调整。</p>
+<p><strong>Table 3.3. Superblock Structure</strong></p>
+<table>
+<thead>
+<tr>
+<th>偏移（字节）</th>
+<th>大小（字节）</th>
+<th>字段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>4</td>
+<td><code>s_inodes_count</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>4</td>
+<td><code>s_blocks_count</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>4</td>
+<td><code>s_r_blocks_count</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td>4</td>
+<td><code>s_free_blocks_count</code></td>
+</tr>
+<tr>
+<td>16</td>
+<td>4</td>
+<td><code>s_free_inodes_count</code></td>
+</tr>
+<tr>
+<td>20</td>
+<td>4</td>
+<td><code>s_first_data_block</code></td>
+</tr>
+<tr>
+<td>24</td>
+<td>4</td>
+<td><code>s_log_block_size</code></td>
+</tr>
+<tr>
+<td>28</td>
+<td>4</td>
+<td><code>s_log_frag_size</code></td>
+</tr>
+<tr>
+<td>32</td>
+<td>4</td>
+<td><code>s_blocks_per_group</code></td>
+</tr>
+<tr>
+<td>36</td>
+<td>4</td>
+<td><code>s_frags_per_group</code></td>
+</tr>
+<tr>
+<td>40</td>
+<td>4</td>
+<td><code>s_inodes_per_group</code></td>
+</tr>
+<tr>
+<td>44</td>
+<td>4</td>
+<td><code>s_mtime</code></td>
+</tr>
+<tr>
+<td>48</td>
+<td>4</td>
+<td><code>s_wtime</code></td>
+</tr>
+<tr>
+<td>52</td>
+<td>2</td>
+<td><code>s_mnt_count</code></td>
+</tr>
+<tr>
+<td>54</td>
+<td>2</td>
+<td><code>s_max_mnt_count</code></td>
+</tr>
+<tr>
+<td>56</td>
+<td>2</td>
+<td><code>s_magic</code></td>
+</tr>
+<tr>
+<td>58</td>
+<td>2</td>
+<td><code>s_state</code></td>
+</tr>
+<tr>
+<td>60</td>
+<td>2</td>
+<td><code>s_errors</code></td>
+</tr>
+<tr>
+<td>62</td>
+<td>2</td>
+<td><code>s_minor_rev_level</code></td>
+</tr>
+<tr>
+<td>64</td>
+<td>4</td>
+<td><code>s_lastcheck</code></td>
+</tr>
+<tr>
+<td>68</td>
+<td>4</td>
+<td><code>s_checkinterval</code></td>
+</tr>
+<tr>
+<td>72</td>
+<td>4</td>
+<td><code>s_creator_os</code></td>
+</tr>
+<tr>
+<td>76</td>
+<td>4</td>
+<td><code>s_rev_level</code></td>
+</tr>
+<tr>
+<td>80</td>
+<td>2</td>
+<td><code>s_def_resuid</code></td>
+</tr>
+<tr>
+<td>82</td>
+<td>2</td>
+<td><code>s_def_resgid</code></td>
+</tr>
+<tr>
+<td>– EXT2_DYNAMIC_REV Specific –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>84</td>
+<td>4</td>
+<td><code>s_first_ino</code></td>
+</tr>
+<tr>
+<td>88</td>
+<td>2</td>
+<td><code>s_inode_size</code></td>
+</tr>
+<tr>
+<td>90</td>
+<td>2</td>
+<td><code>s_block_group_nr</code></td>
+</tr>
+<tr>
+<td>92</td>
+<td>4</td>
+<td><code>s_feature_compat</code></td>
+</tr>
+<tr>
+<td>96</td>
+<td>4</td>
+<td><code>s_feature_incompat</code></td>
+</tr>
+<tr>
+<td>100</td>
+<td>4</td>
+<td><code>s_feature_rocompat</code></td>
+</tr>
+<tr>
+<td>104</td>
+<td>16</td>
+<td><code>s_uuid</code></td>
+</tr>
+<tr>
+<td>120</td>
+<td>16</td>
+<td><code>s_volumn_name</code></td>
+</tr>
+<tr>
+<td>136</td>
+<td>64</td>
+<td><code>s_last_mounted</code></td>
+</tr>
+<tr>
+<td>200</td>
+<td>4</td>
+<td><code>s_algo_bitmap</code></td>
+</tr>
+<tr>
+<td>– Performance Hints –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>204</td>
+<td>1</td>
+<td><code>s_prealloc_blocks</code></td>
+</tr>
+<tr>
+<td>205</td>
+<td>1</td>
+<td><code>s_prealloc_dir_blocks</code></td>
+</tr>
+<tr>
+<td>206</td>
+<td>2</td>
+<td>(<code>alignment</code>)</td>
+</tr>
+<tr>
+<td>– Journaling Support –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>208</td>
+<td>16</td>
+<td><code>s_journal_uuid</code></td>
+</tr>
+<tr>
+<td>224</td>
+<td>4</td>
+<td><code>s_journal_inum</code></td>
+</tr>
+<tr>
+<td>228</td>
+<td>4</td>
+<td><code>s_journal_dev</code></td>
+</tr>
+<tr>
+<td>232</td>
+<td>4</td>
+<td><code>s_last_orphan</code></td>
+</tr>
+<tr>
+<td>– Directory Indexing Support –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>236</td>
+<td>4x4</td>
+<td><code>s_hash_seed</code></td>
+</tr>
+<tr>
+<td>252</td>
+<td>1</td>
+<td><code>s_def_hash_version</code></td>
+</tr>
+<tr>
+<td>253</td>
+<td>3</td>
+<td><code>padding - reserved for future expansion</code></td>
+</tr>
+<tr>
+<td>– Other options –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>256</td>
+<td>4</td>
+<td><code>s_default_mount_options</code></td>
+</tr>
+<tr>
+<td>260</td>
+<td>4</td>
+<td><code>s_first_meta_bg</code></td>
+</tr>
+<tr>
+<td>264</td>
+<td>760</td>
+<td><code>Unused - reserved for future revisions</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>s_inodes_count</code>：一个32位的值，表示文件系统中<code>inode</code>（包括已使用和未使用的）的总数。此值必须小于或等于 <code>(s_inodes_per_group * 块组数量)</code>。 它必须等于每个块组中定义的<code>inode</code>数的总和。</p>
+</li>
+<li><p><code>s_blocks_count</code>：一个32位的值，表示文件系统中块（包括已使用、未使用和保留块）的总数。此值必须小于或等于 <code>(s_blocks_per_group * 块组数量)</code>。如果最后一个块组由于卷大小的原因块数少于<code>s_blocks_per_group</code>，那么这个值可能小于上述计算结果。 它必须等于每个块组中定义的块数的总和。</p>
+</li>
+<li><p><code>s_r_blocks_count</code>：一个32位的值，表示为超级用户保留的块总数。当某个用户（无论是恶意还是非恶意）将文件系统填满时，这个值最为有用；超级用户仍可以使用这部分预留的块，用于编辑和保存配置文件。</p>
+</li>
+<li><p><code>s_free_blocks_count</code>：一个32位的值，表示空闲块的总数，包括保留块的数量（见 <code>s_r_blocks_count</code>）。它是所有块组中空闲块数量的总和。</p>
+</li>
+<li><p><code>s_free_inodes_count</code>：一个32位的值，表示空闲<code>inode</code>的总数。它是所有块组中空闲<code>inode</code>数的总和。</p>
+</li>
+<li><p><code>s_first_data_block</code>：一个32位的值，表示第一个数据块的编号，也就是说包含超级块结构的块的编号。</p>
+<p>注意：</p>
+<ul>
+<li><p>对于块大小大于<code>1KB</code>的文件系统，此值始终为<code>0</code>。</p>
+</li>
+<li><p>对于块大小为<code>1KB</code>的文件系统，此值始终为<code>1</code>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>​	超级块始终从磁盘的第1024字节开始，这通常是第三个扇区的第一个字节。</p>
+<ul>
+<li><code>s_log_block_size</code>：这个32位值表示需要将<code>1024</code>向左移动的位数，以计算块大小。此值只能为非负数。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">块大小 = 1024 &lt;&lt; <span class="string">s_log_block_size;</span></span><br></pre></td></tr></table></figure>
+
+<p>​	常见的块大小包括<code>1KB</code>、<code>2KB</code>、<code>4KB</code>和<code>8KB</code>。</p>
+<p>​	<strong>注意：</strong><br>​	在 Linux（至少到 2.6.28 版本）中，块大小必须不小于块设备的扇区大小，且不能大于体系结构支持的内存页大小。</p>
+<ul>
+<li><code>s_log_frag_size</code>：这个32位值用于计算碎片大小（fragment size），其方法是将<code>1024</code>向左或右移动相应位数</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (s_log_frag_size &gt;= <span class="number">0</span>)</span><br><span class="line">  碎片大小 = <span class="number">1024</span> &lt;&lt; s_log_frag_size;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  碎片大小 = <span class="number">1024</span> &gt;&gt; -s_log_frag_size;</span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>注意：</strong></p>
+<p>​	截至<code>Linux</code> 2.6.28，<code>Ext2</code>分区不支持碎片大小小于块大小的情况，因为此特性似乎并未被实现。</p>
+<ul>
+<li><p><code>s_blocks_per_group</code>：一个32位整数，表示每个块组（<code>block group</code>）中包含的块（<code>block</code>）数量。结合 <code>s_first_data_block</code> 字段，可以用来计算各个块组的边界。由于卷大小限制，最后一个块组的实际块数可能少于该字段中指定的数量。</p>
+</li>
+<li><p><code>s_frags_per_group</code>：一个32位整数，表示每个块组中包含的片段（<code>fragment</code>）数量。这个值也用于确定每个块组中块位图（<code>block bitmap</code>）的大小。</p>
+</li>
+<li><p><code>s_inodes_per_group</code>：一个32位整数，表示每个块组中包含的索引节点（<code>inode</code>）数量。同样也用于计算每个块组中 <code>inode</code>位图（<code>inode bitmap</code>）的大小。</p>
+<p>注意：每个块组的<code>inode</code>数量不能超过（块大小 × 8），因为<code>inode</code>位图必须能完全存放在一个块内。此外，该字段的值必须是可以整除单个块中可容纳的<code>inode</code>数量的，即必须是 <code>((1024 &lt;&lt; s_log_block_size) / s_inode_size)</code> 的整数倍。</p>
+</li>
+<li><p><code>s_mtime</code>：文件系统最后一次被挂载（<code>mount</code>）的时间，使用<code>POSIX</code>定义的<code>Unix</code>时间格式表示。</p>
+</li>
+<li><p><code>s_wtime</code>：文件系统最后一次被写入（<code>write</code>）的时间，同样采用<code>POSIX</code>的<code>Unix</code>时间格式。</p>
+</li>
+<li><p><code>s_mnt_count</code>：一个16位整数，记录自上次完整校验以来，文件系统被挂载的次数。</p>
+</li>
+<li><p><code>s_max_mnt_count</code>：一个16位整数，表示在进行一次完整校验前，文件系统允许挂载的最大次数。</p>
+</li>
+<li><p><code>s_magic</code>：一个16位整数，用于标识文件系统类型是否为<code>Ext2</code>。这个值固定为<code>EXT2_SUPER_MAGIC</code>（<code>0xEF53</code>）。</p>
+</li>
+<li><p><code>s_state</code>：</p>
+<p>一个16位整数，表示文件系统当前的状态：</p>
+<ul>
+<li><p>当文件系统被挂载时，状态会被设置为<code>EXT2_ERROR_FS</code>。</p>
+</li>
+<li><p>当文件系统被正常卸载后，状态会被设置为<code>EXT2_VALID_FS</code>。</p>
+</li>
+</ul>
+<p>如果在挂载过程中发现状态是<code>EXT2_ERROR_FS</code>，这表示文件系统上次未能正常卸载，可能存在错误，需要修复。通常在 <code>Linux</code>系统中，这意味着需要运行<code>fsck</code>工具进行检查。</p>
+</li>
+</ul>
+<p><strong>s_state 定义表：</strong></p>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_VALID_FS</code></td>
+<td>1</td>
+<td>正常卸载</td>
+</tr>
+<tr>
+<td><code>EXT2_ERROR_FS</code></td>
+<td>2</td>
+<td>检测到错误</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>s_errors</code>：一个16位整数，指定在检测到错误时，文件系统驱动应采取的应对措施。</p>
+<p><strong>s_errors 定义表：</strong></p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_ERRORS_CONTINUE</code></td>
+<td>1</td>
+<td>出错后继续运行</td>
+</tr>
+<tr>
+<td><code>EXT2_ERRORS_RO</code></td>
+<td>2</td>
+<td>将文件系统重新挂载为只读</td>
+</tr>
+<tr>
+<td><code>EXT2_ERRORS_PANIC</code></td>
+<td>3</td>
+<td>触发内核崩溃（panic）</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>s_minor_rev_level</code>：一个16位整数，表示当前主版本（<code>revision level</code>）下的小版本号。</p>
+</li>
+<li><p><code>s_lastcheck</code>：上一次进行文件系统完整性检查（<code>fsck</code>）的时间，采用<code>POSIX</code>定义的<code>Unix</code>时间格式。</p>
+</li>
+<li><p><code>s_checkinterval</code>：文件系统允许两次完整性检查之间的最大时间间隔（<code>Unix</code>时间），超过该间隔后应强制进行一次检查。</p>
+</li>
+<li><p><code>s_creator_os</code>：一个32位整数，表示创建该文件系统时使用的操作系统。定义的取值包括（未列出完整取值，通常有 <code>Linux</code>、<code>GNU Hurd</code>、<code>FreeBSD</code>等）。</p>
+</li>
+</ul>
+<p>表 3.6：<code>s_creator_os</code>字段的定义值</p>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_OS_LINUX</code></td>
+<td>0</td>
+<td><code>Linux</code>系统</td>
+</tr>
+<tr>
+<td><code>EXT2_OS_HURD</code></td>
+<td>1</td>
+<td><code>GNU HURD</code>系统</td>
+</tr>
+<tr>
+<td><code>EXT2_OS_MASIX</code></td>
+<td>2</td>
+<td><code>MASIX</code>系统</td>
+</tr>
+<tr>
+<td><code>EXT2_OS_FREEBSD</code></td>
+<td>3</td>
+<td><code>FreeBSD</code>系统</td>
+</tr>
+<tr>
+<td><code>EXT2_OS_LITES</code></td>
+<td>4</td>
+<td><code>Lites</code>系统</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>s_rev_level</code>：32位整数，表示文件系统的修订版本号。</li>
+</ul>
+<p>表 3.7：<code>s_rev_level</code>字段的定义值</p>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_GOOD_OLD_REV</code></td>
+<td>0</td>
+<td>旧版本（<code>Revision 0</code>）</td>
+</tr>
+<tr>
+<td><code>EXT2_DYNAMIC_REV</code></td>
+<td>1</td>
+<td>动态修订版本（<code>Revision 1</code>），支持可变<code>inode</code>大小、扩展属性等特性</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>s_def_resuid</code>：一个16位整数，表示预留块的默认用户<code>ID</code>。</li>
+</ul>
+<blockquote>
+<p>  注：在<code>Linux</code>系统中，默认值为<code>EXT2_DEF_RESUID = 0</code>。</p>
+</blockquote>
+<ul>
+<li><code>s_def_resgid</code>：一个16位整数，表示预留块的默认用户组<code>ID</code>。</li>
+</ul>
+<blockquote>
+<p>  注：在<code>Linux</code>系统中，默认值为<code>EXT2_DEF_RESGID = 0</code>。</p>
+</blockquote>
+<ul>
+<li><p><code>s_first_ino</code>：一个32位整数，表示普通文件可用的第一个<code>inode</code>的编号。在<code>Revision 0</code>中，该值固定为<code>11</code>（即 <code>EXT2_GOOD_OLD_FIRST_INO</code>）。在<code>Revision 1</code>及以上版本中，可以设为任意合法值。</p>
+</li>
+<li><p><code>s_inode_size</code>：一个16位整数，表示<code>inode</code>结构的大小。在<code>Revision 0</code>中，此值固定为128（即 <code>EXT2_GOOD_OLD_INODE_SIZE</code>）。在<code>Revision 1</code>及以上版本中，此值必须是2的幂，并且不能大于块大小（<code>1 &lt;&lt; s_log_block_size</code>）。</p>
+</li>
+<li><p><code>s_block_group_nr</code>：一个16位整数，表示当前超级块所在的块组编号。该字段可用于从备份超级块中恢复文件系统结构。</p>
+</li>
+<li><p><code>s_feature_compat</code>：一个32位的位掩码，表示兼容特性（<code>compatible features</code>）。文件系统驱动可以选择是否支持这些特性，不支持也不会破坏元数据结构。</p>
+</li>
+</ul>
+<p>表 3.8：兼容特性（<code>s_feature_compat</code>）定义</p>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_FEATURE_COMPAT_DIR_PREALLOC</code></td>
+<td>0x0001</td>
+<td>新建目录时预分配块</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_COMPAT_IMAGIC_INODES</code></td>
+<td>0x0002</td>
+<td>特殊<code>magic inode</code>支持（较少使用）</td>
+</tr>
+<tr>
+<td><code>EXT3_FEATURE_COMPAT_HAS_JOURNAL</code></td>
+<td>0x0004</td>
+<td>存在<code>Ext3</code>日志</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_COMPAT_EXT_ATTR</code></td>
+<td>0x0008</td>
+<td><code>inode</code>含有扩展属性</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_COMPAT_RESIZE_INO</code></td>
+<td>0x0010</td>
+<td>使用非标准<code>inode</code>大小</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_COMPAT_DIR_INDEX</code></td>
+<td>0x0020</td>
+<td>支持目录索引（<code>HTree</code>）</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>s_feature_incompat</code>：一个32位的位掩码，表示不兼容特性（<code>incompatible features</code>）。如果文件系统驱动不支持这些特性，<strong>应拒绝挂载</strong>该文件系统。</li>
+</ul>
+<p>不支持这些特性的实现无法正确读取或操作文件系统，例如若启用了压缩而驱动不支持解压，则可导致可执行文件无法正常运行。</p>
+<p>表 3.9：不兼容特性（<code>s_feature_incompat</code>）定义</p>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_FEATURE_INCOMPAT_COMPRESSION</code></td>
+<td>0x0001</td>
+<td>使用了磁盘&#x2F;文件压缩</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_INCOMPAT_FILETYPE</code></td>
+<td>0x0002</td>
+<td>目录项中包含文件类型</td>
+</tr>
+<tr>
+<td><code>EXT3_FEATURE_INCOMPAT_RECOVER</code></td>
+<td>0x0004</td>
+<td>需要从<code>journal</code>中恢复</td>
+</tr>
+<tr>
+<td><code>EXT3_FEATURE_INCOMPAT_JOURNAL_DEV</code></td>
+<td>0x0008</td>
+<td><code>journal</code>存储在独立设备上</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_INCOMPAT_META_BG</code></td>
+<td>0x0010</td>
+<td>使用元块组（<code>meta block group</code>）</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>s_feature_ro_compat</code>：32位的只读兼容特性位掩码（<code>bitmask</code>）。如果文件系统实现不支持其中任意一项特性，应<strong>以只读方式挂载该文件系统</strong>。</li>
+</ul>
+<p>表 3.10：定义的<code>s_feature_ro_compat</code>值</p>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER</code></td>
+<td><code>0x0001</code></td>
+<td>稀疏超级块（Sparse Superblock）</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_RO_COMPAT_LARGE_FILE</code></td>
+<td><code>0x0002</code></td>
+<td>大文件支持，支持 64 位文件大小</td>
+</tr>
+<tr>
+<td><code>EXT2_FEATURE_RO_COMPAT_BTREE_DIR</code></td>
+<td><code>0x0004</code></td>
+<td>目录条目采用二叉树排序（B-tree 目录索引）</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>s_uuid</code>：128位的卷标<code>UUID</code>，用作文件系统的唯一标识符。应尽量保证每个格式化后的文件系统具有唯一的<code>UUID</code>。</p>
+</li>
+<li><p><code>s_volume_name</code>：16字节的卷名字段，通常未被广泛使用。合法的卷名应仅包含<code>ISO Latin-1</code>字符，并以0结尾（即<code>null</code>终止）。</p>
+</li>
+<li><p><code>s_last_mounted</code>：64字节的路径字符串，表示上次挂载该文件系统的挂载点路径。虽然不是核心字段，但可用于在未指定挂载点时自动寻找合适的挂载路径。路径也应以0结尾，且字符应使用<code>ISO Latin-1</code>编码。</p>
+</li>
+<li><p><code>s_algo_bitmap</code>：32位的位图，用于指示所使用的压缩算法。</p>
+</li>
+</ul>
+<blockquote>
+<p>  💡说明：<br>   <code>Linux</code> 2.4与2.6支持压缩功能（需应用<code>e2compr</code>补丁）。<br>   更多信息请访问 <a href="http://e2compr.sourceforge.net/">http://e2compr.sourceforge.net/</a></p>
+</blockquote>
+<p>表 3.11：定义的<code>s_algo_bitmap</code>值</p>
+<table>
+<thead>
+<tr>
+<th>常量名</th>
+<th>位编号</th>
+<th>二进制值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_LZV1_ALG</code></td>
+<td>0</td>
+<td><code>0x00000001</code></td>
+</tr>
+<tr>
+<td><code>EXT2_LZRW3A_ALG</code></td>
+<td>1</td>
+<td><code>0x00000002</code></td>
+</tr>
+<tr>
+<td><code>EXT2_GZIP_ALG</code></td>
+<td>2</td>
+<td><code>0x00000004</code></td>
+</tr>
+<tr>
+<td><code>EXT2_BZIP2_ALG</code></td>
+<td>3</td>
+<td><code>0x00000008</code></td>
+</tr>
+<tr>
+<td><code>EXT2_LZO_ALG</code></td>
+<td>4</td>
+<td><code>0x00000010</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>s_prealloc_blocks</code>：8位值，表示创建新普通文件时建议预分配的块数。在<code>Linux</code> 2.6.28中，只有<code>Ext4</code>会实际执行预分配操作。即使<code>Linux</code>遇到块数超出实际文件大小的情况，也不会出现问题。</p>
+</li>
+<li><p><code>s_prealloc_dir_blocks</code>：8位值，表示创建新目录时建议预分配的块数。<code>Linux</code> 2.6.28 仅在启用<code>EXT4_FEATURE_COMPAT_DIR_PREALLOC</code> 标志时，在<code>Ext4</code>上执行预分配。由于<code>Linux</code>不会主动回收目录分配的块，因此进行预分配是安全的，且与<code>Linux</code>保持兼容。</p>
+</li>
+<li><p><code>s_journal_uuid</code>：16字节的<code>UUID</code>，表示日志超级块所在卷的<code>UUID</code>。参见<code>Ext3</code>日志机制（<code>Journaling</code>）了解详情。</p>
+</li>
+<li><p><code>s_journal_inum</code>：32位值，表示日志文件的<code>inode</code>编号。参见<code>Ext3</code>日志机制。</p>
+</li>
+<li><p><code>s_journal_dev</code>：32位值，表示日志文件所在设备的设备编号。参见<code>Ext3</code>日志机制。</p>
+</li>
+<li><p><code>s_last_orphan</code>：32位的<code>inode</code>编号，指向待删除<code>inode</code>链表中的第一个<code>inode</code>。参见<code>Ext3</code>日志机制。</p>
+</li>
+<li><p><code>s_hash_seed</code>：一个包含4个32位整数的数组，作为目录索引（<code>Directory Indexing</code>）中哈希算法的种子值。</p>
+</li>
+<li><p><code>s_def_hash_version</code>：8位值，表示目录索引中默认使用的哈希算法版本。</p>
+</li>
+<li><p><code>s_default_mount_options</code>：32位值，表示该文件系统的默认挂载选项。</p>
+</li>
+</ul>
+<blockquote>
+<p>  TODO：待补充该字段的具体含义与位定义。</p>
+</blockquote>
+<ul>
+<li><code>s_first_meta_bg</code>：32位值，表示首个元块组（<code>meta block group</code>）的块组编号。</li>
+</ul>
+<blockquote>
+<p>  TODO：待确认该字段是否为<code>Ext3</code>的扩展字段。</p>
+</blockquote>
+<h4 id="块组描述符表（Block-Group-Descriptor-Table）"><a href="#块组描述符表（Block-Group-Descriptor-Table）" class="headerlink" title="块组描述符表（Block Group Descriptor Table）"></a>块组描述符表（Block Group Descriptor Table）</h4><p>​	块组描述符表是一个由多个块组描述符组成的数组，用于定义所有块组的相关参数。它提供了关于<code>inode</code>位图、<code>inode</code>表、块位图的位置，以及空闲块数、空闲<code>inode</code>数和其他有用信息。</p>
+<p>该表紧随超级块之后，即为第一个块。对于使用<code>1KB</code>块大小的文件系统，这是第3个块；而对于使用<code>2KB</code>或更大块大小的文件系统，则是第2个块。每一个超级块的备份副本旁边也保存了块组描述符表的备份。</p>
+<p>根据块组的数量，该表可能会占用多个块。在存疑时，应以超级块中的信息为准。</p>
+<p>块组描述符的结构如下：</p>
+<p>表 3.12 块组描述符结构（<code>Block Group Descriptor Structure</code>）</p>
+<table>
+<thead>
+<tr>
+<th>偏移量（字节）</th>
+<th>大小（字节）</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>4</td>
+<td><code>bg_block_bitmap</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>4</td>
+<td><code>bg_inode_bitmap</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>4</td>
+<td><code>bg_inode_table</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td>2</td>
+<td><code>bg_free_blocks_count</code></td>
+</tr>
+<tr>
+<td>14</td>
+<td>2</td>
+<td><code>bg_free_inodes_count</code></td>
+</tr>
+<tr>
+<td>16</td>
+<td>2</td>
+<td><code>bg_used_dirs_count</code></td>
+</tr>
+<tr>
+<td>18</td>
+<td>2</td>
+<td><code>bg_pad</code></td>
+</tr>
+<tr>
+<td>20</td>
+<td>12</td>
+<td><code>bg_reserved</code></td>
+</tr>
+</tbody></table>
+<p>文件系统中的每个块组都有一个对应的<code>group_desc</code>结构体。每个结构体只描述其对应的那个块组，与其他块组无关。块组描述符表汇总了所有块组的相关信息。</p>
+<p><strong>注意：</strong> 所有“块 ID”都是绝对块编号。</p>
+<p>字段说明：</p>
+<ul>
+<li><p><code>bg_block_bitmap</code></p>
+<p>表示该块组中“块位图”所在的第一个块的32位块<code>ID</code>。实际的位图数据从该块开始向后分布在连续的块中。</p>
+</li>
+<li><p><code>bg_inode_bitmap</code></p>
+<p>表示该块组中“inode 位图”所在的第一个块的32位块<code>ID</code>。</p>
+</li>
+<li><p><code>bg_inode_table</code></p>
+<p>表示该块组中“inode 表”所在的第一个块的32位块<code>ID</code>。</p>
+</li>
+<li><p><code>bg_free_blocks_count</code></p>
+<p>该块组中空闲块的总数（16位）。</p>
+</li>
+<li><p><code>bg_free_inodes_count</code><br>该块组中空闲<code>inode</code>的总数（16位）。</p>
+</li>
+<li><p><code>bg_used_dirs_count</code></p>
+<p>表示该块组中已分配给目录的<code>inode</code>数量（16位）。</p>
+</li>
+<li><p><code>bg_pad</code></p>
+<p>用于结构体的对齐（16位填充字段）。</p>
+</li>
+<li><p><code>bg_reserved</code></p>
+<p>为未来扩展保留的 12 字节空间。</p>
+</li>
+</ul>
+<h4 id="块位图（Block-Bitmap）"><a href="#块位图（Block-Bitmap）" class="headerlink" title="块位图（Block Bitmap）"></a>块位图（Block Bitmap）</h4><p>​	在小型文件系统中，每个块组的“块位图”通常位于该组的第一个块；如果存在超级块备份，则为第二个块。其精确位置可通过该组描述符中的<code>bg_block_bitmap</code>字段获得。</p>
+<p>每一位表示该块组中一个块的使用状态：</p>
+<ul>
+<li>1表示“已使用”，</li>
+<li>0表示“空闲”。</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>第1个块由第0字节的第0位表示；</li>
+<li>第2个块由第0字节的第1位表示；</li>
+<li>第8个块对应的是第0字节的最高位（第7位）；</li>
+<li>第9个块则对应第1字节的最低位（第0位）。</li>
+</ul>
+<h4 id="Inode-位图（Inode-Bitmap）"><a href="#Inode-位图（Inode-Bitmap）" class="headerlink" title="Inode 位图（Inode Bitmap）"></a>Inode 位图（Inode Bitmap）</h4><p>​	“Inode 位图”的工作方式与“块位图”相似，不过每一位表示的是<code>inode</code>的使用状态，而不是块。由于<code>inode</code>编号从 1 开始，因此第一个块组的<code>inode</code>位图中的第一位代表的是<code>inode</code>编号1。</p>
+<p>每个块组有一个<code>inode</code>位图，其位置可通过相应描述符中的<code>bg_inode_bitmap</code>字段确定。</p>
+<p>在<code>inode</code>表创建时，所有保留的<code>inode</code>会被标记为“已使用”。在版本0中，前11个<code>inode</code>是保留<code>inode</code>。</p>
+<h4 id="Inode-表（Inode-Table）"><a href="#Inode-表（Inode-Table）" class="headerlink" title="Inode 表（Inode Table）"></a>Inode 表（Inode Table）</h4><p>​	Inode表用于记录系统中每一个目录、普通文件、符号链接或特殊文件的信息，包括它们的位置、大小、类型和访问权限等。<code>inode</code>本身并不包含文件名，文件名存储在目录文件中。</p>
+<p>每个块组有一个<code>inode</code>表，其起始块号由相应的<code>bg_inode_table</code>字段指定。每个表中有<code>s_inodes_per_group</code>个<code>inode</code>。</p>
+<p>每个<code>inode</code>表示系统中的一个“文件”，这个“文件”可以是目录、套接字、缓冲区、字符设备、块设备、符号链接或普通文件。也就是说，<code>inode</code>是描述一个实体的结构体，记录其在磁盘中的位置、大小、权限和所有者等信息。</p>
+<p>一个<code>inode</code>的结构大致如下（略）。</p>
+<p>表 3.13. Inode 结构</p>
+<table>
+<thead>
+<tr>
+<th>偏移量 (字节)</th>
+<th>大小 (字节)</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>2</td>
+<td><code>i_mode</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td><code>i_uid</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>4</td>
+<td><code>i_size</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>4</td>
+<td><code>i_atime</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td>4</td>
+<td><code>i_ctime</code></td>
+</tr>
+<tr>
+<td>16</td>
+<td>4</td>
+<td><code>i_mtime</code></td>
+</tr>
+<tr>
+<td>20</td>
+<td>4</td>
+<td><code>i_dtime</code></td>
+</tr>
+<tr>
+<td>24</td>
+<td>2</td>
+<td><code>i_gid</code></td>
+</tr>
+<tr>
+<td>26</td>
+<td>2</td>
+<td><code>i_links_count</code></td>
+</tr>
+<tr>
+<td>28</td>
+<td>4</td>
+<td><code>i_blocks</code></td>
+</tr>
+<tr>
+<td>32</td>
+<td>4</td>
+<td><code>i_flags</code></td>
+</tr>
+<tr>
+<td>36</td>
+<td>4</td>
+<td><code>i_osd1</code></td>
+</tr>
+<tr>
+<td>40</td>
+<td>15 x 4</td>
+<td><code>i_block</code></td>
+</tr>
+<tr>
+<td>100</td>
+<td>4</td>
+<td><code>i_generation</code></td>
+</tr>
+<tr>
+<td>104</td>
+<td>4</td>
+<td><code>i_file_acl</code></td>
+</tr>
+<tr>
+<td>108</td>
+<td>4</td>
+<td><code>i_dir_acl</code></td>
+</tr>
+<tr>
+<td>112</td>
+<td>4</td>
+<td><code>i_faddr</code></td>
+</tr>
+<tr>
+<td>116</td>
+<td>12</td>
+<td><code>i_osd2</code></td>
+</tr>
+</tbody></table>
+<p><code>inode</code>表的前几个条目是保留的。在修订版本0中，有11个条目是保留的，而在修订版本1（<code>EXT2_DYNAMIC_REV</code>）及以后版本中，保留的<code>inode</code>条目数量通过超级块结构中的<code>s_first_ino</code>指定。以下是已知的保留<code>inode</code>条目列表：</p>
+<p>表 3.14. 已定义的保留<code>Inode</code></p>
+<table>
+<thead>
+<tr>
+<th>常量名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_BAD_INO</code></td>
+<td>1</td>
+<td>坏块<code>inode</code></td>
+</tr>
+<tr>
+<td><code>EXT2_ROOT_INO</code></td>
+<td>2</td>
+<td>根目录<code>inode</code></td>
+</tr>
+<tr>
+<td><code>EXT2_ACL_IDX_INO</code></td>
+<td>3</td>
+<td><code>ACL</code>索引<code>inode</code>（已弃用？）</td>
+</tr>
+<tr>
+<td><code>EXT2_ACL_DATA_INO</code></td>
+<td>4</td>
+<td><code>ACL</code>数据<code>inode</code>（已弃用？）</td>
+</tr>
+<tr>
+<td><code>EXT2_BOOT_LOADER_INO</code></td>
+<td>5</td>
+<td>启动加载程序<code>inode</code></td>
+</tr>
+<tr>
+<td><code>EXT2_UNDEL_DIR_INO</code></td>
+<td>6</td>
+<td>删除恢复目录<code>inode</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>i_mode</code>：16位值，用于指示所描述文件的格式和访问权限。以下是可能的值，它们可以以各种方式组合：</li>
+</ul>
+<p>表 3.15. 定义的<code>i_mode</code>值</p>
+<table>
+<thead>
+<tr>
+<th>常量</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>– 文件格式 –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>EXT2_S_IFSOCK</code></td>
+<td>0xC000</td>
+<td>套接字文件</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IFLNK</code></td>
+<td>0xA000</td>
+<td>符号链接</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IFREG</code></td>
+<td>0x8000</td>
+<td>普通文件</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IFBLK</code></td>
+<td>0x6000</td>
+<td>块设备</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IFDIR</code></td>
+<td>0x4000</td>
+<td>目录</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IFCHR</code></td>
+<td>0x2000</td>
+<td>字符设备</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IFIFO</code></td>
+<td>0x1000</td>
+<td><code>FIFO</code>（先进先出）</td>
+</tr>
+<tr>
+<td>– 进程执行用户&#x2F;组重载 –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>EXT2_S_ISUID</code></td>
+<td>0x0800</td>
+<td>设置进程用户<code>ID</code></td>
+</tr>
+<tr>
+<td><code>EXT2_S_ISGID</code></td>
+<td>0x0400</td>
+<td>设置进程组<code>ID</code></td>
+</tr>
+<tr>
+<td><code>EXT2_S_ISVTX</code></td>
+<td>0x0200</td>
+<td>粘滞位</td>
+</tr>
+<tr>
+<td>– 访问权限 –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>EXT2_S_IRUSR</code></td>
+<td>0x0100</td>
+<td>用户可读</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IWUSR</code></td>
+<td>0x0080</td>
+<td>用户可写</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IXUSR</code></td>
+<td>0x0040</td>
+<td>用户可执行</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IRGRP</code></td>
+<td>0x0020</td>
+<td>组可读</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IWGRP</code></td>
+<td>0x0010</td>
+<td>组可写</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IXGRP</code></td>
+<td>0x0008</td>
+<td>组可执行</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IROTH</code></td>
+<td>0x0004</td>
+<td>其他人可读</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IWOTH</code></td>
+<td>0x0002</td>
+<td>其他人可写</td>
+</tr>
+<tr>
+<td><code>EXT2_S_IXOTH</code></td>
+<td>0x0001</td>
+<td>其他人可执行</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>i_uid</code>：16位用户<code>ID</code>，关联于该文件。</p>
+</li>
+<li><p><code>i_size</code>：在修订版本0中，这是一个（有符号）32位值，表示文件的大小（以字节为单位）。在修订版本1及以后版本中，并且仅适用于常规文件，它表示文件大小的低32位；上32位位于<code>i_dir_acl</code>中。</p>
+</li>
+<li><p><code>i_atime</code>：32位值，表示自1970年1月1日以来最后一次访问该<code>inode</code>的时间（秒）。</p>
+</li>
+<li><p><code>i_ctime</code>：32位值，表示自1970年1月1日以来该<code>inode</code>创建的时间（秒）。</p>
+</li>
+<li><p><code>i_mtime</code>：32位值，表示自1970年1月1日以来最后一次修改该<code>inode</code>的时间（秒）。</p>
+</li>
+<li><p><code>i_dtime</code>：32位值，表示自1970年1月1日以来该<code>inode</code>删除的时间（秒）。</p>
+</li>
+<li><p><code>i_gid</code>：16位值，表示具有访问该文件权限的<code>POSIX</code>组<code>ID</code>。</p>
+</li>
+<li><p><code>i_links_count</code>：16位值，指示该<code>inode</code>被链接的次数（被引用的次数）。大多数文件的链接计数为1，具有硬链接的文件每个硬链接都会增加计数。符号链接不会影响<code>inode</code>的链接计数。当链接计数为0时，<code>inode</code>及其所有关联的块会被释放。</p>
+</li>
+<li><p><code>i_blocks</code>：32位值，表示为包含该<code>inode</code>数据而保留的512字节块的总数，无论这些块是否被实际使用。这些保留块的块号存储在<code>i_block</code>数组中。由于该值表示的是512字节块，而不是文件系统块，因此该值不应直接用作<code>i_block</code>数组的索引。相反，<code>i_block</code>数组的最大索引应通过<code>i_blocks / ((1024&lt;&lt;s_log_block_size)/512)</code>计算，简化后为 <code>i_blocks/(2&lt;&lt;s_log_block_size)</code>。</p>
+</li>
+<li><p><code>i_flags</code>：32位值，指示在访问该<code>inode</code>数据时，<code>Ext2</code>实现应该如何行为。</p>
+</li>
+</ul>
+<p><strong>表 3.16. 已定义的 i_flags 值</strong></p>
+<table>
+<thead>
+<tr>
+<th>常量名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXT2_SECRM_FL</code></td>
+<td>0x00000001</td>
+<td>安全删除</td>
+</tr>
+<tr>
+<td><code>EXT2_UNRM_FL</code></td>
+<td>0x00000002</td>
+<td>记录用于恢复删除的文件</td>
+</tr>
+<tr>
+<td><code>EXT2_COMPR_FL</code></td>
+<td>0x00000004</td>
+<td>压缩文件</td>
+</tr>
+<tr>
+<td><code>EXT2_SYNC_FL</code></td>
+<td>0x00000008</td>
+<td>同步更新</td>
+</tr>
+<tr>
+<td><code>EXT2_IMMUTABLE_FL</code></td>
+<td>0x00000010</td>
+<td>不可更改的文件</td>
+</tr>
+<tr>
+<td><code>EXT2_APPEND_FL</code></td>
+<td>0x00000020</td>
+<td>仅追加操作</td>
+</tr>
+<tr>
+<td><code>EXT2_NODUMP_FL</code></td>
+<td>0x00000040</td>
+<td>不进行转储&#x2F;删除文件</td>
+</tr>
+<tr>
+<td><code>EXT2_NOATIME_FL</code></td>
+<td>0x00000080</td>
+<td>不更新 .i_atime</td>
+</tr>
+<tr>
+<td>– 压缩使用保留 –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>EXT2_DIRTY_FL</code></td>
+<td>0x00000100</td>
+<td>脏文件（已修改）</td>
+</tr>
+<tr>
+<td><code>EXT2_COMPRBLK_FL</code></td>
+<td>0x00000200</td>
+<td>压缩块</td>
+</tr>
+<tr>
+<td><code>EXT2_NOCOMPR_FL</code></td>
+<td>0x00000400</td>
+<td>访问原始压缩数据</td>
+</tr>
+<tr>
+<td><code>EXT2_ECOMPR_FL</code></td>
+<td>0x00000800</td>
+<td>压缩错误</td>
+</tr>
+<tr>
+<td>– 压缩标志结束 –</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>EXT2_BTREE_FL</code></td>
+<td>0x00001000</td>
+<td>B树格式目录</td>
+</tr>
+<tr>
+<td><code>EXT2_INDEX_FL</code></td>
+<td>0x00001000</td>
+<td>哈希索引目录</td>
+</tr>
+<tr>
+<td><code>EXT2_IMAGIC_FL</code></td>
+<td>0x00002000</td>
+<td>AFS 目录</td>
+</tr>
+<tr>
+<td><code>EXT3_JOURNAL_DATA_FL</code></td>
+<td>0x00004000</td>
+<td>日志文件数据</td>
+</tr>
+<tr>
+<td><code>EXT2_RESERVED_FL</code></td>
+<td>0x80000000</td>
+<td>为 ext2 库保留</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>i_osd1</code>：32位操作系统相关值。</p>
+</li>
+<li><p><code>Hurd</code>：32位值，标记为“translator”。</p>
+</li>
+<li><p><code>Linux</code>：当前保留的32位值。</p>
+</li>
+<li><p><code>Masix</code>：当前保留的32位值。</p>
+</li>
+<li><p><code>i_block</code>：15个32位块编号，指向包含此 inode 数据的块。前12个块为直接块。数组中的第13个条目是第一个间接块的块号；该块包含一个包含数据块 ID 的块数组。因此，文件的第13个块将是间接块中包含的第一个块 ID。在 1KiB 块大小下，文件数据的块 13 到 268 都包含在该间接块中。第14个条目是第一个双重间接块的块号；该块包含一个间接块 ID 数组，每个间接块包含一个包含数据的块数组。在 1KiB 块大小下，每个双重间接块将包含 256 个间接块，每个间接块包含 256 个直接块，总共 65536 个数据块。第15个条目是三重间接块的块号；该块包含一个双重间接块 ID 数组，每个双重间接块包含一个间接块数组，每个间接块包含一个直接块数组。在 1KiB 文件系统中，每个三重间接块总共包含 16777216 个块。在 Ext2 的原始实现中，数组中的值为 0 时表示终止，并且没有更多的块被定义。在稀疏文件中，某些块已经分配，而其他块尚未分配，值 0 用于指示哪些块尚未分配。</p>
+</li>
+<li><p><code>i_generation</code>：32位值，用于表示文件版本（<code>NFS</code>使用）。</p>
+</li>
+<li><p><code>i_file_acl</code>：32位值，指示包含扩展属性的块号。在修订版0中，此值始终为0。</p>
+<p><strong>注</strong>：有关<code>Linux</code>上<code>ACL</code>补丁和实现状态的更多信息，请访问 <a href="http://acl.bestbits.at/">http://acl.bestbits.at/</a></p>
+</li>
+<li><p><code>i_dir_acl</code>：在修订版0中，此32位值始终为0。在修订版1中，对于常规文件，此32位值包含64位文件大小的高32位。</p>
+<p><strong>注</strong>：如果文件不是常规文件（例如块设备、目录等），<code>Linux</code>将此值设置为0。理论上，此值可以指向包含目录或特殊文件扩展属性的块。</p>
+</li>
+<li><p><code>i_faddr</code>：32位值，指示文件碎片的位置。</p>
+<p><strong>注</strong>：在<code>Linux</code>和<code>GNU HURD</code>中，由于不支持碎片，因此此值始终为0。在<code>Ext4</code>中，此值现在标记为过时。理论上，这应包含托管实际碎片的块号。碎片号及其大小将包含在<code>i_osd2</code>结构中。</p>
+</li>
+</ul>
+<h5 id="Inode-i-osd2结构体"><a href="#Inode-i-osd2结构体" class="headerlink" title="Inode i_osd2结构体"></a><code>Inode i_osd2</code>结构体</h5><p>该结构体为操作系统相关的96位结构体。</p>
+<p><strong>Hurd系统</strong></p>
+<p><strong>表 3.17. Inode i_osd2 结构体（Hurd）</strong></p>
+<table>
+<thead>
+<tr>
+<th>偏移量（字节）</th>
+<th>大小（字节）</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>1</td>
+<td><code>h_i_frag</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td><code>h_i_fsize</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td><code>h_i_mode_high</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>2</td>
+<td><code>h_i_uid_high</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>2</td>
+<td><code>h_i_gid_high</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>4</td>
+<td><code>h_i_author</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>h_i_frag</code>：8位片段编号。由于<code>GNU HURD</code>不支持文件片段，此值始终为0。在<code>Ext4</code>中已废弃。</li>
+<li><code>h_i_fsize</code>：8位片段大小。与上类似，始终为0，已在<code>Ext4</code>中废弃。</li>
+<li><code>h_i_mode_high</code>：文件权限<code>mode</code>字段的高16位。</li>
+<li><code>h_i_uid_high</code>：用户 ID 的高16位。</li>
+<li><code>h_i_gid_high</code>：组<code>ID</code>的高16位。</li>
+<li><code>h_i_author</code>：分配给该文件的作者用户<code>ID</code>，32位。如果该值为-1，则使用标准的<code>POSIX</code>用户<code>ID</code>。</li>
+</ul>
+<p><strong>Linux 系统</strong></p>
+<p><strong>表 3.18. Inode i_osd2 结构体（Linux）</strong></p>
+<table>
+<thead>
+<tr>
+<th>偏移量（字节）</th>
+<th>大小（字节）</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>1</td>
+<td><code>l_i_frag</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td><code>l_i_fsize</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td>保留字段</td>
+</tr>
+<tr>
+<td>4</td>
+<td>2</td>
+<td><code>l_i_uid_high</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>2</td>
+<td><code>l_i_gid_high</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>4</td>
+<td>保留字段</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>l_i_frag</code>：8位片段编号。<code>Linux</code>不支持片段，因此该值总为 0。</p>
+<p><strong>注意：</strong> 如果<code>i_faddr</code>的值为 0，新的<code>Ext2</code>实现应完全忽略该字段。</p>
+<p><strong>重要提示：</strong>在<code>Ext4</code>中，此字段与<code>l_i_fsize</code>一起表示<code>inode</code>数据块数的高16位（共48位）。</p>
+</li>
+<li><p><code>l_i_fsize</code>：8位片段大小。含义同上。</p>
+<p><strong>注意和提示：</strong> 与<code>l_i_frag</code>说明相同。</p>
+</li>
+<li><p><code>l_i_uid_high</code>：用户<code>ID</code>的高16位。</p>
+</li>
+<li><p><code>l_i_gid_high</code>：组<code>ID</code>的高16位。</p>
+</li>
+</ul>
+<p><strong>Masix 系统</strong></p>
+<p><strong>表 3.19. Inode i_osd2 结构体（Masix）</strong><br> （该结构定义尚未完整，待补充）</p>
+<table>
+<thead>
+<tr>
+<th>偏移量（字节）</th>
+<th>大小（字节）</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>1</td>
+<td><code>m_i_frag</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td><code>m_i_fsize</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>10</td>
+<td>保留字段 (<code>reserved</code>)</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><code>m_i_frag</code>：8位的碎片编号。由于<code>Masix</code>不支持碎片，因此此字段始终为0。在<code>Ext4</code>中已废弃。</p>
+</li>
+<li><p><code>m_i_fsize</code>：8位的碎片大小。由于<code>Masix</code>不支持碎片，因此此字段始终为0。在<code>Ext4</code>中已废弃。</p>
+</li>
+</ul>
+<h5 id="如何定位一个Inode"><a href="#如何定位一个Inode" class="headerlink" title="如何定位一个Inode"></a>如何定位一个<code>Inode</code></h5><p>​	所有<code>inode</code>按编号顺序排列。“inode 编号”实际上是在<code>inode</code>表中的索引。<code>inode</code>表的大小在格式化文件系统时就已确定，并分配了一个最大容量。由于<code>inode</code>数量庞大，该表通常较大，因此它被平均分布到所有块组中（详情见第 3 章《磁盘组织》）。</p>
+<p><code>superblock</code>结构中的<code>s_inodes_per_group</code>字段表示每个块组中包含的<code>inode</code>数量。已知<code>inode 1</code>是<code>inode</code>表中的第一个 <code>inode</code>，可以使用以下公式定位：</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">块组编号（<span class="keyword">block</span> <span class="keyword">group</span>） = (inode - <span class="number">1</span>) / s_inodes_per_group</span><br></pre></td></tr></table></figure>
+
+<p>确定所属块组后，可进一步计算该<code>inode</code>在块组内的本地索引：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">本地inode索引 <span class="operator">=</span> (inode - <span class="number">1</span>) % s_inodes_per_group</span><br></pre></td></tr></table></figure>
+
+<p>以下是一些样例值，可用于测试实现是否正确：</p>
+<p>表 3.20：示例 Inode 计算</p>
+<table>
+<thead>
+<tr>
+<th>inode 编号</th>
+<th>块组编号</th>
+<th>本地 inode 索引</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>s_inodes_per_group = 1712</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>963</td>
+<td>0</td>
+<td>962</td>
+</tr>
+<tr>
+<td>1712</td>
+<td>0</td>
+<td>1711</td>
+</tr>
+<tr>
+<td>1713</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3424</td>
+<td>1</td>
+<td>1711</td>
+</tr>
+<tr>
+<td>3425</td>
+<td>2</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>大多数读者可能已经熟悉：索引从0开始表示第一个条目。之所以从0开始，而不是从 1，是因为它更便于通过结构体大小直接计算出对应在内存或磁盘中的字节偏移。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/filesystem/" rel="tag"># filesystem</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/02/linux/fs/SPFS/" rel="next" title="SPFS">
+                  SPFS <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

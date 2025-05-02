@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本章介绍与文件相关的编程接口，包括：  基础文件访问系统调用 内存映射文件 异步I&#x2F;O 稀疏文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用户文件I&#x2F;O">
+<meta property="og:url" content="https://huangpiao.tech/2025/04/18/linux/fs/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="本章介绍与文件相关的编程接口，包括：  基础文件访问系统调用 内存映射文件 异步I&#x2F;O 稀疏文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-18T07:21:56.062Z">
+<meta property="article:modified_time" content="2025-04-30T16:09:30.281Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/04/18/linux/fs/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/18/linux/fs/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/","path":"2025/04/18/linux/fs/用户文件IO/","title":"用户文件I/O"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>用户文件I/O | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%93%E5%87%BD%E6%95%B0vs%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">库函数vs系统调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%93%AA%E4%BA%9B%E5%A4%B4%E6%96%87%E4%BB%B6%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">使用哪些头文件？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6%E7%A7%8D%E5%9F%BA%E6%9C%AC%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">6种基本文件操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E4%B8%8Elseek-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">文件随机访问与lseek()系统调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%A4%8D%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">文件描述符的复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E5%90%88%E5%81%8F%E7%A7%BB%E6%93%8D%E4%BD%9C%E4%B8%8EI-O%EF%BC%9Apread-%E4%B8%8Epwrite"><span class="nav-number">6.</span> <span class="nav-text">结合偏移操作与I&#x2F;O：pread()与pwrite()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E5%B1%9E%E6%80%A7%E7%BC%93%E5%AD%98%EF%BC%88Data-and-Attribute-Caching%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">数据与属性缓存（Data and Attribute Caching）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#VxFS-%E7%BC%93%E5%AD%98%E5%BB%BA%E8%AE%AE%EF%BC%88Caching-Advisories%EF%BC%89"><span class="nav-number">7.1.</span> <span class="nav-text">VxFS 缓存建议（Caching Advisories）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96open%E9%80%89%E9%A1%B9%E8%AF%B4%E6%98%8E%EF%BC%88Miscellaneous-Open-Options%EF%BC%89"><span class="nav-number">7.2.</span> <span class="nav-text">其他open选项说明（Miscellaneous Open Options）</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/18/linux/fs/%E7%94%A8%E6%88%B7%E6%96%87%E4%BB%B6IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="用户文件I/O | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用户文件I/O
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-18 15:21:56" itemprop="dateCreated datePublished" datetime="2025-04-18T15:21:56+08:00">2025-04-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-01 00:09:30" itemprop="dateModified" datetime="2025-05-01T00:09:30+08:00">2025-05-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>本章介绍与文件相关的编程接口，包括：</p>
+<ol>
+<li>基础文件访问系统调用</li>
+<li>内存映射文件</li>
+<li>异步<code>I/O</code></li>
+<li>稀疏文件</li>
+</ol>
+<span id="more"></span>
+
+<h4 id="库函数vs系统调用"><a href="#库函数vs系统调用" class="headerlink" title="库函数vs系统调用"></a>库函数<code>vs</code>系统调用</h4><p>​	系统调用（<code>System calls</code>）是一种将控制权从用户进程转移到操作系统内核的函数。例如，<code>read()</code>和<code>write()</code>就是系统调用。进程传递相应的参数来调用它们，控制权转交给内核，在内核中执行该系统调用，将结果返回给调用进程，最后再将控制权交还给用户进程。</p>
+<p>​	库函数（<code>Library functions</code>）通常提供更丰富的功能。例如，库函数<code>fread()</code>可以从文件中读取指定大小的若干数据元素。<code>fread()</code>内部会调用<code>read()</code>从文件中读取数据。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">size_t</span> <span class="title function_">fread</span><span class="params">(<span class="type">void</span> *<span class="keyword">restrict</span> ptr, <span class="type">size_t</span> size, <span class="type">size_t</span> nitems,</span></span><br><span class="line"><span class="params">             FILE *<span class="keyword">restrict</span> stream)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>库函数构建在系统调用之上。使用系统调用还是库函数取决于所编写的应用程序。如果某个应用希望对<code>I/O</code>操作有更细致的控制，以优化性能，它可能需要直接调用系统调用。而如果利用库函数中已经提供的功能，这可以节省大量编程工作。</p>
+<p>系统调用通常比调用库函数消耗更多的时间，因为它们涉及从用户态切换到内核态的过程。然而，库函数的具体实现可能无法满足某个特定应用程序的需求。换句话说，是否使用库函数或系统调用并不是一个显而易见的选择，这取决于所编写的应用程序的具体需求。</p>
+<h4 id="使用哪些头文件？"><a href="#使用哪些头文件？" class="headerlink" title="使用哪些头文件？"></a>使用哪些头文件？</h4><p>​	<code>UNIX</code>的头文件是理解用户级编程和内核级数据结构的极好资料来源。大多数用户级编程所需的头文件可以在<code>/usr/include</code>和<code>/usr/include/sys</code>目录下找到。</p>
+<p>所需的头文件通常会在对应的库函数或系统调用的手册页中列出。例如，使用<code>stat()</code>系统调用需要包含以下两个头文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">stat</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path, <span class="keyword">struct</span> stat *buf)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>stat.h</code>头文件定义了<code>stat</code>结构体；<code>types.h</code>头文件则定义了<code>stat</code>结构体中各字段所使用的类型。</p>
+<p>位于<code>/usr/include</code>下的头文件仅供用户空间的应用程序使用，而位于<code>/usr/include/sys</code>下的头文件同时也被内核使用。以<code>stat()</code>为例，用户进程将一个<code>stat</code>结构体的引用传递给内核，内核填写其中的各个字段后返回。因此，在很多情况下，用户进程和内核都需要理解同样的结构和数据类型。</p>
+<h4 id="6种基本文件操作"><a href="#6种基本文件操作" class="headerlink" title="6种基本文件操作"></a>6种基本文件操作</h4><p>​	大多数文件的创建和<code>I/O</code>需求都可以通过表3.1中列出的六种基本系统调用来满足。本节将使用这些调用展示如何实现<code>UNIX</code> 中最简单的命令之一：<code>cat</code>命令的基本实现。</p>
+<p>​	在创建新进程时，通常会从父进程继承前3个文件描述符。这三个文件描述符（0、1和2）在 C 运行时库中的例程中具有特殊含义，分别表示进程的标准输入、标准输出和标准错误。用户进程打开的第一个文件会被分配文件描述符值3。</p>
+<p>在使用库函数时，可以指定文件流来确定数据从哪里读取或写入。比如<code>printf()</code>默认写入标准输出；而像<code>fprintf()</code>这样的函数则必须指定文件流。对于标准输出，可以使用<code>stdout</code>；对于标准错误，可以使用<code>stderr</code>；需要输入流时，则可以使用<code>stdin</code>。</p>
+<p>当直接调用系统调用（需要使用文件描述符）时，可以使用以下常量：<code>STDIN_FILENO</code>、<code>STDOUT_FILENO</code>和<code>STDERR_FILENO</code></p>
+<p>。这些常量在<code>&lt;unistd.h&gt;</code>中定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> STDIN_FILENO  0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> STDOUT_FILENO 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> STDERR_FILENO 2</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>系统调用</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>open()</code></td>
+<td>打开一个已存在文件或者创建一个新文件</td>
+</tr>
+<tr>
+<td><code>creat()</code></td>
+<td>创建一个新文件</td>
+</tr>
+<tr>
+<td><code>close()</code></td>
+<td>关闭一个已经打开的文件</td>
+</tr>
+<tr>
+<td><code>lseek()</code></td>
+<td>将文件指针移动到指定位置</td>
+</tr>
+<tr>
+<td><code>read()</code></td>
+<td>从当前文件位置读取数据</td>
+</tr>
+<tr>
+<td><code>write()</code></td>
+<td>从当前文件位置开始写入数据</td>
+</tr>
+</tbody></table>
+<h4 id="文件随机访问与lseek-系统调用"><a href="#文件随机访问与lseek-系统调用" class="headerlink" title="文件随机访问与lseek()系统调用"></a>文件随机访问与<code>lseek()</code>系统调用</h4><p>之前的程序会读取整个文件并输出其内容。而像<code>dd</code>这样的命令允许调用者定位到输入文件中的指定块，并输出指定数量的块。</p>
+<p>如果为了到达用户指定的位置而必须从文件开头顺序读取，这将特别低效。<code>lseek()</code>系统调用可以修改文件指针，从而实现对文件的随机访问。<code>lseek()</code>的声明如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">off_t</span> <span class="title function_">lseek</span><span class="params">(<span class="type">int</span> fildes, <span class="type">off_t</span> offset, <span class="type">int</span> whence)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>参数<code>offset</code>和<code>whence</code>决定了文件指针的定位方式：</p>
+<ul>
+<li><code>SEEK_SET</code>：将文件指针设置为<code>offset</code>字节处（绝对位置）</li>
+<li><code>SEEK_CUR</code>：将文件指针设置为当前位置加上<code>offset</code>（相对位置）</li>
+<li><code>SEEK_END</code>：将文件指针设置为文件大小加上<code>offset</code>（从末尾计算）</li>
+</ul>
+<h4 id="文件描述符的复制"><a href="#文件描述符的复制" class="headerlink" title="文件描述符的复制"></a>文件描述符的复制</h4><p>通常，一个文件描述符是在调用<code>open()</code>或<code>creat()</code>系统调用时返回的。而<code>dup()</code>系统调用允许用户复制一个已经打开的文件描述符。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dup</span><span class="params">(<span class="type">int</span> fildes)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>示例代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fd = open(argv[<span class="number">1</span>], O_RDONLY);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;unable to open file\n&quot;</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>dup()</code>的用法比较广泛，超出了本书的讲解范围。不过，在实际应用中，<code>Shell</code>在通过管道连接多个进程的输入输出流时，就经常会使用<code>dup()</code>来重定向文件描述符。</p>
+<h4 id="结合偏移操作与I-O：pread-与pwrite"><a href="#结合偏移操作与I-O：pread-与pwrite" class="headerlink" title="结合偏移操作与I&#x2F;O：pread()与pwrite()"></a>结合偏移操作与I&#x2F;O：<code>pread()</code>与<code>pwrite()</code></h4><p>​	<code>pread()</code>和<code>pwrite()</code>系统调用将<code>lseek()</code>与<code>read()</code>（或<code>write()</code>）的功能合并为一次系统调用。这样可以在某些场景下带来性能提升，尤其是在<code>I/O</code>密集型应用中更为显著。</p>
+<p>这两个接口已被<code>Single UNIX Specification</code>标准化，因此在大多数<code>UNIX</code>系统中都可用。它们的函数定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">pread</span><span class="params">(<span class="type">int</span> fildes, <span class="type">void</span> *buf, <span class="type">size_t</span> nbyte, <span class="type">off_t</span> offset)</span>;</span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">pwrite</span><span class="params">(<span class="type">int</span> fildes, <span class="type">const</span> <span class="type">void</span> *buf, <span class="type">size_t</span> nbyte, <span class="type">off_t</span> offset)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>下面的示例代码将继续之前介绍的<code>dd</code>程序，展示如何通过将<code>lseek()</code>与<code>read()</code>和<code>write()</code>结合使用，实现文件偏移位置的精确读取与写入。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> ifd, ofd;</span><br><span class="line">    <span class="type">off_t</span> inoffset, outoffset;</span><br><span class="line">    <span class="type">size_t</span> insize, outsize, nread;</span><br><span class="line">    <span class="type">char</span> *buf;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">7</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;usage: mydd infilename in_offset in_size outfilename out_offset out_size\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打开输入文件</span></span><br><span class="line">    ifd = open(argv[<span class="number">1</span>], O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (ifd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;unable to open %s\n&quot;</span>, argv[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打开输出文件</span></span><br><span class="line">    ofd = open(argv[<span class="number">4</span>], O_WRONLY);</span><br><span class="line">    <span class="keyword">if</span> (ofd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;unable to open %s\n&quot;</span>, argv[<span class="number">4</span>]);</span><br><span class="line">        close(ifd);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解析命令行参数</span></span><br><span class="line">    inoffset = (<span class="type">off_t</span>)atol(argv[<span class="number">2</span>]);</span><br><span class="line">    insize   = (<span class="type">size_t</span>)atol(argv[<span class="number">3</span>]);</span><br><span class="line">    outoffset= (<span class="type">off_t</span>)atol(argv[<span class="number">5</span>]);</span><br><span class="line">    outsize  = (<span class="type">size_t</span>)atol(argv[<span class="number">6</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 分配缓冲区</span></span><br><span class="line">    buf = (<span class="type">char</span> *)<span class="built_in">malloc</span>(insize);</span><br><span class="line">    <span class="keyword">if</span> (!buf) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;failed to allocate buffer\n&quot;</span>);</span><br><span class="line">        close(ifd);</span><br><span class="line">        close(ofd);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果目标写入长度大于读取长度，只写入读取到的部分</span></span><br><span class="line">    <span class="keyword">if</span> (insize &lt; outsize)</span><br><span class="line">        outsize = insize;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 执行读取和写入</span></span><br><span class="line">    nread = pread(ifd, buf, insize, inoffset);</span><br><span class="line">    <span class="keyword">if</span> (nread &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;read error\n&quot;</span>);</span><br><span class="line">        <span class="built_in">free</span>(buf);</span><br><span class="line">        close(ifd);</span><br><span class="line">        close(ofd);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pwrite(ofd, buf, (nread &lt; outsize) ? nread : outsize, outoffset) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;write error\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">free</span>(buf);</span><br><span class="line">    close(ifd);</span><br><span class="line">    close(ofd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了展示<code>pread()</code>和<code>pwrite()</code>能够提升性能的效果，作者将<code>I/O</code>循环执行了100万次，并通过调用<code>time()</code>来测量使用这两种方法所需的时间。</p>
+<p>实验结果如下：</p>
+<ul>
+<li>使用<code>pread()</code>&#x2F;<code>pwrite()</code>组合时，完成100万次<code>I/O</code>操作平均耗时约<strong>25秒</strong>；</li>
+<li>而使用<code>lseek()</code>搭配<code>read()</code>或<code>write()</code>的组合，平均耗时约为<strong>35秒</strong>。</li>
+</ul>
+<p>这个结果展示了<code>pread()</code>和<code>pwrite()</code>在最佳场景下的明显优势。</p>
+<p>总的来说，如果一次<code>lseek()</code>操作之后紧接着是一次<code>read()</code>或<code>write()</code>，那么应当将两者合并为<code>pread()</code>或<code>pwrite()</code>，以获得更高的性能。</p>
+<h4 id="数据与属性缓存（Data-and-Attribute-Caching）"><a href="#数据与属性缓存（Data-and-Attribute-Caching）" class="headerlink" title="数据与属性缓存（Data and Attribute Caching）"></a>数据与属性缓存（Data and Attribute Caching）</h4><p>​	在进行文件<code>I/O</code>时，可以通过<code>open()</code>系统调用传入一些标志位（<code>flags</code>）来控制行为。此外，某些文件系统还支持一些额外的、非标准的方法来提升<code>I/O</code>性能。</p>
+<p>依据<code>Single UNIX Specification</code>，有三个标准支持的<code>open()</code>选项会影响随后的<code>I/O</code>操作。写入数据时，系统需要将两个内容写入磁盘：<strong>文件数据</strong>和<strong>inode元数据</strong>。<code>Inode</code>是磁盘上存储的一个结构，描述了文件的属性（可通过<code>stat()</code>获取）以及指向该文件所有数据块的块映射。</p>
+<p>以下是三个标准支持的选项：</p>
+<ul>
+<li><p><code>O_SYNC</code>：无论写入是否需要新分配空间，写入操作都会在数据和所有元数据（包括<code>inode</code>）写入磁盘后才返回；对于读取操作，访问时间戳也会在读取返回前同步更新到磁盘。</p>
+</li>
+<li><p><code>O_DSYNC</code>：写入操作在数据写入磁盘后即可返回，但元数据（如<code>inode</code>）可以延迟写入。这种方式在文件系统实现得当的前提下，能显著减少<code>inode</code>更新次数，因而提升<code>I/O</code>吞吐量。当写入会导致新块分配（如写入“空洞”或超过文件末尾），元数据也会被写入磁盘；但若不涉及分配，通常时间戳等元数据不会同步更新。</p>
+</li>
+<li><p><code>O_RSYNC</code>：如果设置了<code>O_RSYNC</code>和<code>O_DSYNC</code>，则读取操作会等到读取的数据和文件属性（不包括时间戳）同步更新到磁盘后才返回；如果读取的数据范围与尚未完成的写入重叠，这些写入也会在读取前被提交。</p>
+<p>若设置了<code>O_RSYNC</code>和<code>O_SYNC</code>，行为与<code>O_RSYNC | O_DSYNC</code>相同，但还会要求所有由读操作修改的文件属性（包括所有时间戳）也必须同步到磁盘之后才返回。</p>
+</li>
+</ul>
+<p><strong>如何选择这些选项取决于具体应用的需求</strong>：</p>
+<p>对于<code>I/O</code>密集型应用，如果时间戳的准确性并不关键，那么使用<code>O_DSYNC</code>替代<code>O_SYNC</code>可以带来显著的性能提升。</p>
+<h5 id="VxFS-缓存建议（Caching-Advisories）"><a href="#VxFS-缓存建议（Caching-Advisories）" class="headerlink" title="VxFS 缓存建议（Caching Advisories）"></a>VxFS 缓存建议（Caching Advisories）</h5><p>​	某些文件系统通过提供额外的功能，采用<strong>非标准方式</strong>来提升<code>I/O</code>性能。例如，<code>VERITAS</code>文件系统（<code>VxFS</code>）支持<code>noatime</code>挂载选项，用于<strong>关闭访问时间（access time）更新</strong>。对于大多数应用场景来说，这通常不会带来问题。</p>
+<p>下面的示例展示了在使用<code>O_SYNC</code>和<code>O_DSYNC</code>两种方式时对应用程序性能的影响：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">  <span class="type">char</span> buf[<span class="number">4096</span>];</span><br><span class="line">  <span class="type">int</span> i, fd;</span><br><span class="line"></span><br><span class="line">  fd = open(<span class="string">&quot;myfile&quot;</span>, O_WRONLY | O_DSYNC);</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">1024</span>; i++) &#123;</span><br><span class="line">      write(fd, buf, <span class="number">4096</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将其中的<code>O_DSYNC</code>改为<code>O_SYNC</code>，重新编译运行后，执行结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># time ./sync</span></span><br><span class="line">real    0m8.33s</span><br><span class="line">user    0m0.03s</span><br><span class="line">sys     0m1.92s</span><br><span class="line"></span><br><span class="line"><span class="comment"># time ./dsync</span></span><br><span class="line">real    0m6.44s</span><br><span class="line">user    0m0.02s</span><br><span class="line">sys     0m0.69s</span><br></pre></td></tr></table></figure>
+
+<p>从输出中可以明显看出，使用<code>O_SYNC</code>时程序执行时间更长。</p>
+<p><code>VxFS</code>提供了多种<strong>扩展建议（advisories）</strong>，超出了传统<code>UNIX</code>标准的支持范围。这些选项只能通过<code>ioctl()</code>系统调用来访问，并赋予应用程序开发者更多对<code>I/O</code>行为的控制能力：</p>
+<ul>
+<li><code>VX_RANDOM</code>：告诉文件系统<code>I/O</code>模式是<strong>随机访问</strong>，应<strong>关闭预读（read-ahead）</strong>优化。</li>
+<li><code>VX_SEQ</code>：告诉文件系统该文件以<strong>顺序方式</strong>访问，应<strong>加强预读</strong>策略。</li>
+<li><code>VX_DIRECT</code>：跳过内核缓冲区（page cache），在<strong>用户缓冲区与磁盘之间直接传输数据</strong>，避免两次复制，提高性能。</li>
+<li><code>VX_NOREUSE</code>：表明读取的数据<strong>只会使用一次</strong>，不需缓存。</li>
+<li><code>VX_DSYNC</code>：此选项早于<code>UNIX</code>标准中<code>O_DSYNC</code>的出现，仍可在<strong>不支持<code>O_DSYNC</code>的平台</strong>上使用。</li>
+</ul>
+<p>在说明如何使用这些缓存建议之前，先介绍<code>ioctl()</code>系统调用的基本用法。该函数<strong>不是UNIX标准的一部分</strong>，在不同平台上包含的头文件略有差异，但基本函数定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span>      <span class="comment">// 所有系统</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stropts.h&gt;</span>     <span class="comment">// Solaris, AIX, HP-UX</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/ioctl.h&gt;</span>   <span class="comment">// Linux</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">ioctl</span><span class="params">(<span class="type">int</span> fildes, <span class="type">int</span> request, <span class="comment">/* 可选参数 arg */</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>请注意</strong>，截至本文撰写时，<strong>AIX并不支持对常规文件使用 <code>ioctl()</code>调用</strong>。虽然对<code>VxFS</code>常规文件可以执行<code>ioctl()</code>调用，但这一功能在一般情况下并不受支持。</p>
+<p>下面的示例程序展示了如何在实际中使用<code>VxFS</code>的缓存建议（<code>caching advisories</code>）。该程序接收一个参数（<code>VX_SEQ</code>、<code>VX_RANDOM</code> 或<code>VX_DIRECT</code>），并以4096字节为单位读取一个<code>1MB</code>的文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sys/fs/vx_ioctl.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB (1024 * 1024)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">  <span class="type">char</span> *buf;</span><br><span class="line">  <span class="type">int</span> i, fd, advisory;</span><br><span class="line">  <span class="type">long</span> pagesize, pagemask;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">strcmp</span>(argv[<span class="number">1</span>], <span class="string">&quot;VX_SEQ&quot;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">      advisory = VX_SEQ;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(argv[<span class="number">1</span>], <span class="string">&quot;VX_RANDOM&quot;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">      advisory = VX_RANDOM;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(argv[<span class="number">1</span>], <span class="string">&quot;VX_DIRECT&quot;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">      advisory = VX_DIRECT;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  pagesize = sysconf(_SC_PAGESIZE);</span><br><span class="line">  pagemask = pagesize - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  buf = (<span class="type">char</span> *)<span class="built_in">malloc</span>(<span class="number">2</span> * pagesize);</span><br><span class="line">  buf = (<span class="type">char</span> *)(((<span class="type">long</span>)buf + pagesize) &amp; ~pagemask);  <span class="comment">// 对齐到页边界</span></span><br><span class="line"></span><br><span class="line">  fd = open(<span class="string">&quot;myfile&quot;</span>, O_RDWR);</span><br><span class="line">  ioctl(fd, VX_SETCACHE, advisory);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; MB / <span class="number">4096</span>; i++) &#123;</span><br><span class="line">    read(fd, buf, <span class="number">4096</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该程序分别以<code>VX_SEQ</code>、<code>VX_RANDOM</code>和<code>VX_DIRECT</code>三种参数运行三次。每次运行后使用<code>time</code>命令记录程序运行总时间，以及分别在用户态和内核态所消耗的时间。</p>
+<p>以下为使用<code>VX_SEQ</code>参数的运行结果示例：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">VX_SEQ</span></span><br><span class="line"><span class="attribute">real</span>    <span class="number">2</span>m47.<span class="number">6</span>s</span><br><span class="line"><span class="attribute">user</span>      <span class="number">5</span>.<span class="number">9</span>s</span><br><span class="line"><span class="attribute">sys</span>     <span class="number">2</span>m41.<span class="number">4</span>s</span><br><span class="line"><span class="attribute">VX_DIRECT</span></span><br><span class="line"><span class="attribute">real</span>    （<span class="number">2</span>m35.<span class="number">7</span>s）</span><br><span class="line"><span class="attribute">user</span>    （<span class="number">6</span>.<span class="number">7</span>s）</span><br><span class="line"><span class="attribute">sys</span>     （<span class="number">2</span>m28.<span class="number">7</span>s）</span><br><span class="line"><span class="attribute">VX_RANDOM</span></span><br><span class="line"><span class="attribute">real</span>    （<span class="number">2</span>m43.<span class="number">6</span>s）</span><br><span class="line"><span class="attribute">user</span>    （<span class="number">5</span>.<span class="number">2</span>s）</span><br><span class="line"><span class="attribute">sys</span>     （<span class="number">2</span>m38.<span class="number">1</span>s）</span><br></pre></td></tr></table></figure>
+
+<p>尽管以上几次运行的时间差异看起来并不显著，但在大型应用程序中<strong>合理使用这些缓存建议选项（caching advisories）可以对整体性能产生显著影响</strong>。</p>
+<h5 id="其他open选项说明（Miscellaneous-Open-Options）"><a href="#其他open选项说明（Miscellaneous-Open-Options）" class="headerlink" title="其他open选项说明（Miscellaneous Open Options）"></a>其他open选项说明（Miscellaneous Open Options）</h5><p>​	通过在调用<code>open()</code>函数时传入<code>O_NONBLOCK</code>或<code>O_NDELAY</code>标志，应用程序可以在读写操作可能阻塞的情况下获得额外的控制能力。</p>
+<ul>
+<li><strong>O_EXCL</strong>：如果同时指定了<code>O_CREAT</code>和<code>O_EXCL</code>，当目标文件已存在时，<code>open()</code>调用将会失败。<br> 如果没有指定<code>O_CREAT</code>，那么单独使用<code>O_EXCL</code>的行为是未定义的。</li>
+<li><strong>O_NONBLOCK &#x2F; O_NDELAY</strong>：这两个标志会影响后续的读写操作行为。如果同时设置了<code>O_NDELAY</code>和<code>O_NONBLOCK</code>，那<code>O_NONBLOCK</code>优先生效。由于这两个选项主要用于管道（pipe）操作，这里不再展开讨论。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/04/15/linux/memory/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" rel="prev" title="存储管理">
+                  <i class="fa fa-angle-left"></i> 存储管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/04/21/compiler/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AD%A6%E5%91%8A/" rel="next" title="编译器警告">
+                  编译器警告 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

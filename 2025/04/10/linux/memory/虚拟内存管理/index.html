@@ -23,7 +23,7 @@
     <meta name="description" content="转载：一步一图带你深入理解 Linux 虚拟内存管理 从本文开始我们就正式开启了 Linux内核内存管理子系统源码解析系列，笔者还是会秉承之前系列文章的风格，采用一步一图的方式先是详细介绍相关原理，在保证大家清晰理解原理的基础上，我们再来一步一步的解析相关内核源码的实现。有了源码的辅证，这样大家看得也安心，理解起来也放心，最起码可以证明笔者没有胡编乱造骗大家，哈哈~~">
 <meta property="og:type" content="article">
 <meta property="og:title" content="虚拟内存管理">
-<meta property="og:url" content="https://huangpiao.tech/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:url" content="https://huangpiao.tech/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
 <meta property="og:site_name" content="Rockyの博客">
 <meta property="og:description" content="转载：一步一图带你深入理解 Linux 虚拟内存管理 从本文开始我们就正式开启了 Linux内核内存管理子系统源码解析系列，笔者还是会秉承之前系列文章的风格，采用一步一图的方式先是详细介绍相关原理，在保证大家清晰理解原理的基础上，我们再来一步一步的解析相关内核源码的实现。有了源码的辅证，这样大家看得也安心，理解起来也放心，最起码可以证明笔者没有胡编乱造骗大家，哈哈~~">
 <meta property="og:locale" content="zh_CN">
@@ -97,10 +97,10 @@
 <meta name="twitter:image" content="https://huangpiao.tech/images/vm_01.png">
 
 
-<link rel="canonical" href="https://huangpiao.tech/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+<link rel="canonical" href="https://huangpiao.tech/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/","path":"2025/04/10/linux/虚拟内存管理/","title":"虚拟内存管理"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/","path":"2025/04/10/linux/memory/虚拟内存管理/","title":"虚拟内存管理"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>虚拟内存管理 | Rockyの博客</title>
@@ -190,17 +190,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -227,7 +227,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/linux/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -917,12 +917,12 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2025/02/26/linux/fs/%E6%96%87%E4%BB%B6%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5/" rel="prev" title="">
-                  <i class="fa fa-angle-left"></i> 
+                <a href="/2025/04/10/compiler/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8LTO%E4%BB%8B%E7%BB%8D/" rel="prev" title="代码优化利器LTO介绍">
+                  <i class="fa fa-angle-left"></i> 代码优化利器LTO介绍
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2025/04/15/linux/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" rel="next" title="存储管理">
+                <a href="/2025/04/15/linux/memory/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" rel="next" title="存储管理">
                   存储管理 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
