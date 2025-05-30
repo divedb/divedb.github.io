@@ -28,7 +28,7 @@
 <meta property="og:description" content="几个常用的编译器警告（Warning）标志的含义：-Wall、-Wextra和-Werror。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-04-21T05:57:29.399Z">
-<meta property="article:modified_time" content="2025-04-21T05:58:35.997Z">
+<meta property="article:modified_time" content="2025-05-13T05:55:14.228Z">
 <meta property="article:author" content="Rocky">
 <meta name="twitter:card" content="summary">
 
@@ -100,7 +100,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -113,6 +113,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Wpragmas-%E8%AD%A6%E5%91%8A"><span class="nav-number">1.</span> <span class="nav-text">1. -Wpragmas 警告</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Wdocumentation-%E8%AD%A6%E5%91%8A"><span class="nav-number">2.</span> <span class="nav-text">2. -Wdocumentation 警告</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8F%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number"></span> <span class="nav-text">宏的实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E9%9C%80%E8%A6%81%E7%A6%81%E7%94%A8%E8%BF%99%E4%BA%9B%E8%AD%A6%E5%91%8A%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text">何时需要禁用这些警告？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number"></span> <span class="nav-text">最佳实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%98%E9%87%8F%E9%81%AE%E8%94%BD%EF%BC%88Shadowing%EF%BC%89%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text">1. 什么是变量遮蔽（Shadowing）？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%AD%A6%E5%91%8A%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text">2. 为什么要警告？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Wshadow"><span class="nav-number"></span> <span class="nav-text">3. 如何使用 -Wshadow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="nav-number"></span> <span class="nav-text">4. 示例：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E8%AD%A6%E5%91%8A%E7%9A%84%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">有警告的代码：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E7%94%A8%E8%AD%A6%E5%91%8A%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">禁用警告：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%B8%B8%E8%A7%81%E7%9A%84-Wshadow-%E8%AD%A6%E5%91%8A%EF%BC%9A"><span class="nav-number"></span> <span class="nav-text">5. 常见的 -Wshadow 警告：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number"></span> <span class="nav-text">总结：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9D%A1%E4%BB%B6%E7%BC%96%E8%AF%91"><span class="nav-number"></span> <span class="nav-text">1. 条件编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-gnu-section-text-folly-keep-%E8%AF%AD%E6%B3%95"><span class="nav-number"></span> <span class="nav-text">2. [[gnu::section(&quot;.text.folly.keep&quot;)]] 语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%9E%E9%99%85%E4%BD%9C%E7%94%A8"><span class="nav-number"></span> <span class="nav-text">3. 实际作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%94%A8%E9%80%94"><span class="nav-number"></span> <span class="nav-text">4. 用途</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="nav-number"></span> <span class="nav-text">5. 示例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A-1"><span class="nav-number"></span> <span class="nav-text">总结：</span></a></div>
         </div>
         <!--/noindex-->
 
@@ -125,17 +126,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -190,9 +191,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-04-21 13:57:29 / 修改时间：13:58:35" itemprop="dateCreated datePublished" datetime="2025-04-21T13:57:29+08:00">2025-04-21</time>
+      <time title="创建时间：2025-04-21 13:57:29" itemprop="dateCreated datePublished" datetime="2025-04-21T13:57:29+08:00">2025-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-13 13:55:14" itemprop="dateModified" datetime="2025-05-13T13:55:14+08:00">2025-05-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -259,6 +266,133 @@
 <li><strong>作用：</strong> 这个标志<strong>本身不开启任何新的警告</strong>。它的作用是改变<strong>已开启的警告的性质</strong>——将所有被编译器发出的<strong>警告 (Warning)</strong> 都视为**错误 (Error)**。</li>
 <li><strong>结果：</strong> 一旦启用 <code>-Werror</code>，任何一个警告都会导致编译过程立即停止，就像遇到了语法错误一样，不会生成可执行文件。</li>
 <li><strong>用途：</strong> 在开发和持续集成 (CI) 环境中，经常启用 <code>-Werror</code> 来强制开发者解决所有的警告。这有助于防止代码库中警告的累积，确保代码的整洁和质量。</li>
+</ul>
+<p><code>-Wshadow</code> 是 GCC 和 Clang 编译器的一个警告选项，用于检测变量或参数在作用域内被重新定义（<strong>shadowing</strong>）。具体来说，它会警告你在一个更小的作用域中定义了一个与外部变量（包括函数参数）同名的变量。</p>
+<h4 id="1-Wpragmas-警告"><a href="#1-Wpragmas-警告" class="headerlink" title="1. -Wpragmas 警告"></a><strong>1. <code>-Wpragmas</code> 警告</strong></h4><p><strong>作用</strong>：<br>检测编译器不支持的 <code>#pragma</code> 指令。当代码中使用了编译器无法识别的 <code>#pragma</code> 时，GCC&#x2F;Clang 会触发此警告。</p>
+<p><strong>禁用场景</strong>：</p>
+<ul>
+<li>代码需要跨编译器兼容（如同时支持 MSVC 和 GCC 的特定 <code>#pragma</code>）。</li>
+<li>第三方库包含非标准的 <code>#pragma</code> 指令，但功能无害。</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 禁用 -Wpragmas 以忽略未知的 #pragma 警告</span></span><br><span class="line"><span class="function"><span class="title">KIWI_GNU_DISABLE_WARNING</span><span class="params">(<span class="string">&quot;-Wpragmas&quot;</span>)</span></span></span><br><span class="line"><span class="selector-id">#pragma</span> some_unknown_directive  <span class="comment">// 编译器不会警告</span></span><br><span class="line"><span class="function"><span class="title">FOLLY_GNU_RESTORE_WARNING</span><span class="params">(<span class="string">&quot;-Wpragmas&quot;</span>)</span></span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="2-Wdocumentation-警告"><a href="#2-Wdocumentation-警告" class="headerlink" title="2. -Wdocumentation 警告"></a><strong>2. <code>-Wdocumentation</code> 警告</strong></h4><p><strong>作用</strong>：<br>检查文档注释（如 Doxygen）中的语法错误或参数不匹配。例如：</p>
+<ul>
+<li>文档中提到的参数名与实际函数参数不一致。</li>
+<li>未定义的文档标签（如 <code>@nonexistent_tag</code>）。</li>
+</ul>
+<p><strong>禁用场景</strong>：</p>
+<ul>
+<li><strong>重载函数共享文档</strong>：多个重载函数可能参数不同，但想复用同一份文档。</li>
+<li>兼容旧代码中的非标准文档注释。</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 禁用 -Wdocumentation 以允许重载函数共享文档</span></span><br><span class="line">FOLLY_GNU_DISABLE_WARNING(<span class="string">&quot;-Wdocumentation&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@brief</span> 计算两个值的和</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> a 第一个参数（实际可能是 int/double）</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> b 第二个参数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">add</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">double</span> b)</span></span>; <span class="comment">// 参数类型不同，但复用文档</span></span><br><span class="line"></span><br><span class="line">FOLLY_GNU_RESTORE_WARNING(<span class="string">&quot;-Wdocumentation&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="宏的实现原理"><a href="#宏的实现原理" class="headerlink" title="宏的实现原理"></a><strong>宏的实现原理</strong></h3><p>这些宏通常基于编译器的 <code>_Pragma</code> 或 <code>#pragma</code> 指令，例如：</p>
+<p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GCC/Clang 的实现</span></span><br><span class="line"><span class="selector-id">#define</span> <span class="built_in">FOLLY_GNU_DISABLE_WARNING</span>(w) \</span><br><span class="line">    <span class="built_in">_Pragma</span>(<span class="string">&quot;GCC diagnostic push&quot;</span>)   \</span><br><span class="line">    <span class="built_in">_Pragma</span>(<span class="string">&quot;GCC diagnostic ignored \&quot;&quot;</span> <span class="selector-id">#w</span> <span class="string">&quot;\&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#define</span> <span class="built_in">FOLLY_GNU_RESTORE_WARNING</span>(w) \</span><br><span class="line">    <span class="built_in">_Pragma</span>(<span class="string">&quot;GCC diagnostic pop&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="何时需要禁用这些警告？"><a href="#何时需要禁用这些警告？" class="headerlink" title="何时需要禁用这些警告？"></a><strong>何时需要禁用这些警告？</strong></h3><table>
+<thead>
+<tr>
+<th align="left">警告类型</th>
+<th align="left">推荐禁用场景</th>
+<th align="left">替代方案（优先考虑）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>-Wpragmas</code></td>
+<td align="left">跨平台代码中不可避免的非标准 <code>#pragma</code></td>
+<td align="left">使用条件编译（<code>#ifdef</code>）隔离编译器特定代码</td>
+</tr>
+<tr>
+<td align="left"><code>-Wdocumentation</code></td>
+<td align="left">重载函数共享文档，或旧代码中无法立即修复的文档错误</td>
+<td align="left">修正文档注释，或使用 <code>@tparam</code> 泛型描述</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a><strong>最佳实践</strong></h3><ol>
+<li><p><strong>局部禁用</strong>：<br>仅在必要的最小作用域内禁用警告，并明确注释原因。</p>
+<p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原因：重载函数共享文档</span></span><br><span class="line"><span class="function"><span class="title">FOLLY_GNU_DISABLE_WARNING</span><span class="params">(<span class="string">&quot;-Wdocumentation&quot;</span>)</span></span></span><br><span class="line">void <span class="built_in">foo</span>(int <span class="attribute">x</span>);</span><br><span class="line">void <span class="built_in">foo</span>(double <span class="attribute">x</span>);</span><br><span class="line"><span class="function"><span class="title">FOLLY_GNU_RESTORE_WARNING</span><span class="params">(<span class="string">&quot;-Wdocumentation&quot;</span>)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>避免全局禁用</strong>：<br>在编译命令中禁用（如 <code>-Wno-pragmas</code>）会掩盖所有潜在问题。</p>
+</li>
+<li><p><strong>文档一致性</strong>：<br>对于重载函数，可以用泛型描述：</p>
+<p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * <span class="title">@tparam</span> T 参数类型（int 或 <span class="type">double</span>）</span><br><span class="line"> * <span class="title">@param</span> <span class="keyword">x</span> 输入值</span><br><span class="line"> */</span><br><span class="line">template &lt;typename T&gt;</span><br><span class="line"><span class="type">void</span> foo(T <span class="keyword">x</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p>通过合理使用这些宏，可以在保持代码灵活性的同时避免不必要的编译器警告。</p>
+<h3 id="1-什么是变量遮蔽（Shadowing）？"><a href="#1-什么是变量遮蔽（Shadowing）？" class="headerlink" title="1. 什么是变量遮蔽（Shadowing）？"></a>1. <strong>什么是变量遮蔽（Shadowing）？</strong></h3><p><strong>变量遮蔽</strong>发生在局部变量（或函数参数）与外部作用域中的变量同名时，局部变量会“遮蔽”外部变量。这样，局部变量在其作用域内会覆盖外部变量的值，导致外部变量无法访问，从而可能导致代码错误或不易理解的行为。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> value = <span class="number">10</span>; <span class="comment">// 外部变量</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> value = <span class="number">20</span>;  <span class="comment">// 局部变量，遮蔽了外部的 value</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Local value: &quot;</span> &lt;&lt; value &lt;&lt; std::endl; <span class="comment">// 输出 20</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Global value: &quot;</span> &lt;&lt; value &lt;&lt; std::endl; <span class="comment">// 输出 10</span></span><br><span class="line">    <span class="built_in">foo</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的代码中，<code>foo</code> 函数中的 <code>value</code> 局部变量遮蔽了全局变量 <code>value</code>，导致全局变量无法在 <code>foo</code> 内访问。</p>
+<h3 id="2-为什么要警告？"><a href="#2-为什么要警告？" class="headerlink" title="2. 为什么要警告？"></a>2. <strong>为什么要警告？</strong></h3><p><strong>遮蔽警告</strong>的目的是帮助开发者识别出这种可能引发混淆或错误的情况。虽然有时我们可能故意让局部变量遮蔽外部变量，但如果不小心，这种现象可能会导致不可预见的错误，尤其是在大型项目中。</p>
+<h3 id="3-如何使用-Wshadow"><a href="#3-如何使用-Wshadow" class="headerlink" title="3. 如何使用 -Wshadow"></a>3. <strong>如何使用 <code>-Wshadow</code></strong></h3><p>当你启用 <code>-Wshadow</code> 选项时，编译器会在编译时检查你代码中是否存在变量遮蔽的情况。如果发现，编译器会给出一个警告。</p>
+<p>示例：</p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">sh</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">复制编辑</span></span><br><span class="line"><span class="comment">g</span><span class="literal">++</span> <span class="literal">-</span><span class="comment">Wshadow my_program</span><span class="string">.</span><span class="comment">cpp</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-示例："><a href="#4-示例：" class="headerlink" title="4. 示例："></a>4. <strong>示例：</strong></h3><h4 id="有警告的代码："><a href="#有警告的代码：" class="headerlink" title="有警告的代码："></a>有警告的代码：</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> x = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">example</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> x = <span class="number">10</span>;  <span class="comment">// 警告: 局部变量 x 遮蔽了全局变量 x</span></span><br><span class="line">    std::cout &lt;&lt; x &lt;&lt; std::endl; <span class="comment">// 输出 10</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">example</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里，<code>example</code> 函数中的局部变量 <code>x</code> 遮蔽了全局的 <code>x</code>。编译器会发出警告，告诉你在局部作用域中不小心遮蔽了全局变量。</p>
+<h4 id="禁用警告："><a href="#禁用警告：" class="headerlink" title="禁用警告："></a>禁用警告：</h4><p>如果你不希望看到这种警告，可以通过禁用 <code>-Wshadow</code>：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sh</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">g++ -Wno-<span class="keyword">shadow </span>my_program.cpp</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-常见的-Wshadow-警告："><a href="#5-常见的-Wshadow-警告：" class="headerlink" title="5. 常见的 -Wshadow 警告："></a>5. <strong>常见的 <code>-Wshadow</code> 警告：</strong></h3><ul>
+<li>局部变量遮蔽全局变量、静态变量、成员变量或函数参数。</li>
+<li>局部变量与函数参数同名。</li>
+</ul>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><ul>
+<li><code>-Wshadow</code> 用于警告局部变量遮蔽外部变量。</li>
+<li>它帮助开发者避免因意外遮蔽而导致的错误或混淆。</li>
+<li>通过分析代码中的遮蔽警告，可以提高代码的可维护性和可读性。</li>
+</ul>
+<p>这段代码的作用是为特定平台和编译器设置一个宏 <code>FOLLY_KEEP</code>，它控制函数或变量是否应被放置到特定的段中。在这段代码中，它使用了 GCC 编译器的特性和 Linux 系统的环境来实现条件编译。具体地说：</p>
+<h3 id="1-条件编译"><a href="#1-条件编译" class="headerlink" title="1. 条件编译"></a>1. <strong>条件编译</strong></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> __GNUC__ &amp;&amp; __linux__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FOLLY_KEEP [[gnu::section(<span class="string">&quot;.text.folly.keep&quot;</span>)]]</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FOLLY_KEEP</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这部分代码使用了条件编译指令 <code>#if</code>，检查当前编译器是否为 <strong>GCC</strong>（或兼容的编译器，例如 Clang）并且操作系统为 <strong>Linux</strong>。如果条件满足，定义了 <code>FOLLY_KEEP</code> 宏；如果条件不满足，<code>FOLLY_KEEP</code> 宏将不做任何特殊定义。</p>
+<h3 id="2-gnu-section-text-folly-keep-语法"><a href="#2-gnu-section-text-folly-keep-语法" class="headerlink" title="2. [[gnu::section(&quot;.text.folly.keep&quot;)]] 语法"></a>2. <strong><code>[[gnu::section(&quot;.text.folly.keep&quot;)]]</code> 语法</strong></h3><p>在 GCC 和 Clang 中，可以通过 <code>[[gnu::section(&quot;section_name&quot;)]]</code> 来指定某个函数或变量应该放置到特定的节（section）中。在这个例子中，函数或变量会被放置到名为 <code>.text.folly.keep</code> 的节中。</p>
+<ul>
+<li><strong><code>.text</code></strong>: 是程序的代码段（通常用于存储可执行代码）。</li>
+<li><strong><code>.folly.keep</code></strong>: 是自定义的段名称，可能用于标记那些需要特别处理的函数或变量。</li>
+</ul>
+<h3 id="3-实际作用"><a href="#3-实际作用" class="headerlink" title="3. 实际作用"></a>3. <strong>实际作用</strong></h3><ul>
+<li>如果编译器是 GCC 且操作系统是 Linux，宏 <code>FOLLY_KEEP</code> 将被定义为 <code>[[gnu::section(&quot;.text.folly.keep&quot;)]]</code>，这意味着应用了该宏的函数或变量会被放到 <code>.text.folly.keep</code> 这个节中。可能是为了优化、保持或其他目的，这些函数或变量在链接过程中会被保留。</li>
+<li>如果编译器不是 GCC 或操作系统不是 Linux，<code>FOLLY_KEEP</code> 宏什么也不做。</li>
+</ul>
+<h3 id="4-用途"><a href="#4-用途" class="headerlink" title="4. 用途"></a>4. <strong>用途</strong></h3><p>这个宏通常用于一些特殊需求，比如：</p>
+<ul>
+<li><strong>强制保留</strong>某些函数或变量，即使它们看起来未被使用。例如，某些库可能需要在特定条件下强制保留某些符号，以避免链接器优化掉这些函数或变量。</li>
+<li><strong>放置到特定段</strong>，可能用于调试、分析或特定的内存管理策略。</li>
+</ul>
+<h3 id="5-示例："><a href="#5-示例：" class="headerlink" title="5. 示例："></a>5. <strong>示例：</strong></h3><p>假设你有一个函数希望在 Linux + GCC 环境下保留并放入特定的段中，代码可能像这样：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="function">FOLLY_KEEP</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mySpecialFunction</span>()</span> &#123;</span><br><span class="line">    <span class="comment">// Some special code that should not be optimized away</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 GCC 和 Linux 环境下，<code>mySpecialFunction</code> 将被放置在 <code>.text.folly.keep</code> 这个段中。对于其他平台或编译器，<code>FOLLY_KEEP</code> 宏不会影响任何东西。</p>
+<h3 id="总结：-1"><a href="#总结：-1" class="headerlink" title="总结："></a>总结：</h3><ul>
+<li><code>FOLLY_KEEP</code> 是一个条件编译宏，用于在 GCC + Linux 环境下将函数或变量放置到 <code>.text.folly.keep</code> 段中。</li>
+<li>该宏用于控制特定的函数或变量不被优化掉，或用于特殊的内存管理&#x2F;存储需求。</li>
+<li>对于其他平台，<code>FOLLY_KEEP</code> 不做任何事情。</li>
 </ul>
 
     </div>

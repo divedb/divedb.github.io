@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="​	本章介绍早期的UNIX版本，直至第七版，并重点阐述了核心的内核概念，尤其是与文件系统活动相关的内核结构，以及主要基于文件访问的系统调用是如何实现的。 ​	尽管此后经过了 25 年以上的发展，这些早期研究版UNIX内核中的结构、内核子系统以及控制流程依然在很大程度上被保留。因此，理解本章所描述的这些简单实现方法，对于掌握如今更为复杂的UNIX实现来说是重要基础。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNIX内核概念">
+<meta property="og:url" content="https://huangpiao.tech/2025/05/13/linux/fs/UNIX%E5%86%85%E6%A0%B8%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="​	本章介绍早期的UNIX版本，直至第七版，并重点阐述了核心的内核概念，尤其是与文件系统活动相关的内核结构，以及主要基于文件访问的系统调用是如何实现的。 ​	尽管此后经过了 25 年以上的发展，这些早期研究版UNIX内核中的结构、内核子系统以及控制流程依然在很大程度上被保留。因此，理解本章所描述的这些简单实现方法，对于掌握如今更为复杂的UNIX实现来说是重要基础。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://huangpiao.tech/.tech//fs_figure6.2.png">
+<meta property="og:image" content="https://huangpiao.tech/.tech//fs_figure6.4.png">
+<meta property="article:published_time" content="2025-05-13T11:09:16.160Z">
+<meta property="article:modified_time" content="2025-05-13T14:56:35.825Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="文件系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://huangpiao.tech/.tech//fs_figure6.2.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/05/13/linux/fs/UNIX%E5%86%85%E6%A0%B8%E6%A6%82%E5%BF%B5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/13/linux/fs/UNIX%E5%86%85%E6%A0%B8%E6%A6%82%E5%BF%B5/","path":"2025/05/13/linux/fs/UNIX内核概念/","title":"UNIX内核概念"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UNIX内核概念 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%89%88%E8%87%B3%E7%AC%AC%E4%B8%83%E7%89%88%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">第五版至第七版的内部机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UNIX%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.</span> <span class="nav-text">UNIX文件系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E7%9A%84%E5%86%85%E6%A0%B8%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">与文件系统相关的内核结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%80%81%E4%B8%8E%E5%86%85%E6%A0%B8%E6%80%81"><span class="nav-number">4.</span> <span class="nav-text">用户态与内核态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UNIX%E4%B8%AD%E4%B8%8E%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">UNIX中与进程相关的结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E4%B8%8E%E6%96%87%E4%BB%B6%E8%A1%A8"><span class="nav-number">6.</span> <span class="nav-text">文件描述符与文件表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E7%BC%93%E5%AD%98%EF%BC%88The-Inode-Cache%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">节点缓存（The Inode Cache）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA%E7%BC%93%E5%AD%98%EF%BC%88The-Buffer-Cache%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">缓冲区缓存（The Buffer Cache）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">8.1.</span> <span class="nav-text">挂载文件系统</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%EF%BC%88System-Call-Handling%EF%BC%89"><span class="nav-number">9.</span> <span class="nav-text">系统调用处理（System Call Handling）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E5%90%8D%E8%A7%A3%E6%9E%90%EF%BC%88Pathname-Resolution%EF%BC%89"><span class="nav-number">10.</span> <span class="nav-text">路径名解析（Pathname Resolution）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E5%90%88%E5%90%84%E4%B8%AA%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">11.</span> <span class="nav-text">整合各个子系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6"><span class="nav-number">11.1.</span> <span class="nav-text">打开文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">11.2.</span> <span class="nav-text">读取文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E6%96%87%E4%BB%B6"><span class="nav-number">11.3.</span> <span class="nav-text">关闭文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">12.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/13/linux/fs/UNIX%E5%86%85%E6%A0%B8%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UNIX内核概念 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UNIX内核概念
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-13 19:09:16 / 修改时间：22:56:35" itemprop="dateCreated datePublished" datetime="2025-05-13T19:09:16+08:00">2025-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>​	本章介绍早期的<code>UNIX</code>版本，直至第七版，并重点阐述了核心的内核概念，尤其是与文件系统活动相关的内核结构，以及主要基于文件访问的系统调用是如何实现的。</p>
+<p>​	尽管此后经过了 25 年以上的发展，这些早期研究版<code>UNIX</code>内核中的结构、内核子系统以及控制流程依然在很大程度上被保留。因此，理解本章所描述的这些简单实现方法，对于掌握如今更为复杂的<code>UNIX</code>实现来说是重要基础。</p>
+ <span id="more"></span>
+
+<h4 id="第五版至第七版的内部机制"><a href="#第五版至第七版的内部机制" class="headerlink" title="第五版至第七版的内部机制"></a>第五版至第七版的内部机制</h4><p>​	自20世纪80 年代中期起，<code>UNIX</code>内核经历了一系列的变更，主流内核在实现方式上逐渐产生了分歧。而在<code>UNIX</code>发展最初的15年中，各个内核子系统的实现方式差异并不大，因此掌握这些早期<code>UNIX</code>版本背后的基本原理，将有助于理解新一代内核是如何演化和改变的。</p>
+<p>​	最早有文档记录的<code>UNIX</code>版本是第六版，其内容可以参考<code>John Lions</code>所著的《<code>UNIX</code>第六版注释（带源码）》（<code>Lions&#39; Commentary on UNIX 6th Edition—with source code</code>）一书来了解最早期的<code>UNIX</code>版本。如今，从第5版起的多个<code>UNIX</code>版本已经可以免费获取。与当今标准相比，早期的内核代码量非常小。整个内核不到8,000行代码，使得深入理解其运行机制变得非常可行。甚至部分为数不多的汇编代码，也无需过多钻研即可掌握其基本功能。</p>
+<p>​	本章重点从文件系统的视角讲解内核原理。在介绍较新的<code>UNIX</code>实现之前，首先需要说明一些<code>UNIX</code>的基本概念。这里的内容主要围绕<code>UNIX</code>第五版至第七版展开，这一时期大致涵盖了<code>UNIX</code>前十年的发展历程。本章避免陷入技术细节的泥潭，读者无需具备太多<code>UNIX</code>内核知识，也能较为轻松地理解内容。</p>
+<p>值得注意的是，在这一早期阶段，<code>UNIX</code>仍是基于单处理器的内核。直到大约十年后，主流的多处理器<code>UNIX</code>实现才逐渐出现。</p>
+<h4 id="UNIX文件系统"><a href="#UNIX文件系统" class="headerlink" title="UNIX文件系统"></a><code>UNIX</code>文件系统</h4><p>​	在讨论各内核结构如何协同工作之前，必须先了解最初的<code>UNIX</code>文件系统在磁盘上的存储方式。如图6.1所示，文件系统由若干基本构建块组成：第一个512字节的块未被使用；第二个块（块1）为超级块（<code>superblock</code>），其中存储整个文件系统的元信息，例如文件系统的块总数、<code>inode</code>（文件节点）的总数、可用<code>inode</code>和数据块数量等。</p>
+<p>文件系统中的每个文件都对应一个唯一的<code>inode</code>，其中包含如下字段：</p>
+<ul>
+<li><code>i_mode</code>：指定文件类型，例如目录（<code>IFDIR</code>）、块设备文件（<code>IFBLK</code>）或字符设备文件（<code>IFCHR</code>）。若未设置这些标志之一，则默认为普通文件（该逻辑后期被更显式的<code>IFREG</code>标志取代）。</li>
+<li><code>i_nlink</code>：记录指向该文件的硬链接数量。该值为0时，<code>inode</code>将被释放。</li>
+<li><code>i_uid</code>：文件所属用户的<code>ID</code>。</li>
+<li><code>i_gid</code>：文件所属用户组的<code>ID</code>。</li>
+<li><code>i_size</code>：文件大小（以字节为单位）。</li>
+<li><code>i_addr</code>：指向磁盘上数据块的地址数组。</li>
+<li><code>i_mtime</code>：文件最后修改时间。</li>
+<li><code>i_atime</code>：文件最后访问时间。</li>
+</ul>
+<p>其中，<code>i_addr</code>是一个包含8个指针的数组。每个指针可以直接指向一个512字节的磁盘数据块，或者指向所谓的“间接块”（<code>indirect block</code>）。每个间接块包含32个指针，它们可以指向数据块或“双重间接块”（<code>double indirect block</code>），后者则进一步指向数据块。图6.2展示了<code>inode</code>直接访问数据块与通过双重间接块访问的两个极端例子：</p>
+<ul>
+<li>在第一个例子中，<code>inode</code>直接指向两个数据块，说明该文件大小在513到1024字节之间；若文件小于512字节，仅需一个数据块，其余<code>i_addr[2]</code>至<code>i_addr[7]</code>将为<code>NULL</code>。</li>
+<li>第二个例子展示了最大可能的文件大小：<code>i_addr[]</code>中的每个元素指向一个间接块，每个间接块指向32个双重间接块，而每个双重间接块再指向 32 个数据块，因此最大数据块数量为32 × 32 × 32 &#x3D; 32,768。</li>
+</ul>
+<h4 id="与文件系统相关的内核结构"><a href="#与文件系统相关的内核结构" class="headerlink" title="与文件系统相关的内核结构"></a>与文件系统相关的内核结构</h4><p>​	本节介绍<code>UNIX</code>内核中用于文件访问的关键结构，从文件描述符（<code>file descriptor</code>）到最终调用磁盘驱动进行读写操作的整个流程。</p>
+<h4 id="用户态与内核态"><a href="#用户态与内核态" class="headerlink" title="用户态与内核态"></a>用户态与内核态</h4><p>​	<code>UNIX</code>系统通过硬件保护机制将每个进程与其他进程、以及内核本身隔离开来。一个进程既无法访问其他进程的地址空间，也无法直接读写内核数据结构。</p>
+<p>进程运行时可能处于用户态或内核态：</p>
+<ul>
+<li>用户态（<code>User Mode</code>）：进程使用自己的堆栈，执行应用程序本体或其链接的库中的指令。</li>
+<li>内核态（<code>Kernel Mode</code>）：当进程发起系统调用时，会通过特定的硬件指令切换到内核态。此时，系统调用的所有参数会被复制到内核地址空间，后续操作在内核栈中执行。</li>
+</ul>
+<p>如果该进程的时间片耗尽，或它因等待<code>I/O</code>而进入休眠状态，系统可能会发生上下文切换（<code>context switch</code>），将<code>CPU</code>控制权交给另一个用户进程。</p>
+<p>用户态与内核态之间的控制切换机制依赖于具体的硬件架构。</p>
+<h4 id="UNIX中与进程相关的结构"><a href="#UNIX中与进程相关的结构" class="headerlink" title="UNIX中与进程相关的结构"></a><code>UNIX</code>中与进程相关的结构</h4><p>​	每个进程的信息在内核中分布在两个不同的结构体中：<code>proc</code>结构和<code>user</code>结构。其中<code>proc</code>结构始终常驻内存，而<code>user</code>结构仅在进程运行时才需要，因此当进程不处于运行状态并可被换出（<code>swap out</code>）时，除了 <code>proc</code> 结构之外的所有相关结构都可以写入交换设备。显然，<code>proc</code>结构中必须记录这些被换出结构在交换设备上的位置。</p>
+<p><code>proc</code>结构本身并不包含文件访问相关的信息，但<code>user</code>结构中包含了多个与文件访问密切相关的字段：</p>
+<ul>
+<li><code>u_cdir</code>：当前工作目录的<code>inode</code>，主要用于路径名解析中相对路径的解析。</li>
+<li><code>u_uid/u_gid</code>：该进程的用户<code>ID</code>和组<code>ID</code>，用于文件访问权限的判断。类似地，<code>u_euid</code>和<code>u_egid</code>分别表示有效用户<code>ID</code>和有效组<code>ID</code>。</li>
+<li><code>u_ofile</code>：一个文件描述符数组，用于记录该进程打开的文件。</li>
+<li><code>u_arg</code>：在用户态切换到内核态并调用系统调用时，该数组保存系统调用的参数。</li>
+<li><code>u_base</code>：保存用户空间的缓冲区地址，用于如<code>read()</code>和<code>write()</code>等系统调用中读取或写入数据。</li>
+<li><code>u_count</code>：表示要读取或写入的字节数，在<code>I/O</code>操作中逐步减少，最终结果可返回给用户。</li>
+<li><code>u_offset</code>：当前读写操作在文件中的偏移量。</li>
+<li><code>u_error</code>：如果系统调用处理过程中遇到错误，会设置该字段，返回时将其传递给用户。</li>
+</ul>
+<p>除此之外，还有其他与文件访问相关的字段，但由于在后续版本中逐渐被淘汰，为避免篇幅冗长，此处不再详述。</p>
+<p>熟悉<code>chroot()</code>系统调用以及较新版本<code>UNIX</code>的读者可能会好奇为何没有<code>u_rdir</code>字段来记录每个进程独立的根目录。这是因为在该阶段的<code>UNIX</code>中，<code>chroot()</code>尚未被实现。</p>
+<h4 id="文件描述符与文件表"><a href="#文件描述符与文件表" class="headerlink" title="文件描述符与文件表"></a>文件描述符与文件表</h4><p>​	第2章中的“文件描述符”部分已提到，系统调用如<code>open()</code>会返回一个文件描述符。在<code>user</code>结构体中，<code>u_ofile[]</code>数组通过文件描述符作为索引，用于定位指向对应<code>file</code>结构的指针。</p>
+<p>在早期的<code>UNIX</code>版本中，<code>u_ofile[]</code>的大小是硬编码的，由常量<code>NOFILE</code>定义。例如，标准输入、标准输出和标准错误对应的是数组下标0、1和2，因此第一个由<code>open()</code>返回的文件描述符通常是3。在早期<code>UNIX</code>中，<code>NOFILE</code>的初始值为15，到了第7版时被提升至20。</p>
+<p><code>file</code>结构包含了文件打开方式、当前文件偏移等信息，具体成员如下：</p>
+<ul>
+<li><code>f_flag</code>：表示文件的打开方式。如果为读打开则设置为<code>FREAD</code>，写打开则为<code>FWRITE</code>。</li>
+<li><code>f_count</code>：引用计数，每个<code>file</code>结构都有一个引用计数字段，后文会进一步解释。</li>
+<li><code>f_inode</code>：文件打开后，其<code>inode</code>会从磁盘读取并存入内存中的<code>inode</code>结构，该字段即指向该内核的<code>inode</code>。</li>
+<li><code>f_offset</code>：记录当前读写操作在文件中的偏移量，初始为0，之后会随着每次读写操作递增，或由<code>lseek()</code>修改。</li>
+</ul>
+<p><code>file</code>结构的引用计数<code>f_count</code>会在例如<code>dup()</code>系统调用中被增加。该调用会创建一个新的文件描述符，与原始描述符指向同一个文件表条目。调用<code>dup()</code>前，系统会先增加<code>f_count</code>的值。</p>
+<p>虽然现在要获得一个正在运行的第五版<code>UNIX</code>系统已经比较困难（自其问世已过去27 年），但在现代<code>UNIX</code>系统中仍可看到这些机制的实际应用。例如，<code>Sun Solaris 8</code>中运行的如下程序便可印证这些概念。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> fd1, fd2;</span><br><span class="line">  fd1 = open(<span class="string">&quot;/etc/passwd&quot;</span>, O_RDONLY);</span><br><span class="line">  fd2 = dup(fd1);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fd1 = %d, fd2 = %d\n&quot;</span>, fd1, fd2);</span><br><span class="line">  pause();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>crash</code>工具可以用于分析内核中的各种数据结构。在本例中，我们运行上述程序，通过<code>crash</code>工具定位该进程，并展示其对应的用户区（<code>user area</code>）和文件结构（<code>file structures</code>）。</p>
+<p>首先，将程序放到后台运行，可以看到文件描述符的值分别为<code>3</code>和<code>4</code>，这符合预期。接着运行<code>crash</code>工具，利用<code>proc</code>命令配合 <code>grep</code> 命令来定位该进程，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crash</span></span><br><span class="line">dumpfile = /dev/mem, namelist = /dev/ksyms, outfile = stdout</span><br><span class="line">&gt; proc | grep mydup</span><br><span class="line">37  s  1422 1389 1422 1389 0 46 mydup</span><br></pre></td></tr></table></figure>
+
+<p>可以看到该进程占用了第37号槽位（<code>slot</code> 37），可以理解为一个<code>proc</code>结构数组中的元素编号。接下来使用<code>user</code>命令传入该槽位号，显示该进程的用户区信息。虽然这里并未展示整个结构体，但我们仍可以清楚地看到该进程的一些关键数据，例如文件描述符列表。</p>
+<p>值得注意的是，文件描述符<code>0</code>、<code>1</code>和<code>2</code>都指向同一个文件表项（通常是标准输入、输出、错误）。此外，由于程序中调用了 <code>dup()</code>函数，文件描述符<code>3</code>和<code>4</code>也指向同一个文件表项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&gt; user 37</span><br><span class="line">PER PROCESS USER AREA FOR PROCESS 37</span><br><span class="line"></span><br><span class="line">PROCESS MISC:</span><br><span class="line"><span class="built_in">command</span>: mydup, psargs: ./mydup</span><br><span class="line">start: Sat Jul 28 08:50:16 2001</span><br><span class="line">mem: 90, <span class="built_in">type</span>: <span class="built_in">exec</span> su-user</span><br><span class="line">vnode of current directory: 300019b5468</span><br><span class="line"></span><br><span class="line">OPEN FILES, FLAGS, AND THREAD REFCNT:</span><br><span class="line">[0]: F 30000adad68, 0, 0</span><br><span class="line">[1]: F 30000adad68, 0, 0</span><br><span class="line">[2]: F 30000adad68, 0, 0</span><br><span class="line">[3]: F 30000adb078, 0, 0</span><br><span class="line">[4]: F 30000adb078, 0, 0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>最后，可以使用<code>file</code>命令来查看某个文件描述符所对应的文件表项。可以看到该文件结构的引用计数为2，偏移量为0（因为尚未读取任何数据），而标志位显示为只读（<code>read</code>）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; file 30000adb078</span><br><span class="line">ADDRESS        RCNT TYPE/ADDR       OFFSET FLAGS</span><br><span class="line">30000adb078    2    UFS /30000aafe30   0    <span class="built_in">read</span></span><br></pre></td></tr></table></figure>
+
+<p>除了这个文件结构体现在指向的是一个<code>vnode</code>而不是传统的内存中的<code>inode</code>之外，其主结构在<code>UNIX</code>三十多年的发展中基本保持稳定。</p>
+<h4 id="节点缓存（The-Inode-Cache）"><a href="#节点缓存（The-Inode-Cache）" class="headerlink" title="节点缓存（The Inode Cache）"></a>节点缓存（<code>The Inode Cache</code>）</h4><p>​	每个文件在磁盘上由一个<code>inode</code>（索引节点）表示。当文件被打开时，其<code>inode</code>必须从磁盘中读取。像<code>stat()</code>这样的系统调用，需要的绝大部分信息都来自<code>inode</code>结构体。</p>
+<p>在文件打开期间，<code>inode</code>会一直驻留在内存中。如果对<code>inode</code>的内容进行了修改，比如文件大小或块地址的变动，系统通常会将这些更改写回磁盘。</p>
+<p>举例来说，假设一个文件当前大小为512字节，仅分配了一个块（通过<code>i_addr[0]</code>引用），现在向文件末尾写入512字节的新数据。这将涉及：</p>
+<ul>
+<li>将<code>i_size</code>扩展为 1024 字节；</li>
+<li>为新数据分配一个新的块；</li>
+<li>设置<code>i_addr[1]</code>指向该新分配的块。</li>
+</ul>
+<p>上述<code>inode</code>结构的修改将被写回磁盘。</p>
+<p>在文件关闭并且没有其他进程再打开该文件后，这个内存中的<code>inode（in-core inode）</code>就可以被释放。</p>
+<p>但如果<code>inode</code>每次关闭文件就立刻释放，下次打开文件时就需要重新从磁盘读取，非常低效。尤其是一些频繁访问的<code>inode</code>，例如根目录<code>/</code>、<code>/usr</code>或<code>/usr/bin</code>对应的<code>inode</code>。为了避免这种开销，<code>Linux</code>将这些<code>inode</code>保留在<code>inode</code>缓存中，即使文件已经关闭也不立即释放。只有当系统需要为新<code>inode</code>腾出空间时，才会回收这些不再使用的缓存<code>inode</code>。</p>
+<p>图6.3展示了文件描述符与<code>inode</code>的关系。上方的进程调用了<code>dup()</code>，该系统调用创建了一个新的文件描述符，使得<code>fdb</code>和<code>fdc</code>指向同一个文件表项。这个文件表项又指向<code>/etc/passwd</code>的<code>inode</code>。</p>
+<p>在下方的进程中，打开<code>/etc/passwd</code>会分配一个新的文件描述符和新的文件表项，但文件表项仍然指向与上方进程相同的内存中<code>inode</code>。为了正确处理这种“多个引用同一个<code>inode</code>”的情况，系统使用<code>i_count</code>字段：每次打开文件时递增，关闭文件时递减。只有当<code>i_count</code>降为0后，<code>inode</code>才能从<code>inode</code>缓存中释放。</p>
+<p><img src="/.tech//fs_figure6.2.png"></p>
+<h4 id="缓冲区缓存（The-Buffer-Cache）"><a href="#缓冲区缓存（The-Buffer-Cache）" class="headerlink" title="缓冲区缓存（The Buffer Cache）"></a>缓冲区缓存（The Buffer Cache）</h4><p>​	设备的访问仍然依赖于 设备<code>ID（device ID）</code> 和 块号（<code>block number</code>）。设备<code>ID</code>由主设备号（<code>major number</code>）和次设备号（<code>minor number</code>）构成。主设备号本质上是一个索引，用来从函数指针数组中找到设备驱动程序的入口点。</p>
+<ul>
+<li>块设备通过<code>bdevsw[]</code>数组访问；</li>
+<li>字符设备通过<code>cdevsw[]</code>数组访问；</li>
+<li>这两个数组在早期的内核中通常是硬编码的。</li>
+</ul>
+<p>文件系统通过块设备驱动接口访问磁盘。磁盘驱动会提供一个称为<code>strategy</code>函数的接口供文件系统调用，以发起实际的<code>I/O</code>操作。</p>
+<p>每个设备驱动的 strategy 函数接受一个 <code>buf</code> 结构体，里面包含完成 I&#x2F;O 所需的所有信息。这个结构体自第 5 版 UNIX 以来变化不大，其字段大致如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>         b_flags;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">b_forw</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">b_back</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">av_forw</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">av_back</span>;</span></span><br><span class="line"><span class="type">int</span>         b_dev;</span><br><span class="line"><span class="type">char</span>       *b_addr;</span><br><span class="line"><span class="type">char</span>        b_blkno;</span><br><span class="line"><span class="type">char</span>        b_error;</span><br><span class="line"><span class="type">char</span>        b_resid;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>b_forw</code>和<code>b_back</code>字段由设备驱动使用，用于将相关的缓冲区连接成链；</li>
+<li><code>I/O</code>完成后，<code>av_forw</code>和<code>av_back</code>用于将缓冲区加入到空闲列表；</li>
+<li>空闲列表上的缓冲区在被重用之前会保留其原始内容，因此形成了一个最近访问块的缓存；</li>
+<li><code>b_dev</code>和<code>b_blkno</code>标明该缓冲区对应的设备和块号；</li>
+<li><code>b_addr</code>指向的是内存中实际保存数据的缓冲区；</li>
+<li><code>b_error</code>、<code>b_resid</code>和<code>b_wcount</code>等字段用于<code>I/O</code>操作的状态维护。</li>
+</ul>
+<p><code>b_flags</code>字段及其含义</p>
+<p><code>b_flags</code>字段保存了缓冲区当前的状态信息。以下是一些可能设置的标志位：</p>
+<ul>
+<li><code>B_WRITE</code>：调用设备驱动时，会将缓冲区中的数据写入由<code>b_dev</code>指定设备的<code>b_blkno</code>块。</li>
+<li><code>B_READ</code>：调用设备驱动时，会将<code>b_dev</code>设备上编号为<code>b_blkno</code>的块读入到<code>b_addr</code>所指向的缓冲区内存中。</li>
+<li><code>B_DONE</code>：<code>I/O</code>操作已完成，缓冲区中的数据可被使用。</li>
+<li><code>B_ERROR</code>：在读写过程中发生了错误。</li>
+<li><code>B_BUSY</code>：该缓冲区当前正在被使用。</li>
+<li><code>B_WANTED</code>：表示有其他进程希望使用该缓冲区。在<code>I/O</code>完成并释放缓冲区之后，内核会唤醒等待的进程。</li>
+</ul>
+<p><strong>缓冲区初始化与组织</strong></p>
+<p>当内核启动时，会初始化一个大小为<code>NBUF</code>的缓冲区数组，这些缓冲区构成了缓冲区缓存（<code>buffer cache</code>）。每个缓冲区通过 <code>av_forw</code>和<code>av_back</code>字段进行链式连接，由<code>bfreelist</code>指针维护整个空闲缓冲区链表的头部。</p>
+<p>缓冲区缓存主要对外提供两个接口：<code>bread()</code>和<code>bwrite()</code>，分别用于读和写操作。它们的函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> buf *<span class="title function_">bread</span><span class="params">(<span class="type">int</span> dev, <span class="type">int</span> blkno)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">bwrite</span><span class="params">(<span class="keyword">struct</span> buf *bp)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>先来看<code>bread()</code>函数，它首先调用<code>getblk()</code>，在缓存中查找是否已存在对应设备（<code>dev</code>）和块号（<code>blkno</code>）的缓冲区。如果未命中，<code>getblk()</code>会从空闲链表中取出一个缓冲区，将其标识设为目标设备和块号，并返回该缓冲区。</p>
+<p><code>bread()</code>获取到缓冲区后，会检查其<code>B_DONE</code>标志：</p>
+<ul>
+<li>如果该标志已设置，说明缓冲区中的数据是有效的，可以直接返回；</li>
+<li>如果未设置，说明该块尚未从磁盘读入，需要调用磁盘驱动的<code>strategy</code>函数执行读操作，并调用<code>iowait()</code>进入睡眠，直到数据读取完成。</li>
+</ul>
+<p>此处值得一提的是，设备驱动的 <code>strategy</code> 函数是<strong>异步接口</strong>：I&#x2F;O 请求提交后，设备驱动立即返回，系统可以在 I&#x2F;O 进行期间执行其他任务。</p>
+<p>如上述场景中，虽然当前进程通过 <code>iowait()</code> 进入休眠等待，但系统中其他任务仍可并行运行。这种异步特性也使得预读（read-ahead）机制成为可能——内核可提前启动下一个文件块的异步读取，以提高未来访问的响应速度。</p>
+<p>当进程请求某个数据块时，如果该数据块已经在内存中，则可以立即提供。而在将数据返回给用户之前，内核会调用一次<code>strategy</code>函数，启动<strong>下一个数据块</strong>的异步读取，但<strong>不会</strong>调用<code>iowait()</code>等待该<code>I/O</code>操作完成。这样可实现预读机制，使得下次访问时数据可能已在内存中，从而提高性能。</p>
+<p>执行写操作时，只需调用<code>bwrite()</code>函数，其内部按照前文所示的两行代码顺序完成写入。</p>
+<p>调用者在使用完缓冲区后，应调用<code>brelse()</code>函数释放该缓冲区。<code>brelse()</code>会将缓冲区放回空闲链表（<code>freelist</code>）的末尾，这样可确保最早空闲的缓冲区会优先被重新分配。</p>
+<h5 id="挂载文件系统"><a href="#挂载文件系统" class="headerlink" title="挂载文件系统"></a>挂载文件系统</h5><p>​	本章前文《UNIX 文件系统》部分介绍了文件系统在磁盘上的布局：超级块（<code>superblock</code>）位于磁盘分区（<code>slice</code>）的第1块。系统中所有已挂载的文件系统以链表形式组织，每个挂载的文件系统对应一个<code>mount</code>结构体，最多可以挂载<code>NMOUNT</code>个文件系统。</p>
+<p>每个<code>mount</code>结构包含三个主要字段：</p>
+<ul>
+<li><code>m_dev</code>：记录所挂载磁盘分区的设备<code>ID</code>，可用于简单地检查是否尝试重复挂载同一文件系统。</li>
+<li><code>m_buf</code>：指向挂载操作中从磁盘读取的超级块（<code>struct filsys</code>）。</li>
+<li><code>m_inodp</code>：指向挂载点所在目录的<code>inode</code>。</li>
+</ul>
+<p>​	根文件系统的挂载发生在内核初始化早期。由于根设备<code>ID</code>在内核中是硬编码的，挂载过程相对简单：首先通过<code>bread()</code>读取根文件系统的超级块所在的磁盘块，将其读入内存；随后初始化第一个<code>mount</code>结构体，使其指向该缓冲区。</p>
+<p>​	任何后续的文件系统挂载必须通过<code>mount()</code>系统调用进行。该系统调用首先会遍历当前已挂载的文件系统链表，对比每个 <code>mount</code>结构体中的<code>m_dev</code>字段与传入的设备号。如果发现该文件系统已经挂载，则返回<code>EBUSY</code>错误；否则，分配一个新的 <code>mount</code>结构体用于新挂载的文件系统。</p>
+<h4 id="系统调用处理（System-Call-Handling）"><a href="#系统调用处理（System-Call-Handling）" class="headerlink" title="系统调用处理（System Call Handling）"></a>系统调用处理（System Call Handling）</h4><p>​	系统调用的参数在调用之前会被放置在用户栈上，然后通过一条硬件指令将执行流程从用户态切换到内核态。一旦进入内核，系统调用的处理函数需要访问这些参数。由于系统调用可能会因为等待资源而导致进程睡眠并发生上下文切换，内核必须将这些参数复制到内核地址空间中，以防数据丢失。</p>
+<p>内核中通过<code>sysent[]</code>数组来定义所有系统调用，包括每个调用所需的参数个数。当用户空间调用系统调用时，会执行一条硬件陷入指令（<code>trap instruction</code>），从而将控制权交给内核。此时，内核中的<code>trap()</code>函数会被调用，以判断要处理哪个系统调用。链接到用户程序中的<code>C</code>标准库函数会在用户栈上存储一个唯一的值，用于标识对应的系统调用。内核使用该值在 <code>sysent[]</code>中定位相应条目，从而知道要传入多少参数。</p>
+<p>以<code>read()</code>或<code>write()</code>为例，其参数在内核中通过如下方式访问：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fd      = u.u_ar0[R0];</span><br><span class="line">u_base  = u.u_arg[<span class="number">0</span>];</span><br><span class="line">u_count = u.u_arg[<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+
+<p>这种参数访问方式略显奇怪：第一个参数和后续参数的获取方式并不一致。这一设计部分是由于第五版<code>UNIX</code>所运行的硬件架构所限，部分则是当时作者处理陷入机制（<code>trap</code>）的特定实现方式。</p>
+<p>如果在系统调用处理期间检测到错误，内核会设置<code>u_error</code>来记录相应的错误。例如，如果尝试挂载一个已经被挂载的文件系统，<code>mount</code>系统调用的处理函数会将<code>u_error</code>设置为<code>EBUSY</code>。在系统调用处理结束时，<code>trap()</code>会将错误代码设置到<code>r0</code>寄存器中，这样在返回用户空间后，用户程序就可以通过系统调用的返回值获取该错误码。</p>
+<h4 id="路径名解析（Pathname-Resolution）"><a href="#路径名解析（Pathname-Resolution）" class="headerlink" title="路径名解析（Pathname Resolution）"></a>路径名解析（Pathname Resolution）</h4><p>许多系统调用都需要处理路径名，并在系统调用继续执行之前将路径名解析为对应的<code>inode</code>。例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fd = open(<span class="string">&quot;/etc/passwd&quot;</span>, O_RDONLY);</span><br></pre></td></tr></table></figure>
+
+<p>内核需要确认<code>/etc</code>是一个目录，并且<code>passwd</code>是该目录下的一个文件。</p>
+<p>路径解析的起始点取决于路径名是绝对路径还是相对路径。如果是绝对路径，搜索从<code>rootdir</code>开始，即指向根文件系统中根<code>inode</code>的指针，它在内核引导期间初始化。如果是相对路径，搜索则从<code>u.u_cdir</code>开始，即当前工作目录的<code>inode</code>。因此，改变当前目录的操作实质上就是将路径解析为目标目录的<code>inode</code>，并将<code>u.u_cdir</code>设置为该<code>inode</code>。</p>
+<p>执行路径名解析的主要函数是<code>namei()</code>，它依赖于用户区域中的字段（<code>user area</code>），这也是许多其他内核函数的通用做法。<code>namei()</code>的主要任务是解析路径名，逐个处理路径的每一部分。</p>
+<p>以<code>/etc/passwd</code>为例，解析流程的高层逻辑如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (absolute pathname) &#123;</span><br><span class="line">  dip = rootdir;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  dip = u.u_cdir;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">loop:</span><br><span class="line">  name = next component</span><br><span class="line">  scan dip <span class="keyword">for</span> name / inode number</span><br><span class="line">  iput(dip);</span><br><span class="line">  dip = iget() to read in inode</span><br><span class="line">  <span class="keyword">if</span> (last component) &#123;</span><br><span class="line">    <span class="keyword">return</span> dip;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">goto</span> loop;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然这只是一个简化流程，但基本反映了路径名解析中需要执行的主要步骤。</p>
+<p>其中：</p>
+<ul>
+<li><code>iget()</code>用于从<code>inode</code>缓存或磁盘中获取一个<code>inode</code>，并增加其引用计数（<code>i_count</code>）。</li>
+<li><code>iput()</code>则用于释放一个<code>inode</code>。如果<code>i_count</code>递减到0，该<code>inode</code>就可以被放入空闲列表。</li>
+</ul>
+<p>为了支持跨文件系统挂载点的路径解析，内核在<code>mount</code>和<code>inode</code>结构中引入了一些关键字段。例如，<code>mount</code>结构的<code>m_inodp</code>字段指向挂载该文件系统的目录<code>inode</code>，这样内核就可以通过“<code>..</code>”路径遍历挂载点。同时，被挂载的<code>inode</code>会被设置<code>IMOUNT</code>标志，从而允许内核正确跨越挂载点。</p>
+<blockquote>
+<p>当一个系统调用（比如<code>open(&quot;/mnt/usb/foo.txt&quot;)</code>）需要根据路径名来查找一个文件时，内核必须能够<strong>穿越多个挂载的文件系统</strong>来定位最终的文件。</p>
+<p>举个例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;/</span><br><span class="line">&gt;├── etc/</span><br><span class="line">&gt;├── home/</span><br><span class="line">&gt;├── mnt/</span><br><span class="line">&gt;│   └── usb/   ← 这里是一个挂载点，挂载了另一个文件系统</span><br><span class="line">&gt;│       └── foo.txt</span><br></pre></td></tr></table></figure>
+
+<p>在<code>/mnt/usb/foo.txt</code>上调用<code>open()</code>，但<code>/mnt/usb/</code>实际上不是根文件系统的一部分，它是一个“<strong>挂载点</strong>”，连接到了另一个文件系统（例如&#96;U盘）。</p>
+<p>所以“跨文件系统挂载点的路径解析”是指：</p>
+<p>内核必须：</p>
+<ol>
+<li><strong>识别出某个目录（如<code>/mnt/usb</code>）是一个挂载点</strong>；</li>
+<li><strong>根据挂载点信息跳转到另一个文件系统中继续解析路径（如继续找<code>foo.txt</code>）</strong>；</li>
+<li><strong>最终获取正确的<code>inode</code>和文件对象</strong>。</li>
+</ol>
+</blockquote>
+<h4 id="整合各个子系统"><a href="#整合各个子系统" class="headerlink" title="整合各个子系统"></a>整合各个子系统</h4><p>​	为了说明上述各个子系统是如何协同工作的，本节将以一次对<code>/etc/passwd</code>文件的<code>open()</code>调用为起点，依次跟踪接下来的<code>read()</code>和<code>close()</code>系统调用的执行过程。</p>
+<p>图6.4展示了在实际执行<code>read</code>操作过程中涉及的主要结构体。在阅读接下来的内容时，理解这张图将非常有帮助。</p>
+<p><img src="/.tech//fs_figure6.4.png"></p>
+<h5 id="打开文件"><a href="#打开文件" class="headerlink" title="打开文件"></a>打开文件</h5><p>​	<code>open()</code>系统调用由内核中的<code>open()</code>函数处理。它的首要任务是调用<code>namei()</code>来解析传入的路径名。如果路径名合法<code>namei()</code>将返回对应的<code>inode</code>（此处为<code>/etc/passwd</code>的<code>inode</code>）。接下来调用<code>open1()</code>函数，并传入打开模式作为参数。将<code>open()</code>与<code>open1()</code>分离的设计，使得<code>open()</code>与<code>creat()</code>系统调用能够复用大部分代码逻辑。</p>
+<p>在<code>open1()</code>中，首先会调用<code>access()</code>，根据文件的所有者和传入的访问模式，检查进程是否有权限访问该文件。如果检查通过，则调用<code>falloc()</code>分配一个文件表项。<code>falloc()</code>内部会调用<code>ufalloc()</code>，从<code>u_ofile[]</code>数组中分配一个空闲的文件描述符。新分配的文件描述符将会指向刚刚分配的文件表项。最后，在<code>open1()</code>返回前，会建立该文件表项与<code>/etc/passwd</code>的 <code>inode</code>之间的链接，如图 6.3 所示。</p>
+<h5 id="读取文件"><a href="#读取文件" class="headerlink" title="读取文件"></a>读取文件</h5><p>​	<code>read()</code>与<code>write()</code>系统调用分别由内核中的同名函数处理。这两个函数都会调用<code>rdwr()</code>，并传入<code>FREAD</code>或<code>FWRITE</code>作为参数。<code>rdwr()</code>的职责相对简单，它主要是将系统调用的参数设置到用户结构中相应的字段，然后调用<code>readi()</code>或<code>writei()</code>来执行实际的读写操作。下面的伪代码展示了初始化过程的关键步骤（省略了一些错误检查逻辑，以简化说明）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">get file pointer from user area</span><br><span class="line"><span class="built_in">set</span> u_base to u.u_arg[<span class="number">0</span>]; 	<span class="comment">/* user supplied buffer */</span></span><br><span class="line"><span class="built_in">set</span> u_count to u.u_arg[<span class="number">1</span>]; 	<span class="comment">/* number of bytes to read/write */</span></span><br><span class="line"><span class="keyword">if</span> (reading) &#123;</span><br><span class="line">  readi(fp-&gt;f_inode); </span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  writei(fp-&gt;f_inode); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>readi()</code>的内部逻辑相对直观，它会反复调用<code>bmap()</code>，根据文件偏移量获取磁盘块地址。<code>bmap()</code>会将逻辑块号转换为磁盘上的物理块号，然后作为参数传入<code>bread()</code>，后者负责从磁盘读取相应的数据块。</p>
+<p>随后，<code>uiomove()</code>函数将数据从内核缓冲区拷贝到用户调用<code>read()</code>时指定的缓冲区（即<code>u_base</code>指向的地址）。同时，它会递增<code>u_base</code>并递减<code>u_count</code>，直到所有数据传输完成或请求满足。</p>
+<p>如果读写过程中遇到<code>I/O</code>错误，<code>buf</code>结构体中的<code>b_flags</code>字段会被设置为<code>B_ERROR</code>，具体错误信息可能存储在<code>b_error</code>中。对应地，用户结构中的<code>u_error</code>字段也会被设置为<code>EIO</code>或<code>ENXIO</code>以反映错误。</p>
+<p><code>b_resid</code>字段记录请求的<code>u_count</code>中实际未传输的字节数。调用进程可通过这些字段获知实际读写了多少数据。</p>
+<h5 id="关闭文件"><a href="#关闭文件" class="headerlink" title="关闭文件"></a>关闭文件</h5><p>​	<code>close()</code>系统调用由内核函数<code>close()</code>处理，工作量不大。它首先调用<code>getf()</code>获取对应的文件表项，然后将<code>u_ofile[]</code>中的相应项清零，接着调用<code>closef()</code>。</p>
+<p>需要注意的是，如果之前调用过<code>dup()</code>，该文件表项可能存在多个引用。因此，在释放文件表项前，必须检查其引用计数（<code>f_count</code>）。如果<code>f_count == 1</code>，说明是最后一个引用，此时可以移除该表项，并调用<code>closei()</code>来释放<code>inode</code>。如果 <code>f_count &gt; 1</code>，仅需将其递减即可，<code>close()</code>的工作也就结束了。</p>
+<p>释放<code>inode</code>的操作由<code>iput()</code>完成。如果该文件是设备文件，<code>closei()</code>中还会调用相应的设备驱动关闭函数。</p>
+<p>与<code>closef()</code>类似，<code>iput()</code>会检查<code>inode</code>的引用计数（<code>i_count</code>）。若该计数大于1，仅需递减即可。如果等于1，说明这是该 <code>inode</code>的最后一个引用，可以释放之。此外，还会检查<code>inode</code>的硬链接计数是否为0。如果是，说明文件在打开状态时已经被<code>unlink()</code>删除，此时可以将该<code>inode</code>从磁盘中真正清除。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>​	本章重点介绍了早期<code>UNIX</code>中的文件系统及其相关结构，帮助读者理解<code>UNIX</code>内核的基本原理，尤其是文件系统和文件访问的实现方式。值得注意的是，早期<code>UNIX</code>的设计非常经典，以至于如今许多<code>UNIX</code>系内核仍与30多年前的原始设计保持高度相似。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/13/linux/fs/SVR4-VFSVnode%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B/" rel="prev" title="SVR4 VFS/Vnode架构的发展历程">
+                  <i class="fa fa-angle-left"></i> SVR4 VFS/Vnode架构的发展历程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/14/%E6%A8%A1%E7%89%88%E5%8F%82%E6%95%B0%E6%8E%A8%E5%AF%BC/" rel="next" title="模版参数推导">
+                  模版参数推导 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

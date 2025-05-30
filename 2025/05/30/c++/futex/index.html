@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="​	快速用户态锁（Fast user-level locking）是一种相较于传统内核机制（如fcntl锁和System V信号量）更轻量的加锁方式。在这种机制下，多个进程通过共享内存区域和原子操作来通信锁的状态。只有在锁发生争用时，内核才会介入，以执行排队和调度等操作。 本文通过回顾相关思想与代码的演变历程，探讨用户态锁的相关问题，并通过基准测试和对现有数据库的改造，展示futex（fast u">
+<meta property="og:type" content="article">
+<meta property="og:title" content="futex">
+<meta property="og:url" content="https://huangpiao.tech/2025/05/30/c++/futex/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="​	快速用户态锁（Fast user-level locking）是一种相较于传统内核机制（如fcntl锁和System V信号量）更轻量的加锁方式。在这种机制下，多个进程通过共享内存区域和原子操作来通信锁的状态。只有在锁发生争用时，内核才会介入，以执行排队和调度等操作。 本文通过回顾相关思想与代码的演变历程，探讨用户态锁的相关问题，并通过基准测试和对现有数据库的改造，展示futex（fast u">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-30T07:18:39.974Z">
+<meta property="article:modified_time" content="2025-05-30T07:29:28.756Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="多线程">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/05/30/c++/futex/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/30/c++/futex/","path":"2025/05/30/c++/futex/","title":"futex"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>futex | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/30/c++/futex/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="futex | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          futex
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-30 15:18:39 / 修改时间：15:29:28" itemprop="dateCreated datePublished" datetime="2025-05-30T15:18:39+08:00">2025-05-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>​	快速用户态锁（<code>Fast user-level locking</code>）是一种相较于传统内核机制（如<code>fcntl</code>锁和<code>System V</code>信号量）更轻量的加锁方式。在这种机制下，多个进程通过共享内存区域和原子操作来通信锁的状态。只有在锁发生争用时，内核才会介入，以执行排队和调度等操作。</p>
+<p>本文通过回顾相关思想与代码的演变历程，探讨用户态锁的相关问题，并通过基准测试和对现有数据库的改造，展示<code>futex</code>（<code>fast userspace mutex</code>）的性能优势。最后，展望<code>futex</code>接口未来的发展方向。</p>
+<span id="more"></span>
+
+<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>​	<code>Linux™</code>近年来作为服务器操作系统取得了显著发展，并成功部署在企业环境中，用于<code>Web</code>服务、文件服务和打印服务。随着2.4版本的发布，<code>Linux</code>在可扩展性和稳定性方面获得了巨大提升，使其能够胜任更高要求的企业级应用，如高端数据库、商业智能软件和应用服务器。</p>
+<p>因此，许多完整的企业级业务套件与中间件，如<code>SAP™</code>、<code>WebSphere™</code>、<code>Oracle</code>和<code>DB2™</code>等，可以同时被多个数据库引擎和预取进程访问。在这种环境下，共享状态的访问必须通过独占锁或共享锁进行正确同步。独占锁允许只有一个实体访问受保护的资源，而共享锁则允许多个读取者与一个写入者同时存在。</p>
+<p>同步机制的核心在于一个共享状态——表示某个资源当前是否可用——以及一个等待机制来确保资源在不可用时正确挂起。这个等待机制可以通过忙等待（busy-waiting），也可以通过显式或隐式调用调度器来实现。</p>
+<p>在传统 UNIX™ 系统中，System V IPC（进程间通信）机制，如信号量、消息队列、套接字及文件锁（如 <code>flock()</code>），是进程间同步的基本手段。这些机制通过一个内核对象的句柄进行操作，内核为其提供共享状态和原子操作。对这些机制的访问通常依赖系统调用（如 <code>semop()</code>）。其缺点是：每次加锁或解锁都需要系统调用，对于低争用的锁来说，这种频繁的用户态与内核态切换会造成显著开销。</p>
+<p>为解决这一问题，一种替代方案是采用<strong>用户态锁（user-level locking）</strong>。它通过位于共享内存中的锁对象以及原子操作来完成大部分加锁逻辑，仅在发生锁争用时才需要内核介入。具体的性能表现取决于内核服务介入的时机和方式。</p>
+<p>实际上，这一思想并不新颖。本文的理论基础可追溯至文献 [4]、[6] 和 [7]；文献 [2] 则专门探讨了锁机制对 JVM 性能的影响。近年来，相关实现也逐步在 Linux 平台上落地。</p>
+<p>为了使这些企业级应用能够高效运行在 Linux 或其他操作系统上，操作系统必须提供合适的抽象与服务。企业应用越来越倾向于使用多进程 &#x2F; 多线程架构：多线程应用能更好地利用对称多处理器（SMP）硬件；多进程结构则能增强容错性，例如一个子进程崩溃不会导致整个应用程序退出。此外，企业级软件往往由多个相互独立的子系统组成。</p>
+<p>尽管这些子系统在功能上相互独立，但它们对应的进程之间仍需通信与共享状态。一个典型例子是数据库系统，它们通常在用户空间中维护共享的 I&#x2F;O 缓冲区。</p>
+<p>本文将介绍一种快速的用户态锁机制，称为 <strong>futex（fast userspace mutex）</strong>。该机制是在 Linux 操作系统背景下设计开发的，并由两部分组成：一部分是用户态库，另一部分是内核服务，已集成进 Linux 2.5.7 版本内核。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/c/" rel="tag"># c++</a>
+              <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag"># 多线程</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/28/linux/fs/fs%E5%A4%B4%E6%96%87%E4%BB%B6/" rel="prev" title="fs头文件">
+                  <i class="fa fa-angle-left"></i> fs头文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/" rel="next" title="从零实现IR">
+                  从零实现IR <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

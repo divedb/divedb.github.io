@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="​	操作系统提供基本文件访问系统调用（如 open、read 等），但用户在进行文件操作时，往往需要更高级的功能。标准 I&#x2F;O库（stdio），作为ANSI C标准的一部分，提供额外的功能，避免重复造轮子。 ​	已有大量书籍就少标准I&#x2F;O库提供的各类调用。而本章则采取不同的视角，通过剖析Linux标准I&#x2F;O库的实现机制，介绍其核心结构、如何支持各类函数，以及库函数如何映射到底层UNIX系统调用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="标准I&#x2F;O库">
+<meta property="og:url" content="https://huangpiao.tech/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="​	操作系统提供基本文件访问系统调用（如 open、read 等），但用户在进行文件操作时，往往需要更高级的功能。标准 I&#x2F;O库（stdio），作为ANSI C标准的一部分，提供额外的功能，避免重复造轮子。 ​	已有大量书籍就少标准I&#x2F;O库提供的各类调用。而本章则采取不同的视角，通过剖析Linux标准I&#x2F;O库的实现机制，介绍其核心结构、如何支持各类函数，以及库函数如何映射到底层UNIX系统调用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-13T02:44:35.358Z">
+<meta property="article:modified_time" content="2025-05-13T04:26:13.471Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/","path":"2025/05/13/linux/fs/标准IO库/","title":"标准I/O库"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>标准I/O库 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#FILE%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">1.</span> <span class="nav-text">FILE结构体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E3%80%81%E8%BE%93%E5%87%BA%E5%92%8C%E9%94%99%E8%AF%AF%E6%B5%81"><span class="nav-number">2.</span> <span class="nav-text">标准输入、输出和错误流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E5%92%8C%E5%85%B3%E9%97%AD%E6%96%87%E4%BB%B6%E6%B5%81"><span class="nav-number">3.</span> <span class="nav-text">打开和关闭文件流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E6%B5%81%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">其他打开文件流的函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E5%87%86I-O%E5%BA%93%E7%9A%84%E7%BC%93%E5%86%B2"><span class="nav-number">4.</span> <span class="nav-text">标准I&#x2F;O库的缓冲</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E6%B5%81%E4%B8%AD%E8%AF%BB%E5%8F%96%E5%92%8C%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">5.</span> <span class="nav-text">从流中读取和写入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E6%B5%81%E4%B8%AD%E8%BF%9B%E8%A1%8C%E5%AE%9A%E4%BD%8D%EF%BC%88Seeking-through-the-Stream%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">在流中进行定位（Seeking through the Stream）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="标准I/O库 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          标准I/O库
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-13 10:44:35 / 修改时间：12:26:13" itemprop="dateCreated datePublished" datetime="2025-05-13T10:44:35+08:00">2025-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>​	操作系统提供基本文件访问系统调用（如 <code>open</code>、<code>read</code> 等），但用户在进行文件操作时，往往需要更高级的功能。标准 <code>I/O</code>库（<code>stdio</code>），作为<code>ANSI C</code>标准的一部分，提供额外的功能，避免重复造轮子。</p>
+<p>​	已有大量书籍就少标准<code>I/O</code>库提供的各类调用。而本章则采取不同的视角，通过剖析<code>Linux</code>标准<code>I/O</code>库的实现机制，介绍其核心结构、如何支持各类函数，以及库函数如何映射到底层<code>UNIX</code>系统调用。</p>
+<p>应用程序是否使用标准<code>I/O</code>库，而不是直接调用底层系统调用，取决于应用的需求。如果需要更丰富的功能，且对性能要求不高，标准<code>I/O</code>库提供的丰富函数通常能够满足大多数程序员的需要。但如果性能是关键考量，或者需要更精细地控制<code>I/O</code>行为，那么理解文件系统的<code>I/O</code>实现，并绕过标准<code>I/O</code>库直接使用系统调用，会是更优的选择。</p>
+<p>本章不会逐一讲解<code>stdio</code>提供的众多函数，而是聚焦于标准<code>I/O</code>库的底层实现机制。关于接口的详细介绍，可参考<code>Richard Stevens</code>所著的《<code>UNIX</code>高级环境编程》一书，或查阅<code>Single UNIX Specification</code>。</p>
+<span id="more"></span>
+
+<h4 id="FILE结构体"><a href="#FILE结构体" class="headerlink" title="FILE结构体"></a><code>FILE</code>结构体</h4><p>​	系统调用如<code>open()</code>和<code>dup()</code> 返回一个文件描述符（<code>file descriptor</code>），程序可以通过该描述符进行文件操作。而标准<code>I/O</code>库则基于<code>FILE</code>结构体进行操作，这一结构体也常被称为“文件流”（<code>file stream</code>）。本质上，它是一个字符缓冲区，保存了当前的读写指针及其他辅助信息。</p>
+<p>在<code>Linux</code>中，<code>FILE</code>是由 <code>_IO_FILE</code>结构体定义的。下面是<code>_IO_FILE</code>的部分字段示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">IO_FILE</span> &#123;</span></span><br><span class="line">  <span class="type">char</span> *_IO_read_ptr;   <span class="comment">/* 当前读取指针 */</span></span><br><span class="line">  <span class="type">char</span> *_IO_read_end;   <span class="comment">/* 读取区域的结束位置 */</span></span><br><span class="line">  <span class="type">char</span> *_IO_read_base;  <span class="comment">/* putback区和读取区域的起始位置 */</span></span><br><span class="line">  <span class="type">char</span> *_IO_write_base; <span class="comment">/* 写入区域的起始位置 */</span></span><br><span class="line">  <span class="type">char</span> *_IO_write_ptr;  <span class="comment">/* 当前写入指针 */</span></span><br><span class="line">  <span class="type">char</span> *_IO_write_end;  <span class="comment">/* 写入区域的结束位置 */</span></span><br><span class="line">  <span class="type">char</span> *_IO_buf_base;   <span class="comment">/* 缓冲区的起始位置 */</span></span><br><span class="line">  <span class="type">char</span> *_IO_buf_end;    <span class="comment">/* 缓冲区的结束位置 */</span></span><br><span class="line">  <span class="type">int</span> _fileno;          <span class="comment">/* 文件描述符 */</span></span><br><span class="line">  <span class="type">int</span> _blksize;         <span class="comment">/* 块大小（可能用于优化） */</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IO_FILE</span> <span class="title">FILE</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>本章稍后会详细分析这些结构字段的用途。我们先来看一个使用系统调用打开并读取文件的例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fd = open(<span class="string">&quot;/etc/passwd&quot;</span>, O_RDONLY);</span><br><span class="line">read(fd, buf, <span class="number">1024</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果改用标准<code>I/O</code>库来访问文件，系统会为文件描述符<code>fd</code>分配一个<code>FILE</code>结构体，并通过一个缓冲区处理所有<code>I/O</code>操作。在上述 <code>_IO_FILE</code>结构体中，字段<code>_fileno</code>保存关联的文件描述符，而<code>_IO_buf_base</code>指向实际的数据缓冲区。</p>
+<h4 id="标准输入、输出和错误流"><a href="#标准输入、输出和错误流" class="headerlink" title="标准输入、输出和错误流"></a>标准输入、输出和错误流</h4><p>​	进程的标准输入、标准输出和标准错误流分别由文件描述符<code>STDIN_FILENO</code>、<code>STDOUT_FILENO</code>和<code>STDERR_FILENO</code>表示。若使用标准<code>I/O</code>库进行访问，则可使用对应的文件流<code>stdin</code>、<code>stdout</code>和<code>stderr</code>。其定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> FILE *<span class="built_in">stdin</span>;</span><br><span class="line"><span class="keyword">extern</span> FILE *<span class="built_in">stdout</span>;</span><br><span class="line"><span class="keyword">extern</span> FILE *<span class="built_in">stderr</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这三个标准文件流无需显式调用<code>open()</code>即可直接访问，类似地，三个标准文件描述符也无需显式打开。</p>
+<p>一些标准<code>I/O</code>库函数是专门针对标准输入输出流设计的。例如，<code>printf()</code>默认写入标准输出（即<code>stdout</code>），而<code>fprintf()</code>则要求调用者显式传入目标文件流。同样地，<code>getchar()</code>操作的是标准输入（<code>stdin</code>），而<code>getc()</code>则要求指定具体的文件流。实际上，<code>getchar()</code>的声明可以简化为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> getchar() getc(stdin)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="打开和关闭文件流"><a href="#打开和关闭文件流" class="headerlink" title="打开和关闭文件流"></a>打开和关闭文件流</h4><p>可以调用<code>fopen()</code>和<code>fclose()</code>库函数来打开和关闭文件流：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">FILE *<span class="title function_">fopen</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename, <span class="type">const</span> <span class="type">char</span> *mode)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">fclose</span><span class="params">(FILE *stream)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>mode</code>参数是一个字符串，指示文件的打开方式，它可以是以下几种模式之一。请注意，这些模式是<code>ANSI C</code>标准的一部分：</p>
+<ul>
+<li><code>r, rb</code>：以只读模式打开文件。</li>
+<li><code>w, wb</code>：将文件截断为零长度，或者如果文件不存在，则创建一个新文件并以写入模式打开。</li>
+<li><code>a, ab</code>：以追加模式打开文件。如果文件不存在，先创建文件。</li>
+<li><code>r+, rb+, r+b</code>：以更新模式打开文件（既可读又可写）。</li>
+<li><code>w+, wb+, w+b</code>：将文件截断为零长度，或者如果文件不存在，则创建新文件并以更新模式打开。</li>
+<li><code>a+, ab+, a+b</code>：以追加模式打开文件。如果文件不存在，创建文件并以更新模式打开。写入将从文件末尾开始。</li>
+</ul>
+<p>在内部，标准<code>I/O</code>库将这些模式映射为相应的标志，并将其传递给<code>open()</code>系统调用。例如，<code>r</code>会映射为<code>O_RDONLY</code>，<code>r+</code>会映射为<code>O_RDWR</code>，依此类推。打开文件流的过程如图 4.1 所示。</p>
+<p>以下示例展示了某些库函数对 <code>FILE</code> 结构的影响：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  FILE *fp1, *fp2;</span><br><span class="line">  <span class="type">char</span> c;</span><br><span class="line"></span><br><span class="line">  fp1 = fopen(<span class="string">&quot;/etc/passwd&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">  fp2 = fopen(<span class="string">&quot;/etc/mtab&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp1-&gt;_IO_buf_base = 0x%x\n&quot;</span>, fp1-&gt;_IO_buf_base);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp1-&gt;_IO_buf_end = 0x%x\n&quot;</span>, fp1-&gt;_IO_buf_end);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp2-&gt;_IO_buf_base = 0x%x\n&quot;</span>, fp2-&gt;_IO_buf_base);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp2-&gt;_IO_buf_end = 0x%x\n&quot;</span>, fp2-&gt;_IO_buf_end);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;address of fp1 = 0x%x\n&quot;</span>, fp1);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp1-&gt;_fileno = 0x%x\n&quot;</span>, fp1-&gt;_fileno);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;address of fp2 = 0x%x\n&quot;</span>, fp2);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp2-&gt;_fileno = 0x%x\n&quot;</span>, fp2-&gt;_fileno);</span><br><span class="line"></span><br><span class="line">  c = getc(fp1);</span><br><span class="line">  c = getc(fp2);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp1-&gt;_IO_buf_base = 0x%x\n&quot;</span>, fp1-&gt;_IO_buf_base);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp1-&gt;_IO_buf_end = 0x%x\n&quot;</span>, fp1-&gt;_IO_buf_end);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp2-&gt;_IO_buf_base = 0x%x\n&quot;</span>, fp2-&gt;_IO_buf_base);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp2-&gt;_IO_buf_end = 0x%x\n&quot;</span>, fp2-&gt;_IO_buf_end);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，即使调用了<code>fopen()</code>，标准<code>I/O</code>库在实际请求读取或写入数据之前不会为<code>I/O</code>缓冲区分配空间。因此，<code>_IO_buf_base</code>初始值为 <code>NULL</code>。在上面的示例中，调用<code>getc()</code>会分配缓冲区，并从文件中读取数据到新分配的缓冲区。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ ./fpopen</span><br><span class="line">fp1-&gt;_IO_buf_base = 0x0</span><br><span class="line">fp1-&gt;_IO_buf_end = 0x0</span><br><span class="line">fp2-&gt;_IO_buf_base = 0x0</span><br><span class="line">fp2-&gt;_IO_buf_end = 0x0</span><br><span class="line">address of fp1 = 0xd55842a0</span><br><span class="line">fp1-&gt;_fileno = 0x3</span><br><span class="line">address of fp2 = 0xd5584480</span><br><span class="line">fp2-&gt;_fileno = 0x4</span><br><span class="line">fp1-&gt;_IO_buf_base = 0xd5584a70</span><br><span class="line">fp1-&gt;_IO_buf_end = 0xd5585a70</span><br><span class="line">fp2-&gt;_IO_buf_base = 0xd5585a80</span><br><span class="line">fp2-&gt;_IO_buf_end = 0xd5585e80</span><br></pre></td></tr></table></figure>
+
+<p>运行时使用 <code>strace</code>或<code>truss</code>可以查看库将要执行的系统调用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ strace fpopen 2&gt;&amp;1 | grep open</span><br><span class="line">execve(<span class="string">&quot;./fpopen&quot;</span>, [<span class="string">&quot;./fpopen&quot;</span>], 0x7fff73be0520 /* 55 vars */) = 0</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/etc/ld.so.cache&quot;</span>, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/etc/passwd&quot;</span>, O_RDONLY) = 3</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/etc/mtab&quot;</span>, O_RDONLY) = 4</span><br><span class="line"></span><br><span class="line">$ strace fpopen 2&gt;&amp;1 | grep <span class="built_in">read</span></span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0&gt;\0\1\0\0\0P\237\2\0\0\0\0\0&quot;</span>..., 832) = 832</span><br><span class="line">pread64(3, <span class="string">&quot;\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0&quot;</span>..., 784, 64) = 784</span><br><span class="line">pread64(3, <span class="string">&quot;\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0&quot;</span>..., 48, 848) = 48</span><br><span class="line">pread64(3, <span class="string">&quot;\4\0\0\0\24\0\0\0\3\0\0\0GNU\0\315A\vq\17\17\tLh2\355\331Y1\0m&quot;</span>..., 68, 896) = 68</span><br><span class="line">pread64(3, <span class="string">&quot;\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0&quot;</span>..., 784, 64) = 784</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;root:x:0:0:root:/root:/bin/bash\n&quot;</span>..., 4096) = 2979</span><br><span class="line"><span class="built_in">read</span>(4, <span class="string">&quot;sysfs /sys sysfs rw,nosuid,nodev&quot;</span>..., 1024) = 1024</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在<code>Linux</code>上，当程序执行时，动态链接器（<code>ld.so</code> 或 <code>ld-linux.so</code>）会负责加载程序运行所需的动态链接库。这些库包括标准 C 库（<code>libc</code>），它包含了诸如 <code>fopen()</code>、<code>getc()</code> 等函数。在程序执行期间，动态链接器需要读取缓存文件（例如 <code>/etc/ld.so.cache</code>）以快速查找所需的共享库的位置。</p>
+</blockquote>
+<p>即便程序请求每次只读取一个字符，<code>stdio</code>库仍然会尝试从每个文件读取<code>4KB</code>。后续调用<code>getc()</code>不需要再次调用<code>read()</code>，直到缓冲区中的所有字符都被读取。</p>
+<h5 id="其他打开文件流的函数"><a href="#其他打开文件流的函数" class="headerlink" title="其他打开文件流的函数"></a>其他打开文件流的函数</h5><p>​	除了<code>fopen()</code>和<code>fclose()</code>，还可以使用以下两个函数来打开文件流：</p>
+<ul>
+<li><code>fdopen()</code>：将一个已经存在的文件描述符与文件流关联起来。通常与<code>dup()</code>、<code>pipe()</code>、<code>fcntl()</code>等只返回文件描述符的函数一起使用。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FILE *<span class="title function_">fdopen</span><span class="params">(<span class="type">int</span> fildes, <span class="type">const</span> <span class="type">char</span> *mode)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>freopen()</code>：打开由<code>filename</code>指定的文件，并将<code>stream</code>指向的流与该文件关联。如果原来的流存在，先关闭它。通常用于将文件与标准输入、输出或错误流关联起来。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FILE *<span class="title function_">freopen</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename, <span class="type">const</span> <span class="type">char</span> *mode, FILE *stream)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>例如，如果调用者希望使用默认操作在标准输出上执 <code>printf()</code>，但又希望使用另一个文件流作为标准输出，可以通过 <code>freopen()</code>来实现这一目标。</p>
+<p>✅ 示例 1：将<code>stdout</code>重定向到文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// 把 stdout 重定向到 output.txt</span></span><br><span class="line">  freopen(<span class="string">&quot;output.txt&quot;</span>, <span class="string">&quot;w&quot;</span>, <span class="built_in">stdout</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;这行会写入 output.txt，而不是显示在终端上。\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="标准I-O库的缓冲"><a href="#标准I-O库的缓冲" class="headerlink" title="标准I/O库的缓冲"></a>标准<code>I/O</code>库的缓冲</h4><p><code>stdio</code> 库使用缓冲机制，旨在最小化对 <code>read()</code> 和 <code>write()</code> 系统调用的调用次数。主要使用以下三种缓冲方式：</p>
+<ol>
+<li><strong>全缓冲</strong>：数据将首先写入缓冲区，直到缓冲区满才进行一次大规模的 <code>write()</code> 调用。</li>
+<li><strong>行缓冲</strong>：当缓冲区中遇到换行符或缓冲区满时，数据会写入输出设备。</li>
+<li><strong>无缓冲</strong>：每次调用都会直接进行 I&#x2F;O 操作，不使用缓冲区（通常用于错误输出）。</li>
+</ol>
+<p>标准 I&#x2F;O 库的缓冲机制能够有效提高文件 I&#x2F;O 操作的性能，并减少系统调用的开销。</p>
+<ul>
+<li><p>完全缓冲（块缓冲）</p>
+<p>当字符被写入流时，它们会被缓冲，直到缓冲区满为止。此时，数据会被写入流所引用的文件。类似地，读取操作将尽可能读取整个缓冲区的数据。</p>
+</li>
+<li><p>行缓冲</p>
+<p>当字符被写入流时，它们会被缓冲，直到遇到换行符为止。此时，包含换行符的整行数据会被写入流所引用的文件。对于读取操作，也是一样，字符会被读取，直到遇到换行符。</p>
+</li>
+<li><p>无缓冲</p>
+<p>当输出流是无缓冲时，任何写入流的数据都会立即写入与流关联的文件。</p>
+</li>
+</ul>
+<p><code>ANSI C</code>标准规定，标准输入和输出应该使用完全缓冲，而标准错误则应该是无缓冲的。通常情况下，标准输入和输出在终端设备上是行缓冲的，而在其他设备上则是完全缓冲的。</p>
+<p>可以使用<code>setbuf()</code>和<code>setvbuf()</code>函数来改变流的缓冲特性，示例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">setbuf</span><span class="params">(FILE *stream, <span class="type">char</span> *buf)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">setvbuf</span><span class="params">(FILE *stream, <span class="type">char</span> *buf, <span class="type">int</span> type, <span class="type">size_t</span> size)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>setbuf()</code>函数必须在打开流之后、进行任何<code>I/O</code>操作之前调用。<code>buf</code>参数指定的缓冲区将代替标准<code>I/O</code>库使用的缓冲区。这允许调用者根据应用程序的需求优化<code>read()</code>和<code>write()</code>调用的数量。</p>
+</li>
+<li><p><code>setvbuf()</code>函数可以在任何阶段调用，以改变流的缓冲特性。<code>type</code>参数可以是以下之一：</p>
+<ul>
+<li><code>_IONBF</code>（无缓冲）</li>
+<li><code>_IOLBF</code>（行缓冲）</li>
+<li><code>_IOFBF</code>（完全缓冲）</li>
+</ul>
+<p><code>buf</code>参数指定的缓冲区大小必须至少为<code>size</code>字节。在下一次<code>I/O</code>操作之前，如果已经分配了缓冲区，则此缓冲区将替代当前流使用的缓冲区。如果<code>buf</code>为 NULL，仅缓冲模式将被更改。</p>
+</li>
+</ul>
+<p>无论是完全缓冲还是行缓冲，都可以使用<code>fflush()</code>函数强制将所有缓冲区的数据写入流所引用的文件，示例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">fflush</span><span class="params">(FILE *stream)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，通过将<code>stream</code>设置为<code>NULL</code>，可以刷新所有输出流。在进程退出之前，所有当前打开的流会被刷新并关闭。</p>
+<h4 id="从流中读取和写入数据"><a href="#从流中读取和写入数据" class="headerlink" title="从流中读取和写入数据"></a>从流中读取和写入数据</h4><p>​	标准<code>I/O</code>库提供了许多用于读取和写入的函数。本节将介绍一些常用的函数，并展示使用不同缓冲选项实现的<code>cp</code>程序。以下程序演示了使用<code>getc()</code>函数读取单个字符时对<code>FILE</code>结构的影响：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  FILE *fp;</span><br><span class="line">  <span class="type">char</span> c;</span><br><span class="line"></span><br><span class="line">  fp = fopen(<span class="string">&quot;/etc/passwd&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;address of fp = 0x%x\n&quot;</span>, fp);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp-&gt;_fileno = 0x%x\n&quot;</span>, fp-&gt;_fileno);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp-&gt;_IO_buf_base = 0x%x\n&quot;</span>, fp-&gt;_IO_buf_base);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp-&gt;_IO_read_ptr = 0x%x\n&quot;</span>, fp-&gt;_IO_read_ptr);</span><br><span class="line"></span><br><span class="line">  c = getc(fp);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp-&gt;_IO_buf_base = 0x%x\n&quot;</span>, fp-&gt;_IO_buf_base);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp-&gt;_IO_buf_end = 0x%x\n&quot;</span>, fp-&gt;_IO_buf_end);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp-&gt;_IO_read_ptr = 0x%x\n&quot;</span>, fp-&gt;_IO_read_ptr);</span><br><span class="line"></span><br><span class="line">  c = getc(fp);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fp-&gt;_IO_read_ptr = 0x%x\n&quot;</span>, fp-&gt;_IO_read_ptr);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如输出所示，缓冲区直到首次<code>I/O</code>操作开始时才会分配。分配的缓冲区的默认大小为<code>4KB</code>。随着对<code>getc()</code>的连续调用，读取指针会递增，指向缓冲区内下一个要读取的字节。下图（图 4.2）展示了标准<code>I/O</code>库读取数据时的步骤。</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ ./fpinfo</span><br><span class="line">address of fp = <span class="number">0</span>x7862a0</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_fileno = <span class="number">0</span>x3</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_buf_base = <span class="number">0</span>x0</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_read_ptr = <span class="number">0</span>x0</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_buf_base = <span class="number">0</span>x786890</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_buf_end = <span class="number">0</span>x787890</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_read_ptr = <span class="number">0</span>x786891</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_read_ptr = <span class="number">0</span>x786892</span><br></pre></td></tr></table></figure>
+
+<p>通过在<code>Linux</code>上运行<code>strace</code>，可以查看库在首次调用<code>getc()</code>后如何读取数据。以下是显示的与<code>/etc/passwd</code>文件相关的行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">  Desktop strace ./fpinfo</span><br><span class="line">execve(<span class="string">&quot;./fpinfo&quot;</span>, [<span class="string">&quot;./fpinfo&quot;</span>], 0x7ffe30dcdbf0 /* 55 vars */) = 0</span><br><span class="line">brk(NULL)                               = 0x5a212cb5d000</span><br><span class="line">arch_prctl(0x3001 /* ARCH_??? */, 0x7ffdfcafaa40) = -1 EINVAL (Invalid argument)</span><br><span class="line">mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x76c81d0a9000</span><br><span class="line">access(<span class="string">&quot;/etc/ld.so.preload&quot;</span>, R_OK)      = -1 ENOENT (No such file or directory)</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/etc/ld.so.cache&quot;</span>, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line">newfstatat(3, <span class="string">&quot;&quot;</span>, &#123;st_mode=S_IFREG|0644, st_size=79383, ...&#125;, AT_EMPTY_PATH) = 0</span><br><span class="line">mmap(NULL, 79383, PROT_READ, MAP_PRIVATE, 3, 0) = 0x76c81d095000</span><br><span class="line">close(3)                                = 0</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0&gt;\0\1\0\0\0P\237\2\0\0\0\0\0&quot;</span>..., 832) = 832</span><br><span class="line">pread64(3, <span class="string">&quot;\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0&quot;</span>..., 784, 64) = 784</span><br><span class="line">pread64(3, <span class="string">&quot;\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0&quot;</span>..., 48, 848) = 48</span><br><span class="line">pread64(3, <span class="string">&quot;\4\0\0\0\24\0\0\0\3\0\0\0GNU\0\315A\vq\17\17\tLh2\355\331Y1\0m&quot;</span>..., 68, 896) = 68</span><br><span class="line">newfstatat(3, <span class="string">&quot;&quot;</span>, &#123;st_mode=S_IFREG|0755, st_size=2220400, ...&#125;, AT_EMPTY_PATH) = 0</span><br><span class="line">pread64(3, <span class="string">&quot;\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0&quot;</span>..., 784, 64) = 784</span><br><span class="line">mmap(NULL, 2264656, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x76c81ce00000</span><br><span class="line">mprotect(0x76c81ce28000, 2023424, PROT_NONE) = 0</span><br><span class="line">mmap(0x76c81ce28000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x76c81ce28000</span><br><span class="line">mmap(0x76c81cfbd000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000) = 0x76c81cfbd000</span><br><span class="line">mmap(0x76c81d016000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x215000) = 0x76c81d016000</span><br><span class="line">mmap(0x76c81d01c000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x76c81d01c000</span><br><span class="line">close(3)                                = 0</span><br><span class="line">mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x76c81d092000</span><br><span class="line">arch_prctl(ARCH_SET_FS, 0x76c81d092740) = 0</span><br><span class="line">set_tid_address(0x76c81d092a10)         = 4825</span><br><span class="line">set_robust_list(0x76c81d092a20, 24)     = 0</span><br><span class="line">rseq(0x76c81d0930e0, 0x20, 0, 0x53053053) = 0</span><br><span class="line">mprotect(0x76c81d016000, 16384, PROT_READ) = 0</span><br><span class="line">mprotect(0x5a210375e000, 4096, PROT_READ) = 0</span><br><span class="line">mprotect(0x76c81d0e3000, 8192, PROT_READ) = 0</span><br><span class="line">prlimit64(0, RLIMIT_STACK, NULL, &#123;rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY&#125;) = 0</span><br><span class="line">munmap(0x76c81d095000, 79383)           = 0</span><br><span class="line">getrandom(<span class="string">&quot;\xe9\x01\xef\x15\x88\x3b\x46\x6e&quot;</span>, 8, GRND_NONBLOCK) = 8</span><br><span class="line">brk(NULL)                               = 0x5a212cb5d000</span><br><span class="line">brk(0x5a212cb7e000)                     = 0x5a212cb7e000</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/etc/passwd&quot;</span>, O_RDONLY) = 3</span><br><span class="line">newfstatat(1, <span class="string">&quot;&quot;</span>, &#123;st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...&#125;, AT_EMPTY_PATH) = 0</span><br><span class="line">write(1, <span class="string">&quot;address of fp = 0x2cb5d2a0\n&quot;</span>, 27address of fp = 0x2cb5d2a0</span><br><span class="line">) = 27</span><br><span class="line">write(1, <span class="string">&quot;fp-&gt;_fileno = 0x3\n&quot;</span>, 18fp-&gt;_fileno = 0x3</span><br><span class="line">)     = 18</span><br><span class="line">write(1, <span class="string">&quot;fp-&gt;_IO_buf_base = 0x0\n&quot;</span>, 23fp-&gt;_IO_buf_base = 0x0</span><br><span class="line">) = 23</span><br><span class="line">write(1, <span class="string">&quot;fp-&gt;_IO_read_ptr = 0x0\n&quot;</span>, 23fp-&gt;_IO_read_ptr = 0x0</span><br><span class="line">) = 23</span><br><span class="line">newfstatat(3, <span class="string">&quot;&quot;</span>, &#123;st_mode=S_IFREG|0644, st_size=2979, ...&#125;, AT_EMPTY_PATH) = 0</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;root:x:0:0:root:/root:/bin/bash\n&quot;</span>..., 4096) = 2979</span><br><span class="line">write(1, <span class="string">&quot;fp-&gt;_IO_buf_base = 0x2cb5d890\n&quot;</span>, 30fp-&gt;_IO_buf_base = 0x2cb5d890</span><br><span class="line">) = 30</span><br><span class="line">write(1, <span class="string">&quot;fp-&gt;_IO_buf_end = 0x2cb5e890\n&quot;</span>, 29fp-&gt;_IO_buf_end = 0x2cb5e890</span><br><span class="line">) = 29</span><br><span class="line">write(1, <span class="string">&quot;fp-&gt;_IO_read_ptr = 0x2cb5d891\n&quot;</span>, 30fp-&gt;_IO_read_ptr = 0x2cb5d891</span><br><span class="line">) = 30</span><br><span class="line">write(1, <span class="string">&quot;fp-&gt;_IO_read_ptr = 0x2cb5d892\n&quot;</span>, 30fp-&gt;_IO_read_ptr = 0x2cb5d892</span><br><span class="line">) = 30</span><br><span class="line">lseek(3, -2977, SEEK_CUR)               = 2</span><br><span class="line">exit_group(0)                           = ?</span><br><span class="line">+++ exited with 0 +++</span><br></pre></td></tr></table></figure>
+
+<p>调用<code>fopen()</code>实际会触发对底层<code>open()</code>系统调用的调用，返回的文件描述符会被存储在<code>fp-&gt;_fileno</code>字段中（如前所示）。注意，虽然程序只请求了一个字符（第14行），但标准<code>I/O</code>库会读取整整<code>4KB</code>的数据来填充缓冲区。之后对<code>getc()</code>的调用就无需再进行系统调用读取数据了。当文件读取到末尾时，后续对<code>getc()</code>的调用将返回<code>EOF</code>（文件结束标志）。</p>
+<p>下面的示例展示了一个简单的<code>cp</code>程序，用以演示全缓冲（<code>fully buffered</code>）、行缓冲（<code>line buffered</code>）和无缓冲（<code>unbuffered</code>）<code>I/O</code>模式下的表现差异。缓冲方式通过命令行参数传入；而输入文件和输出文件名在代码中写死为<code>&quot;infile&quot;</code>和<code>&quot;outfile&quot;</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  FILE *ifp, *ofp;</span><br><span class="line">  <span class="type">int</span> mode;</span><br><span class="line">  <span class="type">char</span> c, ibuf[<span class="number">16384</span>], obuf[<span class="number">16384</span>];</span><br><span class="line">  <span class="type">time_t</span> time1, time2;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">strcmp</span>(argv[<span class="number">1</span>], <span class="string">&quot;_IONBF&quot;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">    mode = _IONBF;   <span class="comment">// 无缓冲</span></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(argv[<span class="number">1</span>], <span class="string">&quot;_IOLBF&quot;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">    mode = _IOLBF;   <span class="comment">// 行缓冲</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    mode = _IOFBF;   <span class="comment">// 全缓冲</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ifp = <span class="built_in">fopen</span>(<span class="string">&quot;infile&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">  ofp = <span class="built_in">fopen</span>(<span class="string">&quot;outfile&quot;</span>, <span class="string">&quot;w&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">setvbuf</span>(ifp, ibuf, mode, <span class="number">16384</span>);</span><br><span class="line">  <span class="built_in">setvbuf</span>(ofp, obuf, mode, <span class="number">16384</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">time</span>(&amp;time1);</span><br><span class="line">  <span class="keyword">while</span> ((c = <span class="built_in">fgetc</span>(ifp)) != EOF) &#123;</span><br><span class="line">    <span class="built_in">fputc</span>(c, ofp);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">time</span>(&amp;time2);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Time for %s was %ld seconds\n&quot;</span>, argv[<span class="number">1</span>], time2 - time1);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该示例使用的输入文件<code>infile</code>含有68,000行，每行80个字符：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> -l infile</span><br><span class="line">-rw-r--r-- 1 spate fcf 5508000 Jun 29 15:38 infile</span><br><span class="line">$ <span class="built_in">wc</span> -l infile</span><br><span class="line">68000 infile</span><br></pre></td></tr></table></figure>
+
+<p>测试运行不同缓冲模式的耗时如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ./fpcp _IONBF</span><br><span class="line">Time <span class="keyword">for</span> _IONBF was 35 seconds</span><br><span class="line"></span><br><span class="line">$ ./fpcp _IOLBF</span><br><span class="line">Time <span class="keyword">for</span> _IOLBF was 3 seconds</span><br><span class="line"></span><br><span class="line">$ ./fpcp _IOFBF</span><br><span class="line">Time <span class="keyword">for</span> _IOFBF was 2 seconds</span><br></pre></td></tr></table></figure>
+
+<p>造成性能差异巨大的根本原因在于各缓冲模式触发的系统调用次数不同：</p>
+<p>📌 无缓冲（<code>_IONBF</code>）：</p>
+<p>每次<code>getc()</code>或<code>putc()</code>都会对应一次<code>read()</code>或<code>write()</code>的系统调用。因此会产生68,000次读取 + 68,000次写入！如下所示的系统调用序列：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">open(<span class="string">&quot;infile&quot;</span>, O_RDONLY) = 3</span><br><span class="line">open(<span class="string">&quot;outfile&quot;</span>, O_WRONLY|O_CREAT|O_TRUNC, 0666) = 4</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;0&quot;</span>, 1) = 1</span><br><span class="line">write(4, <span class="string">&quot;0&quot;</span>, 1) = 1</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;1&quot;</span>, 1) = 1</span><br><span class="line">write(4, <span class="string">&quot;1&quot;</span>, 1) = 1</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>📌 行缓冲（<code>_IOLBF</code>）：</p>
+<p>读取仍以大块（例如<code>16KB</code>）为单位进行，但每写一行（或遇到换行）才触发一次写操作，系统调用次数显著减少：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">open(<span class="string">&quot;infile&quot;</span>, O_RDONLY) = 3</span><br><span class="line">open(<span class="string">&quot;outfile&quot;</span>, O_WRONLY|O_CREAT|O_TRUNC, 0666) = 4</span><br><span class="line"><span class="built_in">read</span>(3, ..., 16384) = 16384</span><br><span class="line">write(4, ..., 81) = 81</span><br><span class="line">write(4, ..., 81) = 81</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>📌 全缓冲（<code>_IOFBF</code>）：</p>
+<p>读写都以缓冲区大小（此处为<code>16KB</code>）为单位进行，系统调用数量最少，性能最佳：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">open(<span class="string">&quot;infile&quot;</span>, O_RDONLY) = 3</span><br><span class="line">open(<span class="string">&quot;outfile&quot;</span>, O_WRONLY|O_CREAT|O_TRUNC, 0666) = 4</span><br><span class="line"><span class="built_in">read</span>(3, ..., 4096) = 4096</span><br><span class="line">write(4, ..., 4096) = 4096</span><br><span class="line"><span class="built_in">read</span>(3, ..., 4096) = 4096</span><br><span class="line">write(4, ..., 4096) = 4096</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h4 id="在流中进行定位（Seeking-through-the-Stream）"><a href="#在流中进行定位（Seeking-through-the-Stream）" class="headerlink" title="在流中进行定位（Seeking through the Stream）"></a>在流中进行定位（Seeking through the Stream）</h4><p>​	正如可以使用<code>lseek()</code>系统调用来设置文件指针以便后续读取或写入一样，库函数<code>fseek()</code>也可以用于设置文件流的文件指针，从而使下一次的读写操作从指定的偏移位置开始：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">fseek</span><span class="params">(FILE *stream, <span class="type">long</span> <span class="type">int</span> offset, <span class="type">int</span> whence)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>参数<code>offset</code>和<code>whence</code>的含义与<code>lseek()</code>系统调用相同。下面的示例展示了对文件流调用<code>fseek()</code>所产生的效果：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  FILE* fp;</span><br><span class="line">  <span class="type">char</span> c;</span><br><span class="line"></span><br><span class="line">  fp = fopen(<span class="string">&quot;infile&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;address of fp = 0x%x\n&quot;</span>, fp);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot; fp-&gt;_IO_buf_base = 0x%x\n&quot;</span>, fp-&gt;_IO_buf_base);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot; fp-&gt;_IO_read_ptr = 0x%x\n&quot;</span>, fp-&gt;_IO_read_ptr);</span><br><span class="line"></span><br><span class="line">  c = getc(fp);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot; fp-&gt;_IO_read_ptr = 0x%x\n&quot;</span>, fp-&gt;_IO_read_ptr);</span><br><span class="line"></span><br><span class="line">  fseek(fp, <span class="number">8192</span>, SEEK_SET);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot; fp-&gt;_IO_read_ptr = 0x%x\n&quot;</span>, fp-&gt;_IO_read_ptr);</span><br><span class="line"></span><br><span class="line">  c = getc(fp);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot; fp-&gt;_IO_read_ptr = 0x%x\n&quot;</span>, fp-&gt;_IO_read_ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一次调用<code>getc()</code>会触发一次<code>4KB</code>的<code>read()</code>，从而填充<code>_IO_buf_base</code>指向的缓冲区。由于<code>getc()</code>只读取一个字符，因此 <code>_IO_read_ptr</code>仅向前推进一个位置。</p>
+<p>随后调用<code>fseek()</code>会修改 <code>_IO_read_ptr</code>，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ./fpseek</span><br><span class="line">Address of fp = 0x80497e0</span><br><span class="line">fp-&gt;_IO_buf_base = 0x0</span><br><span class="line">fp-&gt;_IO_read_ptr = 0x0</span><br><span class="line">fp-&gt;_IO_read_ptr = 0x40019001</span><br><span class="line">fp-&gt;_IO_read_ptr = 0x40019000</span><br><span class="line">fp-&gt;_IO_read_ptr = 0x40019001</span><br></pre></td></tr></table></figure>
+
+<p>注意：第二次调用<code>getc()</code>时无需再读取数据。相关的系统调用如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">open(<span class="string">&quot;infile&quot;</span>, O_RDONLY) = 3</span><br><span class="line">fstat64(1, st_mode=S_IFCHR_0620, st_rdev=makedev(136, 0), ...) = 0</span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;01234567890123456789012345678901&quot;</span>..., 4096) = 4096</span><br><span class="line">write(1, ...)                         <span class="comment"># 输出字符</span></span><br><span class="line">_llseek(3, 8192, [8192], SEEK_SET)    <span class="comment"># 定位到文件偏移</span></span><br><span class="line">write(1, ...)                         <span class="comment"># 再次输出</span></span><br><span class="line"><span class="built_in">read</span>(3, <span class="string">&quot;12345678901234567890123456789012&quot;</span>..., 4096) = 4096</span><br><span class="line">write(1, ...)                         <span class="comment"># 输出新字符</span></span><br></pre></td></tr></table></figure>
+
+<p>第一次<code>getc()</code>导致了一次<code>read()</code>系统调用，而<code>fseek()</code>则转换为<code>lseek()</code>，从而重置读取指针。随后再次调用<code>getc()</code>会导致文件的下一块数据被读取。</p>
+<p>除了<code>fseek()</code>外，还有以下四个函数可用于处理流中的文件位置：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">long</span> <span class="title function_">ftell</span><span class="params">(FILE *stream)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">rewind</span><span class="params">(FILE *stream)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">fgetpos</span><span class="params">(FILE *stream, <span class="type">fpos_t</span> *pos)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">fsetpos</span><span class="params">(FILE *stream, <span class="type">const</span> <span class="type">fpos_t</span> *pos)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>ftell()</code>返回当前文件指针的位置。例如，在调用<code>fseek()</code>之后，<code>ftell()</code>将返回 8192。</li>
+<li><code>rewind()</code>相当于<code>fseek(stream, 0, SEEK_SET)</code>，用于将文件指针重置到起始位置。</li>
+<li><code>fgetpos()</code>和<code>fsetpos()</code>的功能分别类似于<code>ftell()</code>和<code>fseek()</code>，但它们使用<code>fpos_t</code>类型以支持可移植性和更复杂的文件定位。</li>
+</ul>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>​	标准<code>I/O</code>库提供了大量函数，大大减轻了应用程序开发者的负担。通过尽可能减少系统调用的次数，可以显著提升应用程序的性能。缓冲机制提供了极大的灵活性，使程序员能够更细粒度地控制<code>I/O</code>的行为。</p>
+<p>本章介绍了标准 I&#x2F;O 库的实现方式，但并未涵盖所有相关函数。更多编程视角下的内容可参考<code>Richard Stevens</code>的《<code>Advanced Programming in the UNIX Environment</code>》；而关于<code>ANSI C</code>标准中<code>stdio</code>库的详细描述，则推荐阅读<code>Herbert Schildt</code>的《<code>The Annotated ANSI C Standard</code>》。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/" rel="prev" title="std::function设计">
+                  <i class="fa fa-angle-left"></i> std::function设计
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/13/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5/" rel="next" title="文件系统的概念">
+                  文件系统的概念 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

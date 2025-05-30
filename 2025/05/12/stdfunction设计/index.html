@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="std::function是一个通用的函数包装器。它可以存储、复制可拷贝构造和可调用对象（CopyConstructible Callable），包括：  普通函数（通过函数指针） lambda表达式 std::bind表达式 成员函数指针 数据成员指针">
+<meta property="og:type" content="article">
+<meta property="og:title" content="std::function设计">
+<meta property="og:url" content="https://huangpiao.tech/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="std::function是一个通用的函数包装器。它可以存储、复制可拷贝构造和可调用对象（CopyConstructible Callable），包括：  普通函数（通过函数指针） lambda表达式 std::bind表达式 成员函数指针 数据成员指针">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-12T09:28:18.531Z">
+<meta property="article:modified_time" content="2025-05-16T06:46:21.743Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="c++">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/","path":"2025/05/12/stdfunction设计/","title":"std::function设计"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>std::function设计 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">1.</span> <span class="nav-text">补充</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A6%81%E6%B1%82%EF%BC%9A"><span class="nav-number">1.0.1.</span> <span class="nav-text">要求：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.0.2.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A6%81%E6%B1%82%EF%BC%9A-1"><span class="nav-number">1.0.3.</span> <span class="nav-text">要求：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="nav-number">1.0.4.</span> <span class="nav-text">补充说明：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="std::function设计 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          std::function设计
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-12 17:28:18" itemprop="dateCreated datePublished" datetime="2025-05-12T17:28:18+08:00">2025-05-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-16 14:46:21" itemprop="dateModified" datetime="2025-05-16T14:46:21+08:00">2025-05-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><code>std::function</code>是一个<strong>通用的函数包装器</strong>。它可以存储、复制<strong>可拷贝构造和可调用对象</strong>（<code>CopyConstructible Callable</code>），包括：</p>
+<ul>
+<li>普通函数（通过函数指针）</li>
+<li><code>lambda</code>表达式</li>
+<li><code>std::bind</code>表达式</li>
+<li>成员函数指针</li>
+<li>数据成员指针</li>
+</ul>
+<span id="more"></span>
+
+<p>存储在<code>std::function</code>中的可调用对象称为<strong>目标对象（target）</strong>。如果一个<code>std::function</code>没有目标对象，它被称为“空”对象（<code>empty</code>）。 对空的<code>std::function</code>进行调用，将抛出<code>std::bad_function_call</code>异常。</p>
+<p>成员类型</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>result_type</code></td>
+<td><code>R</code></td>
+</tr>
+<tr>
+<td><code>argument_type</code> (deprecated in C++17)(removed in C++20)</td>
+<td><code>T</code> if sizeof…(Args)&#x3D;&#x3D;1 and <code>T</code> is the first and only type in <code>Args...</code></td>
+</tr>
+<tr>
+<td><code>first_argument_type</code> (deprecated in C++17)(removed in C++20)</td>
+<td><code>T1</code> if sizeof…(Args)&#x3D;&#x3D;2 and <code>T1</code> is the first of the two types in <code>Args...</code></td>
+</tr>
+<tr>
+<td><code>second_argument_type</code> (deprecated in C++17)(removed in C++20)</td>
+<td><code>T2</code> if sizeof…(Args)&#x3D;&#x3D;2 and <code>T2</code> is the second of the two types in <code>Args...</code></td>
+</tr>
+</tbody></table>
+<p>实现一个类似<code>C++11 std::function</code>的通用函数包装器，主要考虑以下几点：</p>
+<ol>
+<li><strong>类型擦除</strong>：能够存储各种可调用对象（函数指针、<code>lambda</code>、成员函数、函数对象等）</li>
+<li><strong>值语义</strong>：支持拷贝、移动、赋值等操作</li>
+<li><strong>类型安全</strong>：调用时检查参数和返回类型是否匹配</li>
+<li><strong>性能考虑</strong>：尽量减少动态内存分配，对小对象进行优化</li>
+<li><strong>异常安全</strong>：保证在异常情况下的资源正确释放</li>
+</ol>
+<!--more-->
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;benchmark/benchmark.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Function</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Ret, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Function</span>&lt;<span class="built_in">Ret</span>(Args...)&gt; &#123;</span><br><span class="line">  <span class="keyword">using</span> InvokePtr = <span class="built_in">Ret</span> (*)(<span class="type">void</span>*, Args&amp;&amp;...);</span><br><span class="line">  <span class="keyword">using</span> CreatePtr = <span class="built_in">void</span> (*)(<span class="type">void</span>*, <span class="type">void</span>*);</span><br><span class="line">  <span class="keyword">using</span> DestroyPtr = <span class="built_in">void</span> (*)(<span class="type">void</span>*);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">  <span class="function"><span class="type">static</span> Ret <span class="title">Invoke</span><span class="params">(F* f, Args&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (*f)(std::forward&lt;Args&gt;(args)...);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">  <span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">Create</span><span class="params">(F* dest, F* src)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">new</span> (dest) <span class="built_in">F</span>(*src);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">  <span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">Destroy</span><span class="params">(F* f)</span> </span>&#123;</span><br><span class="line">    f-&gt;~<span class="built_in">F</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">  <span class="built_in">Function</span>(F f)</span><br><span class="line">      : <span class="built_in">invoke_ptr_</span>(<span class="built_in">reinterpret_cast</span>&lt;InvokePtr&gt;(Invoke&lt;F&gt;)),</span><br><span class="line">        <span class="built_in">create_ptr_</span>(<span class="built_in">reinterpret_cast</span>&lt;CreatePtr&gt;(Create&lt;F&gt;)),</span><br><span class="line">        <span class="built_in">destroy_ptr_</span>(<span class="built_in">reinterpret_cast</span>&lt;DestroyPtr&gt;(Destroy&lt;F&gt;)),</span><br><span class="line">        <span class="built_in">storage_</span>(<span class="keyword">new</span> <span class="type">char</span>[<span class="built_in">sizeof</span>(F)]) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sizeof</span>(F) &lt;= <span class="built_in">sizeof</span>(stack_)) &#123;</span><br><span class="line">      storage_ = std::<span class="built_in">addressof</span>(stack_);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      storage_size_ = <span class="built_in">sizeof</span>(F);</span><br><span class="line">      storage_ = std::<span class="built_in">malloc</span>(storage_size_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">create_ptr_</span>(storage_, std::<span class="built_in">addressof</span>(f));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">Function</span>() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">  ~<span class="built_in">Function</span>() &#123;</span><br><span class="line">    <span class="built_in">destroy_ptr_</span>(storage_);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if (storage_ != std::addressof(stack_)) &#123;</span></span><br><span class="line">    <span class="comment">//   std::free(storage_);</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">Function</span>(<span class="type">const</span> Function&amp; other) &#123;</span><br><span class="line">    <span class="keyword">if</span> (other.storage_ != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">      invoke_ptr_ = other.invoke_ptr_;</span><br><span class="line">      create_ptr_ = other.create_ptr_;</span><br><span class="line">      destroy_ptr_ = other.destroy_ptr_;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (other.storage_ == std::<span class="built_in">addressof</span>(other.stack_)) &#123;</span><br><span class="line">        storage_ = std::<span class="built_in">addressof</span>(stack_);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        storage_size_ = other.storage_size_;</span><br><span class="line">        storage_ = std::<span class="built_in">malloc</span>(storage_size_);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="built_in">create_ptr_</span>(storage_, other.storage_);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Function&amp; <span class="keyword">operator</span>=(<span class="type">const</span> Function&amp; other) &#123;</span><br><span class="line">    <span class="keyword">if</span> (storage_ != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">      <span class="built_in">destroy_ptr_</span>(storage_);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (storage_ != std::<span class="built_in">addressof</span>(stack_)) &#123;</span><br><span class="line">        std::<span class="built_in">free</span>(storage_);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      storage_ = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (other.storage_ != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">      invoke_ptr_ = other.invoke_ptr_;</span><br><span class="line">      create_ptr_ = other.create_ptr_;</span><br><span class="line">      destroy_ptr_ = other.destroy_ptr_;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (other.storage_ == std::<span class="built_in">addressof</span>(other.stack_)) &#123;</span><br><span class="line">        storage_ = std::<span class="built_in">addressof</span>(stack_);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        storage_size_ = other.storage_size_;</span><br><span class="line">        storage_ = std::<span class="built_in">malloc</span>(storage_size_);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="built_in">create_ptr_</span>(storage_, other.storage_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">Ret <span class="title">operator</span><span class="params">()</span><span class="params">(Args&amp;&amp;... args)</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">invoke_ptr_</span>(storage_, std::forward&lt;Args&gt;(args)...);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  InvokePtr invoke_ptr_;</span><br><span class="line">  CreatePtr create_ptr_;</span><br><span class="line">  DestroyPtr destroy_ptr_;</span><br><span class="line">  <span class="type">size_t</span> storage_size_;</span><br><span class="line">  <span class="keyword">typename</span> std::aligned_storage&lt;<span class="number">24</span>&gt;::type stack_;</span><br><span class="line">  <span class="type">void</span>* storage_ = <span class="literal">nullptr</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">AddOne</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123; <span class="keyword">return</span> x + <span class="number">1</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Fn&gt;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">DoWork</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  std::array&lt;Fn, 24&gt; functions;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; f : functions) &#123;</span><br><span class="line">    f = AddOne;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> x = <span class="number">42</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; f : functions) &#123;</span><br><span class="line">    sum += <span class="built_in">f</span>(x);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">BM_CustomFunction</span><span class="params">(benchmark::State&amp; state)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> _ : state) &#123;</span><br><span class="line">    benchmark::<span class="built_in">DoNotOptimize</span>(result = DoWork&lt;Function&lt;<span class="built_in">int</span>(<span class="type">int</span>)&gt;&gt;());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">BM_StdFunction</span><span class="params">(benchmark::State&amp; state)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> _ : state) &#123;</span><br><span class="line">    benchmark::<span class="built_in">DoNotOptimize</span>(result = DoWork&lt;std::function&lt;<span class="built_in">int</span>(<span class="type">int</span>)&gt;&gt;());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Ret, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FunctorHolderBase</span> &#123;</span><br><span class="line">  <span class="keyword">virtual</span> ~<span class="built_in">FunctorHolderBase</span>() &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> Ret <span class="title">operator</span><span class="params">()</span><span class="params">(Args&amp;&amp;...)</span> </span>= <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">Copy</span><span class="params">(<span class="type">void</span>*)</span> <span class="type">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> FunctorHolderBase&lt;Ret, Args...&gt;* <span class="title">Clone</span><span class="params">()</span> <span class="type">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Functor, <span class="keyword">typename</span> Ret, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FunctorHolder</span> <span class="keyword">final</span> : FunctorHolderBase&lt;Ret, Args...&gt; &#123;</span><br><span class="line">  <span class="built_in">FunctorHolder</span>(Functor func) : <span class="built_in">f</span>(func) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">Ret <span class="title">operator</span><span class="params">()</span><span class="params">(Args&amp;&amp;... args)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">f</span>(std::forward&lt;Args&gt;(args)...);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">Copy</span><span class="params">(<span class="type">void</span>* dest)</span> <span class="type">const</span> <span class="keyword">override</span> </span>&#123; <span class="keyword">new</span> (dest) <span class="built_in">FunctorHolder</span>(f); &#125;</span><br><span class="line">  <span class="function">FunctorHolderBase&lt;Ret, Args...&gt;* <span class="title">Clone</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">FunctorHolder</span>(f);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Functor f;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">BENCHMARK</span>(BM_CustomFunction);</span><br><span class="line"><span class="built_in">BENCHMARK</span>(BM_StdFunction);</span><br><span class="line"></span><br><span class="line"><span class="built_in">BENCHMARK_MAIN</span>();</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>libc++</code>实现</p>
+<p>底层数据结构表示</p>
+<p>​	<code>std::function&lt;Ret(Args...)&gt;</code>需要保存任意一个<code>Callable</code>对象（成员函数、函数指针、<code>lambda</code>、<code>bind</code>表达式等），但这些对象类型不同，所以通过定义一个抽象基类<code>__base&lt;Ret(Args...)&gt;</code>，由不同的派生类模板去实现真正的行为，从而实现<strong>统一接口 + 类型擦除</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__base</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__base</span>&lt;_Rp(_ArgTypes...)&gt; &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  __base(<span class="type">const</span> __base&amp;)            = <span class="keyword">delete</span>;</span><br><span class="line">  __base&amp; <span class="keyword">operator</span>=(<span class="type">const</span> __base&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">  __base() &#123;&#125;</span><br><span class="line">  <span class="keyword">virtual</span> ~__base() &#123;&#125;</span><br><span class="line">  <span class="keyword">virtual</span> __base* __clone() <span class="type">const</span>             = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">virtual</span> <span class="type">void</span> __clone(__base*) <span class="type">const</span>         = <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">destroy</span><span class="params">()</span> <span class="keyword">noexcept</span>             </span>= <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">destroy_deallocate</span><span class="params">()</span> _NOEXCEPT </span>= <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> _Rp <span class="title">operator</span><span class="params">()</span><span class="params">(_ArgTypes&amp;&amp;...)</span>      </span>= <span class="number">0</span>;</span><br><span class="line"><span class="meta">#  <span class="keyword">if</span> _LIBCPP_HAS_RTTI</span></span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">const</span> <span class="type">void</span>* <span class="title">target</span><span class="params">(<span class="type">const</span> type_info&amp;)</span> <span class="type">const</span> <span class="keyword">noexcept</span> </span>= <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">const</span> std::type_info&amp; <span class="title">target_type</span><span class="params">()</span>  <span class="type">const</span> <span class="keyword">noexcept</span> </span>= <span class="number">0</span>;</span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span> <span class="comment">// _LIBCPP_HAS_RTTI</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>具体实现</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Ap</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__alloc_func</span>&lt;_Fp, _Ap, _Rp(_ArgTypes...)&gt; &#123;</span><br><span class="line">  _LIBCPP_COMPRESSED_PAIR(_Fp, __func_, _Ap, __alloc_);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">using</span> _Target _LIBCPP_NODEBUG = _Fp;</span><br><span class="line">  <span class="keyword">using</span> _Alloc _LIBCPP_NODEBUG  = _Ap;</span><br><span class="line"></span><br><span class="line">  <span class="type">const</span> _Target&amp; __target() <span class="type">const</span> &#123; <span class="keyword">return</span> __func_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// WIN32 APIs may define __allocator, so use __get_allocator instead.</span></span><br><span class="line">  <span class="type">const</span> _Alloc&amp; __get_allocator() <span class="type">const</span> &#123; <span class="keyword">return</span> __alloc_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">explicit</span> __alloc_func(_Target&amp;&amp; __f) : __func_(std::<span class="built_in">move</span>(__f)), __alloc_() &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">explicit</span> __alloc_func(<span class="type">const</span> _Target&amp; __f, <span class="type">const</span> _Alloc&amp; __a) : __func_(__f), __alloc_(__a) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">explicit</span> __alloc_func(<span class="type">const</span> _Target&amp; __f, _Alloc&amp;&amp; __a)</span><br><span class="line">      : __func_(__f), __alloc_(std::<span class="built_in">move</span>(__a)) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">explicit</span> __alloc_func(_Target&amp;&amp; __f, _Alloc&amp;&amp; __a)</span><br><span class="line">      : __func_(std::<span class="built_in">move</span>(__f)), __alloc_(std::<span class="built_in">move</span>(__a)) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">_Rp <span class="title">operator</span><span class="params">()</span><span class="params">(_ArgTypes&amp;&amp;... __arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::__invoke_r&lt;_Rp&gt;(__func_, std::forward&lt;_ArgTypes&gt;(__arg)...);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  __alloc_func* __clone() <span class="type">const</span> &#123;</span><br><span class="line">    <span class="keyword">typedef</span> allocator_traits&lt;_Alloc&gt; __alloc_traits;</span><br><span class="line">    <span class="keyword">typedef</span> __rebind_alloc&lt;__alloc_traits, __alloc_func&gt; _AA;</span><br><span class="line">    _AA __a(__alloc_);</span><br><span class="line">    <span class="keyword">typedef</span> __allocator_destructor&lt;_AA&gt; _Dp;</span><br><span class="line">    unique_ptr&lt;__alloc_func, _Dp&gt; __hold(__a.<span class="built_in">allocate</span>(<span class="number">1</span>), _Dp(__a, <span class="number">1</span>));</span><br><span class="line">    ::<span class="keyword">new</span> ((<span class="type">void</span>*)__hold.<span class="built_in">get</span>()) __alloc_func(__func_, _Alloc(__a));</span><br><span class="line">    <span class="keyword">return</span> __hold.<span class="built_in">release</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">destroy</span><span class="params">()</span> _NOEXCEPT </span>&#123;</span><br><span class="line">    __func_.~_Fp();</span><br><span class="line">    __alloc_.~_Alloc();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">static</span> <span class="type">void</span> __destroy_and_delete(__alloc_func* __f) &#123;</span><br><span class="line">    <span class="keyword">typedef</span> allocator_traits&lt;_Alloc&gt; __alloc_traits;</span><br><span class="line">    <span class="keyword">typedef</span> __rebind_alloc&lt;__alloc_traits, __alloc_func&gt; _FunAlloc;</span><br><span class="line">    _FunAlloc __a(__f-&gt;__get_allocator());</span><br><span class="line">    __f-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">    __a.<span class="built_in">deallocate</span>(__f, <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_FD</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_FB</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__func</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__func</span>&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt; : <span class="keyword">public</span> __base&lt;_Rp(_ArgTypes...)&gt; &#123;</span><br><span class="line">  __alloc_func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt; __f_;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">explicit</span> __func(_Fp&amp;&amp; __f) : __f_(std::<span class="built_in">move</span>(__f)) &#123;&#125;</span><br><span class="line">  <span class="keyword">explicit</span> __func(<span class="type">const</span> _Fp&amp; __f, <span class="type">const</span> _Alloc&amp; __a) : __f_(__f, __a) &#123;&#125;</span><br><span class="line">  <span class="keyword">explicit</span> __func(<span class="type">const</span> _Fp&amp; __f, _Alloc&amp;&amp; __a) : __f_(__f, std::<span class="built_in">move</span>(__a)) &#123;&#125;</span><br><span class="line">  <span class="keyword">explicit</span> __func(_Fp&amp;&amp; __f, _Alloc&amp;&amp; __a) : __f_(std::<span class="built_in">move</span>(__f), std::<span class="built_in">move</span>(__a)) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">virtual</span> __base&lt;_Rp(_ArgTypes...)&gt;* __clone() <span class="type">const</span>;</span><br><span class="line">  <span class="keyword">virtual</span> <span class="type">void</span> __clone(__base&lt;_Rp(_ArgTypes...)&gt;*) <span class="type">const</span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">destroy</span><span class="params">()</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">destroy_deallocate</span><span class="params">()</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> _Rp <span class="title">operator</span><span class="params">()</span><span class="params">(_ArgTypes&amp;&amp;... __arg)</span></span>;</span><br><span class="line"><span class="meta">#  <span class="keyword">if</span> _LIBCPP_HAS_RTTI</span></span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">const</span> <span class="type">void</span>* <span class="title">target</span><span class="params">(<span class="type">const</span> type_info&amp;)</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="type">const</span> std::type_info&amp; <span class="title">target_type</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span> <span class="comment">// _LIBCPP_HAS_RTTI</span></span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 克隆一个`__func`</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line">__base&lt;_Rp(_ArgTypes...)&gt;* __func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt;::__clone() <span class="type">const</span> &#123;</span><br><span class="line">  <span class="keyword">typedef</span> allocator_traits&lt;_Alloc&gt; __alloc_traits;</span><br><span class="line">  <span class="comment">// 假设`_Alloc`类型是`std::allocator&lt;?&gt;`</span></span><br><span class="line">  <span class="comment">// 将分配器类型转成`std::allocator&lt;__func&gt;`</span></span><br><span class="line">  <span class="keyword">typedef</span> __rebind_alloc&lt;__alloc_traits, __func&gt; _Ap;</span><br><span class="line">  _Ap __a(__f_.__get_allocator());</span><br><span class="line">  <span class="keyword">typedef</span> __allocator_destructor&lt;_Ap&gt; _Dp;</span><br><span class="line">  <span class="comment">// 分配内存，如果分配失败可以回滚</span></span><br><span class="line">  unique_ptr&lt;__func, _Dp&gt; __hold(__a.<span class="built_in">allocate</span>(<span class="number">1</span>), _Dp(__a, <span class="number">1</span>));</span><br><span class="line">  <span class="comment">// 调用布局构造函数</span></span><br><span class="line">  ::<span class="keyword">new</span> ((<span class="type">void</span>*)__hold.<span class="built_in">get</span>()) __func(__f_.__target(), _Alloc(__a));</span><br><span class="line">  <span class="keyword">return</span> __hold.<span class="built_in">release</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="type">void</span> __func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt;::__clone(__base&lt;_Rp(_ArgTypes...)&gt;* __p) <span class="type">const</span> &#123;</span><br><span class="line">  ::<span class="keyword">new</span> ((<span class="type">void</span>*)__p) __func(__f_.__target(), __f_.__get_allocator());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="type">void</span> __func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt;::<span class="built_in">destroy</span>() <span class="keyword">noexcept</span> &#123;</span><br><span class="line">  __f_.<span class="built_in">destroy</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="type">void</span> __func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt;::<span class="built_in">destroy_deallocate</span>() <span class="keyword">noexcept</span> &#123;</span><br><span class="line">  <span class="keyword">typedef</span> allocator_traits&lt;_Alloc&gt; __alloc_traits;</span><br><span class="line">  <span class="keyword">typedef</span> __rebind_alloc&lt;__alloc_traits, __func&gt; _Ap;</span><br><span class="line">  _Ap __a(__f_.__get_allocator());</span><br><span class="line">  __f_.<span class="built_in">destroy</span>();</span><br><span class="line">  __a.<span class="built_in">deallocate</span>(<span class="keyword">this</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line">_Rp __func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt;::<span class="built_in">operator</span>()(_ArgTypes&amp;&amp;... __arg) &#123;</span><br><span class="line">  <span class="keyword">return</span> __f_(std::forward&lt;_ArgTypes&gt;(__arg)...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#  <span class="keyword">if</span> _LIBCPP_HAS_RTTI</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="type">const</span> <span class="type">void</span>* __func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt;::<span class="built_in">target</span>(<span class="type">const</span> type_info&amp; __ti) <span class="type">const</span> <span class="keyword">noexcept</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (__ti == <span class="built_in">typeid</span>(_Fp))</span><br><span class="line">    <span class="keyword">return</span> std::<span class="built_in">addressof</span>(__f_.__target());</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>, <span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="type">const</span> std::type_info&amp; __func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt;::<span class="built_in">target_type</span>() <span class="type">const</span> _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">typeid</span>(_Fp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span> <span class="comment">// _LIBCPP_HAS_RTTI</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__value_func</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Rp</span>, <span class="keyword">class</span>... _ArgTypes&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">__value_func</span>&lt;_Rp(_ArgTypes...)&gt; &#123;</span><br><span class="line">  <span class="comment">// &lt;=24字节 存储在栈上</span></span><br><span class="line">  <span class="keyword">typename</span> aligned_storage&lt;<span class="number">3</span> * <span class="built_in">sizeof</span>(<span class="type">void</span>*)&gt;::type __buf_;</span><br><span class="line">	<span class="comment">// &gt;24字节 存储在堆上</span></span><br><span class="line">  <span class="keyword">typedef</span> __base&lt;_Rp(_ArgTypes...)&gt; __func;</span><br><span class="line">  __func* __f_;</span><br><span class="line"></span><br><span class="line">  <span class="type">static</span> __func* __as_base(<span class="type">void</span>* __p) &#123; <span class="keyword">return</span> <span class="built_in">reinterpret_cast</span>&lt;__func*&gt;(__p); &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  __value_func() <span class="keyword">noexcept</span> : __f_(<span class="literal">nullptr</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="keyword">class</span> <span class="title class_">_Alloc</span>&gt;</span><br><span class="line">  __value_func(_Fp&amp;&amp; __f, <span class="type">const</span> _Alloc&amp; __a) : __f_(<span class="literal">nullptr</span>) &#123;</span><br><span class="line">    <span class="keyword">typedef</span> allocator_traits&lt;_Alloc&gt; __alloc_traits;</span><br><span class="line">    <span class="keyword">typedef</span> __function::__func&lt;_Fp, _Alloc, _Rp(_ArgTypes...)&gt; _Fun;</span><br><span class="line">    <span class="keyword">typedef</span> __rebind_alloc&lt;__alloc_traits, _Fun&gt; _FunAlloc;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (__function::__not_null(__f)) &#123;</span><br><span class="line">      _FunAlloc __af(__a);</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">sizeof</span>(_Fun) &lt;= <span class="built_in">sizeof</span>(__buf_) &amp;&amp; is_nothrow_copy_constructible&lt;_Fp&gt;::value &amp;&amp;</span><br><span class="line">          is_nothrow_copy_constructible&lt;_FunAlloc&gt;::value) &#123;</span><br><span class="line">        __f_ = ::<span class="built_in">new</span> ((<span class="type">void</span>*)&amp;__buf_) _Fun(std::<span class="built_in">move</span>(__f), _Alloc(__af));</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">typedef</span> __allocator_destructor&lt;_FunAlloc&gt; _Dp;</span><br><span class="line">        unique_ptr&lt;__func, _Dp&gt; __hold(__af.<span class="built_in">allocate</span>(<span class="number">1</span>), _Dp(__af, <span class="number">1</span>));</span><br><span class="line">        ::<span class="keyword">new</span> ((<span class="type">void</span>*)__hold.<span class="built_in">get</span>()) _Fun(std::<span class="built_in">move</span>(__f), _Alloc(__a));</span><br><span class="line">        __f_ = __hold.<span class="built_in">release</span>();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fp</span>, <span class="type">__enable_if_t</span>&lt;!is_same&lt;<span class="type">__decay_t</span>&lt;_Fp&gt;, __value_func&gt;::value, <span class="type">int</span>&gt; = <span class="number">0</span>&gt;</span><br><span class="line">  <span class="keyword">explicit</span> __value_func(_Fp&amp;&amp; __f) : __value_func(std::forward&lt;_Fp&gt;(__f), <span class="built_in">allocator</span>&lt;_Fp&gt;()) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 为什么拷贝构造不再需要知道对象的大小了呢？</span></span><br><span class="line">  <span class="comment">// 因为`__alloc_func`都是type aware的</span></span><br><span class="line">  __value_func(<span class="type">const</span> __value_func&amp; __f) &#123;</span><br><span class="line">    <span class="keyword">if</span> (__f.__f_ == <span class="literal">nullptr</span>)</span><br><span class="line">      __f_ = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ((<span class="type">void</span>*)__f.__f_ == &amp;__f.__buf_) &#123;</span><br><span class="line">      __f_ = __as_base(&amp;__buf_);</span><br><span class="line">      __f.__f_-&gt;__clone(__f_);</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">      __f_ = __f.__f_-&gt;__clone();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  __value_func(__value_func&amp;&amp; __f) <span class="keyword">noexcept</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (__f.__f_ == <span class="literal">nullptr</span>)</span><br><span class="line">      __f_ = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ((<span class="type">void</span>*)__f.__f_ == &amp;__f.__buf_) &#123;</span><br><span class="line">      __f_ = __as_base(&amp;__buf_);</span><br><span class="line">      __f.__f_-&gt;__clone(__f_);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      __f_     = __f.__f_;</span><br><span class="line">      __f.__f_ = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ~__value_func() &#123;</span><br><span class="line">    <span class="keyword">if</span> ((<span class="type">void</span>*)__f_ == &amp;__buf_)</span><br><span class="line">      __f_-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (__f_)</span><br><span class="line">      __f_-&gt;<span class="built_in">destroy_deallocate</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  __value_func&amp; <span class="keyword">operator</span>=(__value_func&amp;&amp; __f) &#123;</span><br><span class="line">    *<span class="keyword">this</span> = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">if</span> (__f.__f_ == <span class="literal">nullptr</span>)</span><br><span class="line">      __f_ = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ((<span class="type">void</span>*)__f.__f_ == &amp;__f.__buf_) &#123;</span><br><span class="line">      __f_ = __as_base(&amp;__buf_);</span><br><span class="line">      __f.__f_-&gt;__clone(__f_);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      __f_     = __f.__f_;</span><br><span class="line">      __f.__f_ = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  __value_func&amp; <span class="keyword">operator</span>=(<span class="type">nullptr_t</span>) &#123;</span><br><span class="line">    __func* __f = __f_;</span><br><span class="line">    __f_        = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">if</span> ((<span class="type">void</span>*)__f == &amp;__buf_)</span><br><span class="line">      __f-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (__f)</span><br><span class="line">      __f-&gt;<span class="built_in">destroy_deallocate</span>();</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">_Rp <span class="title">operator</span><span class="params">()</span><span class="params">(_ArgTypes&amp;&amp;... __args)</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (__f_ == <span class="literal">nullptr</span>)</span><br><span class="line">      __throw_bad_function_call();</span><br><span class="line">    <span class="keyword">return</span> (*__f_)(std::forward&lt;_ArgTypes&gt;(__args)...);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(__value_func&amp; __f)</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (&amp;__f == <span class="keyword">this</span>)</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">if</span> ((<span class="type">void</span>*)__f_ == &amp;__buf_ &amp;&amp; (<span class="type">void</span>*)__f.__f_ == &amp;__f.__buf_) &#123;</span><br><span class="line">      _LIBCPP_SUPPRESS_DEPRECATED_PUSH</span><br><span class="line">      <span class="keyword">typename</span> aligned_storage&lt;<span class="built_in">sizeof</span>(__buf_)&gt;::type __tempbuf;</span><br><span class="line">      _LIBCPP_SUPPRESS_DEPRECATED_POP</span><br><span class="line">      __func* <span class="type">__t</span> = __as_base(&amp;__tempbuf);</span><br><span class="line">      __f_-&gt;__clone(<span class="type">__t</span>);</span><br><span class="line">      __f_-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">      __f_ = <span class="literal">nullptr</span>;</span><br><span class="line">      __f.__f_-&gt;__clone(__as_base(&amp;__buf_));</span><br><span class="line">      __f.__f_-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">      __f.__f_ = <span class="literal">nullptr</span>;</span><br><span class="line">      __f_     = __as_base(&amp;__buf_);</span><br><span class="line">      <span class="type">__t</span>-&gt;__clone(__as_base(&amp;__f.__buf_));</span><br><span class="line">      <span class="type">__t</span>-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">      __f.__f_ = __as_base(&amp;__f.__buf_);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> ((<span class="type">void</span>*)__f_ == &amp;__buf_) &#123;</span><br><span class="line">      __f_-&gt;__clone(__as_base(&amp;__f.__buf_));</span><br><span class="line">      __f_-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">      __f_     = __f.__f_;</span><br><span class="line">      __f.__f_ = __as_base(&amp;__f.__buf_);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> ((<span class="type">void</span>*)__f.__f_ == &amp;__f.__buf_) &#123;</span><br><span class="line">      __f.__f_-&gt;__clone(__as_base(&amp;__buf_));</span><br><span class="line">      __f.__f_-&gt;<span class="built_in">destroy</span>();</span><br><span class="line">      __f.__f_ = __f_;</span><br><span class="line">      __f_     = __as_base(&amp;__buf_);</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">      std::<span class="built_in">swap</span>(__f_, __f.__f_);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="title">bool</span><span class="params">()</span> <span class="type">const</span> _NOEXCEPT </span>&#123; <span class="keyword">return</span> __f_ != <span class="literal">nullptr</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#  <span class="keyword">if</span> _LIBCPP_HAS_RTTI</span></span><br><span class="line">  <span class="function"><span class="type">const</span> std::type_info&amp; <span class="title">target_type</span><span class="params">()</span> <span class="type">const</span> _NOEXCEPT </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (__f_ == <span class="literal">nullptr</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">typeid</span>(<span class="type">void</span>);</span><br><span class="line">    <span class="keyword">return</span> __f_-&gt;<span class="built_in">target_type</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> _Tp&gt;</span><br><span class="line">  <span class="function"><span class="type">const</span> _Tp* <span class="title">target</span><span class="params">()</span> <span class="type">const</span> _NOEXCEPT </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (__f_ == <span class="literal">nullptr</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">const</span> _Tp*)__f_-&gt;<span class="built_in">target</span>(<span class="built_in">typeid</span>(_Tp));</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span> <span class="comment">// _LIBCPP_HAS_RTTI</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><ol>
+<li><p><code>c++ named requirements: MoveConstructible</code></p>
+<p>指明该类型的实例可以从一个右值实参进行构造。</p>
+<h6 id="要求："><a href="#要求：" class="headerlink" title="要求："></a>要求：</h6><p>当类型<code>T</code>满足以下条件时，即满足可移动构造（<code>MoveConstructible</code>）要求：</p>
+<p>给定：</p>
+<ul>
+<li>rv：类型<code>T</code>的右值表达式</li>
+<li>u：任意标识符</li>
+</ul>
+<p>以下表达式必须有效并产生指定效果：</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>后置条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>T u = rv;</code></td>
+<td><code>u</code>的值等价于<code>rv</code>初始化前的值。<code>rv</code>的新值是未指定的。</td>
+</tr>
+<tr>
+<td><code>T(rv)</code></td>
+<td><code>T(rv)</code>的值等价于<code>rv</code>初始化前的值。<code>rv</code>的新值是未指定的。</td>
+</tr>
+</tbody></table>
+<h6 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h6><ol>
+<li>类不需要实现移动构造函数即可满足此类型要求：接受<code>const T&amp;</code>参数的拷贝构造函数也可以绑定右值表达式。</li>
+<li>如果可移动构造类实现了移动构造函数，则可以利用构造后<code>rv</code>值未指定的特性来实现移动语义。</li>
+</ol>
+<p>一个可移动构造类意味着满足<code>std::is_move_constructible</code>，但反之则不成立。因为<code>std::is_move_constructible</code>仅检查能否使用正确的参数调用构造函数，而不检查后置条件值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">S</span> &#123;</span><br><span class="line">  <span class="type">int</span> n;</span><br><span class="line">  <span class="built_in">S</span>(<span class="type">int</span> in) : n&#123;in&#125; &#123;&#125;</span><br><span class="line">  <span class="built_in">S</span>(S&amp;&amp; other) &#123; n = other.n + <span class="number">1</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">static_assert</span>(std::is_move_constructible_v&lt;S&gt;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  S v&#123;<span class="number">1</span>&#125;;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;v.n = &quot;</span> &lt;&lt; v.n &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;  <span class="comment">// 输出：v.n = 1</span></span><br><span class="line"></span><br><span class="line">  S u = std::<span class="built_in">move</span>(v);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 类S不满足可移动构造要求</span></span><br><span class="line">  <span class="comment">// u的值不等于初始化前v的值</span></span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;u.n = &quot;</span> &lt;&lt; u.n &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;  <span class="comment">// 输出：u.n = 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v.n = 1</span><br><span class="line">u.n = 2</span><br></pre></td></tr></table></figure>
+
+<p>相关概念</p>
+<table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>is_move_constructible (C++11)</code></td>
+<td align="left">检查类型是否可以从右值引用构造（类模板）</td>
+</tr>
+<tr>
+<td align="left"><code>is_trivially_move_constructible (C++11)</code></td>
+<td align="left">检查类型是否具有平凡的移动构造函数</td>
+</tr>
+<tr>
+<td align="left"><code>is_nothrow_move_constructible (C++11)</code></td>
+<td align="left">检查类型的移动构造函数是否不会抛出异常</td>
+</tr>
+<tr>
+<td align="left"><code>move_constructible (C++20)</code></td>
+<td align="left">指定类型的对象可以被移动构造（概念）</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><code>c++ named requirements: CopyConstructible</code></p>
+</li>
+</ol>
+<p>指明该类型的实例实例可以通过左值进行拷贝构造。</p>
+<h6 id="要求：-1"><a href="#要求：-1" class="headerlink" title="要求："></a>要求：</h6><p>类型<code>T</code>满足<code>CopyConstructible</code>要求需满足以下条件：</p>
+<ol>
+<li>类型<code>T</code>必须同时满足<code>MoveConstructible</code>（可移动构造）；</li>
+<li>给定以下变量：<ul>
+<li><code>v</code>：类型为<code>T</code>、<code>const T</code>的左值表达式，或类型为<code>const T</code>的右值表达式；</li>
+<li><code>u</code>：任意变量名。</li>
+</ul>
+</li>
+</ol>
+<p>以下表达式必须合法，且产生指定的语义效果：</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>后置条件（Post-conditions）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>T u = v;</code></td>
+<td><code>u</code>的值与<code>v</code>相等，<code>v</code>的值不变。</td>
+</tr>
+<tr>
+<td><code>T(v)</code></td>
+<td>构造出的对象的值等于<code>v</code>，<code>v</code>的值不变。</td>
+</tr>
+</tbody></table>
+<p>此外，表达式 <code>v.~T()</code>必须是合法的；对于左值<code>v</code>，表达式<code>&amp;v</code>的类型必须是<code>T*</code>或<code>const T*</code>，且必须计算为<code>v</code>的地址。</p>
+<blockquote>
+<p>  ⛔️（在<code>C++11</code>之前）<br>   如果一个类重载了<code>operator&amp;</code>，则它将不再满足<code>CopyConstructible</code>，因此不能用于标准库容器。<br>   这是<code>C++98</code>中的一个设计决策，而不是缺陷（参见<code>LWG issue 390</code>）。</p>
+</blockquote>
+<blockquote>
+<p>  ✅（从<code>C++11</code>起）<br>   标准库在需要获取对象地址时，会使用<code>std::addressof</code>，避免因重载<code>operator&amp;</code>导致的问题。</p>
+</blockquote>
+<h6 id="补充说明："><a href="#补充说明：" class="headerlink" title="补充说明："></a>补充说明：</h6><p>如果一个类是<code>CopyConstructible</code>，那么<code>std::is_copy_constructible</code>判断为<code>true</code>，但反过来不一定成立。因为 <code>std::is_copy_constructible</code>只检查语法上能否调用构造函数，并不会检查：</p>
+<ul>
+<li>是否满足<code>MoveConstructible</code>；</li>
+<li>构造后的对象是否语义等价（后置条件）。</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">S</span> &#123;</span><br><span class="line">  <span class="built_in">S</span>() = <span class="keyword">default</span>;</span><br><span class="line">  <span class="built_in">S</span>(S&amp;&amp;) = <span class="keyword">delete</span>;        <span class="comment">// 删除移动构造函数</span></span><br><span class="line">  <span class="built_in">S</span>(<span class="type">const</span> S&amp;) = <span class="keyword">default</span>;  <span class="comment">// 默认拷贝构造函数</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">static_assert</span>(std::is_copy_constructible_v&lt;S&gt;);  <span class="comment">// ✅ 成立</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  S s1;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ❌ 这段代码非法：虽然S可拷贝构造，但不能移动构造</span></span><br><span class="line">  [[maybe_unused]] S s2&#123;std::<span class="built_in">move</span>(s1)&#125;;  <span class="comment">// 错误：调用已删除的移动构造函数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul>
+<li><a href="https://www.youtube.com/watch?v=VY83afAJUIg&t=51s">CppCon 2018: Tom Poole “Why and How to Roll Your Own std::function Implementation”</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/c/" rel="tag"># c++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/11/x86-64%E6%8C%87%E4%BB%A4/" rel="prev" title="x86-64指令">
+                  <i class="fa fa-angle-left"></i> x86-64指令
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/" rel="next" title="标准I/O库">
+                  标准I/O库 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

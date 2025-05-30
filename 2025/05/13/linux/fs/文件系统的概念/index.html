@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="​	UNIX文件系统层次结构包含多种类型的文件系统，包括基于磁盘的文件系统（如VxFS和UFS），以及伪文件系统（如 procfs和tmpfs）。本章将介绍与整个文件系统相关的基本概念，包括磁盘分区、文件系统的挂载与卸载，以及主要操作文件系统的命令，如mkfs、mount、fsck和df。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件系统的概念">
+<meta property="og:url" content="https://huangpiao.tech/2025/05/13/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="​	UNIX文件系统层次结构包含多种类型的文件系统，包括基于磁盘的文件系统（如VxFS和UFS），以及伪文件系统（如 procfs和tmpfs）。本章将介绍与整个文件系统相关的基本概念，包括磁盘分区、文件系统的挂载与卸载，以及主要操作文件系统的命令，如mkfs、mount、fsck和df。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-13T04:28:26.999Z">
+<meta property="article:modified_time" content="2025-05-13T05:39:34.359Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/05/13/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/13/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5/","path":"2025/05/13/linux/fs/文件系统的概念/","title":"文件系统的概念"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>文件系统的概念 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是文件系统？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">文件系统层次结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E3%80%81%E5%88%86%E5%8C%BA%E3%80%81%E5%88%87%E7%89%87%E4%B8%8E%E5%8D%B7%EF%BC%88Volumes%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">磁盘、分区、切片与卷（Volumes）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8B%E8%AE%BE%E5%A4%87%E4%B8%8E%E5%9D%97%E8%AE%BE%E5%A4%87%EF%BC%88Raw-and-Block-Devices%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">原始设备与块设备（Raw and Block Devices）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%EF%BC%88Filesystem-Switchout-Commands%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">文件系统相关命令（Filesystem Switchout Commands）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E6%A0%BC%E5%BC%8F%E5%8C%96%EF%BC%9A"><span class="nav-number"></span> <span class="nav-text">对于文件的格式化：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA-EXT4-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number"></span> <span class="nav-text">1. 创建 EXT4 文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA-FAT32-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number"></span> <span class="nav-text">2. 创建 FAT32 文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA-XFS-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number"></span> <span class="nav-text">3. 创建 XFS 文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%88%9B%E5%BB%BA-Btrfs-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number"></span> <span class="nav-text">4. 创建 Btrfs 文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%88%9B%E5%BB%BA-JFS-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number"></span> <span class="nav-text">5. 创建 JFS 文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E4%BD%BF%E7%94%A8-F-%E9%80%89%E9%A1%B9%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%B1%BB%E5%9E%8B"><span class="nav-number"></span> <span class="nav-text">6. 使用 -F 选项指定文件系统类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E4%BD%BF%E7%94%A8-L-%E9%80%89%E9%A1%B9%E7%BB%99%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%91%BD%E5%90%8D"><span class="nav-number"></span> <span class="nav-text">7. 使用 -L 选项给文件系统命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E6%A3%80%E6%9F%A5%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%88%9B%E5%BB%BA%E6%97%B6%E7%9A%84%E5%9D%97%E5%A4%A7%E5%B0%8F"><span class="nav-number"></span> <span class="nav-text">8. 检查文件系统创建时的块大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%90%8E%E6%8C%82%E8%BD%BD"><span class="nav-number"></span> <span class="nav-text">9. 创建文件系统后挂载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number"></span> <span class="nav-text">总结：</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/13/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="文件系统的概念 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          文件系统的概念
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-13 12:28:26 / 修改时间：13:39:34" itemprop="dateCreated datePublished" datetime="2025-05-13T12:28:26+08:00">2025-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>​	<code>UNIX</code>文件系统层次结构包含多种类型的文件系统，包括基于磁盘的文件系统（如<code>VxFS</code>和<code>UFS</code>），以及伪文件系统（如 <code>procfs</code>和<code>tmpfs</code>）。本章将介绍与整个文件系统相关的基本概念，包括磁盘分区、文件系统的挂载与卸载，以及主要操作文件系统的命令，如<code>mkfs</code>、<code>mount</code>、<code>fsck</code>和<code>df</code>。</p>
+<span id="more"></span>
+
+<h4 id="什么是文件系统？"><a href="#什么是文件系统？" class="headerlink" title="什么是文件系统？"></a>什么是文件系统？</h4><p>​	早期文件系统要么是基于物理磁盘的，所有文件都存储在磁盘上；要么是基于内存的，这种情况下文件系统在系统重启后即会消失。尽管存储介质不同，但其基本概念与实现方式基本相同。</p>
+<p>在过去10到15年间，出现了一些伪文件系统，它们在用户看来是文件系统，但并不依赖任何物理存储设备，因此其实现方式与传统文件系统有显著差异。</p>
+<p>一个<code>UNIX</code>文件系统是一组具有以下属性的文件和目录的集合：</p>
+<ul>
+<li>它有一个根目录<code>/</code>，该目录下包含其他文件和子目录。大多数基于磁盘的文件系统还会包含一个<code>lost+found</code>目录，用于在系统崩溃恢复过程中存放“孤儿文件”。</li>
+<li>每个文件或目录都有唯一的标识，由其名称、所在目录以及唯一标识符（通常称为<code>inode</code>）构成。</li>
+<li>按照惯例，根目录的<code>inode</code>编号是2，而<code>lost+found</code>的<code>inode</code>编号是3。编号0和1的<code>inode</code>通常不会被使用。可通过<code>ls -i</code> 命令查看文件的<code>inode</code>编号。</li>
+<li>文件系统是自包含的：一个文件系统之间不会依赖另一个文件系统。</li>
+</ul>
+<p>文件系统在挂载前必须处于“干净”状态。如果系统发生崩溃，文件系统可能被标记为“脏”，即某些操作可能未完成，导致其结构不再一致。在这种情况下，需要使用<code>fsck</code>工具对文件系统进行一致性检查并修复潜在问题。运行<code>fsck</code>可使文件系统恢复为干净状态。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> -i /</span><br><span class="line">     13 bin     262145 etc         16 lib64        917505 mnt         1 run        12 swapfile   655361 var</span><br><span class="line">1048577 boot    786433 home        17 libx32       393217 opt        18 sbin        1 sys</span><br><span class="line"> 923049 cdrom       14 lib         11 lost+found        1 proc   786434 snap   786435 tmp</span><br><span class="line">      1 dev  </span><br></pre></td></tr></table></figure>
+
+<p>✅ 真相：这是因为它们来自<strong>不同的挂载点（挂载的文件系统）</strong>。</p>
+<p>每个挂载的文件系统都有自己的<code>inode</code>表，从1开始编号。所以<code>inode</code>是在<strong>单个文件系统内部唯一</strong>，但<strong>跨文件系统</strong>可以重复。</p>
+<p>🔍 举个例子</p>
+<p>来看你列出的部分内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 dev         1 proc        1 run        1 sys</span><br></pre></td></tr></table></figure>
+
+<p>这些目录都是<strong>独立挂载的虚拟文件系统</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>文件系统类型</th>
+<th>挂载作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/dev</code></td>
+<td><code>devtmpfs</code></td>
+<td>设备节点</td>
+</tr>
+<tr>
+<td><code>/proc</code></td>
+<td><code>proc</code></td>
+<td>内核与进程信息</td>
+</tr>
+<tr>
+<td><code>/sys</code></td>
+<td><code>sysfs</code></td>
+<td>内核对象模型接口</td>
+</tr>
+<tr>
+<td><code>/run</code></td>
+<td><code>tmpfs</code></td>
+<td>临时运行时文件</td>
+</tr>
+</tbody></table>
+<p>它们每一个都是独立的文件系统，单独挂载在根文件系统的某个目录上，所以这些文件系统中的<strong>根目录<code>inode</code>号都是1</strong>，这完全合理。</p>
+<h4 id="文件系统层次结构"><a href="#文件系统层次结构" class="headerlink" title="文件系统层次结构"></a>文件系统层次结构</h4><p>​	<code>UNIX</code>操作系统中包含多种类型的文件。所有这些文件（包括用户主目录）都以层级树状结构组织，这种结构便于将相似类型的文件聚类存放。虽然不同<code>UNIX</code>变种在目录层级结构上略有差异，但现代结构仍大致延续了早期<code>System V</code>和<code>BSD</code>的设计理念。</p>
+<p>在用户登录过程中，系统会为<code>root</code>用户和普通用户设置不同的<code>PATH</code>环境变量，确保相应的命令路径可用。由于某些目录中包含系统管理相关命令，<code>root</code>用户的路径设置通常与普通用户不同。例如，在<code>Linux</code>系统中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># echo $PATH</span></span><br><span class="line">/usr/sbin:/sbin:/bin:/usr/bin:/usr/local/bin:/usr/bin/X11:/root/bin</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$PATH</span></span><br><span class="line">/home/spate/bin:/usr/bin:/bin:/usr/bin/X11:/usr/local/bin:/home/spate/office52/program</span><br></pre></td></tr></table></figure>
+
+<p>以下是<code>UNIX</code>中的主要目录及其所包含的文件类型。虽然不同<code>UNIX</code>变种在实现上并不完全一致，但大致结构是共通的：</p>
+<ul>
+<li><code>/usr</code>：主要的用户与系统级可执行文件存放目录。</li>
+<li><code>/usr/bin</code>：用户级可执行文件。</li>
+<li><code>/usr/sbin</code>：系统管理工具，普通用户通常无访问权限。</li>
+<li><code>/usr/local</code>：用于本地安装的软件，通常不属于操作系统的一部分。</li>
+<li><code>/usr/share</code>：架构无关的共享资源文件（如帮助文档、<code>man</code>手册页）。</li>
+<li><code>/usr/lib</code>：动态库与共享库。</li>
+<li><code>/usr/ucb</code>：非<code>BSD</code>系统中的<code>BSD</code>工具集。</li>
+<li><code>/usr/include</code>：用户级头文件，内核头文件一般位于<code>/usr/include/sys</code>。</li>
+<li><code>/usr/src</code>：早期<code>UNIX</code>系统中存放内核源码的目录（除<code>Linux</code>外已不再使用）。</li>
+<li><code>/bin</code>：现在通常是<code>/usr/bin</code>的符号链接。</li>
+<li><code>/dev</code>：所有设备文件。</li>
+<li><code>/etc</code>：系统配置文件和启动脚本。</li>
+<li><code>/var</code>：日志文件等可变数据。</li>
+<li><code>/var/adm</code>：<code>UNIX</code>记账与登录日志。</li>
+<li><code>/var/preserve</code>：<code>vi</code>和<code>ex</code>辑器的临时备份目录。</li>
+<li><code>/var/tmp</code>：用户级临时文件。</li>
+<li><code>/var/spool</code>：排队任务（如打印、邮件、<code>cron</code>）。</li>
+<li><code>/home</code>：用户主目录，某些系统为<code>/usr/home</code>或<code>/u</code>。</li>
+<li><code>/tmp</code>：用于短期临时文件，重启后通常会被清空。</li>
+<li><code>/opt</code>：可选软件包安装目录，第三方软件常存放于此。</li>
+</ul>
+<p>​	在系统安装时，会创建多个文件系统。根文件系统包含最基本的命令、脚本、配置文件及工具，用于引导系统启动。其余文件则在系统启动后，以挂载方式暴露出来。</p>
+<p>下面是某个<code>Solaris</code>系统上部分挂载的文件系统示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/proc on /proc <span class="built_in">read</span>/write/setuid</span><br><span class="line">/ on /dev/dsk/c1t0d0s0 <span class="built_in">read</span>/write/setuid</span><br><span class="line">/dev/fd on fd <span class="built_in">read</span>/write/setuid</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>在安装操作系统时，管理员可以灵活配置每个文件系统的大小和数量。基本目标是将易增长的数据从根文件系统中分离出来，避免因根分区写满而导致系统瘫痪。</p>
+<h4 id="磁盘、分区、切片与卷（Volumes）"><a href="#磁盘、分区、切片与卷（Volumes）" class="headerlink" title="磁盘、分区、切片与卷（Volumes）"></a>磁盘、分区、切片与卷（Volumes）</h4><p>​	每块硬盘通常会被划分为若干不同大小的区域，称为“分区”或“切片（slice）”。需要注意，这里的“分区”不同于<code>PC</code>系统中的概念。</p>
+<p>每块磁盘都包含一个分区表。在<code>System V Release 4</code>（<code>SVR4</code>）中，这种分区表称为<code>VTOC</code>（<code>Volume Table Of Contents</code>），用于描述各切片的起始位置与大小。每个切片可用来存储启动信息、文件系统、交换空间，或作为裸设备供数据库等系统使用。</p>
+<p>磁盘管理可以通过多个工具实现，例如在<code>Solaris</code>或其他<code>SVR4</code>系统中，可使用<code>prtvtoc</code>和<code>fmthard</code>工具编辑<code>VTOC</code>表，划分磁盘切片。但当系统中有大量磁盘时，手动管理这些分区容易出错且效率低下。</p>
+<p>下面是<code>Solaris</code>系统中运行<code>prtvtoc</code>命令的输出示例：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># prtvtoc /dev/rdsk/c0t0d0s0</span></span><br><span class="line"><span class="bullet">*</span> /dev/rdsk/c0t0d0s0 partition map ...</span><br><span class="line"><span class="bullet">*</span> </span><br><span class="line"><span class="bullet">*</span> Dimensions</span><br><span class="line"><span class="bullet">*</span>      512 bytes/sector</span><br><span class="line"><span class="bullet">*</span>      135 sectors/track</span><br><span class="line"><span class="bullet">*</span>      16 tracks/cylinder</span><br><span class="line"><span class="bullet">*</span>     2160 sectors/cylinder</span><br><span class="line"><span class="bullet">*</span>     3882 cylinders</span><br><span class="line"><span class="bullet">*</span>     3880 accessible cylinders</span><br><span class="line"><span class="bullet">*</span> Flags:</span><br><span class="line"><span class="bullet">*</span>   1: unmountable</span><br><span class="line"><span class="bullet">*</span>  10: read-only</span><br><span class="line"><span class="bullet">*</span>                      First   Sector    Last</span><br><span class="line"><span class="bullet">*</span> Partition Tag Flags Sector   Count   Sector Mount Dir</span><br><span class="line"><span class="code">       0      2   00.      0  788400   788399 /</span></span><br></pre></td></tr></table></figure>
+
+<p>分区标记（<code>Partition Tag</code>）用于标识每个分区片段（<code>slice</code>），例如<code>c0t0d0s0</code>表示根文件系统所在的片段，<code>c0t0d0s4</code>表示<code>/usr</code>文件系统所在片段，依此类推。</p>
+<p>尽管命名方式不同，概念上与上面的示例类似。以下是在<code>Linux</code>中对基于<code>IDE</code>的根磁盘进行分区的示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># fdisk /dev/hda</span></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): p</span><br></pre></td></tr></table></figure>
+
+<p>磁盘信息：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Disk</span> /dev/hda: <span class="number">240</span> heads, <span class="number">63</span> sectors, <span class="number">2584</span> cylinders</span><br><span class="line"><span class="attribute">Units</span> = cylinders of <span class="number">15120</span> * <span class="number">512</span> bytes</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>设备名</th>
+<th>启动</th>
+<th>起始柱面</th>
+<th>结束柱面</th>
+<th>块数</th>
+<th>类型代号</th>
+<th>系统类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&#x2F;dev&#x2F;hda1</td>
+<td>*</td>
+<td>1</td>
+<td>3</td>
+<td>22648+</td>
+<td>83</td>
+<td>Linux</td>
+</tr>
+<tr>
+<td>&#x2F;dev&#x2F;hda2</td>
+<td></td>
+<td>556</td>
+<td>630</td>
+<td>567000</td>
+<td>6</td>
+<td>FAT16</td>
+</tr>
+<tr>
+<td>&#x2F;dev&#x2F;hda3</td>
+<td></td>
+<td>4</td>
+<td>12</td>
+<td>68040</td>
+<td>82</td>
+<td>Linux swap</td>
+</tr>
+<tr>
+<td>&#x2F;dev&#x2F;hda4</td>
+<td></td>
+<td>649</td>
+<td>2584</td>
+<td>14636160</td>
+<td>f</td>
+<td>Win95 Ext’d (LBA)</td>
+</tr>
+<tr>
+<td>&#x2F;dev&#x2F;hda5</td>
+<td></td>
+<td>1204</td>
+<td>2584</td>
+<td>10440328+</td>
+<td>b</td>
+<td>Win95 FAT32</td>
+</tr>
+<tr>
+<td>&#x2F;dev&#x2F;hda6</td>
+<td></td>
+<td>649</td>
+<td>1203</td>
+<td>4195737</td>
+<td>83</td>
+<td>Linux</td>
+</tr>
+</tbody></table>
+<p>逻辑卷管理器（如<code>VERITAS Volume Manager</code>，<code>VxVM</code>）提供了更方便的方式来管理磁盘和创建新的切片（称为逻辑卷）。它接管磁盘管理，并按需分配空间。</p>
+<p>逻辑卷可以是简单卷（类似基础分区），也可以是镜像卷或条带卷。</p>
+<p>创建逻辑卷示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vxassist make myvol 10g</span></span><br><span class="line"><span class="comment"># vxprint myvol</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Disk group: rootdg</span><br><span class="line">TY NAME       ASSOC     KSTATE   LENGTH     PLOFFS STATE</span><br><span class="line">v  myvol      fsgen     ENABLED  20971520   -      ACTIVE</span><br><span class="line">pl myvol-01   myvol     ENABLED  20973600   -      ACTIVE</span><br><span class="line">sd disk12-01  myvol-01  ENABLED  8378640    0      -</span><br><span class="line">sd disk02-01  myvol-01  ENABLED  8378640    -      4216320</span><br><span class="line">sd disk03-01  myvol-01  ENABLED  16757280   -      -</span><br></pre></td></tr></table></figure>
+
+<p>这个名为<code>myvol</code>的逻辑卷由三个连续的磁盘空间片段组成，总容量为<code>10GB</code>，并作为一个原始分区使用。</p>
+<h4 id="原始设备与块设备（Raw-and-Block-Devices）"><a href="#原始设备与块设备（Raw-and-Block-Devices）" class="headerlink" title="原始设备与块设备（Raw and Block Devices）"></a>原始设备与块设备（Raw and Block Devices）</h4><p>每个磁盘分区或逻辑卷都可以通过字符设备（原始接口）或块设备接口访问。</p>
+<p>字符设备示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ls -l /dev/vx/rdsk/myvol</span></span><br><span class="line">crw------ 1 root root 86, 8 Jul 9 21:36 /dev/vx/rdsk/myvol</span><br><span class="line"></span><br><span class="line"><span class="comment"># ls -lL /dev/rdsk/c0t0d0s0</span></span><br><span class="line">crw------ 1 root sys 136, 0 Apr 20 09:51 /dev/rdsk/c0t0d0s0</span><br></pre></td></tr></table></figure>
+
+<p>块设备示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ls -l /dev/vx/dsk/myvol</span></span><br><span class="line">brw------ 1 root root 86, 8 Jul 9 21:11 /dev/vx/dsk/myvol</span><br><span class="line"></span><br><span class="line"><span class="comment"># ls -lL /dev/dsk/c0t0d0s0</span></span><br><span class="line">brw------ 1 root sys 136, 0 Apr 20 09:51 /dev/dsk/c0t0d0s0</span><br></pre></td></tr></table></figure>
+
+<p>设备类型可通过文件名的首字母判断：<code>b</code>表示块设备，<code>c</code>表示字符设备。一般来说，字符设备位于<code>/dev/rdsk/</code>，块设备位于<code>/dev/dsk/</code>。</p>
+<p>块设备访问数据时通过系统缓冲缓存，缓存即使已释放仍会驻留一段时间。而字符设备不会使用缓存。如果混用两者，可能会读取到陈旧数据，造成系统问题。</p>
+<p>因此，<strong>除了挂载命令外，所有文件系统命令都应使用字符设备接口以避免缓存问题。</strong></p>
+<h4 id="文件系统相关命令（Filesystem-Switchout-Commands）"><a href="#文件系统相关命令（Filesystem-Switchout-Commands）" class="headerlink" title="文件系统相关命令（Filesystem Switchout Commands）"></a>文件系统相关命令（Filesystem Switchout Commands）</h4><p>许多文件系统命令依赖于具体的文件系统实现。例如在创建文件系统时，选项会因文件系统不同而有所差异。</p>
+<p>为支持这些不同的选项，相关命令通常分为通用部分和特定文件系统的实现。例如，<code>mkfs</code>命令可以如下调用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mkfs -F vxfs -o ...</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-F</code>（在<code>Linux</code>中为<code>-t</code>）指定文件系统类型</li>
+<li><code>-o</code>指定文件系统相关的具体参数</li>
+</ul>
+<p>命令首先检查参数合法性，然后定位并调用相应的文件系统特定的<code>mkfs</code>实现函数。</p>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mkfs -F nofs /dev/vx/rdsk/myvol</span></span><br><span class="line">mkfs: FSType nofs not installed <span class="keyword">in</span> the kernel</span><br></pre></td></tr></table></figure>
+
+<p>系统会在以下路径查找相应实现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># truss -o /tmp/truss.out mkfs -F nofs /dev/vx/rdsk/myvol</span></span><br><span class="line"><span class="comment"># grep nofs /tmp/truss.out</span></span><br><span class="line">execve(<span class="string">&quot;/usr/lib/fs/nofs/mkfs&quot;</span>, ...) Err#2 ENOENT</span><br><span class="line">execve(<span class="string">&quot;/etc/fs/nofs/mkfs&quot;</span>, ...) Err#2 ENOENT</span><br><span class="line">sysfs(GETFSIND, <span class="string">&quot;nofs&quot;</span>) Err#22 EINVAL</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，通用的<code>mkfs</code>命令假设<code>nofs</code>文件系统的相关命令会位于上述两个目录中的某一个。然而，实际上这些文件并不存在。作为最终的合理性检查，系统会调用<code>sysfs()</code>来确认是否真的存在一个名为<code>nofs</code>的文件系统类型。</p>
+<p>考虑在<code>Solaris</code>中通用和特定文件系统的<code>fstyp</code>命令的位置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># which fstyp</span></span><br><span class="line">/usr/sbin/fstyp</span><br><span class="line"></span><br><span class="line"><span class="comment"># ls /usr/lib/fs</span></span><br><span class="line">autofs/ cachefs/ fd/ hsfs/ lofs/ mntfs/ nfs/ pcfs/ proc/ tmpfs/ udfs/ ufs/ vxfs/</span><br><span class="line"></span><br><span class="line"><span class="comment"># ls /usr/lib/fs/ufs/fstyp</span></span><br><span class="line">/usr/lib/fs/ufs/fstyp</span><br><span class="line"></span><br><span class="line"><span class="comment"># ls /usr/lib/fs/vxfs/fstyp</span></span><br><span class="line">/usr/lib/fs/vxfs/fstyp</span><br></pre></td></tr></table></figure>
+
+<p>因此，可以根据上述路径逻辑自行实现一个通用版本的<code>fstyp</code>命令。</p>
+<p>示例：</p>
+<h3 id="对于文件的格式化："><a href="#对于文件的格式化：" class="headerlink" title="对于文件的格式化："></a>对于文件的格式化：</h3><p><code>mkfs</code> 通常用于磁盘分区，但也可以用于创建文件系统在一个文件上（例如在 <code>loop</code> 设备上）。可以通过 <code>dd</code> 创建一个空的文件，然后用 <code>mkfs</code> 创建文件系统。例如：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">dd <span class="attribute">if</span>=/dev/zero <span class="attribute">of</span>=disk.img <span class="attribute">bs</span>=1M <span class="attribute">count</span>=100</span><br><span class="line">mkfs.ext4 disk.img</span><br></pre></td></tr></table></figure>
+
+<p>这会创建一个 100MB 大小的 <code>disk.img</code> 文件，并对其格式化为 <code>ext4</code> 文件系统。</p>
+<p><code>mkfs</code>（Make File System）是用来创建文件系统的命令。你可以通过它来格式化磁盘分区或逻辑卷，并为其创建特定的文件系统。</p>
+<p>下面是一些常见的 <code>mkfs</code> 命令使用示例：</p>
+<h3 id="1-创建-EXT4-文件系统"><a href="#1-创建-EXT4-文件系统" class="headerlink" title="1. 创建 EXT4 文件系统"></a>1. 创建 EXT4 文件系统</h3><p>假设你有一个磁盘分区 <code>/dev/sda1</code>，你可以使用以下命令将它格式化为 <code>ext4</code> 文件系统：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs.ext4 <span class="regexp">/dev/</span>sda1</span><br></pre></td></tr></table></figure>
+
+<p>这将会把 <code>/dev/sda1</code> 分区格式化为 <code>ext4</code> 文件系统。</p>
+<h3 id="2-创建-FAT32-文件系统"><a href="#2-创建-FAT32-文件系统" class="headerlink" title="2. 创建 FAT32 文件系统"></a>2. 创建 FAT32 文件系统</h3><p>如果你想格式化为 <code>FAT32</code> 文件系统（例如在创建 USB 启动盘时常用），可以使用：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs.fat -F <span class="number">32</span> <span class="regexp">/dev/</span>sda1</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>-F 32</code> 选项指定了 FAT32 格式。</p>
+<h3 id="3-创建-XFS-文件系统"><a href="#3-创建-XFS-文件系统" class="headerlink" title="3. 创建 XFS 文件系统"></a>3. 创建 XFS 文件系统</h3><p>假设你想将分区 <code>/dev/sdb1</code> 格式化为 <code>XFS</code> 文件系统，可以使用：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs.xfs <span class="regexp">/dev/</span>sdb1</span><br></pre></td></tr></table></figure>
+
+<p><code>XFS</code> 是一种高性能的文件系统，通常用于大型数据存储。</p>
+<h3 id="4-创建-Btrfs-文件系统"><a href="#4-创建-Btrfs-文件系统" class="headerlink" title="4. 创建 Btrfs 文件系统"></a>4. 创建 Btrfs 文件系统</h3><p><code>Btrfs</code> 是一个支持快照、压缩等功能的现代文件系统。如果你要将 <code>/dev/sdc1</code> 格式化为 <code>Btrfs</code>，可以使用：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs.btrfs <span class="regexp">/dev/</span>sdc1</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-创建-JFS-文件系统"><a href="#5-创建-JFS-文件系统" class="headerlink" title="5. 创建 JFS 文件系统"></a>5. 创建 JFS 文件系统</h3><p><code>JFS</code> 是 IBM 开发的一个日志文件系统，如果你想将分区 <code>/dev/sdd1</code> 格式化为 JFS 文件系统，使用：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs.jfs <span class="regexp">/dev/</span>sdd1</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-使用-F-选项指定文件系统类型"><a href="#6-使用-F-选项指定文件系统类型" class="headerlink" title="6. 使用 -F 选项指定文件系统类型"></a>6. 使用 <code>-F</code> 选项指定文件系统类型</h3><p>如果你要指定文件系统类型，可以使用 <code>-F</code> 选项。比如，使用 <code>-F</code> 指定 <code>vxfs</code>（Veritas File System）类型：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs -F vxfs <span class="regexp">/dev/</span>sda1</span><br></pre></td></tr></table></figure>
+
+<p>这里，<code>vxfs</code> 是一个专有的高性能文件系统，通常用于企业级存储。</p>
+<h3 id="7-使用-L-选项给文件系统命名"><a href="#7-使用-L-选项给文件系统命名" class="headerlink" title="7. 使用 -L 选项给文件系统命名"></a>7. 使用 <code>-L</code> 选项给文件系统命名</h3><p>你还可以使用 <code>-L</code> 选项为文件系统指定标签。例如，格式化 <code>/dev/sda1</code> 为 <code>ext4</code> 文件系统，并给它命名为 <code>MyDrive</code>：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs.ext4 -L MyDrive <span class="regexp">/dev/</span>sda1</span><br></pre></td></tr></table></figure>
+
+<p>这样，文件系统就会被挂载时显示为 <code>MyDrive</code>，方便识别。</p>
+<h3 id="8-检查文件系统创建时的块大小"><a href="#8-检查文件系统创建时的块大小" class="headerlink" title="8. 检查文件系统创建时的块大小"></a>8. 检查文件系统创建时的块大小</h3><p>某些文件系统允许你指定块大小。比如创建 <code>ext4</code> 文件系统时指定 4KB 的块大小：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mkfs<span class="selector-class">.ext4</span> -<span class="selector-tag">b</span> <span class="number">4096</span> /dev/sda1</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-创建文件系统后挂载"><a href="#9-创建文件系统后挂载" class="headerlink" title="9. 创建文件系统后挂载"></a>9. 创建文件系统后挂载</h3><p>创建文件系统后，你可以挂载它。假设你刚才创建了一个 <code>ext4</code> 文件系统在 <code>/dev/sda1</code> 上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">mount /dev/sda1 /mnt</span><br></pre></td></tr></table></figure>
+
+<p>这将会把 <code>/dev/sda1</code> 挂载到 <code>/mnt</code> 目录，允许你访问它。</p>
+<hr>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><ul>
+<li><code>mkfs</code> 命令根据不同的文件系统类型有不同的子命令（如 <code>mkfs.ext4</code>, <code>mkfs.fat</code>, <code>mkfs.xfs</code> 等）。</li>
+<li>使用 <code>-L</code> 可以为文件系统指定标签。</li>
+<li>使用 <code>-F</code> 可以指定文件系统类型（例如 <code>vxfs</code>）。</li>
+<li>创建文件系统时，需要确保分区未被挂载。</li>
+</ul>
+<p>这些命令都是不可逆的，执行时会<strong>清除</strong>分区上的所有数据，请谨慎操作。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/" rel="prev" title="标准I/O库">
+                  <i class="fa fa-angle-left"></i> 标准I/O库
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/13/asio-protocol/" rel="next" title="asio protocol">
+                  asio protocol <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

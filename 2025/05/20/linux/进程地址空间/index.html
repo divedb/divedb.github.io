@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="翻译：https:&#x2F;&#x2F;www.kernel.org&#x2F;doc&#x2F;gorman&#x2F;html&#x2F;understand&#x2F;understand007.html 第4章 进程地址空间​	虚拟内存的主要优势之一在于每个进程拥有独立的虚拟地址空间，而这一空间由操作系统映射到物理内存中。本章将讨论进程地址空间的结构以及Linux是如何管理它的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程地址空间">
+<meta property="og:url" content="https://huangpiao.tech/2025/05/20/linux/%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="翻译：https:&#x2F;&#x2F;www.kernel.org&#x2F;doc&#x2F;gorman&#x2F;html&#x2F;understand&#x2F;understand007.html 第4章 进程地址空间​	虚拟内存的主要优势之一在于每个进程拥有独立的虚拟地址空间，而这一空间由操作系统映射到物理内存中。本章将讨论进程地址空间的结构以及Linux是如何管理它的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-20T14:06:57.062Z">
+<meta property="article:modified_time" content="2025-05-20T14:15:56.923Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="memory">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/05/20/linux/%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/20/linux/%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4/","path":"2025/05/20/linux/进程地址空间/","title":"进程地址空间"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>进程地址空间 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC4%E7%AB%A0-%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-number">1.</span> <span class="nav-text">第4章 进程地址空间</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%B6%E9%A1%B5%EF%BC%88Zero-Page%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">零页（Zero Page）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-1-%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-number">1.2.</span> <span class="nav-text">4.1 线性地址空间</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/20/linux/%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="进程地址空间 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          进程地址空间
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-20 22:06:57 / 修改时间：22:15:56" itemprop="dateCreated datePublished" datetime="2025-05-20T22:06:57+08:00">2025-05-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/memory/" itemprop="url" rel="index"><span itemprop="name">memory</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>翻译：<a href="https://www.kernel.org/doc/gorman/html/understand/understand007.html">https://www.kernel.org/doc/gorman/html/understand/understand007.html</a></p>
+<h4 id="第4章-进程地址空间"><a href="#第4章-进程地址空间" class="headerlink" title="第4章 进程地址空间"></a>第4章 进程地址空间</h4><p>​	虚拟内存的主要优势之一在于每个进程拥有独立的虚拟地址空间，而这一空间由操作系统映射到物理内存中。本章将讨论进程地址空间的结构以及<code>Linux</code>是如何管理它的。</p>
+<span id="more"></span>
+
+<h5 id="零页（Zero-Page）"><a href="#零页（Zero-Page）" class="headerlink" title="零页（Zero Page）"></a>零页（Zero Page）</h5><p>​	内核对用户空间和内核空间的地址区域采取截然不同的处理方式。例如，内核空间的内存分配会被立即满足，并且无论当前<code>CPU</code>上运行的是哪个进程，这些分配在全局范围内都是可见的。<code>vmalloc()</code>是一个例外情况，因为在进程页表与内核参考页表同步时可能会发生一次<code>page fault</code>，但所请求的页在调用时仍会被立即分配。</p>
+<p>对于用户进程而言，空间分配的初始阶段只是在线性地址空间中“预留”了一块区域，其方式是将页表项指向一个只读的、全局可见的零填充页（<code>zero page</code>）。当该内存区域首次被写入时，会触发一个页错误（<code>page fault</code>）。操作系统随后会分配一个新的物理页，将其清零，替换掉页表中的原始条目，并将其标记为可写。之所以填零，是为了使新分配的页在内容上与全局零页保持一致，从而在初始观察上无差异。</p>
+<p>用户空间部分是不被信任的，也不能被假定为始终不变。在每次上下文切换之后，用户空间部分的线性地址空间都可能发生变化，除非使用的是“惰性<code>TLB</code>切换（<code>Lazy TLB Switch</code>）”，这一机制将在第4.3节中详述。因此，内核必须随时准备捕捉并处理来自用户空间的所有异常和地址访问错误，第4.5节将对此展开介绍。</p>
+<p>本章将首先介绍线性地址空间的结构划分及其各部分的作用。随后我们将讨论描述每个进程地址空间的相关结构体，包括它们是如何分配、初始化和销毁的。接下来，我们会讲解进程空间中各个区域的创建过程，以及与之相关的各种函数。之后我们会进入异常处理部分，讨论与地址空间相关的缺页处理机制，以及为满足缺页请求可能发生的各种情况。最后，我们将介绍内核是如何安全地在内核空间与用户空间之间复制数据的。</p>
+<h5 id="4-1-线性地址空间"><a href="#4-1-线性地址空间" class="headerlink" title="4.1 线性地址空间"></a>4.1 线性地址空间</h5><p>​	从用户的视角来看，地址空间是一个线性的平面结构；而从内核的角度来看，这种结构则显得更加复杂。整个地址空间被划分为两部分：<strong>用户空间</strong>和<strong>内核空间</strong>。用户空间可能会在每次完整的上下文切换时发生改变，而内核空间则保持不变。</p>
+<p>这一区域的划分由常量 <code>PAGE_OFFSET</code> 决定。在 x86 架构上，该值为 <code>0xC0000000</code>，这意味着前 3GiB（0x00000000 ~ 0xBFFFFFFF）的地址空间可供用户进程使用，剩余的 1GiB（0xC0000000 ~ 0xFFFFFFFF）始终由内核映射并保留。图 ?? 展示了从内核视角看待的线性虚拟地址空间结构。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/memory/" rel="tag"># memory</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/19/algorithm/" rel="prev" title="algorithm">
+                  <i class="fa fa-angle-left"></i> algorithm
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/22/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/" rel="next" title="文件系统概念">
+                  文件系统概念 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
