@@ -123,7 +123,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2067,7 +2067,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/13/asio-protocol/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/13/%E5%B8%B8%E8%A7%81concept/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -2085,7 +2085,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/13/asio-protocol/" class="post-title-link" itemprop="url">asio protocol</a>
+          <a href="/2025/05/13/%E5%B8%B8%E8%A7%81concept/" class="post-title-link" itemprop="url">常见concept</a>
         </h2>
 
         <div class="post-meta-container">
@@ -2095,9 +2095,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-05-13 13:40:32 / 修改时间：13:55:07" itemprop="dateCreated datePublished" datetime="2025-05-13T13:40:32+08:00">2025-05-13</time>
+      <time title="创建时间：2025-05-13 13:54:49" itemprop="dateCreated datePublished" datetime="2025-05-13T13:54:49+08:00">2025-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-02 14:57:43" itemprop="dateModified" datetime="2025-06-02T14:57:43+08:00">2025-06-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -2105,7 +2111,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/network/" itemprop="url" rel="index"><span itemprop="name">network</span></a>
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
         </span>
     </span>
 
@@ -2119,15 +2125,60 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>​	在<code>asio</code>的<code>basic_socket_acceptor</code>模板中，<code>Protocol</code>参数是一个关键的类型参数，它定义了套接字接受器使用的网络协议规则。以下是关于<code>Protocol</code>类型的详细解析：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/05/13/asio-protocol/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <p><code>sentinel_for</code> 是 C++20 标准中引入的一个概念（Concept），用于类型推断和范围算法中，检查一个类型是否可以作为容器的“哨兵”类型。</p>
+<h3 id="哨兵（Sentinel）的概念"><a href="#哨兵（Sentinel）的概念" class="headerlink" title="哨兵（Sentinel）的概念"></a>哨兵（Sentinel）的概念</h3><p>在 C++ 中，容器通常由两部分构成：一个是迭代器，它指向容器中的元素，另一个是哨兵，它是一个标记，用来指示迭代是否结束。比如，在标准库中，<code>std::vector</code> 使用迭代器来遍历元素，而迭代器的末尾会指向 <code>std::vector</code> 的结束位置，即哨兵。</p>
+<h3 id="sentinel-for-详解"><a href="#sentinel-for-详解" class="headerlink" title="sentinel_for 详解"></a><code>sentinel_for</code> 详解</h3><p><code>sentinel_for</code> 是一个 <strong>概念</strong>（concept），用于检查某个类型是否适合作为一个容器的哨兵类型。在算法中，哨兵通常被用来和迭代器进行比较，以确定容器遍历是否完成。</p>
+<h4 id="sentinel-for-的定义"><a href="#sentinel-for-的定义" class="headerlink" title="sentinel_for 的定义"></a><code>sentinel_for</code> 的定义</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Sentinel, <span class="keyword">typename</span> Iterator&gt;</span><br><span class="line"><span class="keyword">concept</span> sentinel_for = <span class="built_in">requires</span>(Sentinel s, Iterator i) &#123;</span><br><span class="line">    &#123; i == s &#125; -&gt; std::convertible_to&lt;<span class="type">bool</span>&gt;;  <span class="comment">// Sentinel can be compared to Iterator</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Sentinel</code> 是一个容器的哨兵类型。</li>
+<li><code>Iterator</code> 是一个容器的迭代器类型。</li>
+<li><code>sentinel_for</code> 概念会检查是否可以将一个 <code>Iterator</code> 和一个 <code>Sentinel</code> 进行比较，并且比较结果能被转换为 <code>bool</code>。</li>
+</ul>
+<h3 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h3><p>在容器中，通常会通过比较迭代器和哨兵来判断是否到达容器的末尾。例如，在 <code>std::vector</code> 中，<code>end()</code> 函数返回一个指向容器末尾的迭代器，它实际上是一个哨兵。当你在遍历容器时，通过与这个“哨兵”进行比较，来判断是否应该停止。</p>
+<p>例如：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line"><span class="keyword">auto</span> it = vec.<span class="built_in">begin</span>();</span><br><span class="line"><span class="keyword">auto</span> end = vec.<span class="built_in">end</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (it != end) &#123;</span><br><span class="line">    <span class="comment">// Do something with *it</span></span><br><span class="line">    ++it;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里，<code>vec.end()</code> 返回的是一个哨兵值，它表示容器的结束位置。<code>sentinel_for</code> 确保了 <code>it != end</code> 是有效的，因为它验证了 <code>Iterator</code> 和 <code>Sentinel</code> 可以进行有效的比较。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p><code>sentinel_for</code> 概念主要用于检查某个类型是否可以作为容器的“结束标记”，即哨兵。它被广泛应用于算法中，以保证迭代器和容器的结束位置能够正确比较。</p>
+<p>例如，在标准库的算法中，当涉及到容器的遍历时，往往会有这样的语法：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">template</span> &lt;typename Iterator, typename Sentinel&gt;</span><br><span class="line"><span class="type">void</span> my_algorithm(Iterator first, Sentinel last) &#123;</span><br><span class="line">    <span class="keyword">for</span> (; first != last; ++first) &#123;</span><br><span class="line">        // <span class="keyword">Perform</span> operations</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sentinel_for</code> 概念在这里就会确保 <code>last</code>（哨兵）是一个有效的容器结束标记，可以与 <code>first</code>（迭代器）进行比较。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><code>sentinel_for</code> 是一个 C++20 概念，用来检查某个类型是否能作为容器的哨兵类型。</li>
+<li>哨兵通常是用来与迭代器比较，表示容器的结束位置。</li>
+<li>这个概念用于标准库算法中，确保容器遍历的正确性和类型安全性。</li>
+</ul>
+<p><code>SizedSentinelFor</code> 是 C++20 中引入的一个概念（Concept），它扩展了 <code>sentinel_for</code> 概念，要求哨兵类型不仅可以与迭代器进行比较，还需要能够通过与迭代器的比较来确定容器的大小，或至少可以提供一个与容器大小相关的有效操作。</p>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><p><code>SizedSentinelFor</code> 主要用于支持那些可以根据容器大小直接计算或推断剩余元素个数的容器类型。例如，在一些容器中，哨兵不仅仅是表示结束的位置，它还可以携带关于容器大小的信息（例如，在数组或容器的迭代中可以通过 <code>last - first</code> 来计算元素的数量）。</p>
+<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">template &lt;typename Sentinel, typename <span class="built_in">Iterator</span>&gt;</span><br><span class="line">concept sized_sentinel_for = sentinel_for&lt;Sentinel, <span class="built_in">Iterator</span>&gt; &amp;&amp;</span><br><span class="line">    <span class="title function_ invoke__">requires</span>(Sentinel s, <span class="built_in">Iterator</span> i) &#123;</span><br><span class="line">        &#123; i - s &#125; <span class="punctuation">-&gt;</span> std::convertible_to&lt;std::ptrdiff_t&gt;;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="解释："><a href="#解释：" class="headerlink" title="解释："></a>解释：</h4><ul>
+<li><code>SizedSentinelFor</code> 继承自 <code>sentinel_for</code> 概念，表示它至少满足哨兵和迭代器可以比较的要求。</li>
+<li>额外要求是，<code>Iterator</code> 和 <code>Sentinel</code> 之间可以进行减法操作，且减法的结果可以转换为 <code>std::ptrdiff_t</code>（通常是一个表示元素个数的整数类型）。</li>
+</ul>
+<p>这意味着，除了能进行比较外，<code>Iterator</code> 和 <code>Sentinel</code> 还需要支持 <code>i - s</code> 操作，这样可以直接计算出迭代器与哨兵之间的距离（即容器的元素数量）。例如，在数组或者支持随机访问的容器中，容器的大小可以通过两个迭代器之间的距离来直接计算。</p>
+<h3 id="使用场景-1"><a href="#使用场景-1" class="headerlink" title="使用场景"></a>使用场景</h3><p><code>SizedSentinelFor</code> 适用于需要进行元素计数操作的算法或数据结构。例如，某些标准库算法（如 <code>std::distance</code>）可以使用此概念来优化对容器大小的计算，而无需遍历整个容器。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Iterator, <span class="keyword">typename</span> Sentinel&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">my_algorithm</span><span class="params">(Iterator first, Sentinel last)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果first和last满足SizedSentinelFor条件</span></span><br><span class="line">    <span class="keyword">auto</span> distance = last - first;  <span class="comment">// 直接计算剩余元素数量</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>假设我们有一个容器 <code>std::vector&lt;int&gt;</code> 和一个数组，我们希望计算容器的大小：</p>
+<ol>
+<li><p>对于 <code>std::vector&lt;int&gt;</code>，迭代器和结束迭代器之间的差可以直接得到容器的元素数量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">auto</span> distance = vec.<span class="built_in">end</span>() - vec.<span class="built_in">begin</span>();  <span class="comment">// 可以直接计算大小</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于一个简单的数组，<code>Iterator</code> 和 <code>Sentinel</code> 之间也可以通过减法得到容器的大小：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">int arr[] = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">auto distance = std::<span class="keyword">end</span>(arr) - std::<span class="keyword">begin</span>(arr);  <span class="regexp">//</span> 计算数组大小</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>在这种情况下，<code>std::vector&lt;int&gt;</code> 和数组类型都符合 <code>SizedSentinelFor</code> 概念。</p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><code>SizedSentinelFor</code> 是 C++20 中的一个概念，它继承自 <code>sentinel_for</code>，要求哨兵类型除了能与迭代器进行比较外，还能进行减法操作，以计算容器的元素数量。</li>
+<li>这个概念用于支持那些可以根据两个迭代器之间的差值直接计算容器大小的类型，适用于随机访问容器或其他可以进行此类操作的容器。</li>
+<li>它使得一些算法可以更高效地计算容器的大小，而不需要迭代遍历容器。</li>
+</ul>
+<p><a href="https://zhuanlan.zhihu.com/p/340081378">https://zhuanlan.zhihu.com/p/340081378</a></p>
+
       
     </div>
 
