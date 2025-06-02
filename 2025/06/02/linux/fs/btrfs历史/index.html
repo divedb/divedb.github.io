@@ -20,27 +20,29 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="这里写关于页的正文，支持 Markdown, HTML">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="https://huangpiao.tech/about/index.html">
+    <meta name="description" content="翻译：A short history of btrfs ​	你或许已经听说过文件系统领域的新星 —— btrfs。毕竟，Linus Torvalds已经在他的一台笔记本上将其作为根文件系统使用了。但除了几个高频关键词，比如写时复制（copy-on-write）、校验和（checksums）、可写快照（writable snapshots），以及一些耸人听闻的传闻，比如“Phoronix的性能测试结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="btrfs历史">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/index.html">
 <meta property="og:site_name" content="Rockyの博客">
-<meta property="og:description" content="这里写关于页的正文，支持 Markdown, HTML">
+<meta property="og:description" content="翻译：A short history of btrfs ​	你或许已经听说过文件系统领域的新星 —— btrfs。毕竟，Linus Torvalds已经在他的一台笔记本上将其作为根文件系统使用了。但除了几个高频关键词，比如写时复制（copy-on-write）、校验和（checksums）、可写快照（writable snapshots），以及一些耸人听闻的传闻，比如“Phoronix的性能测试结">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-10-10T14:56:27.719Z">
-<meta property="article:modified_time" content="2024-10-10T14:56:27.719Z">
+<meta property="article:published_time" content="2025-06-02T05:37:08.741Z">
+<meta property="article:modified_time" content="2025-06-02T05:41:28.398Z">
 <meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="btrfs">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://huangpiao.tech/about/">
+<link rel="canonical" href="https://huangpiao.tech/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/about/index.html","path":"about/index.html","title":"about"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/","path":"2025/06/02/linux/fs/btrfs历史/","title":"btrfs历史"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>about | Rockyの博客
-</title>
+<title>btrfs历史 | Rockyの博客</title>
   
 
 
@@ -152,36 +154,106 @@
 
     </div>
 
-    <div class="main-inner page posts-expand">
+    <div class="main-inner post posts-expand">
 
 
-    
-    
-    
-    <div class="post-block" lang="zh-CN"><header class="post-header">
+  
 
-<h1 class="post-title" itemprop="name headline">about
-</h1>
 
-<div class="post-meta-container">
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="btrfs历史 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          btrfs历史
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-02 13:37:08 / 修改时间：13:41:28" itemprop="dateCreated datePublished" datetime="2025-06-02T13:37:08+08:00">2025-06-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
 </div>
 
-</header>
+        </div>
+      </header>
 
-      
-      
-      
-      <div class="post-body">
-          <p>这里写关于页的正文，支持 Markdown, HTML</p>
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>翻译：<a href="https://lwn.net/Articles/342892/">A short history of btrfs</a></p>
+<p>​	你或许已经听说过文件系统领域的新星 —— <code>btrfs</code>。毕竟，<code>Linus Torvalds</code>已经在他的一台笔记本上将其作为根文件系统使用了。但除了几个高频关键词，比如<em>写时复制（<code>copy-on-write</code>）</em>、<em>校验和（<code>checksums</code>）</em>、<em>可写快照（<code>writable snapshots</code>）</em>，以及一些耸人听闻的传闻，比如“<code>Phoronix</code>的性能测试结果”、 “<code>btrfs</code>是<code>ZFS</code>的山寨版”、 “<code>btrfs</code>是<code>Oracle</code>主宰<code>Linux</code>的秘密计划”之外，你可能对它了解并不多。</p>
+<span id="more"></span>
 
-      </div>
-      
-      
-      
+<p>在文件系统的世界里，真相、谣言和恶意中伤之间的界限常常模糊不清：代码异常复杂、开发者性格张扬、用户因数据丢失而愤怒不已。即便想用性能测试来一较高下，也难以定论——因为不同工作负载下的文件系统行为差异极大，任何一个基准测试都可以被合理地视为“无关紧要”或“至关重要”。</p>
+<p>在这篇文章中，我们将从多个层面 —— 技术的、政治的、个人的 —— 深入了解 btrfs 的设计与发展历程。从一个小型研讨会的起点，到如今成为 Linus 根文件系统的地位，理解每一个阶段背后的背景和动机，将帮助你掌握 btrfs 为什么诞生、它是如何工作的，以及它将走向何方。读完后，你应该可以对 btrfs 的磁盘格式做出一番“合理空谈”。</p>
+
     </div>
 
     
     
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/btrfs/" rel="tag"># btrfs</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/02/db/LevelDB%E5%A4%8D%E7%8E%B0/" rel="prev" title="LevelDB复现">
+                  <i class="fa fa-angle-left"></i> LevelDB复现
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
 
 
     <div class="comments utterances-container"></div>
