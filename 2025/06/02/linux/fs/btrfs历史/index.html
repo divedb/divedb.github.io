@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/oldskool.png">
 <meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/newskool.png">
 <meta property="article:published_time" content="2025-06-02T05:37:08.741Z">
-<meta property="article:modified_time" content="2025-06-02T06:57:48.047Z">
+<meta property="article:modified_time" content="2025-06-02T07:33:09.709Z">
 <meta property="article:author" content="Rocky">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="文件系统">
@@ -120,7 +120,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%98-btrfs%E7%9A%84%E5%89%8D%E4%BC%A0%EF%BC%9A%E8%B5%B7%E7%82%B9%E4%B9%8B%E5%89%8D"><span class="nav-number">2.</span> <span class="nav-text">📘 btrfs的前传：起点之前</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%B1-btrfs%E7%9A%84%E8%AF%9E%E7%94%9F"><span class="nav-number">3.</span> <span class="nav-text">🧱 btrfs的诞生</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%98-btrfs%E7%9A%84%E5%89%8D%E4%BC%A0%EF%BC%9A%E8%B5%B7%E7%82%B9%E4%B9%8B%E5%89%8D"><span class="nav-number">2.</span> <span class="nav-text">📘 btrfs的前传：起点之前</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%B1-btrfs%E7%9A%84%E8%AF%9E%E7%94%9F"><span class="nav-number">3.</span> <span class="nav-text">🧱 btrfs的诞生</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%92%A1-btrfs%EF%BC%9A%E6%94%BF%E6%B2%BB%E4%B8%8E%E8%83%8C%E6%99%AF"><span class="nav-number">4.</span> <span class="nav-text">💡 btrfs：政治与背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%AC-btrfs%E4%B8%8EZFS%E7%9A%84%E7%AE%80%E8%A6%81%E6%AF%94%E8%BE%83"><span class="nav-number">5.</span> <span class="nav-text">🧬 btrfs与ZFS的简要比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%9D-btrfs%EF%BC%9A%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B"><span class="nav-number">6.</span> <span class="nav-text">📝 btrfs：未来展望</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -200,7 +200,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-06-02 13:37:08 / 修改时间：14:57:48" itemprop="dateCreated datePublished" datetime="2025-06-02T13:37:08+08:00">2025-06-02</time>
+      <time title="创建时间：2025-06-02 13:37:08 / 修改时间：15:33:09" itemprop="dateCreated datePublished" datetime="2025-06-02T13:37:08+08:00">2025-06-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -247,6 +247,31 @@
 <p><img src="/images/linux/btrfs/oldskool.png"></p>
 <p><code>btrfs</code>则采用了一种更像这样的磁盘布局：</p>
 <p><img src="/images/linux/btrfs/newskool.png"></p>
+<p>在这两个示意图中，红色块表示浪费的磁盘空间，红色箭头表示磁头寻道操作。</p>
+<p>文件系统中各种元数据和数据——目录项、<code>inode</code>、扩展属性、文件数据本身——都以特定类型的“项（<code>item</code>）”存储。如果回头看“项”的定义，可以看到它的第一个成员是一个键（<code>key</code>）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">btrfs_disk_key</span> &#123;</span></span><br><span class="line">  __le64 objectid;</span><br><span class="line">  u8 type;</span><br><span class="line">  __le64 offset;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先从<code>objectid</code>字段说起。文件系统中的每个对象——通常是<code>inode</code>——都有一个唯一的<code>objectid</code>。这也是文件系统中常见的做法，相当于<code>inode</code>号。<code>btrfs</code>的特别之处在于，这个<code>objectid</code>构成了项键（用于在<code>btree</code>中查找项）的高位部分，而低位部分则是该<code>objectid</code>关联的不同类型的项。这样一来，所有属于同一个<code>objectid</code>的信息都会被自然地聚合在一起。如果你连续分配相邻的<code>objectid</code>，那么这些<code>objectid</code>相关的所有项也会被紧密地分配在一起。<code>&lt;objectid, type&gt;</code>这一对键值对，能自动将相关数据聚合在一起，而无需像传统文件系统那样为每种文件系统数据类型单独设计复杂的优化分配器。</p>
+<p><code>type</code>字段表示这个项中存储的数据类型：是<code>inode</code>吗？是目录项吗？是表示文件数据在磁盘上位置的<code>extent</code>（区块描述）吗？还是文件数据本身？结合<code>objectid</code>和<code>type</code>，你就可以在<code>btree</code>中查找任何所需的文件系统数据。</p>
+<p>接下来，我们简要看一下<code>btree</code>节点和叶子节点的结构。每个节点和叶子节点都是<code>btree</code>的一个<code>extent</code>——节点存储的是 <code>&lt;key, block header&gt;</code>键值对，叶子节点则包含具体的项。较大的文件数据不会存放在叶子节点中，而是存放在叶子节点描述的<code>extent</code>之外。（“较大”的定义可以根据工作负载调整。）每个描述<code>btree</code>部分的<code>extent</code>都有校验和和引用计数，这支持了可写快照的功能。此外，每个<code>extent</code>还包含显式的反向引用，指向引用它的所有<code>extent</code>。</p>
+<p>反向引用赋予了<code>btrfs</code>其同类文件系统中无可比拟的优势。它让我们能够快速、高效地迁移数据，增量地检查和修复文件系统，并在正常操作中验证引用计数的正确性。事实上，<code>btrfs</code>已经支持快速、高效的设备移除和文件系统存储空间的缩减。虽然许多文件系统都宣称支持“缩减文件系统”功能，但通常实现得效率低下、速度缓慢，甚至多年后仍未完成。例如，<code>ext3/4</code> 文件系统缩减时，必须遍历整个文件系统，查找被移除设备上的数据，过程缓慢且容易出错。<code>ZFS</code>至今仍不支持文件系统缩减。</p>
+<p>总结来说，<code>btrfs</code>的设计既通用又优雅：磁盘上的所有数据都是一个<code>btree</code>，<code>btrfs</code>的<code>btree</code>由引用计数且带校验和的<code>item extent</code>组成，使用<code>&lt;objectid, type&gt;</code>键进行组织。<code>btrfs</code>代码中很大一部分并不关心项中具体存储了什么，它只负责如何将项插入或删除于<code>btree</code>。磁盘布局优化也很简单：尽量将相似键值的项紧密分配在一起。</p>
+<h4 id="💡-btrfs：政治与背景"><a href="#💡-btrfs：政治与背景" class="headerlink" title="💡 btrfs：政治与背景"></a>💡 <code>btrfs</code>：政治与背景</h4><p>​	在<code>Chris</code>设计<code>btrfs</code>技术方案的同时，他也在思考如何在短期和长期为<code>btrfs</code>的开发筹集资金。<code>Chris</code>刚从<code>SUSE</code>转到<code>Oracle</code> 的一个专门负责<code>Linux</code>的团队，该团队拥有多位高级<code>Linux</code>存储开发者，包括<code>Martin K. Petersen</code>、<code>Zach Brown</code>和<code>Jens Axboe</code>。<code>Oracle</code>资助了大量<code>Linux</code>相关开发，有些显然和<code>Oracle</code>数据库相关（如<code>OCFS2</code>、<code>DIF/DIX</code>），有些则不太直接相关（例如通用块层开发、<code>syslets</code>）。<code>Chris</code>在最近一次接受<code>Linux</code>基金会的<code>Amanda McPherson</code>采访时这样解释：</p>
+<p><strong>Amanda：</strong>你为什么启动这个项目？为什么<code>Oracle</code>会如此大力支持？</p>
+<p><strong>Chris：</strong>我是在加入<code>Oracle</code>不久后开始做<code>btrfs</code>的。当时我有一个难得的机会，能深入分析<code>Linux</code>目前缺少的文件系统特性，我觉得<code>btrfs</code>是解决这些问题的最佳方案。</p>
+<p><code>Linux</code>对<code>Oracle</code>来说非常重要。我们在内部业务中大量使用<code>Linux</code>，它也拥有广泛的客户基础。我们希望<code>Linux</code>能继续保持作为数据中心操作系统的强势地位，而在存储领域创新是<code>Oracle</code>贡献力量的自然方式。</p>
+<p>换句话说，<code>Oracle</code>喜欢将<code>Linux</code>作为平台，愿意投入开发力量，即使这不直接提升<code>Oracle</code>数据库性能。试想有多少操作系统是由你的竞争对手开发和资助的？虽然拥有一个完全由自己掌控的操作系统（比如<code>Solaris</code>）很诱人，但这也意味着必须承担平台的大部分开发成本。最终，<code>Oracle</code>认为利用自家的专业知识，支持<code>Linux</code>发展符合自己的利益。</p>
+<p>经过几个月和<code>Zach Brown</code>以及其他人密集的编码与设计讨论，<code>Chris</code>发布了<code>btrfs</code>供社区审阅。从那时起，<code>btrfs</code>的发展轨迹就像其他开源项目一样，可以通过邮件列表和源码历史追踪。现在，<code>btrfs</code>已经进入了主线内核，<code>Red Hat</code>、<code>SUSE</code>、<code>Intel</code>、<code>IBM</code>、<code>HP</code>、<code>Fujitsu</code>等公司的开发者都在贡献代码。<code>btrfs</code>是一个真正的开源项目——不仅在许可证上如此，社区文化也是如此。</p>
+<h4 id="🧬-btrfs与ZFS的简要比较"><a href="#🧬-btrfs与ZFS的简要比较" class="headerlink" title="🧬 btrfs与ZFS的简要比较"></a>🧬 <code>btrfs</code>与<code>ZFS</code>的简要比较</h4><p>​	很多人关心<code>btrfs</code>和<code>ZFS</code>的关系。从某些角度看，这两个文件系统非常相似：都是支持多设备、带校验和的写时复制（<code>copy-on-write</code>）文件系统，并支持可写快照。但从其他角度看，它们差异巨大：文件系统架构、开发模式、成熟度、许可证、支持的操作系统等等。这里我不逐条回答问题，而是简要回顾<code>ZFS</code>的发展历史，并对两者几个关键点进行对比。</p>
+<p>当<code>ZFS</code>刚开始开发时，<code>Solaris</code>的文件系统前景也不容乐观。日志式<code>UFS</code>的容量和性能瓶颈日益明显，许多<code>Solaris</code>用户不得不花大价钱购买<code>Veritas</code>的<code>VxFS</code>。<code>Solaris</code>迫切需要一个全新的文件系统。</p>
+<p><code>Jeff Bonwick</code>决定解决这个问题，于是启动了<code>Sun</code>内部的<code>ZFS</code>项目。他用虚拟内存子系统作比喻——为什么磁盘不能像内存一样易于管理和使用？<code>ZFS</code>的核心磁盘结构是<code>slab</code>，即一个磁盘块组，按大小相同的块划分，类似他曾开发的内核<code>SLAB</code>分配器。<code>ZFS</code>不用<code>extent</code>，而是每个块一个指针，但每个对象可使用不同大小的块（例如512字节，或128KB），取决于对象大小。块地址通过类似虚拟内存的机制转换，块可被迁移而上层无感知。所有元数据和数据都以对象形式存储，文件系统的所有修改都表现为对象的写时复制。</p>
+<p>总结一下，<code>btrfs</code>将磁盘上的所有数据组织成包含项和数据的<code>extent btree</code>；而<code>ZFS</code>则组织成一个块指针树，块大小随对象大小而变。<code>btrfs</code>对<code>extent</code>做校验和与引用计数，<code>ZFS</code>对可变大小块做相同操作。两者都使用写时复制，数据块（或<code>extent</code>）不会就地覆盖，总是先复制到别处。</p>
+<p>因此，尽管功能列表看起来相似，底层实现却截然不同。这有点像有袋类与胎盘类哺乳动物的趋同进化——袋鼠鼠和普通鼠外表极其相似，但内部构造却有很大差别！</p>
+<p>我个人认为，<code>btrfs</code>的架构比<code>ZFS</code>更适合存储。<code>ZFS</code>最大的问题之一是<code>slab</code>大小块的碎片化——每个对象只能包含单一大小的块，每个<code>slab</code>也只能容纳单一大小块。比如，一个由<code>64KB</code>块组成的文件需要增长一个块时，可能没有合适大小的块可用，尽管文件系统中还存在大量512字节、<code>4KB</code>、<code>128KB</code>等大小的空闲块。为了解决这个问题，<code>ZFS</code>开发者发明了<code>gang blocks</code>（将小块组合成大块）等复杂而不太优雅的变通方法。当时<code>btree</code>和<code>extent</code>被认为与写时复制本质不兼容，而虚拟内存的隐喻在很多方面都非常有用。</p>
+<p>相比之下，基于<code>btree</code>的<code>items</code>方式极其节省空间且灵活。碎片整理是持续进行的过程——高效重组<code>items</code>是写入磁盘前正常的准备流程。基于每个<code>extent</code>进行校验和、引用计数及元数据管理，降低了系统开销，也使得像快速反向映射（<code>extent</code>到所有引用它的项）这类新特性成为可能。</p>
+<p>最后做几个个人预测（仅基于公开信息，无内幕）：<code>btrfs</code>将在两年内成为<code>Linux</code>的默认文件系统。<code>Oracle</code>不会也不可能取消这个项目。如果所有知识产权问题（这是个大问题）得到解决，<code>ZFS</code>会被移植到<code>Linux</code>，但安装量最多占<code>btrfs</code>的几个百分点。两年后你可以再回来看看我的预测是否正确！</p>
+<h4 id="📝-btrfs：未来展望"><a href="#📝-btrfs：未来展望" class="headerlink" title="📝 btrfs：未来展望"></a>📝 <code>btrfs</code>：未来展望</h4><p>​	自首次发布以来，<code>btrfs</code>正朝着1.0版本稳步迈进，历时刚刚超过两年。这比许多文件系统的老牌开发者——包括我自己——预期的速度要快得多，尤其是在这段时间内，<code>btrfs</code>只有一名全职开发者。虽然<code>btrfs</code>还未达到生产环境的稳定级别——也就是说，还不适合存储那些你一旦丢失就会非常懊恼的数据——但它已经足够稳定，可以广泛进行测试。比如，安装在你定期备份的笔记本电脑上，或者放在那台你每隔几周都会重装系统的实验用小笔记本上。</p>
+<p>需要注意的是，<code>btrfs</code>最近经历了一次“旗日”（<code>flag day</code>）——即磁盘格式发生了不兼容的重大变更。在<code>2.6.30</code>内核发布后不久的一次提交中，<code>btrfs</code>的磁盘格式进行了修改，导致新版格式与旧内核不兼容。如果你使用旧版（2.6.30 或更早）内核和工具创建了<code>btrfs</code>文件系统，然后用新内核启动并切换到新版格式，那么就无法再用旧内核访问该文件系统。<code>Linus Torvalds</code>就亲身经历过这个问题。但如果你遇到了类似情况，不要慌张——你可以在<code>btrfs</code>的维基页面找到救援镜像和许多实用的帮助信息。</p>
 
     </div>
 
