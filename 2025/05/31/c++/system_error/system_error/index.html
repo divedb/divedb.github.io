@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="该头文件属于C++标准库中的错误处理库（error handling library）的一部分。 📚 类定义 **std::error_category**：错误类别的基类。 **std::error_condition**：表示可移植的错误状态码。 **std::errc**： 枚举类型，列举了所有标准&lt;cerrno&gt;宏定义对应的错误码。 **std::error_code**：表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="system_error">
+<meta property="og:url" content="https://huangpiao.tech/2025/05/31/c++/system_error/system_error/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="该头文件属于C++标准库中的错误处理库（error handling library）的一部分。 📚 类定义 **std::error_category**：错误类别的基类。 **std::error_condition**：表示可移植的错误状态码。 **std::errc**： 枚举类型，列举了所有标准&lt;cerrno&gt;宏定义对应的错误码。 **std::error_code**：表">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-31T04:03:17.383Z">
+<meta property="article:modified_time" content="2025-05-31T13:43:23.159Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="std">
+<meta property="article:tag" content="c++11">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/05/31/c++/system_error/system_error/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/31/c++/system_error/system_error/","path":"2025/05/31/c++/system_error/system_error/","title":"system_error"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>system_error | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%9A-%E7%B1%BB%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">📚 类定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9B%A0%EF%B8%8F-%E6%A6%82%E8%A6%81"><span class="nav-number">2.</span> <span class="nav-text">🛠️ 概要</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9B%A0%EF%B8%8F-%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3"><span class="nav-number"></span> <span class="nav-text">🛠️ 函数接口</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/31/c++/system_error/system_error/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="system_error | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          system_error
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-31 12:03:17 / 修改时间：21:43:23" itemprop="dateCreated datePublished" datetime="2025-05-31T12:03:17+08:00">2025-05-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>该头文件属于<code>C++</code>标准库中的<strong>错误处理库（<code>error handling library</code>）</strong>的一部分。</p>
+<h4 id="📚-类定义"><a href="#📚-类定义" class="headerlink" title="📚 类定义"></a>📚 类定义</h4><ul>
+<li>**<code>std::error_category</code>**：错误类别的基类。</li>
+<li>**<code>std::error_condition</code>**：表示可移植的错误状态码。</li>
+<li>**<code>std::errc</code>**： 枚举类型，列举了所有标准<code>&lt;cerrno&gt;</code>宏定义对应的错误码。</li>
+<li>**<code>std::error_code</code>**：表示平台相关的错误码。</li>
+<li>**<code>std::system_error</code>**：异常类，用于报告包含<code>error_code</code>的错误状态。</li>
+<li>**<code>std::is_error_code_enum</code>**：类型萃取器，标识某个枚举类型是否为<code>error_code</code>枚举。</li>
+<li>**<code>std::is_error_condition_enum</code>**：类型萃取器，标识某个枚举类型是否为<code>error_condition</code>枚举。</li>
+<li>**<code>std::hash&lt;std::error_code&gt;</code>**：为 <code>std::error_code</code>提供哈希支持的模板特化版本。</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="🛠️-概要"><a href="#🛠️-概要" class="headerlink" title="🛠️ 概要"></a>🛠️ 概要</h4><p>​	<code>std::error_category</code>是特定错误类别类型（如<code>std::system_category</code>、<code>std::iostream_category</code>等）的基类。每个具体的错误类别类负责定义<code>error_code</code>与<code>error_condition</code>之间的映射关系，并提供相应错误条件的解释。错误类别类的对象通常作为单例使用，并以引用的形式传递。</p>
+<p>🌱 <code>error_condition default_error_condition(int ev)</code>：</p>
+<p>返回给定错误值所对应的错误条件。等价于<code>std::error_condition(val, *this)</code>。</p>
+<p>从<code>error_category</code>派生的类可以重写此函数，用于将特定的错误值映射到通用错误类别。例如，<code>std::system_category</code>重写了该函数，将符合<code>POSIX errno</code>值的错误映射到<code>std::generic_category</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> std &#123;</span><br><span class="line">  <span class="keyword">class</span> <span class="title class_">error_category</span> &#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">constexpr</span> <span class="title">error_category</span><span class="params">()</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="keyword">virtual</span> ~<span class="built_in">error_category</span>();</span><br><span class="line">    <span class="built_in">error_category</span>(<span class="type">const</span> error_category&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    error_category&amp; <span class="keyword">operator</span>=(<span class="type">const</span> error_category&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">const</span> <span class="type">char</span>* <span class="title">name</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> error_condition <span class="title">default_error_condition</span><span class="params">(<span class="type">int</span> ev)</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">bool</span> <span class="title">equivalent</span><span class="params">(<span class="type">int</span> code, <span class="type">const</span> error_condition&amp; condition)</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">bool</span> <span class="title">equivalent</span><span class="params">(<span class="type">const</span> error_code&amp; code, <span class="type">int</span> condition)</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> string <span class="title">message</span><span class="params">(<span class="type">int</span> ev)</span> <span class="type">const</span> </span>= <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span>==(<span class="type">const</span> error_category&amp; rhs) <span class="type">const</span> <span class="keyword">noexcept</span>;</span><br><span class="line">    strong_ordering <span class="built_in">operator</span>&lt;=&gt;(<span class="type">const</span> error_category&amp; rhs) <span class="type">const</span> <span class="keyword">noexcept</span>;</span><br><span class="line">  &#125;;</span><br><span class="line"> </span><br><span class="line">  <span class="function"><span class="type">const</span> error_category&amp; <span class="title">generic_category</span><span class="params">()</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">  <span class="function"><span class="type">const</span> error_category&amp; <span class="title">system_category</span><span class="params">()</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+<p>​	通过一个整数值和一个<code>std::error_category</code>唯一标识，但与<code>std::error_code</code>不同，<code>std::error_condition</code>所表示的值不依赖于具体平台。典型的实现方式是：内部保存一个整数值（<code>value</code>）和一个指向<code>std::error_category</code>的指针。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> std &#123;</span><br><span class="line">  <span class="keyword">class</span> <span class="title class_">error_condition</span> &#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// constructors</span></span><br><span class="line">    <span class="built_in">error_condition</span>() <span class="keyword">noexcept</span>;</span><br><span class="line">    <span class="built_in">error_condition</span>(<span class="type">int</span> val, <span class="type">const</span> error_category&amp; cat) <span class="keyword">noexcept</span>;</span><br><span class="line">    <span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> ErrorConditionEnum&gt;</span></span><br><span class="line"><span class="function">      <span class="title">error_condition</span><span class="params">(ErrorConditionEnum e)</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// modifiers</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">assign</span><span class="params">(<span class="type">int</span> val, <span class="type">const</span> error_category&amp; cat)</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">ErrorConditionEnum</span>&gt;</span><br><span class="line">      error_condition&amp; <span class="keyword">operator</span>=(ErrorConditionEnum e) <span class="keyword">noexcept</span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">clear</span><span class="params">()</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// observers</span></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">value</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function"><span class="type">const</span> error_category&amp; <span class="title">category</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">message</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="title">bool</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> val_;                   <span class="comment">// exposition only</span></span><br><span class="line">    <span class="type">const</span> error_category* cat_; <span class="comment">// exposition only</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+<p><code>std::errc</code>是一个作用域枚举，定义了一组与<code>POSIX</code>错误代码对应的可移植错误条件值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"><span class="keyword">enum class</span> <span class="title class_">errc</span> &#123; <span class="comment">// freestanding</span></span><br><span class="line">  address_family_not_supported,       <span class="comment">// EAFNOSUPPORT</span></span><br><span class="line">  address_in_use,                     <span class="comment">// EADDRINUSE</span></span><br><span class="line">  address_not_available,              <span class="comment">// EADDRNOTAVAIL</span></span><br><span class="line">  already_connected,                  <span class="comment">// EISCONN</span></span><br><span class="line">  argument_list_too_long,             <span class="comment">// E2BIG</span></span><br><span class="line">  argument_out_of_domain,             <span class="comment">// EDOM</span></span><br><span class="line">  bad_address,                        <span class="comment">// EFAULT</span></span><br><span class="line">  bad_file_descriptor,                <span class="comment">// EBADF</span></span><br><span class="line">  bad_message,                        <span class="comment">// EBADMSG</span></span><br><span class="line">  broken_pipe,                        <span class="comment">// EPIPE</span></span><br><span class="line">  connection_aborted,                 <span class="comment">// ECONNABORTED</span></span><br><span class="line">  connection_already_in_progress,     <span class="comment">// EALREADY</span></span><br><span class="line">  connection_refused,                 <span class="comment">// ECONNREFUSED</span></span><br><span class="line">  connection_reset,                   <span class="comment">// ECONNRESET</span></span><br><span class="line">  cross_device_link,                  <span class="comment">// EXDEV</span></span><br><span class="line">  destination_address_required,       <span class="comment">// EDESTADDRREQ</span></span><br><span class="line">  device_or_resource_busy,            <span class="comment">// EBUSY</span></span><br><span class="line">  directory_not_empty,                <span class="comment">// ENOTEMPTY</span></span><br><span class="line">  executable_format_error,            <span class="comment">// ENOEXEC</span></span><br><span class="line">  file_exists,                        <span class="comment">// EEXIST</span></span><br><span class="line">  file_too_large,                     <span class="comment">// EFBIG</span></span><br><span class="line">  filename_too_long,                  <span class="comment">// ENAMETOOLONG</span></span><br><span class="line">  function_not_supported,             <span class="comment">// ENOSYS</span></span><br><span class="line">  host_unreachable,                   <span class="comment">// EHOSTUNREACH</span></span><br><span class="line">  identifier_removed,                 <span class="comment">// EIDRM</span></span><br><span class="line">  illegal_byte_sequence,              <span class="comment">// EILSEQ</span></span><br><span class="line">  inappropriate_io_control_operation, <span class="comment">// ENOTTY</span></span><br><span class="line">  interrupted,                        <span class="comment">// EINTR</span></span><br><span class="line">  invalid_argument,                   <span class="comment">// EINVAL</span></span><br><span class="line">  invalid_seek,                       <span class="comment">// ESPIPE</span></span><br><span class="line">  io_error,                           <span class="comment">// EIO</span></span><br><span class="line">  is_a_directory,                     <span class="comment">// EISDIR</span></span><br><span class="line">  message_size,                       <span class="comment">// EMSGSIZE</span></span><br><span class="line">  network_down,                       <span class="comment">// ENETDOWN</span></span><br><span class="line">  network_reset,                      <span class="comment">// ENETRESET</span></span><br><span class="line">  network_unreachable,                <span class="comment">// ENETUNREACH</span></span><br><span class="line">  no_buffer_space,                    <span class="comment">// ENOBUFS</span></span><br><span class="line">  no_child_process,                   <span class="comment">// ECHILD</span></span><br><span class="line">  no_link,                            <span class="comment">// ENOLINK</span></span><br><span class="line">  no_lock_available,                  <span class="comment">// ENOLCK</span></span><br><span class="line">  no_message_available,               <span class="comment">// ENODATA</span></span><br><span class="line">  no_message,                         <span class="comment">// ENOMSG</span></span><br><span class="line">  no_protocol_option,                 <span class="comment">// ENOPROTOOPT</span></span><br><span class="line">  no_space_on_device,                 <span class="comment">// ENOSPC</span></span><br><span class="line">  no_stream_resources,                <span class="comment">// ENOSR</span></span><br><span class="line">  no_such_device_or_address,          <span class="comment">// ENXIO</span></span><br><span class="line">  no_such_device,                     <span class="comment">// ENODEV</span></span><br><span class="line">  no_such_file_or_directory,          <span class="comment">// ENOENT</span></span><br><span class="line">  no_such_process,                    <span class="comment">// ESRCH</span></span><br><span class="line">  not_a_directory,                    <span class="comment">// ENOTDIR</span></span><br><span class="line">  not_a_socket,                       <span class="comment">// ENOTSOCK</span></span><br><span class="line">  not_a_stream,                       <span class="comment">// ENOSTR</span></span><br><span class="line">  not_connected,                      <span class="comment">// ENOTCONN</span></span><br><span class="line">  not_enough_memory,                  <span class="comment">// ENOMEM</span></span><br><span class="line">  not_supported,                      <span class="comment">// ENOTSUP</span></span><br><span class="line">  operation_canceled,                 <span class="comment">// ECANCELED</span></span><br><span class="line">  operation_in_progress,              <span class="comment">// EINPROGRESS</span></span><br><span class="line">  operation_not_permitted,            <span class="comment">// EPERM</span></span><br><span class="line">  operation_not_supported,            <span class="comment">// EOPNOTSUPP</span></span><br><span class="line">  operation_would_block,              <span class="comment">// EWOULDBLOCK</span></span><br><span class="line">  owner_dead,                         <span class="comment">// EOWNERDEAD</span></span><br><span class="line">  permission_denied,                  <span class="comment">// EACCES</span></span><br><span class="line">  protocol_error,                     <span class="comment">// EPROTO</span></span><br><span class="line">  protocol_not_supported,             <span class="comment">// EPROTONOSUPPORT</span></span><br><span class="line">  read_only_file_system,              <span class="comment">// EROFS</span></span><br><span class="line">  resource_deadlock_would_occur,      <span class="comment">// EDEADLK</span></span><br><span class="line">  resource_unavailable_try_again,     <span class="comment">// EAGAIN</span></span><br><span class="line">  result_out_of_range,                <span class="comment">// ERANGE</span></span><br><span class="line">  state_not_recoverable,              <span class="comment">// ENOTRECOVERABLE</span></span><br><span class="line">  stream_timeout,                     <span class="comment">// ETIME</span></span><br><span class="line">  text_file_busy,                     <span class="comment">// ETXTBSY</span></span><br><span class="line">  timed_out,                          <span class="comment">// ETIMEDOUT</span></span><br><span class="line">  too_many_files_open_in_system,      <span class="comment">// ENFILE</span></span><br><span class="line">  too_many_files_open,                <span class="comment">// EMFILE</span></span><br><span class="line">  too_many_links,                     <span class="comment">// EMLINK</span></span><br><span class="line">  too_many_symbolic_link_levels,      <span class="comment">// ELOOP</span></span><br><span class="line">  value_too_large,                    <span class="comment">// EOVERFLOW</span></span><br><span class="line">  wrong_protocol_type,                <span class="comment">// EPROTOTYPE</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+<p>​	<code>std::error_code</code>表示一个与平台相关的错误码值。每个<code>std::error_code</code>对象都包含一个来自操作系统或某些底层接口的错误码值，以及指向对应该接口的<code>std::error_category</code>对象的指针。不同错误类别中的错误码值无需保证唯一性。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> std &#123;</span><br><span class="line">  <span class="keyword">class</span> <span class="title class_">error_code</span> &#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// constructors</span></span><br><span class="line">    <span class="built_in">error_code</span>() <span class="keyword">noexcept</span>;</span><br><span class="line">    <span class="built_in">error_code</span>(<span class="type">int</span> val, <span class="type">const</span> error_category&amp; cat) <span class="keyword">noexcept</span>;</span><br><span class="line">    <span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> ErrorCodeEnum&gt;</span></span><br><span class="line"><span class="function">      <span class="title">error_code</span><span class="params">(ErrorCodeEnum e)</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// modifiers</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">assign</span><span class="params">(<span class="type">int</span> val, <span class="type">const</span> error_category&amp; cat)</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">ErrorCodeEnum</span>&gt;</span><br><span class="line">      error_code&amp; <span class="keyword">operator</span>=(ErrorCodeEnum e) <span class="keyword">noexcept</span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">clear</span><span class="params">()</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// observers</span></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">value</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function"><span class="type">const</span> error_category&amp; <span class="title">category</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function">error_condition <span class="title">default_error_condition</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line">    <span class="function">string <span class="title">message</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="keyword">operator</span> <span class="title">bool</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> val_;                   <span class="comment">// exposition only</span></span><br><span class="line">    <span class="type">const</span> error_category* cat_; <span class="comment">// exposition only</span></span><br><span class="line">  &#125;;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">// non-member functions</span></span><br><span class="line">  <span class="function">error_code <span class="title">make_error_code</span><span class="params">(errc e)</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">CharT</span>, <span class="keyword">class</span> <span class="title class_">Traits</span>&gt;</span><br><span class="line">    basic_ostream&lt;CharT, Traits&gt;&amp;</span><br><span class="line">      <span class="keyword">operator</span>&lt;&lt;(basic_ostream&lt;CharT, Traits&gt;&amp; os, <span class="type">const</span> error_code&amp; ec);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+
+
+
+
+<h2 id="🛠️-函数接口"><a href="#🛠️-函数接口" class="headerlink" title="🛠️ 函数接口"></a>🛠️ 函数接口</h2><ul>
+<li>**<code>std::generic_category()</code>**（C++11）<br> 返回通用错误类别的引用。</li>
+<li>**<code>std::system_category()</code>**（C++11）<br> 返回系统级错误类别的引用（如 POSIX errno）。</li>
+<li><strong>运算符重载</strong><ul>
+<li><code>operator==</code>, <code>operator!=</code>, <code>operator&lt;</code>, <code>&lt;=&gt;</code>（C++20 起）<br> 用于比较 <code>error_code</code> 实例之间的关系。（部分比较运算符在 C++20 中已移除）</li>
+</ul>
+</li>
+<li><strong><code>operator&lt;&lt;</code></strong><br> 向输出流中写入错误码的值及其所属类别的名称。</li>
+<li>**<code>make_error_code(std::errc e)</code>**（C++11）<br> 将 <code>std::errc</code> 枚举值转换为 <code>error_code</code> 对象。</li>
+<li>**<code>make_error_condition(std::errc e)</code>**（C++11）<br> 将 <code>std::errc</code> 枚举值转换为 <code>error_condition</code> 对象。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/c/" rel="tag"># c++</a>
+              <a href="/tags/std/" rel="tag"># std</a>
+              <a href="/tags/c-11/" rel="tag"># c++11</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/" rel="prev" title="从零实现IR">
+                  <i class="fa fa-angle-left"></i> 从零实现IR
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/02/db/LevelDB%E5%A4%8D%E7%8E%B0/" rel="next" title="LevelDB复现">
+                  LevelDB复现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

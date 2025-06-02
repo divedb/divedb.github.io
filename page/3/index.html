@@ -123,17 +123,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -150,6 +150,194 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/" class="post-title-link" itemprop="url">标准I/O库</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-13 10:44:35 / 修改时间：12:26:13" itemprop="dateCreated datePublished" datetime="2025-05-13T10:44:35+08:00">2025-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>​	操作系统提供基本文件访问系统调用（如 <code>open</code>、<code>read</code> 等），但用户在进行文件操作时，往往需要更高级的功能。标准 <code>I/O</code>库（<code>stdio</code>），作为<code>ANSI C</code>标准的一部分，提供额外的功能，避免重复造轮子。</p>
+<p>​	已有大量书籍就少标准<code>I/O</code>库提供的各类调用。而本章则采取不同的视角，通过剖析<code>Linux</code>标准<code>I/O</code>库的实现机制，介绍其核心结构、如何支持各类函数，以及库函数如何映射到底层<code>UNIX</code>系统调用。</p>
+<p>应用程序是否使用标准<code>I/O</code>库，而不是直接调用底层系统调用，取决于应用的需求。如果需要更丰富的功能，且对性能要求不高，标准<code>I/O</code>库提供的丰富函数通常能够满足大多数程序员的需要。但如果性能是关键考量，或者需要更精细地控制<code>I/O</code>行为，那么理解文件系统的<code>I/O</code>实现，并绕过标准<code>I/O</code>库直接使用系统调用，会是更优的选择。</p>
+<p>本章不会逐一讲解<code>stdio</code>提供的众多函数，而是聚焦于标准<code>I/O</code>库的底层实现机制。关于接口的详细介绍，可参考<code>Richard Stevens</code>所著的《<code>UNIX</code>高级环境编程》一书，或查阅<code>Single UNIX Specification</code>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">std::function设计</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-12 17:28:18" itemprop="dateCreated datePublished" datetime="2025-05-12T17:28:18+08:00">2025-05-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-16 14:46:21" itemprop="dateModified" datetime="2025-05-16T14:46:21+08:00">2025-05-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>std::function</code>是一个<strong>通用的函数包装器</strong>。它可以存储、复制<strong>可拷贝构造和可调用对象</strong>（<code>CopyConstructible Callable</code>），包括：</p>
+<ul>
+<li>普通函数（通过函数指针）</li>
+<li><code>lambda</code>表达式</li>
+<li><code>std::bind</code>表达式</li>
+<li>成员函数指针</li>
+<li>数据成员指针</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/05/12/stdfunction%E8%AE%BE%E8%AE%A1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -272,226 +460,6 @@
 <li><p><a href="https://bbs.kanxue.com/thread-270359.htm">[原创]Intel32位指令编码学习笔记 </a></p>
 </li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/10/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/10/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8/" class="post-title-link" itemprop="url">分布式对象存储</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-10 23:20:49 / 修改时间：23:20:50" itemprop="dateCreated datePublished" datetime="2025-05-10T23:20:49+08:00">2025-05-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">存储</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>实现分布式对象存储是一个复杂的系统工程，需要仔细考虑多个方面。以下是需要考虑的关键点和设计时可以采用的方法：</p>
-<p><strong>需要考虑的关键点 (Key Considerations):</strong></p>
-<ol>
-<li><strong>可扩展性 (Scalability):</strong><ul>
-<li><strong>容量扩展:</strong> 系统需要能够轻松地增加存储容量，通常通过添加更多的存储节点来实现。</li>
-<li><strong>性能扩展:</strong> 随着数据量的增长和访问压力的增加，系统需要能够线性地扩展读写性能。</li>
-<li><strong>水平扩展:</strong> 分布式对象存储的核心在于水平扩展，即通过增加廉价的商用硬件来提升整体能力，而非依赖昂贵的高端一体机。</li>
-</ul>
-</li>
-<li><strong>持久性和可用性 (Durability and Availability):</strong><ul>
-<li><strong>数据持久性:</strong> 如何保证数据在硬件故障、甚至整个数据中心故障的情况下不丢失。通常采用数据复制或纠删码（Erasure Coding）技术。</li>
-<li><strong>服务可用性:</strong> 系统需要保证在部分节点或组件发生故障时，仍然能够对外提供服务。这依赖于冗余设计和故障转移机制。</li>
-</ul>
-</li>
-<li><strong>一致性模型 (Consistency Model):</strong><ul>
-<li>分布式系统中的一致性是一个挑战。需要根据应用场景选择合适的一致性模型，如强一致性、最终一致性或因果一致性。对象存储通常倾向于最终一致性，以获得更好的可用性和性能。</li>
-</ul>
-</li>
-<li><strong>性能 (Performance):</strong><ul>
-<li><strong>吞吐量:</strong> 系统处理大量并发读写请求的能力。</li>
-<li><strong>延迟:</strong> 客户端发起请求到接收到响应的时间。</li>
-<li>需要针对大对象和小对象访问模式进行优化。</li>
-</ul>
-</li>
-<li><strong>数据分发和负载均衡 (Data Distribution and Load Balancing):</strong><ul>
-<li>如何将海量对象均匀地分布到不同的存储节点上，避免热点问题。</li>
-<li>如何动态地调整数据分布，以应对节点增减或负载变化。</li>
-</ul>
-</li>
-<li><strong>元数据管理 (Metadata Management):</strong><ul>
-<li>每个对象都有关联的元数据（如文件名、大小、创建时间、用户自定义属性等）。如何高效地存储、索引和查询这些元数据是关键。元数据系统本身也需要具备高可用性和可扩展性。</li>
-</ul>
-</li>
-<li><strong>故障检测与恢复 (Failure Detection and Recovery):</strong><ul>
-<li>系统需要能够快速检测到节点、磁盘、网络等故障。</li>
-<li>在检测到故障后，系统需要能够自动进行数据恢复和故障转移，以保证服务的连续性。</li>
-</ul>
-</li>
-<li><strong>安全性 (Security):</strong><ul>
-<li><strong>身份认证和授权:</strong> 如何验证访问用户的身份，并根据权限控制其对对象的读写操作。</li>
-<li><strong>数据加密:</strong> 如何保证静止数据（存储在磁盘上）和传输中数据（在网络上传输）的安全性。</li>
-<li><strong>多租户隔离:</strong> 如果是多用户环境，需要保证不同用户之间的数据隔离。</li>
-</ul>
-</li>
-<li><strong>API设计 (API Design):</strong><ul>
-<li>提供易于使用的API供应用集成。S3兼容API已成为事实标准，广泛应用于对象存储领域。</li>
-</ul>
-</li>
-<li><strong>运维管理 (Operations Management):</strong><ul>
-<li>系统的监控、日志、告警、容量规划、升级和维护等。</li>
-</ul>
-</li>
-<li><strong>成本 (Cost):</strong><ul>
-<li>硬件成本（服务器、硬盘、网络）。</li>
-<li>电力和散热成本。</li>
-<li>运维人力成本。</li>
-<li>通过优化数据存储效率（如去重、压缩、纠删码）和资源利用率来降低成本。</li>
-</ul>
-</li>
-</ol>
-<p><strong>如何设计 (How to Design):</strong></p>
-<p>设计一个分布式对象存储系统，可以从以下几个核心组件和流程入手：</p>
-<ol>
-<li><strong>存储节点 (Storage Nodes):</strong><ul>
-<li>由商用服务器组成，每个服务器挂载一定数量的硬盘。</li>
-<li>运行存储服务进程，负责管理本地硬盘上的对象数据。</li>
-</ul>
-</li>
-<li><strong>元数据服务 (Metadata Service):</strong><ul>
-<li>负责管理所有对象的元数据信息，包括对象ID、大小、位置信息、用户属性等。</li>
-<li>可以采用分布式键值存储（如 etcd, ZooKeeper）或专门设计的分布式元数据服务。</li>
-<li>需要保证元数据的持久性和高可用性，通常采用复制或分片技术。</li>
-</ul>
-</li>
-<li><strong>分布式哈希&#x2F;查找服务 (Distributed Hashing&#x2F;Lookup Service):</strong><ul>
-<li>用于将对象ID映射到具体的存储节点位置。</li>
-<li>可以采用一致性哈希（Consistent Hashing）等算法来实现数据在节点间的均匀分布和动态rebalancing。</li>
-</ul>
-</li>
-<li><strong>数据分发和复制&#x2F;纠删码 (Data Distribution and Replication&#x2F;Erasure Coding):</strong><ul>
-<li><strong>复制 (Replication):</strong> 将每个对象的多个副本存储在不同的存储节点上。简单但存储开销大。</li>
-<li><strong>纠删码 (Erasure Coding):</strong> 将对象分成数据块和校验块，并将它们存储在不同的节点上。可以在保证数据持久性的同时，显著降低存储开销，但计算开销较大。</li>
-<li>设计时需要选择适合的策略，并考虑如何处理数据块或副本的分布，以最大化容错能力（例如，跨不同的机架、可用区甚至地理区域）。</li>
-</ul>
-</li>
-<li><strong>客户端访问接口 (Client Access Interface):</strong><ul>
-<li>提供RESTful API接口供客户端上传、下载、删除和管理对象。</li>
-<li>实现S3兼容API可以方便现有应用迁移。</li>
-</ul>
-</li>
-<li><strong>控制平面 (Control Plane):</strong><ul>
-<li>负责整个系统的管理和协调，包括节点管理、故障检测、恢复流程、容量管理、用户管理等。</li>
-<li>可以采用分布式协调服务（如 ZooKeeper, etcd）来协助控制平面的实现。</li>
-</ul>
-</li>
-<li><strong>写入流程 (Write Path):</strong><ul>
-<li>客户端发起PUT请求上传对象。</li>
-<li>请求到达负载均衡器或网关。</li>
-<li>根据对象ID通过查找服务确定存储位置。</li>
-<li>数据被分割并根据复制或纠删码策略发送到多个存储节点。</li>
-<li>存储节点接收数据并写入本地存储。</li>
-<li>元数据服务更新对象的元数据信息。</li>
-<li>返回成功响应给客户端。</li>
-</ul>
-</li>
-<li><strong>读取流程 (Read Path):</strong><ul>
-<li>客户端发起GET请求下载对象。</li>
-<li>请求到达负载均衡器或网关。</li>
-<li>根据对象ID通过查找服务确定存储位置。</li>
-<li>请求发送到包含对象数据的存储节点。</li>
-<li>存储节点读取本地数据并返回给客户端。</li>
-<li>如果在复制模式下，可以从多个副本中选择一个进行读取；在纠删码模式下，需要读取足够数量的数据块和校验块进行解码。</li>
-</ul>
-</li>
-<li><strong>后台任务 (Background Tasks):</strong><ul>
-<li><strong>数据一致性检查:</strong> 定期检查数据副本或纠删码块的一致性。</li>
-<li><strong>数据修复:</strong> 在检测到数据丢失或损坏时，自动触发数据修复流程。</li>
-<li><strong>负载均衡和数据迁移:</strong> 在节点增减或负载不均时，自动进行数据迁移。</li>
-<li><strong>垃圾回收:</strong> 清理不再需要的对象数据。</li>
-</ul>
-</li>
-<li><strong>监控和告警 (Monitoring and Alerting):</strong><ul>
-<li>监控系统的各项指标，包括存储容量、性能、错误率、节点状态等。</li>
-<li>设置告警规则，及时发现和处理问题。</li>
-</ul>
-</li>
-</ol>
-<p><strong>设计步骤概览:</strong></p>
-<ol>
-<li><strong>需求分析:</strong> 明确系统的容量、性能、可用性、持久性、一致性等需求。</li>
-<li><strong>架构设计:</strong> 设计系统的整体架构，包括存储层、元数据层、访问层、控制层等。</li>
-<li><strong>数据模型设计:</strong> 定义对象的结构和元数据格式。</li>
-<li><strong>数据分布策略选择:</strong> 选择合适的数据分发算法和复制&#x2F;纠删码策略。</li>
-<li><strong>关键组件设计:</strong> 详细设计存储节点、元数据服务、查找服务等核心组件。</li>
-<li><strong>API和接口设计:</strong> 设计客户端访问API和内部服务接口。</li>
-<li><strong>故障处理机制设计:</strong> 设计详细的故障检测、隔离、恢复和转移流程。</li>
-<li><strong>安全性设计:</strong> 设计身份认证、授权、加密等安全机制。</li>
-<li><strong>运维管理设计:</strong> 设计监控、日志、告警、自动化运维等功能。</li>
-<li><strong>原型实现和测试:</strong> 构建原型并进行充分的测试，包括功能测试、性能测试、稳定性测试和故障注入测试。</li>
-<li><strong>迭代优化:</strong> 根据测试结果和实际运行情况进行系统的迭代优化。</li>
-</ol>
-<p>设计一个生产级的分布式对象存储系统是一个持续演进的过程，需要根据实际需求和技术发展不断进行调整和改进。常见的开源和商业分布式对象存储系统（如 Ceph, MinIO, Swift, AWS S3）都体现了上述的一些设计原则和技术。在设计时可以参考这些现有系统的经验和架构。</p>
 
       
     </div>
@@ -1071,7 +1039,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/14/c++/coroutine/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3promise%E7%B1%BB%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1089,7 +1057,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">虚拟内存管理</a>
+          <a href="/2025/04/14/c++/coroutine/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3promise%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">深入理解promise类型</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1099,15 +1067,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2025-04-10 18:32:33" itemprop="dateCreated datePublished" datetime="2025-04-10T18:32:33+08:00">2025-04-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-11 08:56:51" itemprop="dateModified" datetime="2025-04-11T08:56:51+08:00">2025-04-11</time>
+      <time title="创建时间：2025-04-14 16:21:36 / 修改时间：17:42:06" itemprop="dateCreated datePublished" datetime="2025-04-14T16:21:36+08:00">2025-04-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1115,7 +1077,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/co-routine/" itemprop="url" rel="index"><span itemprop="name">co_routine</span></a>
         </span>
     </span>
 
@@ -1129,184 +1095,22 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>转载：<a href="https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&mid=2247486732&idx=1&sn=435d5e834e9751036c96384f6965b328&chksm=ce77cb4bf900425d33d2adfa632a4684cf7a63beece166c1ffedc4fdacb807c9413e8c73f298&token=1468822011&lang=zh_CN#rd">一步一图带你深入理解 Linux 虚拟内存管理</a></p>
-<p>从本文开始我们就正式开启了 Linux内核内存管理子系统源码解析系列，笔者还是会秉承之前系列文章的风格，采用一步一图的方式先是详细介绍相关原理，在保证大家清晰理解原理的基础上，我们再来一步一步的解析相关内核源码的实现。有了源码的辅证，这样大家看得也安心，理解起来也放心，最起码可以证明笔者没有胡编乱造骗大家，哈哈~~</p>
+          <p>翻译：<a href="https://lewissbaker.github.io/2018/09/05/understanding-the-promise-type">C++ Coroutines: Understanding the promise type</a></p>
+<p>这篇文章是关于C++协程TS (N4736)系列的第三篇。</p>
+<p>本系列的前几篇文章涵盖了：</p>
+<ul>
+<li>协程理论</li>
+<li>理解<code>operator co_await</code></li>
+</ul>
+<p>在这篇文章中，我将探讨编译器如何将您编写的协程代码转换为已编译的代码，以及如何通过定义您自己的<strong>Promise</strong>类型来自定义协程的行为。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/04/10/linux/memory/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#more" rel="contents">
+              <a class="btn" href="/2025/04/14/c++/coroutine/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3promise%E7%B1%BB%E5%9E%8B/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/compiler/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8LTO%E4%BB%8B%E7%BB%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/10/compiler/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8LTO%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">代码优化利器LTO介绍</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-04-10 12:04:19 / 修改时间：12:07:43" itemprop="dateCreated datePublished" datetime="2025-04-10T12:04:19+08:00">2025-04-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/compiler/" itemprop="url" rel="index"><span itemprop="name">compiler</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>转载：<a href="https://zhuanlan.zhihu.com/p/384160632">https://zhuanlan.zhihu.com/p/384160632</a></p>
-<h2 id="代码优化利器-LTO-介绍"><a href="#代码优化利器-LTO-介绍" class="headerlink" title="代码优化利器 LTO 介绍"></a>代码优化利器 LTO 介绍</h2><p>​	由于编译器一次只编译优化一个编译单元，所以只是在做局部优化，而利用 LTO，利用链接时的全局视角进行操作，从而得到能够进行更加极致的优化。</p>
-<h4 id="1-定义"><a href="#1-定义" class="headerlink" title="1. 定义"></a>1. 定义</h4><p>​	“Link-Time Optimization.” Any kind of optimization that requires looking at the whole program, LLVM features powerful intermodular optimizations which can be used at link time.</p>
-<p>LTO(Link-Time Optimization)就是对整个程序代码进行的一种优化，是LLVM里在链接时进行跨模块间的优化。</p>
-<p>LTO属于IPO(interprocedural optimization)当中的一种优化，根据维基百科的解释，IPO是优化代码的一系列编译器优化技术的集合，不同于其他的优化技术，IPO聚焦于分析整个程序代码。</p>
-<h4 id="2-实际操作"><a href="#2-实际操作" class="headerlink" title="2. 实际操作"></a>2. 实际操作</h4><p>​	The basic principle behind LTO is that some of LLVM’s optimization passes are pushed back to the linking stage. Why the linking stage? Because that is the point in the pipeline where the entire program (i.e. the whole set of compilation units) is available at once and thus optimizations across compilation unit boundaries become possible.</p>
-<p>即把一些 pass 的优化推迟到链接时再执行，从而使这些 pass 获得跨模块优化的能力。</p>
-<p><img src="https://pica.zhimg.com/v2-81a4a5d092754cb0b27fd921570d0e46_1440w.jpg" alt="img"></p>
-<p>Link-Time Optimization (LTO) addresses the problem where the compiler traditionally only sees one translation unit (e.g., a <code>.c</code> file with all its headers) at a time and therefore cannot do optimizations (like inlining) across file boundaries. LLVM compilers like <a href="https://zhida.zhihu.com/search?content_id=173499692&content_type=Article&match_order=1&q=Clang&zhida_source=entity">Clang</a> support this with the <code>-flto</code> or <code>-O4</code> command line option. This option instructs the compiler to emit LLVM bitcode to the <code>.o</code> file instead of writing out a native object file, and delays code generation to link time.</p>
-<p>LTO 指出了问题：编译器一次只能看到一个编译单元，因此没法跨文件范围做优化(如内联)。LLVM 的编译器比如 clang 支持 -flto 或者 -O4 命令。这个命令让编译器输出 bitcode 格式(LLVM IR 的其中一种格式)的 .o 文件而不是本地的目标文件，推迟代码生成到链接时。</p>
-<p><img src="https://pic2.zhimg.com/v2-fe3c3b528177a0dd94590e6f48353b75_1440w.jpg" alt="img"></p>
-<p><img src="https://pic3.zhimg.com/v2-f6553e9580e95f8f6703ea930c527a82_1440w.jpg" alt="img"></p>
-<p>Details differ depending on which operating system you’re on, but the important bit is that the linker detects that it has LLVM bitcode in the <code>.o</code> files instead of native object files. When it sees this, it reads all the bitcode files into memory, links them together, then runs the LLVM optimizer over the aggregate. Since the optimizer can now see across a much larger portion of the code, it can inline, propagate constants, do more aggressive dead code elimination, and more across file boundaries. While many modern compilers support LTO, most of them (e.g., GCC, Open64, the Intel compiler, etc.) do so by having an expensive and slow serialization process. In LLVM, LTO falls out naturally from the design of the system, and works across different source languages (unlike many other compilers) because the IR is truly source language neutral.</p>
-<p>具体细节会因操作系统而异，但链接器重要的一点是检查 .o 文件是 bitcode 格式还是本地目标格式。当看到是 bitcode 格式，它会把所有的 bitcode 文件读进内存，把他们链接到一起，然后在集成过程中执行 LLVM 的优化器。由于优化器可以看到更多的代码范围，它就能做到内联、常量传播、更激进的无用代码删除的优化。当现代编译器支持 LTO 时，大部分会有较高的代价和缓慢的序列化过程，在 LLVM 中 LTO 就自然得多，因为有 IR 这个中间格式。</p>
-<p>The linker uses libLTO, a shared object, to handle LLVM bitcode files.</p>
-<p>链接器会使用 libLTO 这个动态库来处理 LLVM bitcode 格式的文件。</p>
-<h5 id="2-1、为什么-LTO-采用-bitcode-的方式来实现？"><a href="#2-1、为什么-LTO-采用-bitcode-的方式来实现？" class="headerlink" title="2.1、为什么 LTO 采用 bitcode 的方式来实现？"></a>2.1、为什么 LTO 采用 bitcode 的方式来实现？</h5><p>LTO让编译器生产 bitcode 格式的文件，然后让链接器读取来进行优化，但为什么要这样实现呢？</p>
-<p>看下其他方法可能的问题：</p>
-<ul>
-<li><strong>Compiler driver invokes link time optimizer separately 让编译器来调用 LTO</strong></li>
-</ul>
-<p>这样的话，LTO 就没法在链接器解析符号阶段来收集信息了。由于某些符号是对外可见的(externally visible)，所以链接器没有足够的信息来处理这部分符号。</p>
-<ul>
-<li><strong>Use separate tool to collect symbol information from all object files 使用独立的工具来收集所有目标文件的符号信息</strong></li>
-</ul>
-<p>复制 LTO 的能力到一个单独的工具上，是不太合理的，不同平台链接器的语义和功能都不太一致，这样维护成本非常高，还需要与链接器的开发进度进行同步，这已经偏离 LTO 原本的开发了。而且还增加了编译的时间。</p>
-<h4 id="3、主要优化"><a href="#3、主要优化" class="headerlink" title="3、主要优化"></a>3、主要优化</h4><p>跨模块优化的效果，也即开启LTO主要有这几点好处：</p>
-<p>（<strong>1）将一些函数內联化</strong></p>
-<p><strong>（2）去除了一些无用代码</strong></p>
-<p><strong>（3）对程序有全局的优化作用</strong></p>
-<p>PGO(Profile Guided Optimization) 对于进行 LTO 优化也很有帮助。</p>
-<h4 id="4-monolithic-LTO-flto"><a href="#4-monolithic-LTO-flto" class="headerlink" title="4. monolithic LTO (-flto)"></a>4. monolithic LTO (-flto)</h4><p>Monolithic Link-Time Optimization: This mode performs monolithic link-time optimization of binaries, combining all executable code into a single unit and running aggressive compiler optimizations.</p>
-<p>大型 LTO：这种模式对二进制进行大型的链接时优化，合并所有的可执行代码到一个单元，并且执行更加激进的编译器优化。</p>
-<p>monolithic LTO implements this by merging all input into a single module, which is not scalable in time or memory, and also prevents fast incremental compiles.</p>
-<p>大型 LTO 的实现是把所有的输入合并到一个模块，并没有考虑时间和内存的问题，而且还阻碍了增量编译的执行。</p>
-<p><img src="https://pic3.zhimg.com/v2-080922c384de61ec3841b96bb1c3af16_1440w.jpg" alt="img"></p>
-<p>What this means in practice is that LTO often requires a large amount of memory (to hold all IR at once) and is very slow. And with debug information enabled via -g, the size of the IR and the resulting memory requirements are significantly larger. Even without debug information, this is prohibitive for very large applications, or when compiling on memory-constrained machines. It also makes incremental builds less effective, as everything from the LTO step on must be re-executed when any input source changes.</p>
-<p>这意味着 LTO 经常需要大量的内存，而且很慢。加上 -g 带来的调试信息，IR 的大小和内存需要都会非常大。即使没有调试信息，对于大型软件而言是难以执行的，或者在一台内存受限的机器上也是。同时它会导致增量编译变得低效，因为当源码改变时， LTO 的步骤中的所有东西都需要被重新执行。</p>
-<p><img src="https://pica.zhimg.com/v2-83775bd65b46f5291c81f3cd19b79fc0_1440w.jpg" alt="img"></p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-Xlinker -object_path_lto </span><br><span class="line">-Xlinker Release-iphoneos/test.build/Objects-normal/arm64/test_lto.o</span><br><span class="line">-flto</span><br></pre></td></tr></table></figure>
-
-<h5 id="4-1-problem"><a href="#4-1-problem" class="headerlink" title="4.1. problem"></a>4.1. problem</h5><ul>
-<li>Not all passes are linear-time</li>
-<li>Memory usage explodes</li>
-</ul>
-<h4 id="5-ThinLTO-flto-thin"><a href="#5-ThinLTO-flto-thin" class="headerlink" title="5. ThinLTO (-flto&#x3D;thin)"></a>5. ThinLTO (-flto&#x3D;thin)</h4><p>Incremental Link-Time Optimization: This mode performs partitioned link-time optimization of binaries, inlining between compilation units and running aggressive compiler optimizations on each unit in parallel. This enables fast incremental builds and uses less memory than Monolithic LTO.</p>
-<p>增量 LTO：这个模式可以对二进制执行部分的链接时优化，在编译单元之间进行内联，并行地在每个单元里执行更激进的编译器优化。这个可以允许更快的增量编译，以及使用更少的内存。</p>
-<p>It utilizes compact summaries of each module for global analyses in the serial link step, as well as an index of function locations for later cross module importing. The function importing and other IPO transformations are performed later when the modules are optimized in fully parallel backends.</p>
-<p>在连续的链接阶段，它使用紧凑的描述来代表每个模块来进行全局的分析，包含有之后进行跨模块引入的函数位置的索引信息。函数引入和其他的 IPO 转换会在模块在并行优化时再执行。</p>
-<p>The key transformation enabled by ThinLTO global analyses is function importing, in which only those functions likely to be inlined are imported into each module. This minimizes the memory overhead in each ThinLTO backend, while maximizing the most impactful cross module optimization opportunities. The IPO transformations are therefore performed on each module extended with its imported functions.</p>
-<p>ThinLTO 全局分析的一个关键转换是函数引入，只有那些可能被内联的函数才会被引入到模块之中。这种方式最小化了内存的开销，同时最大化了跨模块优化的机会。IPO 转换因此会在每个使用了函数引入的扩展模块中执行。</p>
-<p><img src="https://picx.zhimg.com/v2-0abbfa42fd7fc9d0d41f1be52ee8a68f_1440w.jpg" alt="img"></p>
-<p>The ThinLTO process is divided into 3 phases: ThinLTO 被分成了三个步骤</p>
-<ol>
-<li>Compile: Generate IR as with full LTO mode, but extended with module summaries 编译：生成完全 LTO 模式的 IR，但是扩展以模块描述</li>
-<li>Thin Link: Thin linker plugin layer to combine summaries and perform global analyses 链接：thin 链接器插件层合并这些描述并执行全局分析</li>
-<li>ThinLTO backend: Parallel backends with summary-based importing and optimizations 后端：并行基于描述信息的引入和优化</li>
-</ol>
-<p><img src="https://pic2.zhimg.com/v2-18b044529a466b4eb5dab50669eeba71_1440w.jpg" alt="img"></p>
-<p>By default, linkers that support ThinLTO (see below) are set up to launch the ThinLTO backends in threads. So the distinction between the second and third phases is transparent to the user.</p>
-<p>默认情况下，链接器会支持 ThinLTO 被设置为在一个线程开启 ThinLTO 的后端，所以在第二步和第三步之间的差异对于用户是透明的。</p>
-<p>These summaries are emitted using the bitcode format, but designed so that they can be separately loaded without involving an LLVMContext or any other expensive construction. Each global variable and function has an entry in the module summary. An entry contains metadata that abstracts the symbol it is describing.</p>
-<p>描述信息是用 bitcode 格式生成的，但是经过设计以让他们可以分开各自地加载，而不用 LLVMContext 的参与以及其他开销较大的构造。每个全局变量和函数在模块描述文件中都有一个实体，一个实体包含有描述符号抽象的元信息。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-Xlinker -object_path_lto </span><br><span class="line">-Xlinker Release-iphoneos/test.build/Objects-normal/arm64/test_lto.o</span><br><span class="line">-flto=thin </span><br><span class="line">-Xlinker -cache_path_lto </span><br><span class="line">-Xlinker Build/Intermediates.noindex/LTOCache</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="https://pic4.zhimg.com/v2-3ac446e89b08c835d9c01092314e7789_1440w.jpg" alt="img"></p>
-<h4 id="6-cross-language-LTO"><a href="#6-cross-language-LTO" class="headerlink" title="6. cross language LTO"></a>6. cross language LTO</h4><p><img src="https://pic1.zhimg.com/v2-e3a1ec5ce22c8b80e57564be97fcec2e_1440w.jpg" alt="img"></p>
-<p>The compiler front-end generates an LLVM bitcode module (<code>.bc</code>) for each compilation unit. In C and C++ each source file will result in a single compilation unit. In Rust each crate is translated into at least one compilation unit. 编译器前端为每一个编译单元生成 LLVM bitcode 的模块。</p>
-<p>In the next step, LLVM’s optimization pipeline will optimize each LLVM module in isolation 下一步，LLVM 的优化器会单独地优化每一个 LLVM 模块。</p>
-<p>LLVM then lowers each module into machine code so that we get one object file per module 然后 LLVM 把每个模块转成机器码</p>
-<p>Finally, the linker will take the set of object files and link them together into a binary 最后链接成最终的二进制文件</p>
-<h5 id="6-1-Cross-language-link-time-optimization"><a href="#6-1-Cross-language-link-time-optimization" class="headerlink" title="6.1. Cross-language link time optimization"></a>6.1. Cross-language link time optimization</h5><p><img src="https://picx.zhimg.com/v2-989b414cb8baadce0a2b7e309053cd3d_1440w.jpg" alt="img"></p>
-<h4 id="7-LTO-的问题"><a href="#7-LTO-的问题" class="headerlink" title="7. LTO 的问题"></a>7. LTO 的问题</h4><p>开启 lto 后导致产生的 linkmap 可读性变差，如文件名信息可能会变成 8.arm64.thinlto.o 这样的数字，可以对 libLTO.dylib 的行为进行修改，使用 <code>-lto_library</code> 让链接器使用我们指定的 dylib 库。</p>
-<p>比较体验不好的是，LTO 会导致编译和链接变慢，以及会使用更多的内存，所以即使到现在，也没有看到 LTO 被广泛地使用。</p>
-<hr>
-
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
-<li><p>cross language LTO：**<a href="https://link.zhihu.com/?target=https://blog.llvm.org/2019/09/closing-gap-cross-language-lto-between.html">https://blog.llvm.org/2019/09/closing-gap-cross-language-lto-between.html</a>**</p>
-</li>
-<li><p>thisLTO：**<a href="https://link.zhihu.com/?target=http://blog.llvm.org/2016/06/thinlto-scalable-and-incremental-lto.html">http://blog.llvm.org/2016/06/thinlto-scalable-and-incremental-lto.html</a>**</p>
-</li>
-<li><p>LTO 有什么优化：**<a href="https://link.zhihu.com/?target=https://www.jianshu.com/p/58fef052291a">https://www.jianshu.com/p/58fef052291a</a>**</p>
-</li>
-<li><p>LLVM Link Time Optimization: Design and Implementation：**<a href="https://link.zhihu.com/?target=https://llvm.org/docs/LinkTimeOptimization.html%23example-of-link-time-optimization">https://llvm.org/docs/LinkTimeOptimization.html#example-of-link-time-optimization</a>**</p>
-</li>
-<li><p>Link Time Optimizations: New Way to Do Compiler Optimizations:<strong><a href="https://link.zhihu.com/?target=https://johnysswlab.com/link-time-optimizations-new-way-to-do-compiler-optimizations/">https://johnysswlab.com/link-ti</a></strong></p>
-</li>
-</ol>
-
       
     </div>
 
