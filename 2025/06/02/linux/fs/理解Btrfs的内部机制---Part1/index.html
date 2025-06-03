@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	本文是系列文章的第一部分，旨在解释btrfs文件系统磁盘格式的基础知识。 在系列的最后，我们将实现一个程序，无需依赖外部库或调用ioctl，即可打印出一个未挂载的btrfs文件系统镜像中所有常规文件的绝对路径。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解Btrfs的内部机制">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	本文是系列文章的第一部分，旨在解释btrfs文件系统磁盘格式的基础知识。 在系列的最后，我们将实现一个程序，无需依赖外部库或调用ioctl，即可打印出一个未挂载的btrfs文件系统镜像中所有常规文件的绝对路径。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/superblock_chunks.png">
+<meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/tree.png">
+<meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/tree_1.png">
+<meta property="article:published_time" content="2025-06-02T09:10:48.801Z">
+<meta property="article:modified_time" content="2025-06-03T15:20:13.424Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="btrfs">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://huangpiao.tech/images/linux/btrfs/superblock_chunks.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/","path":"2025/06/02/linux/fs/理解Btrfs的内部机制---Part1/","title":"理解Btrfs的内部机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>理解Btrfs的内部机制 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%98-%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="nav-number">2.</span> <span class="nav-text">📘 背景知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%9D%97%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">3.</span> <span class="nav-text">❗注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%97-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAbtrfs%E9%95%9C%E5%83%8F"><span class="nav-number">4.</span> <span class="nav-text">📗 创建一个btrfs镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%99-%E8%A7%A3%E6%9E%90%E8%B6%85%E7%BA%A7%E5%9D%97%EF%BC%88Superblock%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">📙 解析超级块（Superblock）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%95-%E8%AF%BB%E5%8F%96%E8%B6%85%E7%BA%A7%E5%9D%97%E7%9A%84%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">6.</span> <span class="nav-text">📕 读取超级块的示例代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%9D-%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="nav-number">7.</span> <span class="nav-text">📝 下一步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E8%83%8C%E6%99%AF"><span class="nav-number">8.</span> <span class="nav-text">🧩 背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9A%80-%E5%BC%95%E5%AF%BCchunk-tree"><span class="nav-number">9.</span> <span class="nav-text">🚀 引导chunk tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8C%B2-%E7%BC%96%E5%86%99%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81"><span class="nav-number">10.</span> <span class="nav-text">🌲 编写引导代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E8%83%8C%E6%99%AF-1"><span class="nav-number">11.</span> <span class="nav-text">🧩 背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8C%B2-%E8%AF%BB%E5%8F%96Chunk%E6%A0%91"><span class="nav-number">12.</span> <span class="nav-text">🌲 读取Chunk树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E4%BB%A3%E7%A0%81"><span class="nav-number">13.</span> <span class="nav-text">编写代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="nav-number">14.</span> <span class="nav-text">下一步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E8%83%8C%E6%99%AF-2"><span class="nav-number">15.</span> <span class="nav-text">🧩 背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%98-Root-Tree%E6%A0%B9%E8%8A%82%E7%82%B9%E7%BB%93%E6%9E%84"><span class="nav-number">16.</span> <span class="nav-text">📘 Root Tree根节点结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%97-%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A0%91%E7%9A%84%E6%A0%B9%E8%8A%82%E7%82%B9"><span class="nav-number">17.</span> <span class="nav-text">📗 读取文件系统树的根节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%99-%E5%87%BD%E6%95%B0%E5%AE%9E%E7%8E%B0%EF%BC%9A%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A0%91%E7%9A%84%E6%A0%B9%E8%8A%82%E7%82%B9"><span class="nav-number">18.</span> <span class="nav-text">📙 函数实现：读取文件系统树的根节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5-1"><span class="nav-number">19.</span> <span class="nav-text">下一步</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="理解Btrfs的内部机制 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          理解Btrfs的内部机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-02 17:10:48" itemprop="dateCreated datePublished" datetime="2025-06-02T17:10:48+08:00">2025-06-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-03 23:20:13" itemprop="dateModified" datetime="2025-06-03T23:20:13+08:00">2025-06-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文是系列文章的第一部分，旨在解释<code>btrfs</code>文件系统磁盘格式的基础知识。</p>
+<p>在系列的最后，我们将实现一个程序，无需依赖外部库或调用<code>ioctl</code>，即可打印出一个未挂载的<code>btrfs</code>文件系统镜像中所有常规文件的绝对路径。</p>
+<span id="more"></span>
+
+<h4 id="📘-背景知识"><a href="#📘-背景知识" class="headerlink" title="📘 背景知识"></a>📘 背景知识</h4><p>​	在开始之前，先了解一些文件系统的基础知识可能会有所帮助。首先，我们来谈谈<strong>块设备（block devices）</strong>。块设备是对物理（或虚拟）硬件的一层抽象。你可以将块设备视为一个连续的字节序列，可以在任意位置进行任意大小的读取或写入操作。</p>
+<p>文件系统通常构建在块设备之上，它为数据存储提供了结构化的组织方式以及其他非常实用的功能。这些功能可能包括：</p>
+<ul>
+<li>文件和目录</li>
+<li>数据校验</li>
+<li>跨多个块设备的条带化存储（如<code>RAID</code>）</li>
+<li>压缩</li>
+</ul>
+<p>为了支持这些功能，文件系统不仅需要在块设备上存储用户数据，还需要存储元数据（<code>metadata</code>）（用于管理文件系统结构和属性的数据）。</p>
+<p>其次，当提到文件系统时，你想到的很可能是<code>POSIX</code>文件系统。这类文件系统包含我们熟悉的所有<code>Unix</code>特性：文件、”.”和”..”目录结构、文件系统树，以及标准<code>API</code>（如<code>read()</code>、<code>write()</code>、<code>lseek()</code>等）。如果这些<code>API</code>是通过系统调用实现的（通常都是），那么内核就必须具备文件系统感知能力。在<code>Linux</code>系统中，大多数文件系统要么直接编译进内核，要么以内核模块形式加载。</p>
+<p>第三，所谓的文件系统镜像（<code>filesystem image</code>）可以看作是文件系统所管理的整个块设备的内容。通常不建议手动修改文件系统镜像，但<strong>读取</strong>已挂载或未挂载的镜像则是安全的。这里的“安全”指的是：虽然你可能读取到不一致的数据（如果镜像当前已挂载并被内核修改），但一般不会破坏镜像中的任何数据。</p>
+<h4 id="❗注意事项"><a href="#❗注意事项" class="headerlink" title="❗注意事项"></a>❗注意事项</h4><p>在阅读本文时，请注意以下几点：</p>
+<ul>
+<li>本文中的代码示例可能无法直接编译 —— 为了提高可读性，省略了一些必要的代码；</li>
+<li>我会略过许多琐碎的细节（甚至包括部分有趣的内容），但这对于篇幅控制是必要的。</li>
+</ul>
+<h4 id="📗-创建一个btrfs镜像"><a href="#📗-创建一个btrfs镜像" class="headerlink" title="📗 创建一个btrfs镜像"></a>📗 创建一个<code>btrfs</code>镜像</h4><p>​	为了简化操作，我们不用真实的块设备和物理硬盘，而是用一个伪块设备（<code>loopback</code>文件）来模拟。创建一个<code>loopback btrfs</code>镜像并挂载它，步骤如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">truncate</span> -s 1G image               <span class="comment"># 创建一个1GB大小的空文件</span></span><br><span class="line">$ mkfs.btrfs image                   <span class="comment"># 在该文件上格式化btrfs文件系统</span></span><br><span class="line">btrfs-progs v5.7</span><br><span class="line">See http://btrfs.wiki.kernel.org <span class="keyword">for</span> more information.</span><br><span class="line"></span><br><span class="line">Label:              (null)</span><br><span class="line">UUID:               a32cd5e8-2729-4281-b41b-153ea353ffd3</span><br><span class="line">Node size:          16384</span><br><span class="line">Sector size:        4096</span><br><span class="line">Filesystem size:    1.00GiB</span><br><span class="line">Block group profiles:</span><br><span class="line">  Data:             single            8.00MiB</span><br><span class="line">  Metadata:         DUP              51.19MiB</span><br><span class="line">  System:           DUP               8.00MiB</span><br><span class="line">SSD detected:       no</span><br><span class="line">Incompat features:  extref, skinny-metadata</span><br><span class="line">Runtime features:</span><br><span class="line">Checksum:           crc32c</span><br><span class="line">Number of devices:  1</span><br><span class="line">Devices:</span><br><span class="line">   ID        SIZE  PATH</span><br><span class="line">    1     1.00GiB  image</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> <span class="built_in">mkdir</span> /mnt/btrfs               <span class="comment"># 创建挂载点</span></span><br><span class="line">$ <span class="built_in">sudo</span> mount image /mnt/btrfs         <span class="comment"># 挂载镜像文件</span></span><br><span class="line">$ findmnt /mnt/btrfs                  <span class="comment"># 查看挂载信息</span></span><br><span class="line">TARGET     SOURCE     FSTYPE OPTIONS</span><br><span class="line">/mnt/btrfs /dev/loop0 btrfs  rw,relatime,ssd,space_cache,subvolid=5,subvol=/</span><br></pre></td></tr></table></figure>
+
+<p>注意：<code>image</code>是一个普通文件，内部存放了文件系统的数据。如果你选择一直挂载这个镜像文件，修改文件系统后记得运行 <code>sync</code>，确保数据写回“磁盘”（也就是这个镜像文件）中。</p>
+<h4 id="📙-解析超级块（Superblock）"><a href="#📙-解析超级块（Superblock）" class="headerlink" title="📙 解析超级块（Superblock）"></a>📙 解析超级块（<code>Superblock</code>）</h4><p>​	超级块是任何文件系统的起点。它是一个固定大小的结构体，存储在文件系统的预定义位置。超级块的关键作用是包含启动和初始化文件系统所需的全部信息。</p>
+<p>首先定义磁盘上的超级块结构体：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsSuperblock</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> csum: [<span class="type">u8</span>; BTRFS_CSUM_SIZE],             <span class="comment">// 校验和</span></span><br><span class="line">  <span class="keyword">pub</span> fsid: [<span class="type">u8</span>; BTRFS_FSID_SIZE],             <span class="comment">// 文件系统唯一ID</span></span><br><span class="line">  <span class="comment">/// 本块的物理地址</span></span><br><span class="line">  <span class="keyword">pub</span> bytenr: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> flags: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> magic: [<span class="type">u8</span>; <span class="number">0x8</span>],                        <span class="comment">// 魔术值，用于识别文件系统格式</span></span><br><span class="line">  <span class="keyword">pub</span> generation: <span class="type">u64</span>,</span><br><span class="line">  <span class="comment">/// 根树的逻辑地址</span></span><br><span class="line">  <span class="keyword">pub</span> root: <span class="type">u64</span>,</span><br><span class="line">  <span class="comment">/// chunk树的逻辑地址</span></span><br><span class="line">  <span class="keyword">pub</span> chunk_root: <span class="type">u64</span>,</span><br><span class="line">  <span class="comment">/// 日志树的逻辑地址</span></span><br><span class="line">  <span class="keyword">pub</span> log_root: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> log_root_transid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> total_bytes: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> bytes_used: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> root_dir_objectid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> num_devices: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> sector_size: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> node_size: <span class="type">u32</span>,</span><br><span class="line">  <span class="comment">/// 未使用，必须等于node_size</span></span><br><span class="line">  <span class="keyword">pub</span> leafsize: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> stripesize: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> sys_chunk_array_size: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> chunk_root_generation: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> compat_flags: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> compat_ro_flags: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> incompat_flags: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> csum_type: <span class="type">u16</span>,</span><br><span class="line">  <span class="keyword">pub</span> root_level: <span class="type">u8</span>,</span><br><span class="line">  <span class="keyword">pub</span> chunk_root_level: <span class="type">u8</span>,</span><br><span class="line">  <span class="keyword">pub</span> log_root_level: <span class="type">u8</span>,</span><br><span class="line">  <span class="keyword">pub</span> dev_item: BtrfsDevItem,</span><br><span class="line">  <span class="keyword">pub</span> label: [<span class="type">u8</span>; BTRFS_LABEL_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> cache_generation: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> uuid_tree_generation: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> metadata_uuid: [<span class="type">u8</span>; BTRFS_FSID_SIZE],</span><br><span class="line">  <span class="comment">/// 预留字段，供将来扩展使用</span></span><br><span class="line">  <span class="keyword">pub</span> _reserved: [<span class="type">u64</span>; <span class="number">28</span>],</span><br><span class="line">  <span class="keyword">pub</span> sys_chunk_array: [<span class="type">u8</span>; BTRFS_SYSTEM_CHUNK_ARRAY_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> root_backups: [BtrfsRootBackup; <span class="number">4</span>],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="📕-读取超级块的示例代码"><a href="#📕-读取超级块的示例代码" class="headerlink" title="📕 读取超级块的示例代码"></a>📕 读取超级块的示例代码</h4><p>​	<code>btrfs</code>的第一个超级块（最多可能有3个）位于文件偏移 <code>0x10000</code>（<code>64KB</code>）处：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> BTRFS_SUPERBLOCK_OFFSET: <span class="type">u64</span> = <span class="number">0x10_000</span>;</span><br></pre></td></tr></table></figure>
+
+<p>超级块的魔术值定义如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> BTRFS_SUPERBLOCK_MAGIC: [<span class="type">u8</span>; <span class="number">8</span>] = *<span class="string">b&quot;_BHRfS_M&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>读取超级块并校验魔术值的函数示例：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">parse_superblock</span>(file: &amp;File) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;BtrfsSuperblock&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">superblock</span>: BtrfsSuperblock = <span class="keyword">unsafe</span> &#123; std::mem::<span class="title function_ invoke__">zeroed</span>() &#125;;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">superblock_size</span> = std::mem::size_of::&lt;BtrfsSuperblock&gt;();</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">slice</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">unsafe</span> &#123;</span><br><span class="line">    slice = slice::<span class="title function_ invoke__">from_raw_parts_mut</span>(&amp;<span class="keyword">mut</span> superblock <span class="keyword">as</span> *<span class="keyword">mut</span> _ <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span>, superblock_size);</span><br><span class="line">  &#125;</span><br><span class="line">  file.<span class="title function_ invoke__">read_exact_at</span>(slice, BTRFS_SUPERBLOCK_OFFSET)?;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">if</span> superblock.magic != BTRFS_SUPERBLOCK_MAGIC &#123;</span><br><span class="line">    bail!(<span class="string">&quot;superblock magic is wrong&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="title function_ invoke__">Ok</span>(superblock)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数接收一个打开的文件句柄，尝试读取超级块大小的字节数据到结构体内存里。如果魔术值不对，就报错。<br>超级块还包含校验和（<code>csum</code>），理论上可以校验数据完整性，不过这里为了简洁，先仅仅验证魔术值。</p>
+<h4 id="📝-下一步"><a href="#📝-下一步" class="headerlink" title="📝 下一步"></a>📝 下一步</h4><p>​	拿到超级块之后，就可以继续引导文件系统的其它数据结构，比如根树、<code>chunk</code>树等。后续可以展开讲解。</p>
+<hr>
+
+<p>这是连载系列的第二部分，旨在讲解<code>btrfs</code>的磁盘格式基础知识。</p>
+<h4 id="🧩-背景"><a href="#🧩-背景" class="headerlink" title="🧩 背景"></a>🧩 背景</h4><p>​	<code>btrfs</code>除了超级块（<code>superblock</code>）以外，所有内容都存储在<code>B</code>树中。<code>btrfs</code>包含多个功能不同的树，它们通过一个“根中的根”（<code>root of roots</code>）连接起来。这个“根节点”存放着每一棵树的根节点引用。因此，<code>btrfs</code>无需将大量数据放置在磁盘上的固定偏移处。这种结构的一个好处是可以原地将<code>ext2/3/4</code>或<code>reiserfs</code>转换为<code>btrfs</code>，无需移动太多数据。</p>
+<p><code>btrfs</code>同时支持多块设备，也就是说它可以在不同设备间条带化（<code>striping</code>）或冗余复制（<code>mirroring</code>），以支持多种<code>RAID</code>配置。这些信息主要存储在两个地方：</p>
+<ul>
+<li><code>chunk tree</code>（区块树）：将逻辑偏移映射到一个或多个物理偏移；</li>
+<li><code>device tree</code>（设备树）：与<code>chunk tree</code>作用相反，即从物理偏移推回逻辑地址。</li>
+</ul>
+<p>借助这两棵树，<code>btrfs</code>能够在无需卸载的情况下进行文件系统扩展或收缩，因为数据块的位置可以动态调整。</p>
+<p>几乎所有磁盘上的数据结构，包括<code>BtrfsSuperblock::root</code>字段，都使用逻辑偏移。为了访问“根中的根”，我们必须首先引导<code>chunk tree</code>，以便将逻辑偏移转换为物理偏移。之后，我们就可以使用物理偏移从磁盘读取数据了。</p>
+<h4 id="🚀-引导chunk-tree"><a href="#🚀-引导chunk-tree" class="headerlink" title="🚀 引导chunk tree"></a>🚀 引导<code>chunk tree</code></h4><p>首先，定义必要的数据结构：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> BTRFS_CHUNK_ITEM_KEY: <span class="type">u8</span> = <span class="number">228</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsKey</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> objectid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> ty: <span class="type">u8</span>,</span><br><span class="line">  <span class="keyword">pub</span> offset: <span class="type">u64</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>BtrfsKey</code>是一个核心结构体。<code>btrfs</code>磁盘上的所有数据项都以<code>BtrfsKey</code>作为键。每个节点中包含一个或多个数据项，这些项按键的升序排列，从而使树遍历算法可以高效地进行二分查找。我们将在下一篇文章中更深入探讨这个结构。</p>
+<blockquote>
+<p>  🔥注意：<code>btrfs</code>的所有磁盘结构都使用小端格式。在具体实现中，通常需要做大小端转换，但因为本文作者是在<code>x86</code>机器上测试，简化处理，省略了这些转换。</p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsStripe</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> devid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> offset: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> dev_uuid: [<span class="type">u8</span>; BTRFS_UUID_SIZE],</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsChunk</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> length: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> owner: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> stripe_len: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> ty: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> io_align: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> io_width: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> sector_size: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> num_stripes: <span class="type">u16</span>,</span><br><span class="line">  <span class="keyword">pub</span> sub_stripes: <span class="type">u16</span>,</span><br><span class="line">  <span class="keyword">pub</span> stripe: BtrfsStripe,</span><br><span class="line">  <span class="comment">// 后续还有额外的 BtrfsStripe</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应<code>Linux4.4.1</code>源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">btrfs_chunk</span> &#123;</span></span><br><span class="line">	<span class="comment">/* size of this chunk in bytes */</span></span><br><span class="line">	__le64 length;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* objectid of the root referencing this chunk */</span></span><br><span class="line">	__le64 owner;</span><br><span class="line"></span><br><span class="line">	__le64 stripe_len;</span><br><span class="line">	__le64 type;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* optimal io alignment for this chunk */</span></span><br><span class="line">	__le32 io_align;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* optimal io width for this chunk */</span></span><br><span class="line">	__le32 io_width;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* minimal io size for this chunk */</span></span><br><span class="line">	__le32 sector_size;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 2^16 stripes is quite a lot, a second limit is the size of a single</span></span><br><span class="line"><span class="comment">	 * item in the btree</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	__le16 num_stripes;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* sub stripes only matter for raid10 */</span></span><br><span class="line">	__le16 sub_stripes;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">btrfs_stripe</span> <span class="title">stripe</span>;</span></span><br><span class="line">	<span class="comment">/* additional stripes go here */</span></span><br><span class="line">&#125; __attribute__ ((__packed__));</span><br></pre></td></tr></table></figure>
+
+<p><code>BtrfsStripe</code>描述一个条带。根据<code>RAID</code>配置的不同，一个<code>chunk</code>中可能包含多个条带。如果有多个条带，它们会在<code>BtrfsChunk</code>的尾部连续排列。</p>
+<p><code>BtrfsChunk</code>表示一个<code>chunk</code>的元数据。超级块中的<code>sys_chunk_array</code>字段存放着由<code>BtrfsKey</code>和<code>BtrfsChunk</code>构成的数组，结构为“键值对”。</p>
+<p><img src="/images/linux/btrfs/superblock_chunks.png"></p>
+<p>💡 举例说明</p>
+<p>假设有以下<code>chunk</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">length = <span class="number">0x100000</span>; <span class="comment">// 1MB</span></span><br><span class="line">type = BTRFS_BLOCK_GROUP_DATA | BTRFS_BLOCK_GROUP_RAID1</span><br><span class="line">num_stripes = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">stripe[<span class="number">0</span>] = &#123; devid=<span class="number">1</span>, offset=<span class="number">0x100000</span> &#125;</span><br><span class="line">stripe[<span class="number">1</span>] = &#123; devid=<span class="number">2</span>, offset=<span class="number">0x300000</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>chunk</code>的逻辑地址空间是<code>1MB</code>，被<code>RAID1</code>镜像写到了两个不同的设备，物理偏移不同但内容一致。</p>
+<p>如果要从逻辑地址<code>0x1000</code>读数据，<code>chunk tree</code>先找到这是哪个<code>chunk</code>（通过逻辑地址），再通过这个结构知道可以从：</p>
+<ul>
+<li><code>/dev/device-1 + 0x100000 + 0x1000</code></li>
+<li>或 <code>/dev/device-2 + 0x300000 + 0x1000</code></li>
+</ul>
+<p>去读相同的数据（冗余容错）。</p>
+<h4 id="🌲-编写引导代码"><a href="#🌲-编写引导代码" class="headerlink" title="🌲 编写引导代码"></a>🌲 编写引导代码</h4><p>下面是用于引导<code>chunk tree</code>的代码：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">bootstrap_chunk_tree</span>(superblock: &amp;BtrfsSuperblock) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;ChunkTreeCache&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">array_size</span> = superblock.sys_chunk_array_size <span class="keyword">as</span> <span class="type">usize</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">offset</span>: <span class="type">usize</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">chunk_tree_cache</span> = ChunkTreeCache::<span class="title function_ invoke__">default</span>();</span><br></pre></td></tr></table></figure>
+
+<p>我们将遍历整个<code>sys_chunk_array</code>。变量<code>offset</code>表示当前偏移。</p>
+<p><code>ChunkTreeCache</code>是一个简化版的非重叠区间树。实现细节可查看文首链接。其功能是将逻辑区间（起始地址 + 长度）映射到物理起始地址，并支持中间偏移的转换。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> offset &lt; array_size &#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">key_size</span> = std::mem::size_of::&lt;BtrfsKey&gt;();</span><br><span class="line">  <span class="keyword">if</span> offset + key_size &gt; array_size &#123;</span><br><span class="line">    bail!(<span class="string">&quot;short key read&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> <span class="variable">key_slice</span> = &amp;superblock.sys_chunk_array[offset..];</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">key</span> = <span class="keyword">unsafe</span> &#123; &amp;*(key_slice.<span class="title function_ invoke__">as_ptr</span>() <span class="keyword">as</span> *<span class="keyword">const</span> BtrfsKey) &#125;;</span><br><span class="line">  <span class="keyword">if</span> key.ty != BTRFS_CHUNK_ITEM_KEY &#123;</span><br><span class="line">    bail!(</span><br><span class="line">      <span class="string">&quot;unknown item type=&#123;&#125; in sys_array at offset=&#123;&#125;&quot;</span>,</span><br><span class="line">      key.ty,</span><br><span class="line">      offset</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">  offset += key_size;</span><br></pre></td></tr></table></figure>
+
+<p>循环直到遍历完整个数组。我们先从当前偏移获取一个<code>BtrfsKey</code>。做了一个<code>unsafe</code>操作来从裸内存转换为结构体引用。只允许<code>BTRFS_CHUNK_ITEM_KEY</code>类型的项出现，如果遇到其他类型则报错。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> offset + std::mem::size_of::&lt;BtrfsChunk&gt;() &gt; array_size &#123;</span><br><span class="line">  bail!(<span class="string">&quot;short chunk item read&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">chunk_slice</span> = &amp;superblock.sys_chunk_array[offset..];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">chunk</span> = <span class="keyword">unsafe</span> &#123; &amp;*(chunk_slice.<span class="title function_ invoke__">as_ptr</span>() <span class="keyword">as</span> *<span class="keyword">const</span> BtrfsChunk) &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> chunk.num_stripes == <span class="number">0</span> &#123;</span><br><span class="line">  bail!(<span class="string">&quot;num_stripes cannot be 0&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">num_stripes</span> = chunk.num_stripes;</span><br><span class="line"><span class="keyword">if</span> num_stripes != <span class="number">1</span> &#123;</span><br><span class="line">  <span class="built_in">println!</span>(</span><br><span class="line">    <span class="string">&quot;warning: &#123;&#125; stripes detected but only processing 1&quot;</span>,</span><br><span class="line">    num_stripes</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">logical</span> = key.offset;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> chunk_tree_cache.<span class="title function_ invoke__">offset</span>(logical).<span class="title function_ invoke__">is_none</span>() &#123;</span><br><span class="line">  chunk_tree_cache.<span class="title function_ invoke__">insert</span>(</span><br><span class="line">    ChunkTreeKey &#123;</span><br><span class="line">			start: logical,</span><br><span class="line">      size: chunk.length,</span><br><span class="line">    &#125;,</span><br><span class="line">    ChunkTreeValue &#123;</span><br><span class="line">      offset: chunk.stripe.offset,</span><br><span class="line">    &#125;,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">chunk_item_size</span> = std::mem::size_of::&lt;BtrfsChunk&gt;()</span><br><span class="line">    + (std::mem::size_of::&lt;BtrfsStripe&gt;() * (chunk.num_stripes <span class="keyword">as</span> <span class="type">usize</span> - <span class="number">1</span>));</span><br><span class="line"><span class="keyword">if</span> offset + chunk_item_size &gt; array_size &#123;</span><br><span class="line">  bail!(<span class="string">&quot;short chunk item + stripe read&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">offset += chunk_item_size;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">Ok</span>(chunk_tree_cache)</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们取出对应的<code>BtrfsChunk</code>。其中<code>num_stripes</code>表示条带数量，必须<code>≥1</code>。为了简单起见，我们只处理第一个条带，并发出警告。</p>
+<p>接着，我们将逻辑区间插入到<code>ChunkTreeCache</code>中。如果该逻辑起始地址尚未被记录，就添加一个条目。<code>key.offset</code>即为 <code>chunk</code>的逻辑起始地址。</p>
+<p>最后，不要忘了跳过所有额外条带的大小，以便处理下一个条目。</p>
+<hr>
+
+<p>这是系列文章的第三篇，旨在讲解<code>btrfs</code>的磁盘格式基础。</p>
+<h4 id="🧩-背景-1"><a href="#🧩-背景-1" class="headerlink" title="🧩 背景"></a>🧩 背景</h4><p>​	如第二部分所述，<code>btrfs</code>几乎将所有信息都存储在磁盘上的<code>B</code>树中。现在，正如之前承诺的，我们来详细介绍<code>B</code>树的数据格式。我们先来看一个简单的例子：</p>
+<p><img src="/images/linux/btrfs/tree.png"></p>
+<p>在<code>btrfs</code>中，每个<code>B</code>树节点都以一个头部（<code>header</code>）开始。该头部记录了该节点的“层级”（<code>level</code>）：</p>
+<ul>
+<li><code>level</code>为0表示该节点是叶子节点，存储实际的数据。</li>
+<li><code>level&gt;0</code>表示该节点是内部节点，存储指向子节点的指针。</li>
+</ul>
+<p>头部还记录了节点中包含的“项”（<code>item</code>）数量。每项<code>item</code>：</p>
+<ul>
+<li>如果是内部节点，表示一个指向子节点的指针；</li>
+<li>如果是叶子节点，描述了如何定位其实际的数据内容（<code>payload</code>）。</li>
+</ul>
+<p>注意，节点中的每一项都按照其关联的<code>BtrfsKey</code>排序，以便实现高效的二分查找。</p>
+<p>示例中，<code>root</code>和<code>node 0</code>包含的是<code>BtrfsKeyPtr</code>（指向子节点的指针），因为它们不是叶子节点。而<code>leaf 0</code>和<code>leaf 1</code>是叶子节点，包含的是<code>BtrfsItem</code>。</p>
+<h4 id="🌲-读取Chunk树"><a href="#🌲-读取Chunk树" class="headerlink" title="🌲 读取Chunk树"></a>🌲 读取<code>Chunk</code>树</h4><p>了解了树结构在磁盘上的布局后，我们来解析<code>chunk tree</code>的其余部分。</p>
+<p>首先定义几个必要的结构：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsHeader</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> csum: [<span class="type">u8</span>; BTRFS_CSUM_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> fsid: [<span class="type">u8</span>; BTRFS_FSID_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> bytenr: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> flags: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> chunk_tree_uuid: [<span class="type">u8</span>; BTRFS_UUID_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> generation: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> owner: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> nritems: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> level: <span class="type">u8</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsKeyPtr</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> key: BtrfsKey,</span><br><span class="line">  <span class="keyword">pub</span> blockptr: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> generation: <span class="type">u64</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsItem</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> key: BtrfsKey,</span><br><span class="line">  <span class="keyword">pub</span> offset: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> size: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，<code>BtrfsItem::offset</code>表示从节点头部（<code>BtrfsHeader</code>）末尾开始到实际数据所在位置的偏移。</p>
+<p>为了便于理解，我们还定义了<code>BtrfsNode</code>和<code>BtrfsLeaf</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsNode</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> header: BtrfsHeader,</span><br><span class="line">  <span class="comment">// 后续是 BtrfsKeyPtr</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsLeaf</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> header: BtrfsHeader,</span><br><span class="line">  <span class="comment">// 后续是 BtrfsItem</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实定义这些结构并非必须，因为我们总是可以通过解析<code>BtrfsHeader::level</code>来判断后续是<code>BtrfsKeyPtr</code>还是<code>BtrfsItem</code>。</p>
+<h4 id="编写代码"><a href="#编写代码" class="headerlink" title="编写代码"></a>编写代码</h4><p>​	要遍历任意一棵树，必须从根节点开始。根节点的逻辑偏移地址存储在超级块（<code>superblock</code>）中。下面是读取<code>chunk tree</code>根节点的代码：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">read_chunk_tree_root</span>(</span><br><span class="line">    file: &amp;File,</span><br><span class="line">    chunk_root_logical: <span class="type">u64</span>,</span><br><span class="line">    cache: &amp;ChunkTreeCache,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">size</span> = cache</span><br><span class="line">    .<span class="title function_ invoke__">mapping_kv</span>(chunk_root_logical)</span><br><span class="line">    .<span class="title function_ invoke__">ok_or_else</span>(|| anyhow!(<span class="string">&quot;Chunk tree root not bootstrapped&quot;</span>))?</span><br><span class="line">    .<span class="number">0</span></span><br><span class="line">    .size;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">physical</span> = cache</span><br><span class="line">    .<span class="title function_ invoke__">offset</span>(chunk_root_logical)</span><br><span class="line">    .<span class="title function_ invoke__">ok_or_else</span>(|| anyhow!(<span class="string">&quot;Chunk tree root not bootstrapped&quot;</span>))?;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">root</span> = <span class="built_in">vec!</span>[<span class="number">0</span>; size <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">  file.<span class="title function_ invoke__">read_exact_at</span>(&amp;<span class="keyword">mut</span> root, physical)?;</span><br><span class="line"></span><br><span class="line">  <span class="title function_ invoke__">Ok</span>(root)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>chunk_root_logical</code>是<code>BtrfsSuperblock::chunk_root</code>。</p>
+<p>遍历的代码采用典型的递归方式：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">read_chunk_tree</span>(</span><br><span class="line">  file: &amp;File,</span><br><span class="line">  root: &amp;[<span class="type">u8</span>],</span><br><span class="line">  chunk_tree_cache: &amp;<span class="keyword">mut</span> ChunkTreeCache,</span><br><span class="line">  superblock: &amp;BtrfsSuperblock,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">header</span> = tree::<span class="title function_ invoke__">parse_btrfs_header</span>(root)</span><br><span class="line">    .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;failed to parse chunk root header&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>tree::parse_btrfs_header</code>是一个工具函数，用于从<code>root</code>中提取<code>BtrfsHeader</code>。</p>
+<p>接下来判断节点层级：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> header.level == <span class="number">0</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">items</span> = tree::<span class="title function_ invoke__">parse_btrfs_leaf</span>(root)?;</span><br></pre></td></tr></table></figure>
+
+<p>如果是叶子节点（<code>level</code>为0），使用<code>tree::parse_btrfs_leaf</code>解析出其中的<code>BtrfsItem</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> <span class="variable">item</span> <span class="keyword">in</span> items &#123;</span><br><span class="line">  <span class="keyword">if</span> item.key.ty != BTRFS_CHUNK_ITEM_KEY &#123;</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> <span class="variable">chunk</span> = <span class="keyword">unsafe</span> &#123;</span><br><span class="line">      &amp;*(root</span><br><span class="line">          .<span class="title function_ invoke__">as_ptr</span>()</span><br><span class="line">          .<span class="title function_ invoke__">add</span>(std::mem::size_of::&lt;BtrfsHeader&gt;() + item.offset <span class="keyword">as</span> <span class="type">usize</span>)</span><br><span class="line">          <span class="keyword">as</span> *<span class="keyword">const</span> BtrfsChunk)</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码通过偏移计算出当前<code>item</code>对应的<code>BtrfsChunk</code>。</p>
+<p>随后，将该<code>chunk</code>插入<code>chunk</code>树缓存中：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">	chunk_tree_cache.<span class="title function_ invoke__">insert</span>(</span><br><span class="line">    ChunkTreeKey &#123;</span><br><span class="line">      start: item.key.offset,</span><br><span class="line">      size: chunk.length,</span><br><span class="line">    &#125;,</span><br><span class="line">    ChunkTreeValue &#123;</span><br><span class="line">      offset: chunk.stripe.offset,</span><br><span class="line">    &#125;,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果不是叶子节点：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ptrs</span> = tree::<span class="title function_ invoke__">parse_btrfs_node</span>(root)?;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">ptr</span> <span class="keyword">in</span> ptrs &#123;</span><br><span class="line">      <span class="keyword">let</span> <span class="variable">physical</span> = chunk_tree_cache</span><br><span class="line">          .<span class="title function_ invoke__">offset</span>(ptr.blockptr)</span><br><span class="line">          .<span class="title function_ invoke__">ok_or_else</span>(|| anyhow!(<span class="string">&quot;Chunk tree node not mapped&quot;</span>))?;</span><br><span class="line">      <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">node</span> = <span class="built_in">vec!</span>[<span class="number">0</span>; superblock.node_size <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">      file.<span class="title function_ invoke__">read_exact_at</span>(&amp;<span class="keyword">mut</span> node, physical)?;</span><br><span class="line">      <span class="title function_ invoke__">read_chunk_tree</span>(file, &amp;node, chunk_tree_cache, superblock)?;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时我们处理的是内部节点，用<code>tree::parse_btrfs_node</code>解析出<code>BtrfsKeyPtr</code>，并递归访问子节点。</p>
+<h4 id="下一步"><a href="#下一步" class="headerlink" title="下一步"></a>下一步</h4><p>​	现在我们已经将整个<code>chunk</code>树加载进了缓存，接下来我们将访问包含实际文件信息的文件系统树（<code>filesystem tree</code>）。在下一篇中，我们将从<code>root tree</code>中提取文件系统树的根节点。</p>
+<hr>
+
+<p>这是<code>btrfs</code>磁盘格式基础的系列文章的第四篇。</p>
+<h4 id="🧩-背景-2"><a href="#🧩-背景-2" class="headerlink" title="🧩 背景"></a>🧩 背景</h4><p>​	第三部分详细介绍了如何在已知根节点逻辑地址的情况下遍历磁盘上的<code>B-Tree</code>。然而，并不是所有的树的根节点都存储在超级块（<code>superblock</code>）中。除了<code>chunk tree</code>和<code>log tree</code>外，访问其他任何树，都必须通过<code>root tree</code>的根节点来定位相应的树根。</p>
+<blockquote>
+<p>  <code>root tree</code>的根节点中包含了对所有其他树根的引用。</p>
+</blockquote>
+<h4 id="📘-Root-Tree根节点结构"><a href="#📘-Root-Tree根节点结构" class="headerlink" title="📘 Root Tree根节点结构"></a>📘 <code>Root Tree</code>根节点结构</h4><p>超级块中保存了<code>root tree</code>根节点的逻辑地址。</p>
+<ul>
+<li><code>root tree</code>根节点是一个叶节点（<code>leaf node</code>），其负载是<code>BtrfsRootItem</code>。</li>
+<li>每个<code>BtrfsRootItem</code>包含一个对其他树根的引用。</li>
+<li>实线表示直接引用（即<code>BtrfsKeyPtr</code>类型），虚线则表示通过其他手段的间接引用。</li>
+</ul>
+<p>值得注意的是，<code>root tree</code>中还可能包含其他类型的项，但这些在我们这个工具中不太相关，可以忽略。</p>
+<p><img src="/images/linux/btrfs/tree_1.png"></p>
+<p>首先，我们来读取<code>root tree</code>的根节点。现在这应该比较简单了：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">read_root_tree_root</span>(</span><br><span class="line">  file: &amp;File,</span><br><span class="line">  root_tree_root_logical: <span class="type">u64</span>,</span><br><span class="line">  cache: &amp;ChunkTreeCache,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">size</span> = cache</span><br><span class="line">    .<span class="title function_ invoke__">mapping_kv</span>(root_tree_root_logical)</span><br><span class="line">    .<span class="title function_ invoke__">ok_or_else</span>(|| anyhow!(<span class="string">&quot;Root tree root logical addr not mapped&quot;</span>))?</span><br><span class="line">    .<span class="number">0</span></span><br><span class="line">    .size;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">physical</span> = cache</span><br><span class="line">    .<span class="title function_ invoke__">offset</span>(root_tree_root_logical)</span><br><span class="line">    .<span class="title function_ invoke__">ok_or_else</span>(|| anyhow!(<span class="string">&quot;Root tree root logical addr not mapped&quot;</span>))?;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">root</span> = <span class="built_in">vec!</span>[<span class="number">0</span>; size <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">  file.<span class="title function_ invoke__">read_exact_at</span>(&amp;<span class="keyword">mut</span> root, physical)?;</span><br><span class="line"></span><br><span class="line">  <span class="title function_ invoke__">Ok</span>(root)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>root_tree_root_logical</code>是从<code>BtrfsSuperblock::root</code>字段中获得的。</p>
+<p>现在我们拿到了<code>root tree</code>的根节点，接下来就要从中提取出文件系统树的根节点。</p>
+<h4 id="📗-读取文件系统树的根节点"><a href="#📗-读取文件系统树的根节点" class="headerlink" title="📗 读取文件系统树的根节点"></a>📗 读取文件系统树的根节点</h4><p>我们先定义<code>BtrfsRootItem</code>结构体：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[repr(C, packed)]</span></span><br><span class="line"><span class="meta">#[derive(Copy, Clone)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">BtrfsRootItem</span> &#123;</span><br><span class="line">  <span class="keyword">pub</span> inode: BtrfsInodeItem,</span><br><span class="line">  <span class="keyword">pub</span> generation: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> root_dirid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> bytenr: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> byte_limit: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> bytes_used: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> last_snapshot: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> flags: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> refs: <span class="type">u32</span>,</span><br><span class="line">  <span class="keyword">pub</span> drop_progress: BtrfsKey,</span><br><span class="line">  <span class="keyword">pub</span> drop_level: <span class="type">u8</span>,</span><br><span class="line">  <span class="keyword">pub</span> level: <span class="type">u8</span>,</span><br><span class="line">  <span class="keyword">pub</span> generation_v2: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> uuid: [<span class="type">u8</span>; BTRFS_UUID_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> parent_uuid: [<span class="type">u8</span>; BTRFS_UUID_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> received_uuid: [<span class="type">u8</span>; BTRFS_UUID_SIZE],</span><br><span class="line">  <span class="keyword">pub</span> ctransid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> otransid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> stransid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> rtransid: <span class="type">u64</span>,</span><br><span class="line">  <span class="keyword">pub</span> ctime: BtrfsTimespec,</span><br><span class="line">  <span class="keyword">pub</span> otime: BtrfsTimespec,</span><br><span class="line">  <span class="keyword">pub</span> stime: BtrfsTimespec,</span><br><span class="line">  <span class="keyword">pub</span> rtime: BtrfsTimespec,</span><br><span class="line">  <span class="keyword">pub</span> reserved: [<span class="type">u64</span>; <span class="number">8</span>],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以重用遍历<code>chunk tree</code>的算法来遍历<code>root tree</code>的根节点，这正是<code>btrfs</code>使用统一<code>B-Tree</code>结构的优势之一：算法可以复用。</p>
+<h4 id="📙-函数实现：读取文件系统树的根节点"><a href="#📙-函数实现：读取文件系统树的根节点" class="headerlink" title="📙 函数实现：读取文件系统树的根节点"></a>📙 函数实现：读取文件系统树的根节点</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">read_fs_tree_root</span>(</span><br><span class="line">  file: &amp;File,</span><br><span class="line">  superblock: &amp;BtrfsSuperblock,</span><br><span class="line">  root_tree_root: &amp;[<span class="type">u8</span>],</span><br><span class="line">  cache: &amp;ChunkTreeCache,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="variable">header</span> =</span><br><span class="line">    tree::<span class="title function_ invoke__">parse_btrfs_header</span>(root_tree_root)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;failed to parse root tree root header&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> header.level != <span class="number">0</span> &#123;</span><br><span class="line">    bail!(<span class="string">&quot;Root tree root is not a leaf node&quot;</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>解析头部，并确保<code>root tree</code>的根是一个叶节点。如果不是，则终止。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">items</span> = tree::<span class="title function_ invoke__">parse_btrfs_leaf</span>(root_tree_root)?;</span><br><span class="line"><span class="keyword">for</span> <span class="variable">item</span> <span class="keyword">in</span> items.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">rev</span>() &#123;</span><br><span class="line">  <span class="keyword">if</span> item.key.objectid != BTRFS_FS_TREE_OBJECTID</span><br><span class="line">        || item.key.ty != BTRFS_ROOT_ITEM_KEY &#123;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>寻找第一个类型为<code>BTRFS_ROOT_ITEM_KEY</code>且<code>objectid</code>为<code>BTRFS_FS_TREE_OBJECTID</code>的<code>BtrfsItem</code>，这就是我们要找的文件系统树的根节点。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">root_item</span> = <span class="keyword">unsafe</span> &#123;</span><br><span class="line">  &amp;*(root_tree_root</span><br><span class="line">    .<span class="title function_ invoke__">as_ptr</span>()</span><br><span class="line">    .<span class="title function_ invoke__">add</span>(std::mem::size_of::&lt;BtrfsHeader&gt;() + item.offset <span class="keyword">as</span> <span class="type">usize</span>)</span><br><span class="line">    <span class="keyword">as</span> *<span class="keyword">const</span> BtrfsRootItem)</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>从<code>BtrfsItem</code>中提取出对应的<code>BtrfsRootItem</code>，偏移量是相对于<code>BtrfsHeader</code>结束处计算的。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">let</span> <span class="variable">physical</span> = cache</span><br><span class="line">        .<span class="title function_ invoke__">offset</span>(root_item.bytenr)</span><br><span class="line">        .<span class="title function_ invoke__">ok_or_else</span>(|| anyhow!(<span class="string">&quot;fs tree root not mapped&quot;</span>))?;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">node</span> = <span class="built_in">vec!</span>[<span class="number">0</span>; superblock.node_size <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">    file.<span class="title function_ invoke__">read_exact_at</span>(&amp;<span class="keyword">mut</span> node, physical)?;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">Ok</span>(node);</span><br><span class="line">  &#125;</span><br><span class="line">  bail!(<span class="string">&quot;Failed to find root tree item for fs tree root&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完成文件系统树根节点的读取。如果遍历完成都没找到，就报错——这在一个合法的<code>btrfs</code>镜像中本不该发生。</p>
+<h4 id="下一步-1"><a href="#下一步-1" class="headerlink" title="下一步"></a>下一步</h4><p>​	我们已经拿到了文件系统树的根节点。接下来的任务是：遍历整个文件系统树，并解析我们感兴趣的数据。</p>
+<p>对我们来说，我们的目标是提取出每一个普通文件的绝对路径。下一篇文章将完成这个工具的最后部分。</p>
+<hr>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/btrfs/" rel="tag"># btrfs</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/" rel="prev" title="btrfs历史">
+                  <i class="fa fa-angle-left"></i> btrfs历史
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/02/linux/fs/btrfs%E5%AE%9E%E9%AA%8C/" rel="next" title="btrfs实验">
+                  btrfs实验 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
