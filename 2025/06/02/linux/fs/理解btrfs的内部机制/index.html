@@ -20,18 +20,18 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="🧩 概要​	本文是系列文章的第一部分，旨在解释btrfs文件系统磁盘格式的基础知识。 在系列的最后，我们将实现一个程序，无需依赖外部库或调用ioctl，即可打印出一个未挂载的btrfs文件系统镜像中所有常规文件的绝对路径。">
+    <meta name="description" content="🧩 概要​	本文是系列文章的第一部分，旨在解释btrfs文件系统磁盘格式的基础知识。在系列的最后，我们将实现一个不依赖外部库或ioctl调用的程序，打印出一个未挂载的btrfs文件系统镜像中所有常规文件的绝对路径。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="理解Btrfs的内部机制">
-<meta property="og:url" content="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/index.html">
+<meta property="og:title" content="理解btrfs的内部机制">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6/index.html">
 <meta property="og:site_name" content="Rockyの博客">
-<meta property="og:description" content="🧩 概要​	本文是系列文章的第一部分，旨在解释btrfs文件系统磁盘格式的基础知识。 在系列的最后，我们将实现一个程序，无需依赖外部库或调用ioctl，即可打印出一个未挂载的btrfs文件系统镜像中所有常规文件的绝对路径。">
+<meta property="og:description" content="🧩 概要​	本文是系列文章的第一部分，旨在解释btrfs文件系统磁盘格式的基础知识。在系列的最后，我们将实现一个不依赖外部库或ioctl调用的程序，打印出一个未挂载的btrfs文件系统镜像中所有常规文件的绝对路径。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/superblock_chunks.png">
 <meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/tree.png">
 <meta property="og:image" content="https://huangpiao.tech/images/linux/btrfs/tree_1.png">
 <meta property="article:published_time" content="2025-06-02T09:10:48.801Z">
-<meta property="article:modified_time" content="2025-06-03T15:20:13.424Z">
+<meta property="article:modified_time" content="2025-06-04T14:51:44.875Z">
 <meta property="article:author" content="Rocky">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="文件系统">
@@ -40,13 +40,13 @@
 <meta name="twitter:image" content="https://huangpiao.tech/images/linux/btrfs/superblock_chunks.png">
 
 
-<link rel="canonical" href="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/">
+<link rel="canonical" href="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/","path":"2025/06/02/linux/fs/理解Btrfs的内部机制---Part1/","title":"理解Btrfs的内部机制"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6/","path":"2025/06/02/linux/fs/理解btrfs的内部机制/","title":"理解btrfs的内部机制"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>理解Btrfs的内部机制 | Rockyの博客</title>
+<title>理解btrfs的内部机制 | Rockyの博客</title>
   
 
 
@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -143,7 +143,7 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -170,7 +170,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3Btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6---Part1/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -183,12 +183,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="理解Btrfs的内部机制 | Rockyの博客">
+      <meta itemprop="name" content="理解btrfs的内部机制 | Rockyの博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          理解Btrfs的内部机制
+          理解btrfs的内部机制
         </h1>
 
         <div class="post-meta-container">
@@ -206,7 +206,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-03 23:20:13" itemprop="dateModified" datetime="2025-06-03T23:20:13+08:00">2025-06-03</time>
+      <time title="修改时间：2025-06-04 22:51:44" itemprop="dateModified" datetime="2025-06-04T22:51:44+08:00">2025-06-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -227,11 +227,10 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文是系列文章的第一部分，旨在解释<code>btrfs</code>文件系统磁盘格式的基础知识。</p>
-<p>在系列的最后，我们将实现一个程序，无需依赖外部库或调用<code>ioctl</code>，即可打印出一个未挂载的<code>btrfs</code>文件系统镜像中所有常规文件的绝对路径。</p>
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文是系列文章的第一部分，旨在解释<code>btrfs</code>文件系统磁盘格式的基础知识。在系列的最后，我们将实现一个不依赖外部库或<code>ioctl</code>调用的程序，打印出一个未挂载的<code>btrfs</code>文件系统镜像中所有常规文件的绝对路径。</p>
 <span id="more"></span>
 
-<h4 id="📘-背景知识"><a href="#📘-背景知识" class="headerlink" title="📘 背景知识"></a>📘 背景知识</h4><p>​	在开始之前，先了解一些文件系统的基础知识可能会有所帮助。首先，我们来谈谈<strong>块设备（block devices）</strong>。块设备是对物理（或虚拟）硬件的一层抽象。你可以将块设备视为一个连续的字节序列，可以在任意位置进行任意大小的读取或写入操作。</p>
+<h4 id="📘-背景知识"><a href="#📘-背景知识" class="headerlink" title="📘 背景知识"></a>📘 背景知识</h4><p>​	在开始之前，先了解一些文件系统的基础知识可能会有所帮助。首先，我们来谈谈块设备（<code>block device</code>）。块设备是对物理（或虚拟）硬件的一层抽象。你可以将块设备视为一个连续的字节序列，可以在任意位置上进行任意大小的读取或写入操作。</p>
 <p>文件系统通常构建在块设备之上，它为数据存储提供了结构化的组织方式以及其他非常实用的功能。这些功能可能包括：</p>
 <ul>
 <li>文件和目录</li>
@@ -239,7 +238,7 @@
 <li>跨多个块设备的条带化存储（如<code>RAID</code>）</li>
 <li>压缩</li>
 </ul>
-<p>为了支持这些功能，文件系统不仅需要在块设备上存储用户数据，还需要存储元数据（<code>metadata</code>）（用于管理文件系统结构和属性的数据）。</p>
+<p>为了支持这些功能，文件系统不仅需要在块设备上存储用户数据，还需要存储元数据（<code>metadata</code>）。</p>
 <p>其次，当提到文件系统时，你想到的很可能是<code>POSIX</code>文件系统。这类文件系统包含我们熟悉的所有<code>Unix</code>特性：文件、”.”和”..”目录结构、文件系统树，以及标准<code>API</code>（如<code>read()</code>、<code>write()</code>、<code>lseek()</code>等）。如果这些<code>API</code>是通过系统调用实现的（通常都是），那么内核就必须具备文件系统感知能力。在<code>Linux</code>系统中，大多数文件系统要么直接编译进内核，要么以内核模块形式加载。</p>
 <p>第三，所谓的文件系统镜像（<code>filesystem image</code>）可以看作是文件系统所管理的整个块设备的内容。通常不建议手动修改文件系统镜像，但<strong>读取</strong>已挂载或未挂载的镜像则是安全的。这里的“安全”指的是：虽然你可能读取到不一致的数据（如果镜像当前已挂载并被内核修改），但一般不会破坏镜像中的任何数据。</p>
 <h4 id="❗注意事项"><a href="#❗注意事项" class="headerlink" title="❗注意事项"></a>❗注意事项</h4><p>在阅读本文时，请注意以下几点：</p>
