@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	本文介绍LevelDB的写入流程，包括从调用Put()到数据落盘与触发压缩的全过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LevelDB复现之写入流程">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/05/db/LevelDB%E5%A4%8D%E7%8E%B0%E4%B9%8B%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	本文介绍LevelDB的写入流程，包括从调用Put()到数据落盘与触发压缩的全过程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://huangpiao.tech/images/db/leveldb_01.png">
+<meta property="article:published_time" content="2025-06-05T01:30:55.648Z">
+<meta property="article:modified_time" content="2025-06-05T02:59:35.334Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="LevelDB">
+<meta property="article:tag" content="KV数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://huangpiao.tech/images/db/leveldb_01.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/05/db/LevelDB%E5%A4%8D%E7%8E%B0%E4%B9%8B%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/05/db/LevelDB%E5%A4%8D%E7%8E%B0%E4%B9%8B%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B/","path":"2025/06/05/db/LevelDB复现之写入流程/","title":"LevelDB复现之写入流程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>LevelDB复现之写入流程 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%8F%EF%B8%8F-%E4%B8%80%E3%80%81%E5%86%99%E5%85%A5%E5%85%A5%E5%8F%A3"><span class="nav-number"></span> <span class="nav-text">✏️ 一、写入入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%B1-%E4%BA%8C%E3%80%81%E5%86%99%E5%85%A5%E9%98%9F%E5%88%97%EF%BC%9A%E4%B8%B2%E8%A1%8C%E5%8C%96%E5%86%99%E6%93%8D%E4%BD%9C"><span class="nav-number"></span> <span class="nav-text">🧱 二、写入队列：串行化写操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E4%B8%89%E3%80%81MemTable-%E4%B8%8E-Write-Ahead-Log%EF%BC%88WAL%EF%BC%89"><span class="nav-number"></span> <span class="nav-text">🧠 三、MemTable 与 Write-Ahead Log（WAL）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9A%A7-%E5%9B%9B%E3%80%81MemTable-%E5%86%99%E6%BB%A1%E5%90%8E%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number"></span> <span class="nav-text">🚧 四、MemTable 写满后的处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%84-%E4%BA%94%E3%80%81%E5%90%8E%E5%8F%B0-Compaction%EF%BC%88%E5%8E%8B%E7%BC%A9%E5%90%88%E5%B9%B6%EF%BC%89"><span class="nav-number"></span> <span class="nav-text">🔄 五、后台 Compaction（压缩合并）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%AA-%E5%85%AD%E3%80%81%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B%E7%A4%BA%E6%84%8F%E5%9B%BE"><span class="nav-number"></span> <span class="nav-text">🧪 六、写入流程示意图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9A%99%EF%B8%8F-%E4%B8%83%E3%80%81%E5%85%B3%E9%94%AE%E4%BC%98%E5%8C%96%E7%82%B9"><span class="nav-number"></span> <span class="nav-text">⚙️ 七、关键优化点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">🧠 总结</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%A7%AA-%E5%AE%9E%E9%AA%8C1%EF%BC%9A%E5%86%99%E5%85%A5%E7%BA%A64MB%E6%95%B0%E6%8D%AE"><span class="nav-number">0.0.1.</span> <span class="nav-text">🧪 实验1：写入约4MB数据</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/05/db/LevelDB%E5%A4%8D%E7%8E%B0%E4%B9%8B%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="LevelDB复现之写入流程 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LevelDB复现之写入流程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-05 09:30:55 / 修改时间：10:59:35" itemprop="dateCreated datePublished" datetime="2025-06-05T09:30:55+08:00">2025-06-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/db/" itemprop="url" rel="index"><span itemprop="name">db</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><img src="/images/db/leveldb_01.png"></p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文介绍<code>LevelDB</code>的写入流程，包括从调用<code>Put()</code>到数据落盘与触发压缩的全过程。</p>
+<span id="more"></span>
+
+<h2 id="✏️-一、写入入口"><a href="#✏️-一、写入入口" class="headerlink" title="✏️ 一、写入入口"></a>✏️ 一、写入入口</h2><p>用户通过以下方式写入数据：</p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">leveldb::DB<span class="comment">* db = ...;</span></span><br><span class="line">db-&gt;<span class="meta">Put</span>(write_options, <span class="keyword">key</span>, value);</span><br></pre></td></tr></table></figure>
+
+<p>其最终调用的是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="function">Status <span class="title">DBImpl::Write</span><span class="params">(<span class="type">const</span> WriteOptions&amp; options, WriteBatch* updates)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🧱-二、写入队列：串行化写操作"><a href="#🧱-二、写入队列：串行化写操作" class="headerlink" title="🧱 二、写入队列：串行化写操作"></a>🧱 二、写入队列：串行化写操作</h2><p>尽管 <code>Write()</code> 可以被多个线程同时调用，LevelDB 内部会将它们组织成一个串行队列：</p>
+<ul>
+<li>通过 <code>Writer</code> 结构将每个写操作加入 <code>writers_</code> 队列。</li>
+<li>唯一“活跃”的写线程会进行写入，其他线程等待。</li>
+</ul>
+<p>这一设计确保了 <strong>写操作的原子性与顺序性</strong>。</p>
+<hr>
+<h2 id="🧠-三、MemTable-与-Write-Ahead-Log（WAL）"><a href="#🧠-三、MemTable-与-Write-Ahead-Log（WAL）" class="headerlink" title="🧠 三、MemTable 与 Write-Ahead Log（WAL）"></a>🧠 三、MemTable 与 Write-Ahead Log（WAL）</h2><p>写入时，数据会：</p>
+<ol>
+<li>追加到 <strong>WAL（Log File）</strong>：<ul>
+<li>防止断电丢数据。</li>
+<li>位于 <code>dbname/LOG</code> 文件中（或 <code>000xxx.log</code>）。</li>
+</ul>
+</li>
+<li>写入 <strong>MemTable（内存跳表）</strong>：<ul>
+<li>是一个基于 SkipList 的有序表。</li>
+<li>数据真正查询也主要依赖 MemTable。</li>
+</ul>
+</li>
+</ol>
+<p>代码位置在 <code>DBImpl::Write()</code> 中调用：</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="function"><span class="title">status</span> = log_-&gt;</span>AddRecord(record);  <span class="comment">// 写 WAL</span></span><br><span class="line"><span class="function"><span class="title">mem_</span>-&gt;</span>Add(seq, type, key, value);  <span class="comment">// 写 MemTable</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🚧-四、MemTable-写满后的处理"><a href="#🚧-四、MemTable-写满后的处理" class="headerlink" title="🚧 四、MemTable 写满后的处理"></a>🚧 四、MemTable 写满后的处理</h2><p>当 MemTable 占满时（例如默认 4MB）：</p>
+<ul>
+<li>当前 MemTable 会被移至 <code>immutable_mem_</code></li>
+<li>启动后台线程将 <code>immutable_mem_</code> 刷写到磁盘（生成新的 SST 文件）</li>
+<li>并继续创建一个新的空 MemTable 接受写入</li>
+</ul>
+<hr>
+<h2 id="🔄-五、后台-Compaction（压缩合并）"><a href="#🔄-五、后台-Compaction（压缩合并）" class="headerlink" title="🔄 五、后台 Compaction（压缩合并）"></a>🔄 五、后台 Compaction（压缩合并）</h2><p>刷盘只是把 MemTable 写为 L0 的 SST 文件。若 L0 文件过多，还会触发 compaction：</p>
+<ul>
+<li>将 L0 文件与 L1&#x2F;L2 文件合并，去重、去除已删除项</li>
+<li>由后台线程调用 <code>DoCompactionWork()</code> 完成</li>
+</ul>
+<p>压缩过程不会阻塞写入，除非：</p>
+<ul>
+<li>L0 文件太多（&gt;8~12），为了控制读放大，写操作会被暂时阻塞。</li>
+</ul>
+<hr>
+<h2 id="🧪-六、写入流程示意图"><a href="#🧪-六、写入流程示意图" class="headerlink" title="🧪 六、写入流程示意图"></a>🧪 六、写入流程示意图</h2><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">text</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">Put/<span class="keyword">Write</span>()</span><br><span class="line">   ↓</span><br><span class="line">加入 writers_ 队列</span><br><span class="line">   ↓</span><br><span class="line">日志追加到 WAL (log_.AddRecord)</span><br><span class="line">   ↓</span><br><span class="line">写入 MemTable (mem_-&gt;<span class="keyword">Add</span>)</span><br><span class="line">   ↓</span><br><span class="line">(如果满了)</span><br><span class="line">   ↓</span><br><span class="line">  MemTable → immutable_mem_</span><br><span class="line">       ↓</span><br><span class="line"> flush 到磁盘为 L0 sst</span><br><span class="line">       ↓</span><br><span class="line">可能触发 Compaction</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="⚙️-七、关键优化点"><a href="#⚙️-七、关键优化点" class="headerlink" title="⚙️ 七、关键优化点"></a>⚙️ 七、关键优化点</h2><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WAL + MemTable</td>
+<td>结合保证持久性 + 查询速度</td>
+</tr>
+<tr>
+<td>immutable_mem</td>
+<td>保证 MemTable flush 期间不阻塞写入</td>
+</tr>
+<tr>
+<td>writers_ 队列</td>
+<td>串行化写入逻辑，简化同步</td>
+</tr>
+<tr>
+<td>Compaction</td>
+<td>减少读放大，清理旧版本数据</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧠-总结"><a href="#🧠-总结" class="headerlink" title="🧠 总结"></a>🧠 总结</h2><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>写请求排队</td>
+<td>多线程请求被串行处理</td>
+</tr>
+<tr>
+<td>写 WAL</td>
+<td>保证写入持久化</td>
+</tr>
+<tr>
+<td>写 MemTable</td>
+<td>提供快速读取和排序能力</td>
+</tr>
+<tr>
+<td>MemTable 满 → Flush</td>
+<td>写入磁盘为 L0 SST 文件</td>
+</tr>
+<tr>
+<td>多 L0 文件 → Compaction</td>
+<td>逐层合并，压缩、清理、去重等优化过程</td>
+</tr>
+</tbody></table>
+<h6 id="🧪-实验1：写入约4MB数据"><a href="#🧪-实验1：写入约4MB数据" class="headerlink" title="🧪 实验1：写入约4MB数据"></a>🧪 实验1：写入约<code>4MB</code>数据</h6><p>​	<code>Options::write_buffer_size</code>的默认值为<code>4MB</code>。当写入的数据量接近该阈值时，<code>MemTable</code>会被标记为<code>immutable</code>并触发<code>flush</code>操作**，将其内容转换为一个新的<code>SST</code>文件（<code>Level 0</code>）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Amount of data to build up in memory (backed by an unsorted log</span></span><br><span class="line"><span class="comment">// on disk) before converting to a sorted on-disk file.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Larger values increase performance, especially during bulk loads.</span></span><br><span class="line"><span class="comment">// Up to two write buffers may be held in memory at the same time,</span></span><br><span class="line"><span class="comment">// so you may wish to adjust this parameter to control memory usage.</span></span><br><span class="line"><span class="comment">// Also, a larger write buffer will result in a longer recovery time</span></span><br><span class="line"><span class="comment">// the next time the database is opened.</span></span><br><span class="line"><span class="type">size_t</span> write_buffer_size = <span class="number">4</span> * <span class="number">1024</span> * <span class="number">1024</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​	🧫 代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;leveldb/db.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  leveldb::Options options;</span><br><span class="line">  options.create_if_missing = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">  leveldb::DB* db = <span class="literal">nullptr</span>;</span><br><span class="line">  leveldb::Status status = leveldb::DB::<span class="built_in">Open</span>(options, <span class="string">&quot;/tmp/ldb&quot;</span>, &amp;db);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;无法打开数据库: &quot;</span> &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  std::string key = <span class="string">&quot;large_key&quot;</span>;</span><br><span class="line">  <span class="function">std::string <span class="title">value</span><span class="params">(<span class="number">4</span> * <span class="number">1024</span> * <span class="number">1024</span>, <span class="string">&#x27;A&#x27;</span>)</span></span>;  <span class="comment">// 4MB 数据</span></span><br><span class="line"></span><br><span class="line">  leveldb::WriteOptions write_options;</span><br><span class="line">  status = db-&gt;<span class="built_in">Put</span>(write_options, key, value);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;写入失败: &quot;</span> &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">delete</span> db;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;写入成功，写入数据大小: &quot;</span> &lt;&lt; value.<span class="built_in">size</span>() &lt;&lt; <span class="string">&quot; 字节\n&quot;</span>;</span><br><span class="line">  <span class="keyword">delete</span> db;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>🧬 结果：没有生成<code>ldb</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> /tmp/ldb </span><br><span class="line">000003.<span class="built_in">log</span>  CURRENT  LOCK  LOG  MANIFEST-000002</span><br></pre></td></tr></table></figure>
+
+<p>🔍 原因分析：<code>LevelDB</code>是懒刷盘的</p>
+<p>修改代码：写入5次</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">  status = db-&gt;<span class="built_in">Put</span>(write_options, key+std::<span class="built_in">to_string</span>(i), value);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) &#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;写入失败: &quot;</span> &lt;&lt; status.<span class="built_in">ToString</span>() &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">delete</span> db;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LevelDB/" rel="tag"># LevelDB</a>
+              <a href="/tags/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># KV数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/04/linux/fs/reiser%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84/" rel="prev" title="reiser磁盘结构">
+                  <i class="fa fa-angle-left"></i> reiser磁盘结构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/05/linux/fs/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0_%E5%89%AF%E6%9C%AC/" rel="next" title="一个简单文件系统实现">
+                  一个简单文件系统实现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
