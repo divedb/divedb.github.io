@@ -123,7 +123,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -150,6 +150,99 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/" class="post-title-link" itemprop="url">从零实现IR</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-30 19:13:06" itemprop="dateCreated datePublished" datetime="2025-05-30T19:13:06+08:00">2025-05-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-31 21:43:27" itemprop="dateModified" datetime="2025-05-31T21:43:27+08:00">2025-05-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%96%E8%AF%91%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">编译器</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载：<a href="https://farena.in/compilers/programming/writing-an-ir-from-scratch/">Writing an IR from Scratch and survive to write a post</a></p>
+<p>​	在这篇文章中，我将介绍我为<code>Kunai</code>静态分析器设计的第一版中间表示（<code>IR</code>）。<code>Kunai</code>是我在攻读博士期间开发的一个 <code>Dalvik</code>字节码静态分析库，同时也是我深入学习<code>Dalvik</code>文件格式以及提升编程技能的实践项目。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -274,9 +367,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-05-28 22:35:00 / 修改时间：23:55:09" itemprop="dateCreated datePublished" datetime="2025-05-28T22:35:00+08:00">2025-05-28</time>
+      <time title="创建时间：2025-05-28 22:35:00" itemprop="dateCreated datePublished" datetime="2025-05-28T22:35:00+08:00">2025-05-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-06 13:55:41" itemprop="dateModified" datetime="2025-06-06T13:55:41+08:00">2025-06-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -298,41 +397,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kstat</span> &#123;</span></span><br><span class="line">	u32		result_mask;	<span class="comment">/* What fields the user got */</span></span><br><span class="line">	<span class="type">umode_t</span>		mode;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span>	nlink;</span><br><span class="line">	<span class="type">uint32_t</span>	blksize;	<span class="comment">/* Preferred I/O size */</span></span><br><span class="line">	u64		attributes;</span><br><span class="line">	u64		attributes_mask;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KSTAT_ATTR_FS_IOC_FLAGS				\</span></span><br><span class="line"><span class="meta">	(STATX_ATTR_COMPRESSED |			\</span></span><br><span class="line"><span class="meta">	 STATX_ATTR_IMMUTABLE |				\</span></span><br><span class="line"><span class="meta">	 STATX_ATTR_APPEND |				\</span></span><br><span class="line"><span class="meta">	 STATX_ATTR_NODUMP |				\</span></span><br><span class="line"><span class="meta">	 STATX_ATTR_ENCRYPTED |				\</span></span><br><span class="line"><span class="meta">	 STATX_ATTR_VERITY				\</span></span><br><span class="line"><span class="meta">	 )<span class="comment">/* Attrs corresponding to FS_*_FL flags */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KSTAT_ATTR_VFS_FLAGS				\</span></span><br><span class="line"><span class="meta">	(STATX_ATTR_IMMUTABLE |				\</span></span><br><span class="line"><span class="meta">	 STATX_ATTR_APPEND				\</span></span><br><span class="line"><span class="meta">	 ) <span class="comment">/* Attrs corresponding to S_* flags that are enforced by the VFS */</span></span></span><br><span class="line">	u64		    ino;</span><br><span class="line">	<span class="type">dev_t</span>		  dev;</span><br><span class="line">	<span class="type">dev_t</span>		  rdev;</span><br><span class="line">	<span class="type">kuid_t</span>		uid;</span><br><span class="line">	<span class="type">kgid_t</span>		gid;</span><br><span class="line">	<span class="type">loff_t</span>		size;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec64</span> <span class="title">atime</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec64</span> <span class="title">mtime</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec64</span> <span class="title">ctime</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec64</span> <span class="title">btime</span>;</span>			<span class="comment">/* File creation time */</span></span><br><span class="line">	u64		blocks;</span><br><span class="line">	u64		mnt_id;</span><br><span class="line">	u64		change_cookie;</span><br><span class="line">	u64		subvol;</span><br><span class="line">	u32		dio_mem_align;</span><br><span class="line">	u32		dio_offset_align;</span><br><span class="line">	u32		dio_read_offset_align;</span><br><span class="line">	u32		atomic_write_unit_min;</span><br><span class="line">	u32		atomic_write_unit_max;</span><br><span class="line">	u32		atomic_write_segments_max;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p><code>generic_fillattr</code>是<code>Linux</code>内核中用于填充<code>kstat</code>结构体的通用函数，它从给定的<code>inode</code>中提取基本的文件属性信息，如文件大小、权限、时间戳等。</p>
-<h3 id="📌-函数原型"><a href="#📌-函数原型" class="headerlink" title="📌 函数原型"></a>📌 函数原型</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">generic_fillattr</span><span class="params">(<span class="keyword">struct</span> mnt_idmap *idmap, u32 request_mask,</span></span><br><span class="line"><span class="params">                      <span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> kstat *stat)</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="🧩-参数说明"><a href="#🧩-参数说明" class="headerlink" title="🧩 参数说明"></a>🧩 参数说明</h3><ul>
-<li><code>idmap</code>：挂载点的 ID 映射（<code>mnt_idmap</code>），用于处理用户命名空间（user namespace）中的 UID&#x2F;GID 映射。</li>
-<li><code>request_mask</code>：指定请求哪些属性的掩码，通常使用 <code>STATX_*</code> 标志。</li>
-<li><code>inode</code>：指向目标 <code>inode</code> 的指针，表示要获取属性的文件。</li>
-<li><code>stat</code>：指向 <code>kstat</code> 结构体的指针，用于存储提取的文件属性信息。<a href="https://android.googlesource.com/kernel/common/%2B/7fed98f4/fs/stat.c?utm_source=chatgpt.com">Android Git Repositories+1Linux Kernel Archives+1</a></li>
-</ul>
-<h3 id="🛠️-功能描述"><a href="#🛠️-功能描述" class="headerlink" title="🛠️ 功能描述"></a>🛠️ 功能描述</h3><p><code>generic_fillattr</code> 从提供的 <code>inode</code> 中提取基本的文件属性，并填充到 <code>kstat</code> 结构体中。这些属性包括：<a href="https://codebrowser.dev/linux/linux/fs/stat.c.html?utm_source=chatgpt.com">codebrowser.dev+1Android Git Repositories+1</a></p>
-<ul>
-<li>文件类型和权限（mode）</li>
-<li>链接计数（nlink）</li>
-<li>用户 ID（UID）和组 ID（GID）</li>
-<li>文件大小（size）</li>
-<li>访问时间（atime）、修改时间（mtime）和状态更改时间（ctime）</li>
-<li>块大小和已分配的块数<a href="https://docs.huihoo.com/doxygen/linux/kernel/3.7/linux_2fs_8h.html?utm_source=chatgpt.com">Huihoo</a></li>
-</ul>
-<p>如果 <code>inode</code> 是通过 ID 映射挂载（idmapped mount）获得的，函数会根据提供的 <code>idmap</code> 对 UID 和 GID 进行映射，以确保在不同的用户命名空间中正确表示所有权信息。<a href="https://docs.kernel.org/filesystems/api-summary.html?utm_source=chatgpt.com">Linux内核文档+1codebrowser.dev+1</a></p>
-<h3 id="🧠-使用场景"><a href="#🧠-使用场景" class="headerlink" title="🧠 使用场景"></a>🧠 使用场景</h3><p><code>generic_fillattr</code> 通常在文件系统未提供自定义的 <code>getattr</code> 操作时被调用，作为默认的属性填充函数。它确保了即使在没有特定实现的情况下，文件系统也能提供基本的文件属性信息。</p>
-<h3 id="🔄-与-vfs-getattr-的关系"><a href="#🔄-与-vfs-getattr-的关系" class="headerlink" title="🔄 与 vfs_getattr 的关系"></a>🔄 与 <code>vfs_getattr</code> 的关系</h3><p><code>vfs_getattr</code> 是一个更高级别的接口，用于获取文件属性信息。它可能会调用文件系统提供的 <code>getattr</code> 操作，如果未定义，则退回到使用 <code>generic_fillattr</code>。</p>
-<h3 id="🔍-示例代码"><a href="#🔍-示例代码" class="headerlink" title="🔍 示例代码"></a>🔍 示例代码</h3><figure class="highlight hsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">struct kstat <span class="keyword">stat</span><span class="comment">;</span></span><br><span class="line"><span class="keyword">int</span> <span class="keyword">err</span><span class="comment">;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">err</span> = vfs_getattr(&amp;path, &amp;<span class="keyword">stat</span>, STATX_BASIC_STATS, AT_STATX_SYNC_AS_STAT)<span class="comment">;</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">err</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">err</span><span class="comment">;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在，stat 包含了文件的基本属性信息</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>在上述代码中，<code>vfs_getattr</code> 可能会调用 <code>generic_fillattr</code> 来填充 <code>stat</code> 结构体，具体取决于文件系统的实现。</p>
-
+          <h4 id="📘-fs-h常见数据结构"><a href="#📘-fs-h常见数据结构" class="headerlink" title="📘 fs.h常见数据结构"></a>📘 <code>fs.h</code>常见数据结构</h4><p>​	<code>Linux</code>内核中的<code>include/linux/fs.h</code>是文件系统相关的核心头文件，定义了众多用于<code>VFS</code>（虚拟文件系统）的重要数据结构。理解这些结构是掌握<code>Linux</code>文件系统实现的基础。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/05/28/linux/fs/fs%E5%A4%B4%E6%96%87%E4%BB%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -358,7 +431,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/28/linux/memory/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/28/linux/mm/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -376,7 +449,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/28/linux/memory/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/" class="post-title-link" itemprop="url">一步一图带你深入理解Linux</a>
+          <a href="/2025/05/28/linux/mm/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/" class="post-title-link" itemprop="url">一步一图带你深入理解Linux</a>
         </h2>
 
         <div class="post-meta-container">
@@ -394,7 +467,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-29 22:47:07" itemprop="dateModified" datetime="2025-05-29T22:47:07+08:00">2025-05-29</time>
+      <time title="修改时间：2025-06-06 22:51:04" itemprop="dateModified" datetime="2025-06-06T22:51:04+08:00">2025-06-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -430,7 +503,7 @@
 </ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/05/28/linux/memory/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/#more" rel="contents">
+              <a class="btn" href="/2025/05/28/linux/mm/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1290,829 +1363,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/18/linux/fs/%F0%9F%8C%9F%20%E5%9F%BA%E6%9C%AC%E5%AD%97%E6%AE%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/18/linux/fs/%F0%9F%8C%9F%20%E5%9F%BA%E6%9C%AC%E5%AD%97%E6%AE%B5/" class="post-title-link" itemprop="url">Linux内核源代码情景分析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-18 00:44:53" itemprop="dateCreated datePublished" datetime="2025-05-18T00:44:53+08:00">2025-05-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-25 09:17:35" itemprop="dateModified" datetime="2025-05-25T09:17:35+08:00">2025-05-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">super_block</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">s_list</span>;</span>		<span class="comment">/* Keep this first */</span></span><br><span class="line">	<span class="type">dev_t</span>			s_dev;		<span class="comment">/* search index; _not_ kdev_t */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span>		s_blocksize_bits;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>		s_blocksize;</span><br><span class="line">	<span class="type">loff_t</span>			s_maxbytes;	<span class="comment">/* Max file size */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file_system_type</span>	*<span class="title">s_type</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">super_operations</span>	*<span class="title">s_op</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">dquot_operations</span>	*<span class="title">dq_op</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">quotactl_ops</span>	*<span class="title">s_qcop</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">export_operations</span> *<span class="title">s_export_op</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>		s_flags;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>		s_iflags;	<span class="comment">/* internal SB_I_* flags */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>		s_magic;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dentry</span>		*<span class="title">s_root</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rw_semaphore</span>	<span class="title">s_umount</span>;</span></span><br><span class="line">	<span class="type">int</span>			s_count;</span><br><span class="line">	<span class="type">atomic_t</span>		s_active;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_SECURITY</span></span><br><span class="line">	<span class="type">void</span>                    *s_security;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">xattr_handler</span> * <span class="title">const</span> *<span class="title">s_xattr</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_FS_ENCRYPTION</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">fscrypt_operations</span>	*<span class="title">s_cop</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fscrypt_keyring</span>	*<span class="title">s_master_keys</span>;</span> <span class="comment">/* master crypto keys in use */</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_FS_VERITY</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">fsverity_operations</span> *<span class="title">s_vop</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> IS_ENABLED(CONFIG_UNICODE)</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">unicode_map</span> *<span class="title">s_encoding</span>;</span></span><br><span class="line">	__u16 s_encoding_flags;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">hlist_bl_head</span>	<span class="title">s_roots</span>;</span>	<span class="comment">/* alternate root dentries for NFS */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">s_mounts</span>;</span>	<span class="comment">/* list of mounts; _not_ for fs use */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">block_device</span>	*<span class="title">s_bdev</span>;</span>	<span class="comment">/* can go away once we use an accessor for @s_bdev_file */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file</span>		*<span class="title">s_bdev_file</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">backing_dev_info</span> *<span class="title">s_bdi</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mtd_info</span>		*<span class="title">s_mtd</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">hlist_node</span>	<span class="title">s_instances</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span>		s_quota_types;	<span class="comment">/* Bitmask of supported quota types */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">quota_info</span>	<span class="title">s_dquot</span>;</span>	<span class="comment">/* Diskquota specific options */</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sb_writers</span>	<span class="title">s_writers</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Keep s_fs_info, s_time_gran, s_fsnotify_mask, and</span></span><br><span class="line"><span class="comment">	 * s_fsnotify_info together for cache efficiency. They are frequently</span></span><br><span class="line"><span class="comment">	 * accessed and rarely modified.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">void</span>			*s_fs_info;	<span class="comment">/* Filesystem private info */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Granularity of c/m/atime in ns (cannot be worse than a second) */</span></span><br><span class="line">	u32			s_time_gran;</span><br><span class="line">	<span class="comment">/* Time limits for c/m/atime in seconds */</span></span><br><span class="line">	<span class="type">time64_t</span>		   s_time_min;</span><br><span class="line">	<span class="type">time64_t</span>		   s_time_max;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_FSNOTIFY</span></span><br><span class="line">	u32			s_fsnotify_mask;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fsnotify_sb_info</span>	*<span class="title">s_fsnotify_info</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * q: why are s_id and s_sysfs_name not the same? both are human</span></span><br><span class="line"><span class="comment">	 * readable strings that identify the filesystem</span></span><br><span class="line"><span class="comment">	 * a: s_id is allowed to change at runtime; it&#x27;s used in log messages,</span></span><br><span class="line"><span class="comment">	 * and we want to when a device starts out as single device (s_id is dev</span></span><br><span class="line"><span class="comment">	 * name) but then a device is hot added and we have to switch to</span></span><br><span class="line"><span class="comment">	 * identifying it by UUID</span></span><br><span class="line"><span class="comment">	 * but s_sysfs_name is a handle for programmatic access, and can&#x27;t</span></span><br><span class="line"><span class="comment">	 * change at runtime</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">char</span>			s_id[<span class="number">32</span>];	<span class="comment">/* Informational name */</span></span><br><span class="line">	<span class="type">uuid_t</span>			s_uuid;		<span class="comment">/* UUID */</span></span><br><span class="line">	u8			s_uuid_len;	<span class="comment">/* Default 16, possibly smaller for weird filesystems */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* if set, fs shows up under sysfs at /sys/fs/$FSTYP/s_sysfs_name */</span></span><br><span class="line">	<span class="type">char</span>			s_sysfs_name[UUID_STRING_LEN + <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span>		s_max_links;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * The next field is for VFS *only*. No filesystems have any business</span></span><br><span class="line"><span class="comment">	 * even looking at it. You had been warned.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mutex</span> <span class="title">s_vfs_rename_mutex</span>;</span>	<span class="comment">/* Kludge */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Filesystem subtype.  If non-empty the filesystem type field</span></span><br><span class="line"><span class="comment">	 * in /proc/mounts will be &quot;type.subtype&quot;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span> *s_subtype;</span><br><span class="line"></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">dentry_operations</span> *<span class="title">s_d_op</span>;</span> <span class="comment">/* default d_op for dentries */</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">shrinker</span> *<span class="title">s_shrink</span>;</span>	<span class="comment">/* per-sb shrinker handle */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Number of inodes with nlink == 0 but still referenced */</span></span><br><span class="line">	<span class="type">atomic_long_t</span> s_remove_count;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Read-only state of the superblock is being changed */</span></span><br><span class="line">	<span class="type">int</span> s_readonly_remount;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* per-sb errseq_t for reporting writeback errors via syncfs */</span></span><br><span class="line">	<span class="type">errseq_t</span> s_wb_err;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* AIO completions deferred from interrupt context */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">workqueue_struct</span> *<span class="title">s_dio_done_wq</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">hlist_head</span> <span class="title">s_pins</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Owning user namespace and default context in which to</span></span><br><span class="line"><span class="comment">	 * interpret filesystem uids, gids, quotas, device nodes,</span></span><br><span class="line"><span class="comment">	 * xattrs and security labels.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">user_namespace</span> *<span class="title">s_user_ns</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * The list_lru structure is essentially just a pointer to a table</span></span><br><span class="line"><span class="comment">	 * of per-node lru lists, each of which has its own spinlock.</span></span><br><span class="line"><span class="comment">	 * There is no need to put them into separate cachelines.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_lru</span>		<span class="title">s_dentry_lru</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_lru</span>		<span class="title">s_inode_lru</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span>		<span class="title">rcu</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span>	<span class="title">destroy_work</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mutex</span>		<span class="title">s_sync_lock</span>;</span>	<span class="comment">/* sync serialisation lock */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Indicates how deep in a filesystem stack this SB is</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">int</span> s_stack_depth;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* s_inode_list_lock protects s_inodes */</span></span><br><span class="line">	<span class="type">spinlock_t</span>		s_inode_list_lock ____cacheline_aligned_in_smp;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">s_inodes</span>;</span>	<span class="comment">/* all inodes */</span></span><br><span class="line"></span><br><span class="line">	<span class="type">spinlock_t</span>		s_inode_wblist_lock;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">s_inodes_wb</span>;</span>	<span class="comment">/* writeback inodes */</span></span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
-
-<h3 id="✅-文件系统核心信息"><a href="#✅-文件系统核心信息" class="headerlink" title="✅ 文件系统核心信息"></a>✅ <strong>文件系统核心信息</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_list</code></td>
-<td><code>struct list_head</code></td>
-<td>所有超级块组成的全局链表（<code>super_blocks</code>），便于遍历所有挂载的文件系统。</td>
-</tr>
-<tr>
-<td><code>s_dev</code></td>
-<td><code>dev_t</code></td>
-<td>文件系统所在的块设备号（主设备号+次设备号）。</td>
-</tr>
-<tr>
-<td><code>s_blocksize_bits</code></td>
-<td><code>unsigned char</code></td>
-<td>块大小对应的位数（如块大小为 4096，则为 12）。</td>
-</tr>
-<tr>
-<td><code>s_blocksize</code></td>
-<td><code>unsigned long</code></td>
-<td>该文件系统的块大小（如 4096 字节）。</td>
-</tr>
-<tr>
-<td><code>s_maxbytes</code></td>
-<td><code>loff_t</code></td>
-<td>文件系统中支持的最大文件大小。</td>
-</tr>
-<tr>
-<td><code>s_type</code></td>
-<td><code>struct file_system_type *</code></td>
-<td>文件系统类型（如 ext4、xfs）结构体指针。</td>
-</tr>
-<tr>
-<td><code>s_op</code></td>
-<td><code>const struct super_operations *</code></td>
-<td>文件系统对超级块的操作集，如 <code>write_inode</code>、<code>sync_fs</code>。</td>
-</tr>
-<tr>
-<td><code>dq_op</code></td>
-<td><code>const struct dquot_operations *</code></td>
-<td>磁盘配额操作相关函数集。</td>
-</tr>
-<tr>
-<td><code>s_qcop</code></td>
-<td><code>const struct quotactl_ops *</code></td>
-<td>用于 <code>quotactl</code> 系统调用的配额控制操作。</td>
-</tr>
-<tr>
-<td><code>s_export_op</code></td>
-<td><code>const struct export_operations *</code></td>
-<td>用于 NFS 导出的操作。</td>
-</tr>
-<tr>
-<td><code>s_flags</code></td>
-<td><code>unsigned long</code></td>
-<td>挂载时的参数标志位，如 <code>MS_RDONLY</code>。</td>
-</tr>
-<tr>
-<td><code>s_iflags</code></td>
-<td><code>unsigned long</code></td>
-<td>内部使用的标志位，<code>SB_I_*</code> 定义在 <code>fs.h</code> 中。</td>
-</tr>
-<tr>
-<td><code>s_magic</code></td>
-<td><code>unsigned long</code></td>
-<td>文件系统的魔数，用于识别文件系统类型。</td>
-</tr>
-<tr>
-<td><code>s_root</code></td>
-<td><code>struct dentry *</code></td>
-<td>该超级块对应的根目录 <code>dentry</code> 指针。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🔐-并发控制和引用计数"><a href="#🔐-并发控制和引用计数" class="headerlink" title="🔐 并发控制和引用计数"></a>🔐 <strong>并发控制和引用计数</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_umount</code></td>
-<td><code>struct rw_semaphore</code></td>
-<td>用于卸载操作的读写信号量。</td>
-</tr>
-<tr>
-<td><code>s_count</code></td>
-<td><code>int</code></td>
-<td>超级块的引用计数。</td>
-</tr>
-<tr>
-<td><code>s_active</code></td>
-<td><code>atomic_t</code></td>
-<td>活跃计数；用于挂载&#x2F;卸载判定。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🔒-安全与加密"><a href="#🔒-安全与加密" class="headerlink" title="🔒 安全与加密"></a>🔒 <strong>安全与加密</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_security</code></td>
-<td><code>void *</code></td>
-<td>安全模块使用（如 SELinux）。</td>
-</tr>
-<tr>
-<td><code>s_xattr</code></td>
-<td><code>const struct xattr_handler **</code></td>
-<td>扩展属性操作，如 <code>getxattr/setxattr</code>。</td>
-</tr>
-<tr>
-<td><code>s_cop</code></td>
-<td><code>const struct fscrypt_operations *</code></td>
-<td>文件加密操作指针（fscrypt）。</td>
-</tr>
-<tr>
-<td><code>s_master_keys</code></td>
-<td><code>struct fscrypt_keyring *</code></td>
-<td>当前挂载使用的主密钥列表。</td>
-</tr>
-<tr>
-<td><code>s_vop</code></td>
-<td><code>const struct fsverity_operations *</code></td>
-<td>fs-verity 相关操作（文件完整性校验）。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🌐-字符集支持和导出支持"><a href="#🌐-字符集支持和导出支持" class="headerlink" title="🌐 字符集支持和导出支持"></a>🌐 <strong>字符集支持和导出支持</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_encoding</code></td>
-<td><code>struct unicode_map *</code></td>
-<td>文件名的编码（如 UTF-8）。</td>
-</tr>
-<tr>
-<td><code>s_encoding_flags</code></td>
-<td><code>__u16</code></td>
-<td>编码标志，如大小写敏感等。</td>
-</tr>
-<tr>
-<td><code>s_roots</code></td>
-<td><code>struct hlist_bl_head</code></td>
-<td>NFS 导出的备用根目录列表。</td>
-</tr>
-<tr>
-<td><code>s_mounts</code></td>
-<td><code>struct list_head</code></td>
-<td>当前超级块的所有挂载点链表。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="💽-底层设备信息"><a href="#💽-底层设备信息" class="headerlink" title="💽 底层设备信息"></a>💽 <strong>底层设备信息</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_bdev</code></td>
-<td><code>struct block_device *</code></td>
-<td>设备对象指针。</td>
-</tr>
-<tr>
-<td><code>s_bdev_file</code></td>
-<td><code>struct file *</code></td>
-<td>对应的块设备文件。</td>
-</tr>
-<tr>
-<td><code>s_bdi</code></td>
-<td><code>struct backing_dev_info *</code></td>
-<td>与页缓存写回等相关的信息结构体。</td>
-</tr>
-<tr>
-<td><code>s_mtd</code></td>
-<td><code>struct mtd_info *</code></td>
-<td>若为 MTD 设备（闪存），此字段有效。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="💾-磁盘配额支持"><a href="#💾-磁盘配额支持" class="headerlink" title="💾 磁盘配额支持"></a>💾 <strong>磁盘配额支持</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_quota_types</code></td>
-<td><code>unsigned int</code></td>
-<td>支持的配额类型位掩码（如用户、组）。</td>
-</tr>
-<tr>
-<td><code>s_dquot</code></td>
-<td><code>struct quota_info</code></td>
-<td>配额相关配置（如配额启用标志等）。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="📥-写入控制与信息缓存"><a href="#📥-写入控制与信息缓存" class="headerlink" title="📥 写入控制与信息缓存"></a>📥 <strong>写入控制与信息缓存</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_writers</code></td>
-<td><code>struct sb_writers</code></td>
-<td>并发写者计数器与同步控制。</td>
-</tr>
-<tr>
-<td><code>s_fs_info</code></td>
-<td><code>void *</code></td>
-<td>文件系统私有信息（例如 ext4 的 <code>struct ext4_sb_info</code>）。</td>
-</tr>
-<tr>
-<td><code>s_time_gran</code></td>
-<td><code>u32</code></td>
-<td>时间戳粒度（纳秒）。</td>
-</tr>
-<tr>
-<td><code>s_time_min/max</code></td>
-<td><code>time64_t</code></td>
-<td>支持的时间戳范围（秒）。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🔔-事件通知"><a href="#🔔-事件通知" class="headerlink" title="🔔 事件通知"></a>🔔 <strong>事件通知</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_fsnotify_mask</code></td>
-<td><code>u32</code></td>
-<td>监听事件掩码。</td>
-</tr>
-<tr>
-<td><code>s_fsnotify_info</code></td>
-<td><code>struct fsnotify_sb_info *</code></td>
-<td>通知系统相关结构体。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🆔-标识信息"><a href="#🆔-标识信息" class="headerlink" title="🆔 标识信息"></a>🆔 <strong>标识信息</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_id</code></td>
-<td><code>char[32]</code></td>
-<td>用于日志等的可变信息字符串。</td>
-</tr>
-<tr>
-<td><code>s_uuid</code></td>
-<td><code>uuid_t</code></td>
-<td>文件系统的唯一标识 UUID。</td>
-</tr>
-<tr>
-<td><code>s_uuid_len</code></td>
-<td><code>u8</code></td>
-<td>UUID 的长度，通常为 16 字节。</td>
-</tr>
-<tr>
-<td><code>s_sysfs_name</code></td>
-<td><code>char[]</code></td>
-<td>出现在 <code>/sys/fs</code> 下的文件系统标识，不能变。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🧱-文件系统实现细节"><a href="#🧱-文件系统实现细节" class="headerlink" title="🧱 文件系统实现细节"></a>🧱 <strong>文件系统实现细节</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_max_links</code></td>
-<td><code>unsigned int</code></td>
-<td>一个目录中允许的最大硬链接数。</td>
-</tr>
-<tr>
-<td><code>s_vfs_rename_mutex</code></td>
-<td><code>struct mutex</code></td>
-<td>内核用来保护跨目录重命名。</td>
-</tr>
-<tr>
-<td><code>s_subtype</code></td>
-<td><code>const char *</code></td>
-<td>文件系统子类型名。</td>
-</tr>
-<tr>
-<td><code>s_d_op</code></td>
-<td><code>const struct dentry_operations *</code></td>
-<td>默认 <code>dentry</code> 操作。</td>
-</tr>
-<tr>
-<td><code>s_shrink</code></td>
-<td><code>struct shrinker *</code></td>
-<td>内存回收（shrink）策略。</td>
-</tr>
-<tr>
-<td><code>s_remove_count</code></td>
-<td><code>atomic_long_t</code></td>
-<td>被删除但仍被引用的 inode 数量。</td>
-</tr>
-<tr>
-<td><code>s_readonly_remount</code></td>
-<td><code>int</code></td>
-<td>表示正在切换为只读。</td>
-</tr>
-<tr>
-<td><code>s_wb_err</code></td>
-<td><code>errseq_t</code></td>
-<td>用于 <code>syncfs()</code> 错误报告。</td>
-</tr>
-<tr>
-<td><code>s_dio_done_wq</code></td>
-<td><code>struct workqueue_struct *</code></td>
-<td>用于异步 I&#x2F;O 完成后的延迟处理。</td>
-</tr>
-<tr>
-<td><code>s_pins</code></td>
-<td><code>struct hlist_head</code></td>
-<td>用于锁定不被卸载的数据结构（如 pinning）。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🧑‍⚖️-用户命名空间与隔离"><a href="#🧑‍⚖️-用户命名空间与隔离" class="headerlink" title="🧑‍⚖️ 用户命名空间与隔离"></a>🧑‍⚖️ <strong>用户命名空间与隔离</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_user_ns</code></td>
-<td><code>struct user_namespace *</code></td>
-<td>所属用户命名空间（用于权限隔离）。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="♻️-LRU-与销毁"><a href="#♻️-LRU-与销毁" class="headerlink" title="♻️ LRU 与销毁"></a>♻️ <strong>LRU 与销毁</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_dentry_lru</code></td>
-<td><code>struct list_lru</code></td>
-<td>缓存的 <code>dentry</code> LRU 链表。</td>
-</tr>
-<tr>
-<td><code>s_inode_lru</code></td>
-<td><code>struct list_lru</code></td>
-<td>缓存的 inode LRU 链表。</td>
-</tr>
-<tr>
-<td><code>rcu</code></td>
-<td><code>struct rcu_head</code></td>
-<td>RCU 回收机制使用的钩子。</td>
-</tr>
-<tr>
-<td><code>destroy_work</code></td>
-<td><code>struct work_struct</code></td>
-<td>用于延迟销毁超级块。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="🔄-同步与写回"><a href="#🔄-同步与写回" class="headerlink" title="🔄 同步与写回"></a>🔄 <strong>同步与写回</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_sync_lock</code></td>
-<td><code>struct mutex</code></td>
-<td>用于 <code>sync_fs()</code> 的序列化锁。</td>
-</tr>
-<tr>
-<td><code>s_stack_depth</code></td>
-<td><code>int</code></td>
-<td>文件系统堆叠深度（如 overlayfs）。</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="📚-inode-管理"><a href="#📚-inode-管理" class="headerlink" title="📚 inode 管理"></a>📚 <strong>inode 管理</strong></h3><table>
-<thead>
-<tr>
-<th>字段</th>
-<th>类型</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>s_inode_list_lock</code></td>
-<td><code>spinlock_t</code></td>
-<td>保护下方的 <code>s_inodes</code> 链表。</td>
-</tr>
-<tr>
-<td><code>s_inodes</code></td>
-<td><code>struct list_head</code></td>
-<td>所有 inode 的链表（用于扫描）。</td>
-</tr>
-<tr>
-<td><code>s_inode_wblist_lock</code></td>
-<td><code>spinlock_t</code></td>
-<td>保护下方 <code>s_inodes_wb</code> 写回链表。</td>
-</tr>
-<tr>
-<td><code>s_inodes_wb</code></td>
-<td><code>struct list_head</code></td>
-<td>需要写回的 inode 链表。</td>
-</tr>
-</tbody></table>
-<p><code>inode</code>（<code>index node</code>）是指“类<code>Unix</code>文件系统”中的一种数据结构，用于描述文件系统对象（包括文件、目录、设备文件、<code>socket</code>、管道等）。每个<code>inode</code>保存了文件系统对象数据的属性和磁盘块位置。文件系统对象属性包含了各种元数据（如：最后修改时间） ，也包含用户组（<code>owner</code>）和权限数据</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: include/linux/fs.h</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Keep mostly read-only and often accessed (especially for</span></span><br><span class="line"><span class="comment"> * the RCU path lookup and &#x27;stat&#x27; data) fields at the beginning</span></span><br><span class="line"><span class="comment"> * of the &#x27;struct inode&#x27;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">inode</span> &#123;</span></span><br><span class="line">  <span class="comment">// 该字段表示文件的访问权限和类型。</span></span><br><span class="line">	<span class="type">umode_t</span>			      i_mode;</span><br><span class="line">  <span class="comment">// 内部使用的操作标志，如IOP_LOOKUP，控制inode操作行为</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">short</span>		i_opflags;</span><br><span class="line">  <span class="comment">// 拥有者的用户ID</span></span><br><span class="line">	<span class="type">kuid_t</span>						i_uid;</span><br><span class="line">  <span class="comment">// 拥有者的组ID</span></span><br><span class="line">	<span class="type">kgid_t</span>						i_gid;</span><br><span class="line">  <span class="comment">// 文件特性，如是否不可删除、只读等（chattr可设置）</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span>			i_flags;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_FS_POSIX_ACL</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">posix_acl</span>	*<span class="title">i_acl</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">posix_acl</span>	*<span class="title">i_default_acl</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 该字段是指向类型为struct inode_operations的结构的指针</span></span><br><span class="line">  <span class="comment">// 该结构包含可在索引节点上执行的各种操作的函数指针。</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">inode_operations</span>	*<span class="title">i_op</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">super_block</span>						*<span class="title">i_sb</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">address_space</span>					*<span class="title">i_mapping</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_SECURITY</span></span><br><span class="line">	<span class="type">void</span>			*i_security;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Stat data, not accessed from path walking */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>		i_ino;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Filesystems may only read i_nlink directly.  They shall use the</span></span><br><span class="line"><span class="comment">	 * following functions for modification:</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 *    (set|clear|inc|drop)_nlink</span></span><br><span class="line"><span class="comment">	 *    inode_(inc|dec)_link_count</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="type">const</span> <span class="type">unsigned</span> <span class="type">int</span> i_nlink;</span><br><span class="line">		<span class="type">unsigned</span> <span class="type">int</span> __i_nlink;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="type">dev_t</span>			i_rdev;</span><br><span class="line">	<span class="type">loff_t</span>			i_size;</span><br><span class="line">	<span class="type">time64_t</span>		i_atime_sec;</span><br><span class="line">	<span class="type">time64_t</span>		i_mtime_sec;</span><br><span class="line">	<span class="type">time64_t</span>		i_ctime_sec;</span><br><span class="line">	u32			i_atime_nsec;</span><br><span class="line">	u32			i_mtime_nsec;</span><br><span class="line">	u32			i_ctime_nsec;</span><br><span class="line">	u32			i_generation;</span><br><span class="line">	<span class="type">spinlock_t</span>		i_lock;	<span class="comment">/* i_blocks, i_bytes, maybe i_size */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">short</span>          i_bytes;</span><br><span class="line">	u8			i_blkbits;</span><br><span class="line">	<span class="class"><span class="keyword">enum</span> <span class="title">rw_hint</span>		<span class="title">i_write_hint</span>;</span></span><br><span class="line">	<span class="type">blkcnt_t</span>		i_blocks;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __NEED_I_SIZE_ORDERED</span></span><br><span class="line">	<span class="type">seqcount_t</span>		i_size_seqcount;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Misc */</span></span><br><span class="line">	u32			i_state;</span><br><span class="line">	<span class="comment">/* 32-bit hole */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rw_semaphore</span>	<span class="title">i_rwsem</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>		dirtied_when;	<span class="comment">/* jiffies of first dirtying */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span>		dirtied_time_when;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">hlist_node</span>	<span class="title">i_hash</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">i_io_list</span>;</span>	<span class="comment">/* backing dev IO list */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_CGROUP_WRITEBACK</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">bdi_writeback</span>	*<span class="title">i_wb</span>;</span>		<span class="comment">/* the associated cgroup wb */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* foreign inode detection, see wbc_detach_inode() */</span></span><br><span class="line">	<span class="type">int</span>			i_wb_frn_winner;</span><br><span class="line">	u16			i_wb_frn_avg_time;</span><br><span class="line">	u16			i_wb_frn_history;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">i_lru</span>;</span>		<span class="comment">/* inode LRU list */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">i_sb_list</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">i_wb_list</span>;</span>	<span class="comment">/* backing dev writeback list */</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">hlist_head</span>	<span class="title">i_dentry</span>;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span>		<span class="title">i_rcu</span>;</span></span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="type">atomic64_t</span>		i_version;</span><br><span class="line">	<span class="type">atomic64_t</span>		i_sequence; <span class="comment">/* see futex */</span></span><br><span class="line">	<span class="type">atomic_t</span>		i_count;</span><br><span class="line">	<span class="type">atomic_t</span>		i_dio_count;</span><br><span class="line">	<span class="type">atomic_t</span>		i_writecount;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)</span></span><br><span class="line">	<span class="type">atomic_t</span>		i_readcount; <span class="comment">/* struct files open RO */</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span>	*<span class="title">i_fop</span>;</span>	<span class="comment">/* former -&gt;i_op-&gt;default_file_ops */</span></span><br><span class="line">		<span class="type">void</span> (*free_inode)(<span class="keyword">struct</span> inode *);</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file_lock_context</span>	*<span class="title">i_flctx</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">address_space</span>	<span class="title">i_data</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">i_devices</span>;</span></span><br><span class="line">		<span class="type">int</span>			i_linklen;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">pipe_inode_info</span>	*<span class="title">i_pipe</span>;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">cdev</span>		*<span class="title">i_cdev</span>;</span></span><br><span class="line">		<span class="type">char</span>			*i_link;</span><br><span class="line">		<span class="type">unsigned</span>		i_dir_seq;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_FSNOTIFY</span></span><br><span class="line">	__u32			i_fsnotify_mask; <span class="comment">/* all events this inode cares about */</span></span><br><span class="line">	<span class="comment">/* 32-bit hole reserved for expanding i_fsnotify_mask */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fsnotify_mark_connector</span> __<span class="title">rcu</span>	*<span class="title">i_fsnotify_marks</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_FS_ENCRYPTION</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fscrypt_inode_info</span>	*<span class="title">i_crypt_info</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_FS_VERITY</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fsverity_info</span>	*<span class="title">i_verity_info</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="type">void</span>			*i_private; <span class="comment">/* fs or device private pointer */</span></span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="🌟-基本字段"><a href="#🌟-基本字段" class="headerlink" title="🌟 基本字段"></a>🌟 基本字段</h2><h3 id="struct-module-owner"><a href="#struct-module-owner" class="headerlink" title="struct module *owner;"></a><code>struct module *owner;</code></h3><ul>
-<li>所属模块，用于内核模块的引用计数，防止在文件使用过程中卸载模块。</li>
-<li>通常设为 <code>THIS_MODULE</code>。</li>
-</ul>
-<h3 id="fop-flags-t-fop-flags"><a href="#fop-flags-t-fop-flags" class="headerlink" title="fop_flags_t fop_flags;"></a><code>fop_flags_t fop_flags;</code></h3><ul>
-<li>标志位，用于标识这个 <code>file_operations</code> 实例的属性，如是否是非阻塞、安全、支持异步等。</li>
-<li>较新版本内核中引入，可忽略旧版本。</li>
-</ul>
-<hr>
-<h2 id="📚-基本文件操作"><a href="#📚-基本文件操作" class="headerlink" title="📚 基本文件操作"></a>📚 基本文件操作</h2><h3 id="loff-t-llseek-struct-file-loff-t-int"><a href="#loff-t-llseek-struct-file-loff-t-int" class="headerlink" title="loff_t (*llseek)(struct file *, loff_t, int);"></a><code>loff_t (*llseek)(struct file *, loff_t, int);</code></h3><ul>
-<li>文件偏移操作，处理 <code>lseek()</code> 系统调用。</li>
-</ul>
-<h3 id="ssize-t-read-struct-file-char-user-size-t-loff-t"><a href="#ssize-t-read-struct-file-char-user-size-t-loff-t" class="headerlink" title="ssize_t (*read)(struct file *, char __user *, size_t, loff_t *);"></a><code>ssize_t (*read)(struct file *, char __user *, size_t, loff_t *);</code></h3><ul>
-<li>用于 <code>read()</code> 系统调用。</li>
-</ul>
-<h3 id="ssize-t-write-struct-file-const-char-user-size-t-loff-t"><a href="#ssize-t-write-struct-file-const-char-user-size-t-loff-t" class="headerlink" title="ssize_t (*write)(struct file *, const char __user *, size_t, loff_t *);"></a><code>ssize_t (*write)(struct file *, const char __user *, size_t, loff_t *);</code></h3><ul>
-<li>用于 <code>write()</code> 系统调用。</li>
-</ul>
-<h3 id="ssize-t-read-iter-struct-kiocb-struct-iov-iter"><a href="#ssize-t-read-iter-struct-kiocb-struct-iov-iter" class="headerlink" title="ssize_t (*read_iter)(struct kiocb *, struct iov_iter *);"></a><code>ssize_t (*read_iter)(struct kiocb *, struct iov_iter *);</code></h3><ul>
-<li>更现代、支持异步 IO 的读接口（基于 <code>iov_iter</code> 的 vectored IO）。</li>
-</ul>
-<h3 id="ssize-t-write-iter-struct-kiocb-struct-iov-iter"><a href="#ssize-t-write-iter-struct-kiocb-struct-iov-iter" class="headerlink" title="ssize_t (*write_iter)(struct kiocb *, struct iov_iter *);"></a><code>ssize_t (*write_iter)(struct kiocb *, struct iov_iter *);</code></h3><ul>
-<li>同上，用于 <code>write()</code> 的异步版本。</li>
-</ul>
-<hr>
-<h2 id="🔄-Poll-IO-多路复用"><a href="#🔄-Poll-IO-多路复用" class="headerlink" title="🔄 Poll &amp; IO 多路复用"></a>🔄 Poll &amp; IO 多路复用</h2><h3 id="int-iopoll-struct-kiocb-struct-io-comp-batch-unsigned-int"><a href="#int-iopoll-struct-kiocb-struct-io-comp-batch-unsigned-int" class="headerlink" title="int (*iopoll)(struct kiocb *, struct io_comp_batch *, unsigned int);"></a><code>int (*iopoll)(struct kiocb *, struct io_comp_batch *, unsigned int);</code></h3><ul>
-<li>用于 <code>io_uring</code> 的 I&#x2F;O polling。</li>
-</ul>
-<h3 id="poll-t-poll-struct-file-struct-poll-table-struct"><a href="#poll-t-poll-struct-file-struct-poll-table-struct" class="headerlink" title="__poll_t (*poll)(struct file *, struct poll_table_struct *);"></a><code>__poll_t (*poll)(struct file *, struct poll_table_struct *);</code></h3><ul>
-<li>用于 <code>poll()/select()/epoll()</code> 实现，报告事件状态（如是否可读、可写）。</li>
-</ul>
-<hr>
-<h2 id="📁-目录相关"><a href="#📁-目录相关" class="headerlink" title="📁 目录相关"></a>📁 目录相关</h2><h3 id="int-iterate-shared-struct-file-struct-dir-context"><a href="#int-iterate-shared-struct-file-struct-dir-context" class="headerlink" title="int (*iterate_shared)(struct file *, struct dir_context *);"></a><code>int (*iterate_shared)(struct file *, struct dir_context *);</code></h3><ul>
-<li>用于列目录（<code>readdir()</code>），多线程安全。</li>
-</ul>
-<hr>
-<h2 id="⚙️-控制类接口"><a href="#⚙️-控制类接口" class="headerlink" title="⚙️ 控制类接口"></a>⚙️ 控制类接口</h2><h3 id="long-unlocked-ioctl-struct-file-unsigned-int-unsigned-long"><a href="#long-unlocked-ioctl-struct-file-unsigned-int-unsigned-long" class="headerlink" title="long (*unlocked_ioctl)(struct file *, unsigned int, unsigned long);"></a><code>long (*unlocked_ioctl)(struct file *, unsigned int, unsigned long);</code></h3><ul>
-<li>实现 <code>ioctl()</code>，用户态控制指令。</li>
-</ul>
-<h3 id="long-compat-ioctl-struct-file-unsigned-int-unsigned-long"><a href="#long-compat-ioctl-struct-file-unsigned-int-unsigned-long" class="headerlink" title="long (*compat_ioctl)(struct file *, unsigned int, unsigned long);"></a><code>long (*compat_ioctl)(struct file *, unsigned int, unsigned long);</code></h3><ul>
-<li>兼容 32 位用户程序的 ioctl 调用（在 64 位内核上）。</li>
-</ul>
-<hr>
-<h2 id="📌-映射与打开关闭"><a href="#📌-映射与打开关闭" class="headerlink" title="📌 映射与打开关闭"></a>📌 映射与打开关闭</h2><h3 id="int-mmap-struct-file-struct-vm-area-struct"><a href="#int-mmap-struct-file-struct-vm-area-struct" class="headerlink" title="int (*mmap)(struct file *, struct vm_area_struct *);"></a><code>int (*mmap)(struct file *, struct vm_area_struct *);</code></h3><ul>
-<li>实现 <code>mmap()</code> 内存映射。</li>
-</ul>
-<h3 id="int-open-struct-inode-struct-file"><a href="#int-open-struct-inode-struct-file" class="headerlink" title="int (*open)(struct inode *, struct file *);"></a><code>int (*open)(struct inode *, struct file *);</code></h3><ul>
-<li>打开文件时调用（例如创建 <code>struct file *</code> 时）。</li>
-</ul>
-<h3 id="int-flush-struct-file-fl-owner-t-id"><a href="#int-flush-struct-file-fl-owner-t-id" class="headerlink" title="int (*flush)(struct file *, fl_owner_t id);"></a><code>int (*flush)(struct file *, fl_owner_t id);</code></h3><ul>
-<li>在 <code>close()</code> 前刷新数据；注意与 <code>fsync()</code> 区别。</li>
-</ul>
-<h3 id="int-release-struct-inode-struct-file"><a href="#int-release-struct-inode-struct-file" class="headerlink" title="int (*release)(struct inode *, struct file *);"></a><code>int (*release)(struct inode *, struct file *);</code></h3><ul>
-<li>文件关闭时调用，对应用户态的 <code>close()</code>。</li>
-</ul>
-<h3 id="int-fsync-struct-file-loff-t-loff-t-int-datasync"><a href="#int-fsync-struct-file-loff-t-loff-t-int-datasync" class="headerlink" title="int (*fsync)(struct file *, loff_t, loff_t, int datasync);"></a><code>int (*fsync)(struct file *, loff_t, loff_t, int datasync);</code></h3><ul>
-<li>持久化缓存数据到磁盘。</li>
-</ul>
-<hr>
-<h2 id="🔐-文件锁与异步操作"><a href="#🔐-文件锁与异步操作" class="headerlink" title="🔐 文件锁与异步操作"></a>🔐 文件锁与异步操作</h2><h3 id="int-fasync-int-struct-file-int"><a href="#int-fasync-int-struct-file-int" class="headerlink" title="int (*fasync)(int, struct file *, int);"></a><code>int (*fasync)(int, struct file *, int);</code></h3><ul>
-<li>用于注册异步通知（如 <code>SIGIO</code>）。</li>
-</ul>
-<h3 id="int-lock-struct-file-int-struct-file-lock"><a href="#int-lock-struct-file-int-struct-file-lock" class="headerlink" title="int (*lock)(struct file *, int, struct file_lock *);"></a><code>int (*lock)(struct file *, int, struct file_lock *);</code></h3><ul>
-<li><code>fcntl()</code> 文件锁接口。</li>
-</ul>
-<hr>
-<h2 id="⛏️-其他文件特性支持"><a href="#⛏️-其他文件特性支持" class="headerlink" title="⛏️ 其他文件特性支持"></a>⛏️ 其他文件特性支持</h2><h3 id="unsigned-long-get-unmapped-area"><a href="#unsigned-long-get-unmapped-area" class="headerlink" title="unsigned long (*get_unmapped_area)(...)"></a><code>unsigned long (*get_unmapped_area)(...)</code></h3><ul>
-<li>为 mmap 分配未映射的地址空间。</li>
-</ul>
-<h3 id="int-check-flags-int"><a href="#int-check-flags-int" class="headerlink" title="int (*check_flags)(int);"></a><code>int (*check_flags)(int);</code></h3><ul>
-<li>检查 <code>fcntl()</code> 设置的标志是否被支持。</li>
-</ul>
-<h3 id="int-flock-struct-file-int-struct-file-lock"><a href="#int-flock-struct-file-int-struct-file-lock" class="headerlink" title="int (*flock)(struct file *, int, struct file_lock *);"></a><code>int (*flock)(struct file *, int, struct file_lock *);</code></h3><ul>
-<li>支持 flock 风格的文件锁。</li>
-</ul>
-<hr>
-<h2 id="🧩-splice、copy、remap-等高级操作"><a href="#🧩-splice、copy、remap-等高级操作" class="headerlink" title="🧩 splice、copy、remap 等高级操作"></a>🧩 splice、copy、remap 等高级操作</h2><h3 id="ssize-t-splice-write"><a href="#ssize-t-splice-write" class="headerlink" title="ssize_t (*splice_write)(...)"></a><code>ssize_t (*splice_write)(...)</code></h3><ul>
-<li>将 pipe 内容 splice 到文件中。</li>
-</ul>
-<h3 id="ssize-t-splice-read"><a href="#ssize-t-splice-read" class="headerlink" title="ssize_t (*splice_read)(...)"></a><code>ssize_t (*splice_read)(...)</code></h3><ul>
-<li>从文件 splice 到 pipe。</li>
-</ul>
-<h3 id="void-splice-eof-struct-file-file"><a href="#void-splice-eof-struct-file-file" class="headerlink" title="void (*splice_eof)(struct file *file);"></a><code>void (*splice_eof)(struct file *file);</code></h3><ul>
-<li>当文件达到 EOF 时触发，用于 splice。</li>
-</ul>
-<hr>
-<h2 id="📄-文件空间控制"><a href="#📄-文件空间控制" class="headerlink" title="📄 文件空间控制"></a>📄 文件空间控制</h2><h3 id="int-setlease"><a href="#int-setlease" class="headerlink" title="int (*setlease)(...)"></a><code>int (*setlease)(...)</code></h3><ul>
-<li>支持 <code>fcntl()</code> 文件租约机制。</li>
-</ul>
-<h3 id="long-fallocate"><a href="#long-fallocate" class="headerlink" title="long (*fallocate)(...)"></a><code>long (*fallocate)(...)</code></h3><ul>
-<li>支持 <code>fallocate()</code> 预分配磁盘空间。</li>
-</ul>
-<h3 id="void-show-fdinfo"><a href="#void-show-fdinfo" class="headerlink" title="void (*show_fdinfo)(...)"></a><code>void (*show_fdinfo)(...)</code></h3><ul>
-<li>用于 <code>/proc/&lt;pid&gt;/fdinfo/</code> 显示调试信息。</li>
-</ul>
-<hr>
-<h2 id="🧠-与内存有关"><a href="#🧠-与内存有关" class="headerlink" title="🧠 与内存有关"></a>🧠 与内存有关</h2><h3 id="ifndef-CONFIG-MMU-下的-unsigned-mmap-capabilities"><a href="#ifndef-CONFIG-MMU-下的-unsigned-mmap-capabilities" class="headerlink" title="#ifndef CONFIG_MMU 下的 unsigned (*mmap_capabilities)(...)"></a><code>#ifndef CONFIG_MMU</code> 下的 <code>unsigned (*mmap_capabilities)(...)</code></h3><ul>
-<li>非 MMU 平台下的 mmap 能力描述函数。</li>
-</ul>
-<hr>
-<h2 id="📤-文件复制和重映射"><a href="#📤-文件复制和重映射" class="headerlink" title="📤 文件复制和重映射"></a>📤 文件复制和重映射</h2><h3 id="ssize-t-copy-file-range"><a href="#ssize-t-copy-file-range" class="headerlink" title="ssize_t (*copy_file_range)(...)"></a><code>ssize_t (*copy_file_range)(...)</code></h3><ul>
-<li>支持 <code>copy_file_range()</code> 零拷贝文件复制。</li>
-</ul>
-<h3 id="loff-t-remap-file-range"><a href="#loff-t-remap-file-range" class="headerlink" title="loff_t (*remap_file_range)(...)"></a><code>loff_t (*remap_file_range)(...)</code></h3><ul>
-<li>将文件区块重映射到另一个文件，类似 reflink。</li>
-</ul>
-<hr>
-<h2 id="💡-文件建议与-IO-uring-扩展"><a href="#💡-文件建议与-IO-uring-扩展" class="headerlink" title="💡 文件建议与 IO_uring 扩展"></a>💡 文件建议与 IO_uring 扩展</h2><h3 id="int-fadvise-struct-file-loff-t-loff-t-int"><a href="#int-fadvise-struct-file-loff-t-loff-t-int" class="headerlink" title="int (*fadvise)(struct file *, loff_t, loff_t, int);"></a><code>int (*fadvise)(struct file *, loff_t, loff_t, int);</code></h3><ul>
-<li>用于 <code>posix_fadvise()</code>，给内核 IO 策略建议。</li>
-</ul>
-<h3 id="int-uring-cmd"><a href="#int-uring-cmd" class="headerlink" title="int (*uring_cmd)(...)"></a><code>int (*uring_cmd)(...)</code></h3><ul>
-<li>用于 <code>io_uring</code> 的自定义命令。</li>
-</ul>
-<h3 id="int-uring-cmd-iopoll"><a href="#int-uring-cmd-iopoll" class="headerlink" title="int (*uring_cmd_iopoll)(...)"></a><code>int (*uring_cmd_iopoll)(...)</code></h3><ul>
-<li>上述命令的 polling 版本。</li>
-</ul>
-<hr>
-<h2 id="📝-总结"><a href="#📝-总结" class="headerlink" title="📝 总结"></a>📝 总结</h2><table>
-<thead>
-<tr>
-<th>类别</th>
-<th>成员函数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>基础读写</td>
-<td><code>read</code> &#x2F; <code>write</code> &#x2F; <code>llseek</code></td>
-<td>实现基本 IO</td>
-</tr>
-<tr>
-<td>高级 IO</td>
-<td><code>read_iter</code> &#x2F; <code>write_iter</code> &#x2F; <code>iopoll</code></td>
-<td>异步和 vectored IO</td>
-</tr>
-<tr>
-<td>控制接口</td>
-<td><code>ioctl</code>, <code>mmap</code>, <code>fadvise</code></td>
-<td>管理和控制文件行为</td>
-</tr>
-<tr>
-<td>打开关闭</td>
-<td><code>open</code>, <code>release</code>, <code>flush</code></td>
-<td>生命周期管理</td>
-</tr>
-<tr>
-<td>同步与锁</td>
-<td><code>fsync</code>, <code>lock</code>, <code>flock</code></td>
-<td>数据一致性</td>
-</tr>
-<tr>
-<td>多路复用</td>
-<td><code>poll</code>, <code>fasync</code></td>
-<td>用于 epoll、select</td>
-</tr>
-<tr>
-<td>目录</td>
-<td><code>iterate_shared</code></td>
-<td>目录读取</td>
-</tr>
-<tr>
-<td>splice &#x2F; copy</td>
-<td><code>splice_read</code>, <code>copy_file_range</code></td>
-<td>高效数据移动</td>
-</tr>
-</tbody></table>
-<p>每个进程通过“打开文件”（<code>open()</code>）与具体的文件建立起连接，或者说建立起一个读写的“上下文”。这种连接以一个<code>file</code>数据结构作为代表，结构中有个<code>file_operaitons</code>结构指针<code>f_op</code>。将<code>file</code>结构中的指针<code>f_op</code>设置成指向某个具体的<code>file_operations</code>结构，就指定了这个文件所属的文件系统，并且与具体文件系统所提供的一组函数挂上了钩。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * struct file - Represents a file</span></span><br><span class="line"><span class="comment"> * @f_lock: Protects f_ep, f_flags. Must not be taken from IRQ context.</span></span><br><span class="line"><span class="comment"> * @f_mode: FMODE_* flags often used in hotpaths</span></span><br><span class="line"><span class="comment"> * @f_op: file operations</span></span><br><span class="line"><span class="comment"> * @f_mapping: Contents of a cacheable, mappable object.</span></span><br><span class="line"><span class="comment"> * @private_data: filesystem or driver specific data</span></span><br><span class="line"><span class="comment"> * @f_inode: cached inode</span></span><br><span class="line"><span class="comment"> * @f_flags: file flags</span></span><br><span class="line"><span class="comment"> * @f_iocb_flags: iocb flags</span></span><br><span class="line"><span class="comment"> * @f_cred: stashed credentials of creator/opener</span></span><br><span class="line"><span class="comment"> * @f_owner: file owner</span></span><br><span class="line"><span class="comment"> * @f_path: path of the file</span></span><br><span class="line"><span class="comment"> * @f_pos_lock: lock protecting file position</span></span><br><span class="line"><span class="comment"> * @f_pipe: specific to pipes</span></span><br><span class="line"><span class="comment"> * @f_pos: file position</span></span><br><span class="line"><span class="comment"> * @f_security: LSM security context of this file</span></span><br><span class="line"><span class="comment"> * @f_wb_err: writeback error</span></span><br><span class="line"><span class="comment"> * @f_sb_err: per sb writeback errors</span></span><br><span class="line"><span class="comment"> * @f_ep: link of all epoll hooks for this file</span></span><br><span class="line"><span class="comment"> * @f_task_work: task work entry point</span></span><br><span class="line"><span class="comment"> * @f_llist: work queue entrypoint</span></span><br><span class="line"><span class="comment"> * @f_ra: file&#x27;s readahead state</span></span><br><span class="line"><span class="comment"> * @f_freeptr: Pointer used by SLAB_TYPESAFE_BY_RCU file cache (don&#x27;t touch.)</span></span><br><span class="line"><span class="comment"> * @f_ref: reference count</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file</span> &#123;</span></span><br><span class="line">	<span class="type">spinlock_t</span>			f_lock;</span><br><span class="line">	<span class="type">fmode_t</span>				f_mode;</span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span>	*<span class="title">f_op</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">address_space</span>		*<span class="title">f_mapping</span>;</span></span><br><span class="line">	<span class="type">void</span>				*private_data;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">inode</span>			*<span class="title">f_inode</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span>			f_flags;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span>			f_iocb_flags;</span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span>		*<span class="title">f_cred</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fown_struct</span>		*<span class="title">f_owner</span>;</span></span><br><span class="line">	<span class="comment">/* --- cacheline 1 boundary (64 bytes) --- */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">path</span>			<span class="title">f_path</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="comment">/* regular files (with FMODE_ATOMIC_POS) and directories */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">mutex</span>		<span class="title">f_pos_lock</span>;</span></span><br><span class="line">		<span class="comment">/* pipes */</span></span><br><span class="line">		u64			f_pipe;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="type">loff_t</span>				f_pos;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_SECURITY</span></span><br><span class="line">	<span class="type">void</span>				*f_security;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="comment">/* --- cacheline 2 boundary (128 bytes) --- */</span></span><br><span class="line">	<span class="type">errseq_t</span>			f_wb_err;</span><br><span class="line">	<span class="type">errseq_t</span>			f_sb_err;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_EPOLL</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">hlist_head</span>		*<span class="title">f_ep</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">callback_head</span>	<span class="title">f_task_work</span>;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">llist_node</span>	<span class="title">f_llist</span>;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">file_ra_state</span>	<span class="title">f_ra</span>;</span></span><br><span class="line">		<span class="type">freeptr_t</span>		f_freeptr;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="type">file_ref_t</span>			f_ref;</span><br><span class="line">	<span class="comment">/* --- cacheline 3 boundary (192 bytes) --- */</span></span><br><span class="line">&#125; __randomize_layout</span><br><span class="line">  __attribute__((aligned(<span class="number">4</span>)));	<span class="comment">/* lest something weird decides that 2 is OK */</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>进程与文件的连接，即“已打开文件”，是进程的一项“财产”，归具体的进程所有。这里有两个指针<code>fs</code>和<code>files</code>，一个指向<code>fs_struct</code>数据结构，是关于文件系统的信息；另一个指向<code>files_struct</code>，是关于已打开文件的信息。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> &#123;</span></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">/* Filesystem information: */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fs_struct</span>		*<span class="title">fs</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Open file information: */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">files_struct</span>		*<span class="title">files</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_IO_URING</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">io_uring_task</span>		*<span class="title">io_uring</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><code>root</code>所指向的<code>dentry</code>代表着本进程的“根目录”，那就是当用户登陆进入系统时所“看到”的根目录。实际运行时这两个目录不一定都在同一个文件系统中，例如进程的根目录通常是安装于“&#x2F;”节点上的<code>Ext2</code>文件系统中，而当前工作目录则可能安装于“&#x2F;dosc”的一个DOS文件系统中。在文件系统的操作中这些安装点起着重要的作用而常常要用到，所以<code>mnt</code>指针就指向代表着这些“安装”的<code>vfsmount</code>数据结构。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// include/linux/fs_struct.h</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fs_struct</span> &#123;</span></span><br><span class="line">	<span class="type">int</span> users;</span><br><span class="line">	<span class="type">spinlock_t</span> lock;</span><br><span class="line">	<span class="type">seqcount_spinlock_t</span> seq;</span><br><span class="line">	<span class="type">int</span> umask;</span><br><span class="line">	<span class="type">int</span> in_exec;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">path</span> <span class="title">root</span>, <span class="title">pwd</span>;</span></span><br><span class="line">&#125; __randomize_layout;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">path</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vfsmount</span> *<span class="title">mnt</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dentry</span> *<span class="title">dentry</span>;</span></span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li></li>
-</ul>
-<p>最新内核采用<strong>私有数据指针 + 动态分配</strong>的方式：</p>
-<h6 id="关键修改"><a href="#关键修改" class="headerlink" title="关键修改"></a><strong>关键修改</strong></h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">inode</span> &#123;</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">inode_operations</span> *<span class="title">i_op</span>;</span></span><br><span class="line">  <span class="type">void</span> *i_private; <span class="comment">// 替代旧版union，指向文件系统特定数据</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h6 id="配套机制"><a href="#配套机制" class="headerlink" title="配套机制"></a>配套机制</h6><ol>
-<li><p><strong>文件系统注册接口</strong>：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">super_operations</span> &#123;</span></span><br><span class="line">  <span class="type">void</span> *(*alloc_inode)(<span class="keyword">struct</span> super_block *sb);</span><br><span class="line">  <span class="type">void</span> (*free_inode)(<span class="keyword">struct</span> inode *);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>文件系统实现示例</strong>（如<code>ext4</code>）：</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct <span class="keyword">ext4_inode_info </span>&#123;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">static struct inode *<span class="keyword">ext4_alloc_inode(struct </span>super_block *<span class="keyword">sb) </span>&#123;</span><br><span class="line">  struct <span class="keyword">ext4_inode_info </span>*<span class="keyword">ei;</span></span><br><span class="line"><span class="keyword"></span>  <span class="keyword">ei </span>= kmem_cache_alloc(<span class="keyword">ext4_inode_cachep, </span>GFP_KERNEL);</span><br><span class="line">  return &amp;<span class="keyword">ei-&gt;vfs_inode;</span></span><br><span class="line"><span class="keyword"></span>&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>访问私有数据</strong>：</p>
-<p>c</p>
-<p>复制</p>
-<p>下载</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="keyword">struct</span> <span class="title class_">ext4_inode_info</span> *<span class="built_in">EXT4_I</span>(<span class="keyword">struct</span> inode *inode)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">container_of</span>(inode, <span class="keyword">struct</span> ext4_inode_info, vfs_inode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<hr>
-<h3 id="3-新旧对比"><a href="#3-新旧对比" class="headerlink" title="3. 新旧对比"></a><strong>3. 新旧对比</strong></h3><table>
-<thead>
-<tr>
-<th align="left">特性</th>
-<th align="left">旧版 (union)</th>
-<th align="left">新版 (i_private)</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>内存占用</strong></td>
-<td align="left">固定（按最大成员分配）</td>
-<td align="left">动态（按需分配）</td>
-</tr>
-<tr>
-<td align="left"><strong>扩展性</strong></td>
-<td align="left">修改核心头文件</td>
-<td align="left">无需修改VFS</td>
-</tr>
-<tr>
-<td align="left"><strong>类型安全</strong></td>
-<td align="left">依赖强制转换</td>
-<td align="left">类型安全的container_of</td>
-</tr>
-<tr>
-<td align="left"><strong>性能影响</strong></td>
-<td align="left">无动态分配开销</td>
-<td align="left">轻微内存分配开销</td>
-</tr>
-<tr>
-<td align="left"><strong>典型实现</strong></td>
-<td align="left">所有结构体定义在inode.h</td>
-<td align="left">各文件系统自行定义</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="4-实际代码示例"><a href="#4-实际代码示例" class="headerlink" title="4. 实际代码示例"></a><strong>4. 实际代码示例</strong></h3><p>以 ext4 为例的现代实现：</p>
-<h4 id="ext4-专用inode结构"><a href="#ext4-专用inode结构" class="headerlink" title="ext4 专用inode结构"></a><strong>ext4 专用inode结构</strong></h4><p>c</p>
-<p>复制</p>
-<p>下载</p>
-<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="type">ext4_inode_info</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="type">inode</span>    vfs_inode;  <span class="comment">// 内嵌标准inode</span></span><br><span class="line">    __le32          i_data[<span class="number">15</span>]; <span class="comment">// ext4特有字段</span></span><br><span class="line">    ext4_fsblk_t    i_file_acl;</span><br><span class="line">    <span class="comment">// ...其他ext4专用字段...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h4 id="从inode获取ext4数据"><a href="#从inode获取ext4数据" class="headerlink" title="从inode获取ext4数据"></a><strong>从inode获取ext4数据</strong></h4><p>c</p>
-<p>复制</p>
-<p>下载</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="keyword">struct</span> <span class="title class_">ext4_inode_info</span> *<span class="built_in">EXT4_I</span>(<span class="keyword">struct</span> inode *inode)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">container_of</span>(inode, <span class="keyword">struct</span> ext4_inode_info, vfs_inode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a><strong>使用示例</strong></h4><p>c</p>
-<p>复制</p>
-<p>下载</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">ext4_update_inode</span><span class="params">(<span class="keyword">struct</span> inode *inode)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ext4_inode_info</span> *ei = <span class="built_in">EXT4_I</span>(inode);</span><br><span class="line">    <span class="comment">// 直接访问ext4专用字段</span></span><br><span class="line">    ei-&gt;i_file_acl = new_value; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="5-设计优势"><a href="#5-设计优势" class="headerlink" title="5. 设计优势"></a><strong>5. 设计优势</strong></h3><ol>
-<li><strong>内存效率</strong>：<ul>
-<li>每个文件系统只分配自己需要的空间</li>
-<li>避免为最大文件系统（如XFS）预留空间</li>
-</ul>
-</li>
-<li><strong>模块化</strong>：<ul>
-<li>新文件系统无需修改VFS核心代码</li>
-<li>减少内核头文件依赖</li>
-</ul>
-</li>
-<li><strong>类型安全</strong>：<ul>
-<li>通过 <code>container_of</code> 宏实现安全类型转换</li>
-<li>编译时检查类型匹配</li>
-</ul>
-</li>
-<li><strong>热插拔支持</strong>：<ul>
-<li>动态加载的文件系统模块可以安全管理自己的inode数据</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h3 id="6-兼容性保留"><a href="#6-兼容性保留" class="headerlink" title="6. 兼容性保留"></a><strong>6. 兼容性保留</strong></h3><p>虽然联合体方案已被弃用，但某些机制仍保留类似思想：</p>
-<p>c</p>
-<p>复制</p>
-<p>下载</p>
-<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="type">inode</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="built_in">union</span> &#123;</span><br><span class="line">        <span class="keyword">struct</span> <span class="type">pipe_inode_info</span>  *i_pipe;</span><br><span class="line">        <span class="keyword">struct</span> <span class="type">block_device</span>    *i_bdev;</span><br><span class="line">        <span class="comment">// 少数特殊用途的共享字段</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>这些用于<strong>通用基础设施</strong>（如管道、块设备），而非文件系统特定数据。</p>
-
       
     </div>
 

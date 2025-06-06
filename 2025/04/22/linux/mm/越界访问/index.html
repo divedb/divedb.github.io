@@ -23,7 +23,7 @@
     <meta name="description" content="​	页式存储管理机制通过页面目录和页面表将每个线性地址（也可以理解为虚拟地址）转换成物理地址。如果在这个过程中遇到某种阻碍而使CPU无法最终访问到相应的物理内存单元，映射便失败了，而当前的指令也就不能执行完成。此时CPU会产生一次页面错误（Page Fault）异常（Exception）（也称缺页中断），进而执行预定的页面异常处理程序，使应用程序得以从因映射失败而暂停的指令处开始恢复执行，或进行一">
 <meta property="og:type" content="article">
 <meta property="og:title" content="越界访问">
-<meta property="og:url" content="https://huangpiao.tech/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/index.html">
+<meta property="og:url" content="https://huangpiao.tech/2025/04/22/linux/mm/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/index.html">
 <meta property="og:site_name" content="Rockyの博客">
 <meta property="og:description" content="​	页式存储管理机制通过页面目录和页面表将每个线性地址（也可以理解为虚拟地址）转换成物理地址。如果在这个过程中遇到某种阻碍而使CPU无法最终访问到相应的物理内存单元，映射便失败了，而当前的指令也就不能执行完成。此时CPU会产生一次页面错误（Page Fault）异常（Exception）（也称缺页中断），进而执行预定的页面异常处理程序，使应用程序得以从因映射失败而暂停的指令处开始恢复执行，或进行一">
 <meta property="og:locale" content="zh_CN">
@@ -34,10 +34,10 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://huangpiao.tech/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/">
+<link rel="canonical" href="https://huangpiao.tech/2025/04/22/linux/mm/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/","path":"2025/04/22/linux/memory/越界访问/","title":"越界访问"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/22/linux/mm/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/","path":"2025/04/22/linux/mm/越界访问/","title":"越界访问"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>越界访问 | Rockyの博客</title>
@@ -126,7 +126,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/22/linux/mm/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -253,7 +253,7 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/" rel="next" title="用户堆栈的扩展">
+                <a href="/2025/04/22/linux/mm/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/" rel="next" title="用户堆栈的扩展">
                   用户堆栈的扩展 <i class="fa fa-angle-right"></i>
                 </a>
             </div>

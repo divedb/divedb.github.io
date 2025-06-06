@@ -23,7 +23,7 @@
     <meta name="description" content="​	假设在进程运行的过程中，已经用尽了为本进程分配的堆栈区间，也就是从堆栈道“顶部”开始（记住，堆栈是从上向下伸展的），已经到达了已映射的堆栈区间的下沿。或者说，CPU中的堆栈指针%esp已经指向堆栈区间的起始地址。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用户堆栈的扩展">
-<meta property="og:url" content="https://huangpiao.tech/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/index.html">
+<meta property="og:url" content="https://huangpiao.tech/2025/04/22/linux/mm/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/index.html">
 <meta property="og:site_name" content="Rockyの博客">
 <meta property="og:description" content="​	假设在进程运行的过程中，已经用尽了为本进程分配的堆栈区间，也就是从堆栈道“顶部”开始（记住，堆栈是从上向下伸展的），已经到达了已映射的堆栈区间的下沿。或者说，CPU中的堆栈指针%esp已经指向堆栈区间的起始地址。">
 <meta property="og:locale" content="zh_CN">
@@ -34,10 +34,10 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://huangpiao.tech/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/">
+<link rel="canonical" href="https://huangpiao.tech/2025/04/22/linux/mm/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/","path":"2025/04/22/linux/memory/用户堆栈道扩展/","title":"用户堆栈的扩展"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/22/linux/mm/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/","path":"2025/04/22/linux/mm/用户堆栈道扩展/","title":"用户堆栈的扩展"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>用户堆栈的扩展 | Rockyの博客</title>
@@ -126,7 +126,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/22/linux/memory/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/22/linux/mm/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -252,7 +252,7 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2025/04/22/linux/memory/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/" rel="prev" title="越界访问">
+                <a href="/2025/04/22/linux/mm/%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE/" rel="prev" title="越界访问">
                   <i class="fa fa-angle-left"></i> 越界访问
                 </a>
             </div>

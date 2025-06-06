@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://huangpiao.tech/images/linux/uxfs/uxfs_disk_layout.png">
 <meta property="article:published_time" content="2025-05-14T14:24:34.330Z">
-<meta property="article:modified_time" content="2025-06-05T06:19:43.383Z">
+<meta property="article:modified_time" content="2025-06-05T07:04:22.277Z">
 <meta property="article:author" content="Rocky">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="文件系统">
@@ -118,7 +118,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%92%A1%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">💡设计思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%94%A7-%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3"><span class="nav-number">3.0.1.</span> <span class="nav-text">🔧 如何解决</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E2%9C%85-%E4%BF%AE%E6%94%B9%E5%90%8E%EF%BC%88%E9%80%82%E7%94%A8%E4%BA%8ELinux-%E2%89%A5-6-2%EF%BC%89%EF%BC%9A"><span class="nav-number">3.0.2.</span> <span class="nav-text">✅ 修改后（适用于Linux ≥ 6.2）：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A"><span class="nav-number">4.</span> <span class="nav-text">补充：</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%92%A1%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">💡设计思路</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%B1-struct-buffer-head-%E5%AD%97%E6%AE%B5%E8%AF%A6%E8%A7%A3%EF%BC%9A"><span class="nav-number"></span> <span class="nav-text">🧱 struct buffer_head 字段详解：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9unsigned-long-b-state"><span class="nav-number"></span> <span class="nav-text">🔹unsigned long b_state</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9struct-buffer-head-b-this-page"><span class="nav-number"></span> <span class="nav-text">🔹struct buffer_head *b_this_page</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9%E8%81%94%E5%90%88%E4%BD%93%EF%BC%9Aunion-struct-page-b-page-struct-folio-b-folio"><span class="nav-number"></span> <span class="nav-text">🔹联合体：union { struct page *b_page; struct folio *b_folio; }</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9sector-t-b-blocknr"><span class="nav-number"></span> <span class="nav-text">🔹sector_t b_blocknr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9size-t-b-size"><span class="nav-number"></span> <span class="nav-text">🔹size_t b_size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9char-b-data"><span class="nav-number"></span> <span class="nav-text">🔹char *b_data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9struct-block-device-b-bdev"><span class="nav-number"></span> <span class="nav-text">🔹struct block_device *b_bdev</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9bh-end-io-t-b-end-io"><span class="nav-number"></span> <span class="nav-text">🔹bh_end_io_t *b_end_io</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9void-b-private"><span class="nav-number"></span> <span class="nav-text">🔹void *b_private</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9struct-list-head-b-assoc-buffers"><span class="nav-number"></span> <span class="nav-text">🔹struct list_head b_assoc_buffers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9struct-address-space-b-assoc-map"><span class="nav-number"></span> <span class="nav-text">🔹struct address_space *b_assoc_map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9atomic-t-b-count"><span class="nav-number"></span> <span class="nav-text">🔹atomic_t b_count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9spinlock-t-b-uptodate-lock"><span class="nav-number"></span> <span class="nav-text">🔹spinlock_t b_uptodate_lock</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.</span> <span class="nav-text">实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%94%A7-%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3"><span class="nav-number">1.0.1.</span> <span class="nav-text">🔧 如何解决</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E2%9C%85-%E4%BF%AE%E6%94%B9%E5%90%8E%EF%BC%88%E9%80%82%E7%94%A8%E4%BA%8ELinux-%E2%89%A5-6-2%EF%BC%89%EF%BC%9A"><span class="nav-number">1.0.2.</span> <span class="nav-text">✅ 修改后（适用于Linux ≥ 6.2）：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">补充：</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -131,7 +131,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -204,7 +204,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-05 14:19:43" itemprop="dateModified" datetime="2025-06-05T14:19:43+08:00">2025-06-05</time>
+      <time title="修改时间：2025-06-05 15:04:22" itemprop="dateModified" datetime="2025-06-05T15:04:22+08:00">2025-06-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -257,6 +257,82 @@
 </ul>
 <p>除了决定哪些操作由<code>uxfs</code>自己实现外，还可以选择使用内核提供的通用（<code>generic</code>）函数来代替自定义实现，这在很大程度上简化了文件系统的开发工作。</p>
 <p><img src="/images/linux/uxfs/uxfs_disk_layout.png"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Historically, a buffer_head was used to map a single block</span></span><br><span class="line"><span class="comment"> * within a page, and of course as the unit of I/O through the</span></span><br><span class="line"><span class="comment"> * filesystem and block layers.  Nowadays the basic I/O unit</span></span><br><span class="line"><span class="comment"> * is the bio, and buffer_heads are used for extracting block</span></span><br><span class="line"><span class="comment"> * mappings (via a get_block_t call), for tracking state within</span></span><br><span class="line"><span class="comment"> * a folio (via a folio_mapping) and for wrapping bio submission</span></span><br><span class="line"><span class="comment"> * for backward compatibility reasons (e.g. submit_bh).</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buffer_head</span> &#123;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> b_state;           <span class="comment">/* buffer state bitmap (see above) */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">buffer_head</span> *<span class="title">b_this_page</span>;</span> <span class="comment">/* circular list of page&#x27;s buffers */</span></span><br><span class="line">  <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">page</span> *<span class="title">b_page</span>;</span>   <span class="comment">/* the page this bh is mapped to */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">folio</span> *<span class="title">b_folio</span>;</span> <span class="comment">/* the folio this bh is mapped to */</span></span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="type">sector_t</span> b_blocknr; <span class="comment">/* start block number */</span></span><br><span class="line">  <span class="type">size_t</span> b_size;      <span class="comment">/* size of mapping */</span></span><br><span class="line">  <span class="type">char</span> *b_data;       <span class="comment">/* pointer to data within the page */</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">block_device</span> *<span class="title">b_bdev</span>;</span></span><br><span class="line">  <span class="type">bh_end_io_t</span> *b_end_io;             <span class="comment">/* I/O completion */</span></span><br><span class="line">  <span class="type">void</span> *b_private;                   <span class="comment">/* reserved for b_end_io */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">b_assoc_buffers</span>;</span>  <span class="comment">/* associated with another mapping */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">address_space</span> *<span class="title">b_assoc_map</span>;</span> <span class="comment">/* mapping this buffer is</span></span><br><span class="line"><span class="comment">                                        associated with */</span></span><br><span class="line">  <span class="type">atomic_t</span> b_count;                  <span class="comment">/* users using this buffer_head */</span></span><br><span class="line">  <span class="type">spinlock_t</span> b_uptodate_lock;        <span class="comment">/* Used by the first bh in a page, to</span></span><br><span class="line"><span class="comment">                                      * serialise IO completion of other</span></span><br><span class="line"><span class="comment">                                      * buffers in the page */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="🧱-struct-buffer-head-字段详解："><a href="#🧱-struct-buffer-head-字段详解：" class="headerlink" title="🧱 struct buffer_head 字段详解："></a>🧱 <code>struct buffer_head</code> 字段详解：</h2><h3 id="🔹unsigned-long-b-state"><a href="#🔹unsigned-long-b-state" class="headerlink" title="🔹unsigned long b_state"></a>🔹<code>unsigned long b_state</code></h3><ul>
+<li><strong>作用</strong>：记录缓冲区的状态，是一个 bitmap。</li>
+<li><strong>常见状态位</strong>（定义于 <code>include/linux/buffer_head.h</code>）：<ul>
+<li><code>BH_Uptodate</code>：数据是最新的；</li>
+<li><code>BH_Dirty</code>：缓冲区已修改，需要写回；</li>
+<li><code>BH_Lock</code>：正在进行 I&#x2F;O 操作；</li>
+<li><code>BH_Mapped</code>：已与块设备地址映射；</li>
+<li><code>BH_New</code>：新分配的块。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="🔹struct-buffer-head-b-this-page"><a href="#🔹struct-buffer-head-b-this-page" class="headerlink" title="🔹struct buffer_head *b_this_page"></a>🔹<code>struct buffer_head *b_this_page</code></h3><ul>
+<li><strong>作用</strong>：指向同一页中其他 <code>buffer_head</code> 的循环链表。</li>
+<li>每个页可能被分成多个 buffer（例如 ext2 下一个页 4096B，分 4 个 1KB buffer），这形成一个 buffer head 的循环链表。</li>
+</ul>
+<hr>
+<h3 id="🔹联合体：union-struct-page-b-page-struct-folio-b-folio"><a href="#🔹联合体：union-struct-page-b-page-struct-folio-b-folio" class="headerlink" title="🔹联合体：union { struct page *b_page; struct folio *b_folio; }"></a>🔹联合体：<code>union &#123; struct page *b_page; struct folio *b_folio; &#125;</code></h3><ul>
+<li><strong>作用</strong>：指向这个 buffer 所在的页（或 folio）。</li>
+<li>Linux 5.16+ 开始逐步引入 <code>folio</code>（一种更高效的 page 管理方式）。</li>
+<li>这个 union 是为了兼容老式 <code>page</code> 与新式 <code>folio</code>，在访问时二选一。</li>
+</ul>
+<hr>
+<h3 id="🔹sector-t-b-blocknr"><a href="#🔹sector-t-b-blocknr" class="headerlink" title="🔹sector_t b_blocknr"></a>🔹<code>sector_t b_blocknr</code></h3><ul>
+<li><strong>作用</strong>：这个缓冲块所映射的设备上的起始块号（block number）。</li>
+<li>用于定位磁盘上的真实数据位置，单位是块（不是扇区）。</li>
+</ul>
+<hr>
+<h3 id="🔹size-t-b-size"><a href="#🔹size-t-b-size" class="headerlink" title="🔹size_t b_size"></a>🔹<code>size_t b_size</code></h3><ul>
+<li><strong>作用</strong>：表示该缓冲区的大小（单位是字节），比如 1024B、4096B。</li>
+<li>注意，不一定等于页大小。通常小于或等于 <code>PAGE_SIZE</code>。</li>
+</ul>
+<hr>
+<h3 id="🔹char-b-data"><a href="#🔹char-b-data" class="headerlink" title="🔹char *b_data"></a>🔹<code>char *b_data</code></h3><ul>
+<li><strong>作用</strong>：指向缓冲区在内存中的数据地址，属于页缓存的一部分。</li>
+<li>文件系统或块层通过它直接读写数据内容。</li>
+</ul>
+<hr>
+<h3 id="🔹struct-block-device-b-bdev"><a href="#🔹struct-block-device-b-bdev" class="headerlink" title="🔹struct block_device *b_bdev"></a>🔹<code>struct block_device *b_bdev</code></h3><ul>
+<li><strong>作用</strong>：该缓冲块所属的块设备（如 <code>/dev/sda</code>）。</li>
+<li>与 <code>b_blocknr</code> 一起定位该缓冲块在设备上的真实位置。</li>
+</ul>
+<hr>
+<h3 id="🔹bh-end-io-t-b-end-io"><a href="#🔹bh-end-io-t-b-end-io" class="headerlink" title="🔹bh_end_io_t *b_end_io"></a>🔹<code>bh_end_io_t *b_end_io</code></h3><ul>
+<li><strong>作用</strong>：当 I&#x2F;O 操作完成时被调用的回调函数。</li>
+<li>通常用于解锁 buffer，标记状态（如 <code>BH_Uptodate</code>），唤醒等待线程等。</li>
+</ul>
+<hr>
+<h3 id="🔹void-b-private"><a href="#🔹void-b-private" class="headerlink" title="🔹void *b_private"></a>🔹<code>void *b_private</code></h3><ul>
+<li><strong>作用</strong>：供 <code>b_end_io</code> 使用的私有数据指针。</li>
+<li>可传递上下文，例如 bio、任务队列或回调状态。</li>
+</ul>
+<hr>
+<h3 id="🔹struct-list-head-b-assoc-buffers"><a href="#🔹struct-list-head-b-assoc-buffers" class="headerlink" title="🔹struct list_head b_assoc_buffers"></a>🔹<code>struct list_head b_assoc_buffers</code></h3><ul>
+<li><strong>作用</strong>：将该 buffer_head 挂入某个 address_space 的 buffer 列表中。</li>
+<li>比如 inode 的 mapping 管理其相关缓冲块，用这个字段组织起来。</li>
+</ul>
+<hr>
+<h3 id="🔹struct-address-space-b-assoc-map"><a href="#🔹struct-address-space-b-assoc-map" class="headerlink" title="🔹struct address_space *b_assoc_map"></a>🔹<code>struct address_space *b_assoc_map</code></h3><ul>
+<li><strong>作用</strong>：该缓冲区所属的 <code>address_space</code>。</li>
+<li>通常是 inode-&gt;i_mapping，用于建立磁盘数据与文件页缓存之间的关系。</li>
+</ul>
+<hr>
+<h3 id="🔹atomic-t-b-count"><a href="#🔹atomic-t-b-count" class="headerlink" title="🔹atomic_t b_count"></a>🔹<code>atomic_t b_count</code></h3><ul>
+<li><strong>作用</strong>：引用计数，表示有多少用户正在使用该 buffer_head。</li>
+<li>用于资源释放控制（当引用为 0 可被释放）。</li>
+</ul>
+<hr>
+<h3 id="🔹spinlock-t-b-uptodate-lock"><a href="#🔹spinlock-t-b-uptodate-lock" class="headerlink" title="🔹spinlock_t b_uptodate_lock"></a>🔹<code>spinlock_t b_uptodate_lock</code></h3><ul>
+<li><strong>作用</strong>：序列化同一页中多个 buffer 的 I&#x2F;O 完成过程。</li>
+<li>通常只用于一个页中的第一个 buffer，防止多个 buffer 同时修改页面状态造成竞态。</li>
+</ul>
 <h4 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h4><ol>
 <li><strong>定义文件系统类型</strong>：<ul>
 <li>实现<code>struct file_system_type</code>结构体</li>
