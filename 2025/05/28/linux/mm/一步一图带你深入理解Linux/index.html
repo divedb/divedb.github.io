@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="转载：一步一图带你深入理解 Linux 虚拟内存管理 ​	内存管理子系统可谓是Linux内核众多子系统中最为复杂最为庞大的一个，其中包含了众多繁杂的概念和原理，通过内存管理这条主线可以把操作系统的众多核心系统整理出来，比如：进程管理子系统，网络子系统，文件系统子系统等。 当程序运行起来之后就变成了进程，d数据结构的引用在进程的视角里都是虚拟内存地址，物理内存空间被操作系统所屏蔽进程是看不到的。 进">
+    <meta name="description" content="转载：一步一图带你深入理解Linux虚拟内存管理 ​	内存管理子系统可谓是Linux内核众多子系统中最为复杂最为庞大的一个，其中包含了众多繁杂的概念和原理，通过内存管理这条主线可以把操作系统的众多核心系统整理出来，比如：进程管理子系统，网络子系统，文件系统子系统等。 当程序运行起来之后就变成了进程，d数据结构的引用在进程的视角里都是虚拟内存地址，物理内存空间被操作系统所屏蔽进程是看不到的。 进程通">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一步一图带你深入理解Linux">
+<meta property="og:title" content="虚拟内存管理">
 <meta property="og:url" content="https://huangpiao.tech/2025/05/28/linux/mm/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/index.html">
 <meta property="og:site_name" content="Rockyの博客">
-<meta property="og:description" content="转载：一步一图带你深入理解 Linux 虚拟内存管理 ​	内存管理子系统可谓是Linux内核众多子系统中最为复杂最为庞大的一个，其中包含了众多繁杂的概念和原理，通过内存管理这条主线可以把操作系统的众多核心系统整理出来，比如：进程管理子系统，网络子系统，文件系统子系统等。 当程序运行起来之后就变成了进程，d数据结构的引用在进程的视角里都是虚拟内存地址，物理内存空间被操作系统所屏蔽进程是看不到的。 进">
+<meta property="og:description" content="转载：一步一图带你深入理解Linux虚拟内存管理 ​	内存管理子系统可谓是Linux内核众多子系统中最为复杂最为庞大的一个，其中包含了众多繁杂的概念和原理，通过内存管理这条主线可以把操作系统的众多核心系统整理出来，比如：进程管理子系统，网络子系统，文件系统子系统等。 当程序运行起来之后就变成了进程，d数据结构的引用在进程的视角里都是虚拟内存地址，物理内存空间被操作系统所屏蔽进程是看不到的。 进程通">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://pic1.zhimg.com/v2-72275ea489e68213639a11f82cccaeea_1440w.jpg">
 <meta property="og:image" content="https://picx.zhimg.com/v2-199c9bbc4a6fa2cea83b95c9056e72b7_1440w.jpg">
@@ -83,7 +83,7 @@
 <meta property="og:image" content="https://picx.zhimg.com/v2-1ce467976f78f72f11604fd800714021_1440w.jpg">
 <meta property="og:image" content="https://pic4.zhimg.com/v2-ebd61c09a624b6f32b935d924904a1ed_1440w.jpg">
 <meta property="article:published_time" content="2025-05-28T08:59:17.685Z">
-<meta property="article:modified_time" content="2025-06-06T14:51:04.638Z">
+<meta property="article:modified_time" content="2025-06-06T14:52:44.249Z">
 <meta property="article:author" content="Rocky">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="内存管理">
@@ -94,10 +94,10 @@
 <link rel="canonical" href="https://huangpiao.tech/2025/05/28/linux/mm/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/28/linux/mm/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/","path":"2025/05/28/linux/mm/一步一图带你深入理解Linux/","title":"一步一图带你深入理解Linux"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/05/28/linux/mm/%E4%B8%80%E6%AD%A5%E4%B8%80%E5%9B%BE%E5%B8%A6%E4%BD%A0%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux/","path":"2025/05/28/linux/mm/一步一图带你深入理解Linux/","title":"虚拟内存管理"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>一步一图带你深入理解Linux | Rockyの博客</title>
+<title>虚拟内存管理 | Rockyの博客</title>
   
 
 
@@ -184,7 +184,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -234,12 +234,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="一步一图带你深入理解Linux | Rockyの博客">
+      <meta itemprop="name" content="虚拟内存管理 | Rockyの博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          一步一图带你深入理解Linux
+          虚拟内存管理
         </h1>
 
         <div class="post-meta-container">
@@ -257,7 +257,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-06 22:51:04" itemprop="dateModified" datetime="2025-06-06T22:51:04+08:00">2025-06-06</time>
+      <time title="修改时间：2025-06-06 22:52:44" itemprop="dateModified" datetime="2025-06-06T22:52:44+08:00">2025-06-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,7 +278,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>转载：<a href="https://zhuanlan.zhihu.com/p/577035415">一步一图带你深入理解 Linux 虚拟内存管理</a></p>
+    <div class="post-body" itemprop="articleBody"><p>转载：<a href="https://zhuanlan.zhihu.com/p/577035415">一步一图带你深入理解Linux虚拟内存管理</a></p>
 <p>​	内存管理子系统可谓是<code>Linux</code>内核众多子系统中最为复杂最为庞大的一个，其中包含了众多繁杂的概念和原理，通过内存管理这条主线可以把操作系统的众多核心系统整理出来，比如：进程管理子系统，网络子系统，文件系统子系统等。</p>
 <p>当程序运行起来之后就变成了进程，d数据结构的引用在进程的视角里都是虚拟内存地址，物理内存空间被操作系统所屏蔽进程是看不到的。</p>
 <p>进程通过虚拟内存地址访问这些数据结构的时候，虚拟内存地址会在内存管理子系统中被转换成物理内存地址，通过物理内存地址就可以访问到真正存储这些数据结构的物理内存了。</p>

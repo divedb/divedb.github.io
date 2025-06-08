@@ -123,7 +123,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -150,6 +150,95 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/" class="post-title-link" itemprop="url">标准I/O库</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-13 10:44:35 / 修改时间：12:26:13" itemprop="dateCreated datePublished" datetime="2025-05-13T10:44:35+08:00">2025-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>​	操作系统提供基本文件访问系统调用（如 <code>open</code>、<code>read</code> 等），但用户在进行文件操作时，往往需要更高级的功能。标准 <code>I/O</code>库（<code>stdio</code>），作为<code>ANSI C</code>标准的一部分，提供额外的功能，避免重复造轮子。</p>
+<p>​	已有大量书籍就少标准<code>I/O</code>库提供的各类调用。而本章则采取不同的视角，通过剖析<code>Linux</code>标准<code>I/O</code>库的实现机制，介绍其核心结构、如何支持各类函数，以及库函数如何映射到底层<code>UNIX</code>系统调用。</p>
+<p>应用程序是否使用标准<code>I/O</code>库，而不是直接调用底层系统调用，取决于应用的需求。如果需要更丰富的功能，且对性能要求不高，标准<code>I/O</code>库提供的丰富函数通常能够满足大多数程序员的需要。但如果性能是关键考量，或者需要更精细地控制<code>I/O</code>行为，那么理解文件系统的<code>I/O</code>实现，并绕过标准<code>I/O</code>库直接使用系统调用，会是更优的选择。</p>
+<p>本章不会逐一讲解<code>stdio</code>提供的众多函数，而是聚焦于标准<code>I/O</code>库的底层实现机制。关于接口的详细介绍，可参考<code>Richard Stevens</code>所著的《<code>UNIX</code>高级环境编程》一书，或查阅<code>Single UNIX Specification</code>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/05/13/linux/fs/%E6%A0%87%E5%87%86IO%E5%BA%93/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1017,98 +1106,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/04/14/c++/coroutine/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3promise%E7%B1%BB%E5%9E%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/14/c++/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/14/c++/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="post-title-link" itemprop="url">理解C++中的co_await操作符</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-04-14 13:51:55 / 修改时间：16:17:20" itemprop="dateCreated datePublished" datetime="2025-04-14T13:51:55+08:00">2025-04-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/c/co-routine/" itemprop="url" rel="index"><span itemprop="name">co_routine</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>翻译：<a href="https://lewissbaker.github.io/2017/11/17/understanding-operator-co-await">C++ Coroutines: Understanding operator co_await</a></p>
-<p>2017年11月17日</p>
-<p>之前的《协程理论》文章概述了函数与协程的区别，但未深入C++协程TS（N4680）的具体语法和语义。协程TS引入的核心机制是通过新的<code>co_await</code>操作符实现协程的挂起与恢复。理解<code>co_await</code>的工作原理是解密协程行为的关键。本文将剖析<code>co_await</code>的机制，并介绍相关的Awaitable（可等待）和Awaiter（等待器）类型概念。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/04/14/c++/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
