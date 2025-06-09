@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	本文将针对内核版本6.15.0中的mount系统调用实现过程进行简单说明。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件系统挂载分析">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/09/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	本文将针对内核版本6.15.0中的mount系统调用实现过程进行简单说明。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://edsionte.com/techblog/wordpress/wp-content/uploads/2014/02/do_mount.jpg">
+<meta property="article:published_time" content="2025-06-09T14:49:45.102Z">
+<meta property="article:modified_time" content="2025-06-09T15:14:00.468Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="挂载">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://edsionte.com/techblog/wordpress/wp-content/uploads/2014/02/do_mount.jpg">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/09/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD%E5%88%86%E6%9E%90/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/09/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD%E5%88%86%E6%9E%90/","path":"2025/06/09/linux/fs/文件系统挂载分析/","title":"文件系统挂载分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>文件系统挂载分析 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number"></span> <span class="nav-text">1.数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="nav-number"></span> <span class="nav-text">2.函数调用关系图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number"></span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%9E%E7%8E%B0"><span class="nav-number"></span> <span class="nav-text">3.实现</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/09/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="文件系统挂载分析 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          文件系统挂载分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-09 22:49:45 / 修改时间：23:14:00" itemprop="dateCreated datePublished" datetime="2025-06-09T22:49:45+08:00">2025-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文将针对内核版本<code>6.15.0</code>中的<code>mount</code>系统调用实现过程进行简单说明。</p>
+<span id="more"></span>
+
+<h2 id="1-数据结构"><a href="#1-数据结构" class="headerlink" title="1.数据结构"></a>1.数据结构</h2><p>下面将对文件系统挂载过程中涉及到的两个主要数据结构vfsmount和path进行节本说明。</p>
+<p><strong>1.1 struct vfsmount</strong></p>
+<p>每个挂载在内核目录树中的文件系统都将对应一个vfsmount结构，下面将对该结构中的部分字段进行说明。假设设备&#x2F;dev&#x2F;sdc为ntfs文件系统，现需要将其挂载在文件系统为ext3的&#x2F;home&#x2F;edsionte&#x2F;work下。因此，&#x2F;home&#x2F;edsionte&#x2F;work可以被称为ntfs文件系统的挂载点，并且称ntfs文件系统与ext3文件系统形成父子文件文件系统关系。同时ntfs也可称为源文件系统，而ext3也可称为目的文件系统。</p>
+<p>struct list_head mnt_hash;</p>
+<p>内核将系统内所有已挂载的文件系统通过散列表的形式进行组织，每个vfsmount将处于其对应哈希值的冲突链表当中。mnt_hash字段则为具体冲突链表的元素。</p>
+<p>struct list_head mnt_mounts;</p>
+<p>如果当前文件系统下挂载了其他的子文件系统，那么这些子文件系统将通过自身vfsmount中的mnt_child字段组成一个链表，该链表头为父文件系统中的mnt_mounts字段。</p>
+<p>struct list_head mnt_child;</p>
+<p>当前文件系统将通过该字段与其他父文件系统下的子文件系统组成一个链表。</p>
+<p>struct vfsmount *mnt_parent;</p>
+<p>该字段指向父文件系统对应的vfsmount结构。即指向ext3文件系统对应的vfsmount结构。</p>
+<p>struct dentry *mnt_mountpoint;</p>
+<p>该字段表示源文件系统在目的文件系统中挂载点对应的dentry结构。&#x2F;home&#x2F;edsionte&#x2F;work为挂载点，则该字段指向目录项work。</p>
+<p>struct dentry *mnt_root;</p>
+<p>指向当前文件系统的根目录项。对于源文件系统ntfs来说，根目录项相对为&#x2F;，但在整个系统目录树中，根目录项为work。</p>
+<p>struct super_block *mnt_sb;</p>
+<p>每个文件系统都将对应一个super_block结构，该字段指向&#x2F;dev&#x2F;sdc设备上文件系统对应的超级块。</p>
+<p>struct list_head mnt_list;</p>
+<p>所有处于一个名字空间的文件系统通过mnt_list字段链接在一起，而该链表的表头为该名字空间结构中的list字段。</p>
+<p>struct mnt_namespace *mnt_ns;</p>
+<p>该字段表示当前vfsmount所对应的名字空间结构。</p>
+<p><strong>1.2 struct path</strong></p>
+<p>path结构由vfsmount结构和dentry结构组成。该结构在挂载文件系统时表示目的文件系统的vfsmount结构和挂载点dentry。</p>
+<h2 id="2-函数调用关系图"><a href="#2-函数调用关系图" class="headerlink" title="2.函数调用关系图"></a>2.函数调用关系图</h2><h2 id><a href="#" class="headerlink" title></a><a href="http://edsionte.com/techblog/wordpress/wp-content/uploads/2014/02/do_mount.jpg"><img src="http://edsionte.com/techblog/wordpress/wp-content/uploads/2014/02/do_mount.jpg" alt="do_mount"></a></h2><h2 id="3-实现"><a href="#3-实现" class="headerlink" title="3.实现"></a>3.实现</h2><p><strong>3.1 mount系统调用服务例程</strong></p>
+<p>mount()系统调用服务例程为：</p>
+<p>SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name, char __user *, type, unsigned long, flags, void __user *, data)</p>
+<p>其内部实现主要是将用户态的参数依次复制到内核态，接着调用内核函数do_mount()。</p>
+<p><strong>3.2 do_mount()</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">do_mount</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *dev_name, <span class="type">const</span> <span class="type">char</span> __user *dir_name,</span></span><br><span class="line"><span class="params">             <span class="type">const</span> <span class="type">char</span> *type_page, <span class="type">unsigned</span> <span class="type">long</span> flags, <span class="type">void</span> *data_page)</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">path</span> <span class="title">path</span>;</span></span><br><span class="line">  <span class="type">int</span> ret;</span><br><span class="line">  <span class="comment">// 解析用户空间传来的挂载点目录路径，转换成内核路径结构</span></span><br><span class="line">  ret = user_path_at(AT_FDCWD, dir_name, LOOKUP_FOLLOW, &amp;path);</span><br><span class="line">  <span class="keyword">if</span> (ret) <span class="keyword">return</span> ret;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 进行实际挂载操作</span></span><br><span class="line">  ret = path_mount(dev_name, &amp;path, type_page, flags, data_page);</span><br><span class="line">  path_put(&amp;path);</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>💡参数含义</p>
+<ul>
+<li><code>dev_name</code>：要挂载的设备名称（比如<code>/dev/sda1</code>），可以为<code>NULL</code>（比如挂载<code>tmpfs</code>）。</li>
+<li><code>dir_name</code>：用户空间字符串，表示挂载点目录路径（比如<code>/mnt</code>），是用户地址空间指针。</li>
+<li><code>type_page</code>：文件系统类型字符串（比如<code>&quot;ext4&quot;</code>、<code>&quot;tmpfs&quot;</code>）。</li>
+<li><code>flags</code>：挂载选项标志（比如只读、同步等）。</li>
+<li><code>data_page</code>：文件系统专用的挂载参数结构，类型和内容取决于文件系统。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Flags is a 32-bit value that allows up to 31 non-fs dependent flags to</span></span><br><span class="line"><span class="comment"> * be given to the mount() call (ie: read-only, no-dev, no-suid etc).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * data is a (void *) that can point to any structure up to</span></span><br><span class="line"><span class="comment"> * PAGE_SIZE-1 bytes, which can contain arbitrary fs-dependent</span></span><br><span class="line"><span class="comment"> * information (or be NULL).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Pre-0.97 versions of mount() didn&#x27;t have a flags word.</span></span><br><span class="line"><span class="comment"> * When the flags word was introduced its top half was required</span></span><br><span class="line"><span class="comment"> * to have the magic value 0xC0ED, and this remained so until 2.4.0-test9.</span></span><br><span class="line"><span class="comment"> * Therefore, if this magic number is present, it carries no information</span></span><br><span class="line"><span class="comment"> * and must be discarded.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">path_mount</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *dev_name, <span class="keyword">struct</span> path *path, <span class="type">const</span> <span class="type">char</span> *type_page,</span></span><br><span class="line"><span class="params">               <span class="type">unsigned</span> <span class="type">long</span> flags, <span class="type">void</span> *data_page)</span> &#123;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> mnt_flags = <span class="number">0</span>, sb_flags;</span><br><span class="line">  <span class="type">int</span> ret;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Discard magic */</span></span><br><span class="line">  <span class="keyword">if</span> ((flags &amp; MS_MGC_MSK) == MS_MGC_VAL) flags &amp;= ~MS_MGC_MSK;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Basic sanity checks */</span></span><br><span class="line">  <span class="keyword">if</span> (data_page) ((<span class="type">char</span> *)data_page)[PAGE_SIZE - <span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_NOUSER) <span class="keyword">return</span> -EINVAL;</span><br><span class="line"></span><br><span class="line">  ret = security_sb_mount(dev_name, path, type_page, flags, data_page);</span><br><span class="line">  <span class="keyword">if</span> (ret) <span class="keyword">return</span> ret;</span><br><span class="line">  <span class="keyword">if</span> (!may_mount()) <span class="keyword">return</span> -EPERM;</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; SB_MANDLOCK) warn_mandlock();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Default to relatime unless overriden */</span></span><br><span class="line">  <span class="keyword">if</span> (!(flags &amp; MS_NOATIME)) mnt_flags |= MNT_RELATIME;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Separate the per-mountpoint flags */</span></span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_NOSUID) mnt_flags |= MNT_NOSUID;</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_NODEV) mnt_flags |= MNT_NODEV;</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_NOEXEC) mnt_flags |= MNT_NOEXEC;</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_NOATIME) mnt_flags |= MNT_NOATIME;</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_NODIRATIME) mnt_flags |= MNT_NODIRATIME;</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_STRICTATIME) mnt_flags &amp;= ~(MNT_RELATIME | MNT_NOATIME);</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_RDONLY) mnt_flags |= MNT_READONLY;</span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_NOSYMFOLLOW) mnt_flags |= MNT_NOSYMFOLLOW;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* The default atime for remount is preservation */</span></span><br><span class="line">  <span class="keyword">if</span> ((flags &amp; MS_REMOUNT) &amp;&amp; ((flags &amp; (MS_NOATIME | MS_NODIRATIME |</span><br><span class="line">                                         MS_RELATIME | MS_STRICTATIME)) == <span class="number">0</span>)) &#123;</span><br><span class="line">    mnt_flags &amp;= ~MNT_ATIME_MASK;</span><br><span class="line">    mnt_flags |= path-&gt;mnt-&gt;mnt_flags &amp; MNT_ATIME_MASK;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  sb_flags = flags &amp; (SB_RDONLY | SB_SYNCHRONOUS | SB_MANDLOCK | SB_DIRSYNC |</span><br><span class="line">                      SB_SILENT | SB_POSIXACL | SB_LAZYTIME | SB_I_VERSION);</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// Remount bind mount的特殊情况</span></span><br><span class="line">  <span class="keyword">if</span> ((flags &amp; (MS_REMOUNT | MS_BIND)) == (MS_REMOUNT | MS_BIND))</span><br><span class="line">    <span class="keyword">return</span> do_reconfigure_mnt(path, mnt_flags);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 普通remount（更改只读/atime等设置）</span></span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_REMOUNT)</span><br><span class="line">    <span class="keyword">return</span> do_remount(path, flags, sb_flags, mnt_flags, data_page);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// bind挂载（将某个已有挂载重新挂到另一个位置）</span></span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_BIND) <span class="keyword">return</span> do_loopback(path, dev_name, flags &amp; MS_REC);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 更改挂载类型（如设为shared/private等mount namespace操作）</span></span><br><span class="line">  <span class="keyword">if</span> (flags &amp; (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))</span><br><span class="line">    <span class="keyword">return</span> do_change_type(path, flags);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 移动挂载点</span></span><br><span class="line">  <span class="keyword">if</span> (flags &amp; MS_MOVE) <span class="keyword">return</span> do_move_mount_old(path, dev_name);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 默认新挂载</span></span><br><span class="line">  <span class="keyword">return</span> do_new_mount(path, type_page, sb_flags, mnt_flags, dev_name,</span><br><span class="line">                      data_page);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>该函数内部首先通过kern_path()获取目的文件系统的path结构，即挂载点目录项以及目的文件系统的vfsmount结构；接着，通过检查flags对挂载操作进行不同目的的分发。这里我们只讨论最普通的情形，即将一个文件系统挂载在一个新的挂载点中，这种情况调用do_new_mount()。</p>
+<p><strong>3.3 do_new_mount()</strong></p>
+<p>这个函数描述的是挂载一个新文件系统最普遍的情形，主要包括以下几点：</p>
+<p>1.文件系统类型、操纵权限检查等；</p>
+<p>2.通过do_kern_mount()获取源文件系统的vfsmount结构；</p>
+<p>3.通过do_add_mount()将源文件系统增加到目的文件系统中；</p>
+<p><strong>3.4 do_add_mount()</strong></p>
+<p>1.flags参数合法性检查；</p>
+<p>2.检查指定的目的文件系统是否为当前文件系统。如果是，则失败；</p>
+<p>3.检查源文件系统的根inode是否为链接文件。如果是，则失败；</p>
+<p>4.通过graft_tree()将源文件系统装载到目的文件系统中。其内部graft又封装了attach_recursive_mnt()；</p>
+<p><strong>3.5 attach_recursive_mnt()</strong></p>
+<p>该函数的主要作用是设置父子文件系统的映射关系。具体操作为：</p>
+<p>1.通过mnt_set_mountpoint()将子vfsmount中的mnt_parent指向父vfsmount，将子vfsmount的mnt_mountpoint指向位于父文件系统中的挂载点dentry；</p>
+<p>2.通过commit_tree()将子文件系统添加到内核的文件系统哈希表中，并将子文件系统添加到父文件系统对应的子文件系统链表中；</p>
+<p><strong>3.6 commit_tree()</strong></p>
+<p>1.将当前文件系统的名字空间设置为父名字空间，父vfsmount通过当前vfsmount中的mnt_parent获取；再将其连接到父名字空间链表中。</p>
+<p>2.将当前vfsmount加入到对应哈希值的冲突链表当中,哈希值通过hash()计算。其中，mnt_hash作为链表元素。</p>
+<p>3.将当前vfsmount加入到父vfsmount对应的子文件系统链表mnt_mounts中。其中，mnt_child作为链表元素。</p>
+<p>从整个挂载的处理流程上看，挂载的本质就是将源文件系统的vfsmount结构连接到目的文件系统对应的vfsmount结构中，即具体涉及到两个vfsmount中字段的指向问题。两个vfsmount具体父子等级关系，这也对应着内核中目录树的父子等级关系。</p>
+<p><strong>参考资料：</strong></p>
+<p><strong>1.深入理解Linux内核：<a href="http://book.douban.com/subject/2287506/%EF%BC%9B">http://book.douban.com/subject/2287506/；</a></strong></p>
+<p><strong>2.深入Linux内核架构：<a href="http://book.douban.com/subject/4843567/%EF%BC%9B">http://book.douban.com/subject/4843567/；</a></strong></p>
+<p><strong>3.Linux内核探秘：<a href="http://book.douban.com/subject/25817503/%EF%BC%9B">http://book.douban.com/subject/25817503/；</a></strong></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/%E6%8C%82%E8%BD%BD/" rel="tag"># 挂载</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/08/linux/mm/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%85%A8%E9%93%BE%E8%B7%AF%E5%AE%9E%E7%8E%B0/" rel="prev" title="物理内存分配全链路实现">
+                  <i class="fa fa-angle-left"></i> 物理内存分配全链路实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/09/linux/fs/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" rel="next" title="Linux文件系统概述">
+                  Linux文件系统概述 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

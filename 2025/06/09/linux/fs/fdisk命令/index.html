@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	fdisk是Linux系统中一个常用的分区管理工具，它用来在MBR（Master Boot Record）格式的磁盘上查看、创建、删除和修改分区。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fdisk命令">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/09/linux/fs/fdisk%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	fdisk是Linux系统中一个常用的分区管理工具，它用来在MBR（Master Boot Record）格式的磁盘上查看、创建、删除和修改分区。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-09T15:26:53.361Z">
+<meta property="article:modified_time" content="2025-06-09T15:32:03.483Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="常用命令">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/09/linux/fs/fdisk%E5%91%BD%E4%BB%A4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/09/linux/fs/fdisk%E5%91%BD%E4%BB%A4/","path":"2025/06/09/linux/fs/fdisk命令/","title":"fdisk命令"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>fdisk命令 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%AD-fdisk%E6%98%AF%E5%B9%B2%E4%BB%80%E4%B9%88%E7%9A%84%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">🧭 fdisk是干什么的？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%A6-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">📦 基本语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%92%A1-%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4%EF%BC%88%E4%BA%A4%E4%BA%92%E7%95%8C%E9%9D%A2%E4%B8%AD%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">💡 常见命令（交互界面中的操作）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%94%A7-fdisk%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B%EF%BC%88%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E5%88%86%E5%8C%BA%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">🔧 fdisk使用示例（创建一个新分区）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%8C-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">6.</span> <span class="nav-text">📌 注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9B%A0-%E9%85%8D%E5%90%88%E4%BD%BF%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">7.</span> <span class="nav-text">🛠 配合使用的命令</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/09/linux/fs/fdisk%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="fdisk命令 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          fdisk命令
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-09 23:26:53 / 修改时间：23:32:03" itemprop="dateCreated datePublished" datetime="2025-06-09T23:26:53+08:00">2025-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	<code>fdisk</code>是<code>Linux</code>系统中一个常用的分区管理工具，它用来在<code>MBR</code>（<code>Master Boot Record</code>）格式的磁盘上查看、创建、删除和修改分区。</p>
+<span id="more"></span>
+
+<h4 id="🧭-fdisk是干什么的？"><a href="#🧭-fdisk是干什么的？" class="headerlink" title="🧭 fdisk是干什么的？"></a>🧭 <code>fdisk</code>是干什么的？</h4><p>用于在磁盘设备<strong>上进行</strong>分区管理，例如：</p>
+<ul>
+<li>查看当前分区表</li>
+<li>创建新分区</li>
+<li>删除已有分区</li>
+<li>更改分区类型（比如从<code>Linux</code>类型改为<code>EFI</code>类型）</li>
+<li>标记可引导分区（<code>bootable</code>）</li>
+</ul>
+<h4 id="📦-基本语法"><a href="#📦-基本语法" class="headerlink" title="📦 基本语法"></a>📦 基本语法</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> fdisk /dev/sdX</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  例如：</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> fdisk /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>sdX</code>是目标磁盘，例如<code>sda</code>，<code>sdb</code>，不是某个分区（比如<code>sdb1</code>）。</li>
+<li>该命令会打开一个交互式界面。</li>
+</ul>
+<h4 id="💡-常见命令（交互界面中的操作）"><a href="#💡-常见命令（交互界面中的操作）" class="headerlink" title="💡 常见命令（交互界面中的操作）"></a>💡 常见命令（交互界面中的操作）</h4><p>​	进入<code>fdisk</code>后，你会看到提示：<code>Command (m for help):</code></p>
+<p>你可以输入以下命令：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>m</code></td>
+<td>显示帮助菜单</td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td>显示当前分区表</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td>创建新分区</td>
+</tr>
+<tr>
+<td><code>d</code></td>
+<td>删除已有分区</td>
+</tr>
+<tr>
+<td><code>t</code></td>
+<td>修改分区类型</td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td>设置某个分区为可启动</td>
+</tr>
+<tr>
+<td><code>w</code></td>
+<td>保存并退出（⚠️ 会真正写入磁盘）</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>退出但不保存（适用于误操作时）</td>
+</tr>
+</tbody></table>
+<h4 id="🔧-fdisk使用示例（创建一个新分区）"><a href="#🔧-fdisk使用示例（创建一个新分区）" class="headerlink" title="🔧 fdisk使用示例（创建一个新分区）"></a>🔧 <code>fdisk</code>使用示例（创建一个新分区）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> fdisk /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<p>然后依次输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">n          <span class="comment"># 新建分区</span></span><br><span class="line">p          <span class="comment"># 主分区</span></span><br><span class="line">1          <span class="comment"># 分区编号</span></span><br><span class="line">[Enter]    <span class="comment"># 默认起始位置</span></span><br><span class="line">+1G        <span class="comment"># 分区大小（1GB）</span></span><br><span class="line">w          <span class="comment"># 保存并退出</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="📌-注意事项"><a href="#📌-注意事项" class="headerlink" title="📌 注意事项"></a>📌 注意事项</h4><ul>
+<li><code>fdisk</code>适用于<code>MBR</code>分区表，如果是<code>GPT</code>（大于<code>2TB</code>磁盘等），建议用<code>gdisk</code>或<code>parted</code>。</li>
+<li>对磁盘进行分区操作时，务必确保不是系统盘或已经挂载的磁盘。</li>
+<li>改动后需要格式化分区（如用<code>mkfs.ext4</code>），以及<strong>挂载使用</strong>。</li>
+</ul>
+<h4 id="🛠-配合使用的命令"><a href="#🛠-配合使用的命令" class="headerlink" title="🛠 配合使用的命令"></a>🛠 配合使用的命令</h4><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lsblk</code></td>
+<td>查看磁盘及分区结构</td>
+</tr>
+<tr>
+<td><code>blkid</code></td>
+<td>查看每个分区的<code>UUID</code>和类型</td>
+</tr>
+<tr>
+<td><code>mkfs.ext4</code></td>
+<td>格式化新分区为<code>ext4</code>文件系统</td>
+</tr>
+<tr>
+<td><code>mount</code></td>
+<td>将格式化的分区挂载到某个目录</td>
+</tr>
+<tr>
+<td><code>partprobe</code></td>
+<td>重新加载分区表</td>
+</tr>
+<tr>
+<td><code>udevadm settle</code></td>
+<td>等待设备就绪，适用于自动识别新分区</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="tag"># 常用命令</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/09/linux/fs/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" rel="prev" title="Linux文件系统概述">
+                  <i class="fa fa-angle-left"></i> Linux文件系统概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
