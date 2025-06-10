@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	losetup是Linux系统中用于管理loop设备的命令行工具。loop设备是一种虚拟块设备，允许将普通文件“映射”为块设备，从而可以对文件进行像对磁盘分区那样的操作。losetup负责将一个普通文件绑定到一个loop设备，或者解除绑定。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="losetup命令">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/10/linux/fs/losetup%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	losetup是Linux系统中用于管理loop设备的命令行工具。loop设备是一种虚拟块设备，允许将普通文件“映射”为块设备，从而可以对文件进行像对磁盘分区那样的操作。losetup负责将一个普通文件绑定到一个loop设备，或者解除绑定。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-10T03:02:48.876Z">
+<meta property="article:modified_time" content="2025-06-10T03:25:50.117Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="常用命令">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/10/linux/fs/losetup%E5%91%BD%E4%BB%A4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/10/linux/fs/losetup%E5%91%BD%E4%BB%A4/","path":"2025/06/10/linux/fs/losetup命令/","title":"losetup命令"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>losetup命令 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%92%A1-loop%E8%AE%BE%E5%A4%87%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">💡 loop设备简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%9A%99%EF%B8%8F-%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">3.</span> <span class="nav-text">⚙️ 常见应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%B0-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">🧰 常用命令示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%8B-losetup%E5%B8%B8%E7%94%A8%E9%80%89%E9%A1%B9"><span class="nav-number">5.</span> <span class="nav-text">📋 losetup常用选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%9A%99%EF%B8%8F-%E5%8E%9F%E7%90%86%E7%AE%80%E8%BF%B0"><span class="nav-number">6.</span> <span class="nav-text">⚙️ 原理简述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%9A%A0%EF%B8%8F-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">7.</span> <span class="nav-text">⚠️ 注意事项</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/10/linux/fs/losetup%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="losetup命令 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          losetup命令
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-10 11:02:48 / 修改时间：11:25:50" itemprop="dateCreated datePublished" datetime="2025-06-10T11:02:48+08:00">2025-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	<code>losetup</code>是<code>Linux</code>系统中用于管理<code>loop</code>设备的命令行工具。<code>loop</code>设备是一种虚拟块设备，允许将普通文件“映射”为块设备，从而可以对文件进行像对磁盘分区那样的操作。<code>losetup</code>负责将一个普通文件绑定到一个<code>loop</code>设备，或者解除绑定。</p>
+<span id="more"></span>
+
+<h4 id="💡-loop设备简介"><a href="#💡-loop设备简介" class="headerlink" title="💡 loop设备简介"></a>💡 <code>loop</code>设备简介</h4><ul>
+<li><code>Linux</code>中的块设备（<code>block device</code>）通常是物理硬盘、<code>SSD</code>、<code>U</code>盘等。</li>
+<li><code>loop</code>设备将普通文件当作虚拟磁盘，内核会把对<code>loop</code>设备的读写请求转发到该文件的相应偏移处。</li>
+<li>这样，普通文件就可以被格式化、挂载、写入数据等，类似真实硬盘。</li>
+</ul>
+<h4 id="⚙️-常见应用场景"><a href="#⚙️-常见应用场景" class="headerlink" title="⚙️ 常见应用场景"></a>⚙️ 常见应用场景</h4><ul>
+<li>使用<code>Snap</code>包管理器挂载<code>.snap</code>文件。</li>
+<li>测试和开发需要块设备的应用。</li>
+<li>结合<code>LVM</code>或<code>RAID</code>技术创建虚拟磁盘阵列。</li>
+</ul>
+<h4 id="🧰-常用命令示例"><a href="#🧰-常用命令示例" class="headerlink" title="🧰 常用命令示例"></a>🧰 常用命令示例</h4><p>✨ 创建一个<code>100MB</code>的空文件，作为虚拟磁盘镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=disk.img bs=1M count=100</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">100+0 records <span class="keyword">in</span></span><br><span class="line">100+0 records out</span><br><span class="line">104857600 bytes (105 MB, 100 MiB) copied, 0.0395708 s, 2.6 GB/s</span><br></pre></td></tr></table></figure>
+
+<p>🔌 将文件关联到空闲的<code>loop</code>设备</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> losetup -f disk.img</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-f</code>表示查找第一个空闲的<code>loop</code>设备，自动绑定文件。</li>
+<li>绑定后可以用<code>losetup -a</code>查看当前绑定状态。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ losetup -a</span><br><span class="line">...</span><br><span class="line">/dev/loop21: []: (/tmp/disk.img)</span><br><span class="line">/dev/loop11: []: (/var/lib/snapd/snaps/gnome-42-2204_176.snap)</span><br><span class="line">/dev/loop2: []: (/var/lib/snapd/snaps/code_194.snap)</span><br><span class="line">/dev/loop0: []: (/var/lib/snapd/snaps/bare_5.snap)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>🎯 手动绑定到指定的<code>loop</code>设备</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> losetup /dev/loop5 disk.img</span><br></pre></td></tr></table></figure>
+
+<p>将<code>disk.img</code>绑定到<code>/dev/loop5</code>。</p>
+<p>🔓 解除绑定</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> losetup -d /dev/loop5</span><br></pre></td></tr></table></figure>
+
+<p>解除<code>/dev/loop5</code>和文件的绑定。</p>
+<p>🗄️ 创建文件系统并挂载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> mkfs.ext4 /dev/loop5</span><br><span class="line">$ <span class="built_in">sudo</span> mount /dev/loop5 /mnt</span><br></pre></td></tr></table></figure>
+
+<h4 id="📋-losetup常用选项"><a href="#📋-losetup常用选项" class="headerlink" title="📋 losetup常用选项"></a>📋 <code>losetup</code>常用选项</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-f</code></td>
+<td>查找并返回第一个空闲的<code>loop</code>设备</td>
+</tr>
+<tr>
+<td><code>-a</code></td>
+<td>列出所有绑定的<code>loop</code>设备</td>
+</tr>
+<tr>
+<td><code>-d &lt;device&gt;</code></td>
+<td>解除绑定指定<code>loop</code>设备</td>
+</tr>
+<tr>
+<td><code>--show</code></td>
+<td>绑定时显示被使用的<code>loop</code>设备名称</td>
+</tr>
+<tr>
+<td><code>-o &lt;offset&gt;</code></td>
+<td>绑定时指定偏移量（文件内偏移）</td>
+</tr>
+<tr>
+<td><code>-r</code></td>
+<td>以只读模式绑定文件</td>
+</tr>
+</tbody></table>
+<h4 id="⚙️-原理简述"><a href="#⚙️-原理简述" class="headerlink" title="⚙️ 原理简述"></a>⚙️ 原理简述</h4><ul>
+<li><code>losetup</code>通过<code>ioctl</code>调用向内核的<code>loop</code>设备驱动发送请求。</li>
+<li>内核<code>loop</code>模块会将用户指定的文件描述符关联到一个<code>loop</code>设备结构体。</li>
+<li>🔄 之后，所有对该设备的块操作被转发到对应的文件。</li>
+</ul>
+<h4 id="⚠️-注意事项"><a href="#⚠️-注意事项" class="headerlink" title="⚠️ 注意事项"></a>⚠️ 注意事项</h4><ul>
+<li>绑定的文件大小决定了虚拟设备大小，超出部分不可用。</li>
+<li>绑定期间，<code>loop</code>设备被其他程序访问时，文件内容会被修改或读取。</li>
+<li>操作完成后，务必执行解除绑定，否则文件可能处于被占用状态。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="tag"># 常用命令</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/09/linux/fs/fdisk%E5%91%BD%E4%BB%A4/" rel="prev" title="fdisk命令">
+                  <i class="fa fa-angle-left"></i> fdisk命令
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/10/linux/fs/bdev%E5%A4%B4%E6%96%87%E4%BB%B6/" rel="next" title="bdev头文件">
+                  bdev头文件 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

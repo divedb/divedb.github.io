@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://edsionte.com/techblog/wordpress/wp-content/uploads/2014/02/do_mount.jpg">
 <meta property="article:published_time" content="2025-06-09T14:49:45.102Z">
-<meta property="article:modified_time" content="2025-06-09T15:14:00.468Z">
+<meta property="article:modified_time" content="2025-06-10T06:11:28.186Z">
 <meta property="article:author" content="Rocky">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="文件系统">
@@ -131,7 +131,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -141,7 +141,7 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -196,9 +196,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-06-09 22:49:45 / 修改时间：23:14:00" itemprop="dateCreated datePublished" datetime="2025-06-09T22:49:45+08:00">2025-06-09</time>
+      <time title="创建时间：2025-06-09 22:49:45" itemprop="dateCreated datePublished" datetime="2025-06-09T22:49:45+08:00">2025-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-10 14:11:28" itemprop="dateModified" datetime="2025-06-10T14:11:28+08:00">2025-06-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -221,6 +227,14 @@
     
     <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文将针对内核版本<code>6.15.0</code>中的<code>mount</code>系统调用实现过程进行简单说明。</p>
 <span id="more"></span>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: fs/super.c</span></span><br><span class="line"><span class="keyword">struct</span> dentry *<span class="title function_">mount_bdev</span><span class="params">(<span class="keyword">struct</span> file_system_type *fs_type, <span class="type">int</span> flags,</span></span><br><span class="line"><span class="params">                          <span class="type">const</span> <span class="type">char</span> *dev_name, <span class="type">void</span> *data,</span></span><br><span class="line"><span class="params">                          <span class="type">int</span> (*fill_super)(<span class="keyword">struct</span> super_block *, <span class="type">void</span> *,</span></span><br><span class="line"><span class="params">                                            <span class="type">int</span>))</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">super_block</span> *<span class="title">s</span>;</span></span><br><span class="line">  <span class="type">int</span> error;</span><br><span class="line">  <span class="type">dev_t</span> dev;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 查找块设备名对应的设备号dev_t，如果找不到，直接返回错误。</span></span><br><span class="line">  error = lookup_bdev(dev_name, &amp;dev);</span><br><span class="line">  <span class="keyword">if</span> (error) <span class="keyword">return</span> ERR_PTR(error);</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 给挂载标志加上SB_NOSEC，表示忽略安全模块（如SELinux）检查</span></span><br><span class="line">  flags |= SB_NOSEC;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 查找是否已有挂载的super_block，若没有就新建一个</span></span><br><span class="line">  s = sget(fs_type, test_bdev_super, set_bdev_super, flags, &amp;dev);</span><br><span class="line">  <span class="keyword">if</span> (IS_ERR(s)) <span class="keyword">return</span> ERR_CAST(s);</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 如果super_block已经挂载（s_root非空）：</span></span><br><span class="line">  <span class="keyword">if</span> (s-&gt;s_root) &#123;</span><br><span class="line">    <span class="comment">// 检查当前挂载请求和原挂载是否都只读（SB_RDONLY）一致；</span></span><br><span class="line">    <span class="keyword">if</span> ((flags ^ s-&gt;s_flags) &amp; SB_RDONLY) &#123;</span><br><span class="line">      deactivate_locked_super(s);</span><br><span class="line">      <span class="keyword">return</span> ERR_PTR(-EBUSY);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    error = setup_bdev_super(s, flags, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (!error) error = fill_super(s, data, flags &amp; SB_SILENT ? <span class="number">1</span> : <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      deactivate_locked_super(s);</span><br><span class="line">      <span class="keyword">return</span> ERR_PTR(error);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    s-&gt;s_flags |= SB_ACTIVE;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> dget(s-&gt;s_root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
 
 <h2 id="1-数据结构"><a href="#1-数据结构" class="headerlink" title="1.数据结构"></a>1.数据结构</h2><p>下面将对文件系统挂载过程中涉及到的两个主要数据结构vfsmount和path进行节本说明。</p>
 <p><strong>1.1 struct vfsmount</strong></p>

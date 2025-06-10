@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要Linux 内核 dcache（Directory Cache）笔记一、dcache 简介dcache 是 Linux VFS（虚拟文件系统）中用于加速路径名解析的核心机制之一。其全称为 directory cache，主要缓存的是路径中每一级目录和文件名对应的 dentry（directory entry）对象。  避免频繁查找磁盘，提高访问效率。 由内核动态维护，可复用、延迟回收。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dcache头文件">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/10/linux/fs/dcache%E5%A4%B4%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要Linux 内核 dcache（Directory Cache）笔记一、dcache 简介dcache 是 Linux VFS（虚拟文件系统）中用于加速路径名解析的核心机制之一。其全称为 directory cache，主要缓存的是路径中每一级目录和文件名对应的 dentry（directory entry）对象。  避免频繁查找磁盘，提高访问效率。 由内核动态维护，可复用、延迟回收。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-10T11:04:23.728Z">
+<meta property="article:modified_time" content="2025-06-10T14:58:30.646Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="dcache">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/10/linux/fs/dcache%E5%A4%B4%E6%96%87%E4%BB%B6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/10/linux/fs/dcache%E5%A4%B4%E6%96%87%E4%BB%B6/","path":"2025/06/10/linux/fs/dcache头文件/","title":"dcache头文件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>dcache头文件 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-%E5%86%85%E6%A0%B8-dcache%EF%BC%88Directory-Cache%EF%BC%89%E7%AC%94%E8%AE%B0"><span class="nav-number"></span> <span class="nav-text">Linux 内核 dcache（Directory Cache）笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81dcache-%E7%AE%80%E4%BB%8B"><span class="nav-number"></span> <span class="nav-text">一、dcache 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81dentry-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number"></span> <span class="nav-text">二、dentry 结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81dcache-%E7%9A%84%E8%AE%BE%E8%AE%A1%E8%A6%81%E7%82%B9"><span class="nav-number"></span> <span class="nav-text">三、dcache 的设计要点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0"><span class="nav-number"></span> <span class="nav-text">四、常用操作函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-d-lookup-parent-name"><span class="nav-number"></span> <span class="nav-text">1. d_lookup(parent, &amp;name)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-d-alloc-parent-name"><span class="nav-number"></span> <span class="nav-text">2. d_alloc(parent, &amp;name)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-d-add-dentry-inode"><span class="nav-number"></span> <span class="nav-text">3. d_add(dentry, inode)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-dput-dentry"><span class="nav-number"></span> <span class="nav-text">4. dput(dentry)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%B7%AF%E5%BE%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B"><span class="nav-number"></span> <span class="nav-text">五、路径解析过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6"><span class="nav-number"></span> <span class="nav-text">六、内存回收机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E8%B0%83%E8%AF%95%E6%8A%80%E5%B7%A7"><span class="nav-number"></span> <span class="nav-text">七、调试技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">八、总结</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/10/linux/fs/dcache%E5%A4%B4%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="dcache头文件 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          dcache头文件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-10 19:04:23 / 修改时间：22:58:30" itemprop="dateCreated datePublished" datetime="2025-06-10T19:04:23+08:00">2025-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><h1 id="Linux-内核-dcache（Directory-Cache）笔记"><a href="#Linux-内核-dcache（Directory-Cache）笔记" class="headerlink" title="Linux 内核 dcache（Directory Cache）笔记"></a>Linux 内核 dcache（Directory Cache）笔记</h1><h2 id="一、dcache-简介"><a href="#一、dcache-简介" class="headerlink" title="一、dcache 简介"></a>一、dcache 简介</h2><p>dcache 是 Linux VFS（虚拟文件系统）中用于加速路径名解析的核心机制之一。其全称为 <strong>directory cache</strong>，主要缓存的是路径中每一级目录和文件名对应的 <code>dentry</code>（directory entry）对象。</p>
+<ul>
+<li>避免频繁查找磁盘，提高访问效率。</li>
+<li>由内核动态维护，可复用、延迟回收。</li>
+</ul>
+<hr>
+<h2 id="二、dentry-结构体"><a href="#二、dentry-结构体" class="headerlink" title="二、dentry 结构体"></a>二、dentry 结构体</h2><figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">struct</span> <span class="type">dentry</span> &#123;</span><br><span class="line">    atomic_t d_count;              <span class="comment">// 引用计数</span></span><br><span class="line">    unsigned int d_flags;         <span class="comment">// 标志位</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="type">inode</span> *d_inode;        <span class="comment">// 关联的 inode</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="type">dentry</span> *d_parent;      <span class="comment">// 父目录</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="type">qstr</span> d_name;           <span class="comment">// 当前 dentry 名称</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="type">list_head</span> d_child;     <span class="comment">// 子目录链表</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="type">dentry_operations</span> *d_op; <span class="comment">// 自定义操作</span></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、dcache-的设计要点"><a href="#三、dcache-的设计要点" class="headerlink" title="三、dcache 的设计要点"></a>三、dcache 的设计要点</h2><ol>
+<li><strong>高速路径名查找</strong><ul>
+<li>采用 hash 表加速路径名查找（<code>d_lookup</code>）。</li>
+<li>避免每次都访问磁盘。</li>
+</ul>
+</li>
+<li><strong>内存中层级结构</strong><ul>
+<li>dentry 构成一棵树（有父子关系）。</li>
+<li>每一级目录缓存为一个 dentry。</li>
+</ul>
+</li>
+<li><strong>引用计数与生命周期</strong><ul>
+<li>使用 <code>dget()</code>&#x2F;<code>dput()</code> 控制引用计数。</li>
+<li>引用计数为 0 且满足回收条件的 dentry 会被释放或移入 LRU。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="四、常用操作函数"><a href="#四、常用操作函数" class="headerlink" title="四、常用操作函数"></a>四、常用操作函数</h2><h3 id="1-d-lookup-parent-name"><a href="#1-d-lookup-parent-name" class="headerlink" title="1. d_lookup(parent, &amp;name)"></a>1. <code>d_lookup(parent, &amp;name)</code></h3><ul>
+<li>在父目录的 dentry 中查找子文件名是否存在于 dcache。</li>
+<li>仅查缓存，不查磁盘。</li>
+</ul>
+<h3 id="2-d-alloc-parent-name"><a href="#2-d-alloc-parent-name" class="headerlink" title="2. d_alloc(parent, &amp;name)"></a>2. <code>d_alloc(parent, &amp;name)</code></h3><ul>
+<li>创建一个新的 dentry。</li>
+<li>通常结合 <code>d_add()</code> 或 <code>d_splice_alias()</code> 进行加入。</li>
+</ul>
+<h3 id="3-d-add-dentry-inode"><a href="#3-d-add-dentry-inode" class="headerlink" title="3. d_add(dentry, inode)"></a>3. <code>d_add(dentry, inode)</code></h3><ul>
+<li>将 dentry 与 inode 绑定，并加入父目录中。</li>
+</ul>
+<h3 id="4-dput-dentry"><a href="#4-dput-dentry" class="headerlink" title="4. dput(dentry)"></a>4. <code>dput(dentry)</code></h3><ul>
+<li>减少 dentry 的引用计数。</li>
+<li>若计数为 0，进入回收流程。</li>
+</ul>
+<hr>
+<h2 id="五、路径解析过程"><a href="#五、路径解析过程" class="headerlink" title="五、路径解析过程"></a>五、路径解析过程</h2><p>以 <code>/foo/bar</code> 为例：</p>
+<ol>
+<li>内核从根开始查找 <code>foo</code>。</li>
+<li>如果 <code>foo</code> 在 <code>/</code> 的 dentry 的子哈希表中，直接命中。</li>
+<li>否则触发文件系统的 lookup 操作从磁盘加载，并创建新 dentry。</li>
+<li>类似地解析 <code>bar</code>。</li>
+</ol>
+<p><strong>注意</strong>：这个过程完全由 dcache 管理，减少重复磁盘 I&#x2F;O。</p>
+<hr>
+<h2 id="六、内存回收机制"><a href="#六、内存回收机制" class="headerlink" title="六、内存回收机制"></a>六、内存回收机制</h2><ul>
+<li>内核会定期回收不再使用的 dentry。</li>
+<li><code>shrink_dcache_parent()</code>、<code>shrink_dcache_sb()</code> 等负责批量清理。</li>
+<li>LRU（最近最少使用）机制与引用计数配合判断释放时机。</li>
+</ul>
+<hr>
+<h2 id="七、调试技巧"><a href="#七、调试技巧" class="headerlink" title="七、调试技巧"></a>七、调试技巧</h2><p>可以使用以下命令查看当前系统的 dentry 使用情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="built_in">cat</span> /proc/slabinfo | grep dentry</span><br></pre></td></tr></table></figure>
+
+<p>也可以用 <code>drop_caches</code> 强制回收：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">echo <span class="number">2</span> &gt; <span class="regexp">/proc/</span>sys<span class="regexp">/vm/</span>drop_caches</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>提高路径访问速度</td>
+<td>避免重复磁盘访问</td>
+</tr>
+<tr>
+<td>树形结构</td>
+<td>支持完整路径查找</td>
+</tr>
+<tr>
+<td>引用计数机制</td>
+<td>控制生命周期</td>
+</tr>
+<tr>
+<td>缓存失效机制</td>
+<td>支持自动回收</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/dcache/" rel="tag"># dcache</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/10/linux/fs/bdev%E5%A4%B4%E6%96%87%E4%BB%B6/" rel="prev" title="bdev头文件">
+                  <i class="fa fa-angle-left"></i> bdev头文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/10/linux/fs/FUSE-%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="next" title="FUSE-用户空间文件系统">
+                  FUSE-用户空间文件系统 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
