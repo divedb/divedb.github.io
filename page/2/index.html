@@ -123,17 +123,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">37</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -150,6 +150,405 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/08/linux/mm/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%85%A8%E9%93%BE%E8%B7%AF%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/08/linux/mm/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%85%A8%E9%93%BE%E8%B7%AF%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">物理内存分配全链路实现</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-08 17:30:03" itemprop="dateCreated datePublished" datetime="2025-06-08T17:30:03+08:00">2025-06-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-09 14:08:20" itemprop="dateModified" datetime="2025-06-09T14:08:20+08:00">2025-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载：<a href="https://zhuanlan.zhihu.com/p/595356681">深入理解<code>Linux</code>物理内存分配全链路实现</a></p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	在上篇文章《深入理解<code>Linux</code>物理内存管理》中，笔者详细的为大家介绍了<code>Linux</code>内核如何对物理内存进行管理以及相关的一些内核数据结构。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/06/08/linux/mm/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%85%A8%E9%93%BE%E8%B7%AF%E5%AE%9E%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/06/linux/mm/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/06/linux/mm/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">物理内存管理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-06 22:53:07" itemprop="dateCreated datePublished" datetime="2025-06-06T22:53:07+08:00">2025-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-08 18:36:24" itemprop="dateModified" datetime="2025-06-08T18:36:24+08:00">2025-06-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载：<a href="https://zhuanlan.zhihu.com/p/585395024">一步一图带你深入理解<code>Linux</code>物理内存管理</a></p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	在我们回顾完上篇文章介绍的用户态和内核态虚拟内存空间的管理，以及物理内存在计算机中的真实组成结构之后，下面笔者就来正式地为大家介绍本文的主题 —— <code>Linux</code>内核如何对物理内存进行管理？</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/06/06/linux/mm/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/06/db/LevelDB%E5%A4%8D%E7%8E%B0%E4%B9%8B%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/06/db/LevelDB%E5%A4%8D%E7%8E%B0%E4%B9%8B%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/" class="post-title-link" itemprop="url">LevelDB复现之版本控制</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-06 09:25:59 / 修改时间：13:44:13" itemprop="dateCreated datePublished" datetime="2025-06-06T09:25:59+08:00">2025-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/db/" itemprop="url" rel="index"><span itemprop="name">db</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><img src="/images/db/leveldb_01.png"></p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><h5 id="🔍-struct-FileMetaData字段详解："><a href="#🔍-struct-FileMetaData字段详解：" class="headerlink" title="🔍 struct FileMetaData字段详解："></a>🔍 <code>struct FileMetaData</code>字段详解：</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: db/version_edit.h</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FileMetaData</span> &#123;</span><br><span class="line">  <span class="built_in">FileMetaData</span>() : <span class="built_in">refs</span>(<span class="number">0</span>), <span class="built_in">allowed_seeks</span>(<span class="number">1</span> &lt;&lt; <span class="number">30</span>), <span class="built_in">file_size</span>(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> refs;</span><br><span class="line">  <span class="type">int</span> allowed_seeks;</span><br><span class="line">  <span class="type">uint64_t</span> number;</span><br><span class="line">  <span class="type">uint64_t</span> file_size;</span><br><span class="line">  InternalKey smallest;</span><br><span class="line">  InternalKey largest;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>🧱 字段详解：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>含义与作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>refs</code></td>
+<td><code>int</code></td>
+<td><strong>引用计数器</strong>：用于管理内存中的 <code>FileMetaData</code> 对象的生命周期，确保它不会被过早释放。</td>
+</tr>
+<tr>
+<td><code>allowed_seeks</code></td>
+<td><code>int</code></td>
+<td><strong>允许的 seeks 次数（在触发 compaction 前）</strong>： 用于优化触发 compact 的时机。每当一个查询需要进行二分查找（seek）某个文件时，此计数会递减；当次数耗尽时会触发该文件的 compaction。 初始值为 <code>2^30</code>，表示无需紧急 compact。</td>
+</tr>
+<tr>
+<td><code>number</code></td>
+<td><code>uint64_t</code></td>
+<td><strong>SST 文件编号</strong>：唯一标识一个 SST 文件，对应磁盘文件名中的数字部分，如 <code>000123.ldb</code>。</td>
+</tr>
+<tr>
+<td><code>file_size</code></td>
+<td><code>uint64_t</code></td>
+<td><strong>SST 文件大小（以字节为单位）</strong>：用于统计和判断是否需要 compact（比如小文件可能被合并）。</td>
+</tr>
+<tr>
+<td><code>smallest</code></td>
+<td><code>InternalKey</code></td>
+<td><strong>SST 文件中最小的 InternalKey</strong>： 用于 key range 管理和快速查找（比如确定哪些文件与某个查询 key 有重叠）。</td>
+</tr>
+<tr>
+<td><code>largest</code></td>
+<td><code>InternalKey</code></td>
+<td><strong>SST 文件中最大的 InternalKey</strong>： 与 <code>smallest</code> 一起组成该文件的 key 范围。</td>
+</tr>
+</tbody></table>
+<p>在 LevelDB 中，<code>Version</code> 是一个非常核心的类，它表示 <strong>某一时刻整个数据库的快照</strong>，也就是整个 <strong>LSM 树的“视图”</strong>。每个 <code>Version</code> 都记录了当前数据库的所有 SST 文件在各个 Level 上的分布信息，支持读操作（<code>Get</code>）、迭代器构建（<code>AddIterators</code>）、重叠检测（<code>GetOverlappingInputs</code>）等功能。</p>
+<p>我们可以把 <code>Version</code> 看作是数据库内部在某一时刻的 <strong>元数据状态快照</strong>，而 <code>VersionSet</code> 管理着这些快照的演进。</p>
+<h2 id="🧠-TableCache-是什么？"><a href="#🧠-TableCache-是什么？" class="headerlink" title="🧠 TableCache 是什么？"></a>🧠 <code>TableCache</code> 是什么？</h2><p>在 <strong>LevelDB 和 RocksDB</strong> 中，SST 文件是存储在磁盘上的。<br> 为了避免频繁打开&#x2F;关闭文件、重复解析数据结构，它们设计了一个<strong>轻量级的缓存系统</strong>，即 <code>TableCache</code>。</p>
+<h3 id="✅-定义（LevelDB-源码）："><a href="#✅-定义（LevelDB-源码）：" class="headerlink" title="✅ 定义（LevelDB 源码）："></a>✅ 定义（LevelDB 源码）：</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TableCache</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function">Iterator* <span class="title">NewIterator</span><span class="params">(...)</span></span>;   <span class="comment">// 创建某个 SST 的 iterator</span></span><br><span class="line">  <span class="function">Status <span class="title">Get</span><span class="params">(...)</span></span>;              <span class="comment">// 在某个 SST 中查找 key</span></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">Evict</span><span class="params">(<span class="type">uint64_t</span> file_number)</span></span>;  <span class="comment">// 从缓存中逐出某个文件</span></span><br><span class="line">  ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🧱-TableCache-的作用总结"><a href="#🧱-TableCache-的作用总结" class="headerlink" title="🧱 TableCache 的作用总结"></a>🧱 TableCache 的作用总结</h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>📁 <strong>缓存 SST 文件的 Table 对象</strong></td>
+<td>减少打开文件（<code>RandomAccessFile</code>）的频率</td>
+</tr>
+<tr>
+<td>🔢 <strong>按 file number 快速定位</strong></td>
+<td>所有 SST 文件都有唯一编号，TableCache 是 file_number → Table 的映射</td>
+</tr>
+<tr>
+<td>🔍 <strong>加快读取速度</strong></td>
+<td>一次打开 SST 后，解析出的 index、filter block 会缓存在内存中</td>
+</tr>
+<tr>
+<td>💥 <strong>节省内存使用</strong></td>
+<td>LRU 缓存机制，避免所有文件都常驻内存</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧬-TableCache-在读取流程中的位置"><a href="#🧬-TableCache-在读取流程中的位置" class="headerlink" title="🧬 TableCache 在读取流程中的位置"></a>🧬 TableCache 在读取流程中的位置</h2><p>假设你执行一次 <code>Get(key)</code>，底层流程如下：</p>
+<ol>
+<li><strong>MemTable</strong> 查找（可能命中）</li>
+<li><strong>Immutable MemTable</strong> 查找（可能命中）</li>
+<li><strong>SST 查找</strong>：<ul>
+<li>根据 <code>Version</code> 里的 <code>files_[]</code> 决定要读哪些文件</li>
+<li>每个文件用 file_number 查找 <code>TableCache</code></li>
+<li>如果命中：直接用已有的 <code>Table*</code> 访问</li>
+<li>如果没命中：<ul>
+<li>打开文件 → <code>RandomAccessFile</code></li>
+<li>解析 footer → block handle → index&#x2F;filter block</li>
+<li>创建 Table 对象</li>
+<li>加入 <code>TableCache</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>  ✅ 所以，<strong>TableCache 是 SST 文件到解析后的 Table 实例之间的缓存层，避免每次都从头加载。</strong></p>
+</blockquote>
+<hr>
+<h2 id="📌-举例说明"><a href="#📌-举例说明" class="headerlink" title="📌 举例说明"></a>📌 举例说明</h2><p>假如你有 1000 个 SST 文件，查询一个 key <code>foo</code>：</p>
+<ul>
+<li>不使用 TableCache：每次都要打开文件、解析 footer、index block 等，非常慢。</li>
+<li>使用 TableCache：<ul>
+<li>查询时命中缓存：O(1) 取出 <code>Table*</code>，直接查找</li>
+<li>不命中：只做一次解析，然后缓存起来，后续复用</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="🧠-关系图"><a href="#🧠-关系图" class="headerlink" title="🧠 关系图"></a>🧠 关系图</h2><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">pgsql</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">                  +-------------------+</span><br><span class="line">                  |<span class="string">      Version      </span>|</span><br><span class="line">                  |<span class="string"> (文件元数据)       </span>|</span><br><span class="line">                  +-------------------+</span><br><span class="line">                             |<span class="string"></span></span><br><span class="line"><span class="string">         +-------------------+-------------------+</span></span><br><span class="line"><span class="string">         </span>|<span class="string">                   </span>|<span class="string">                   </span>|</span><br><span class="line">+----------------+  +----------------+  +----------------+</span><br><span class="line">|<span class="string"> FileMetaData #1</span>|<span class="string">  </span>|<span class="string"> FileMetaData #2</span>|<span class="string">  </span>|<span class="string"> FileMetaData #3</span>|</span><br><span class="line">+----------------+  +----------------+  +----------------+</span><br><span class="line">         |<span class="string">                   </span>|<span class="string">                   </span>|</span><br><span class="line">       file_number        file_number         file_number</span><br><span class="line">         |<span class="string">                   </span>|<span class="string">                   </span>|</span><br><span class="line">         v                   v                   v</span><br><span class="line">+-----------------------------------------------------------+</span><br><span class="line">|<span class="string">                    TableCache (file_number → Table*)      </span>|</span><br><span class="line">+-----------------------------------------------------------+</span><br><span class="line">                      |<span class="string"></span></span><br><span class="line"><span class="string">                      v</span></span><br><span class="line"><span class="string">         +--------------------------+</span></span><br><span class="line"><span class="string">         </span>|<span class="string"> Table (SST 的内存视图)  </span>|</span><br><span class="line">         |<span class="string"> index/filter/cache等结构 </span>|</span><br><span class="line">         +--------------------------+</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🧼-补充一点：和-BlockCache-区别？"><a href="#🧼-补充一点：和-BlockCache-区别？" class="headerlink" title="🧼 补充一点：和 BlockCache 区别？"></a>🧼 补充一点：和 BlockCache 区别？</h2><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>缓存对象</th>
+<th>默认大小</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TableCache</code></td>
+<td>SST 文件的 <code>Table</code> 实例</td>
+<td>通常为打开文件数量</td>
+<td>缓存文件和结构</td>
+</tr>
+<tr>
+<td><code>BlockCache</code></td>
+<td>数据块、filter block</td>
+<td>可配置为几百 MB</td>
+<td>缓存实际的 key-value 数据块</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="✅-总结"><a href="#✅-总结" class="headerlink" title="✅ 总结"></a>✅ 总结</h2><blockquote>
+<p>  <code>TableCache</code> 是 LevelDB 和 RocksDB 中的 <strong>SST 文件缓存层</strong>，负责将 file_number 映射到已经打开并解析好的 <code>Table</code> 实例，避免重复 I&#x2F;O 和结构构建，是提升读取性能的关键组件。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -869,282 +1268,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/06/02/db/LevelDB%E5%A4%8D%E7%8E%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/31/c++/system_error/system_error/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/31/c++/system_error/system_error/" class="post-title-link" itemprop="url">system_error</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-31 12:03:17 / 修改时间：21:43:23" itemprop="dateCreated datePublished" datetime="2025-05-31T12:03:17+08:00">2025-05-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>该头文件属于<code>C++</code>标准库中的<strong>错误处理库（<code>error handling library</code>）</strong>的一部分。</p>
-<h4 id="📚-类定义"><a href="#📚-类定义" class="headerlink" title="📚 类定义"></a>📚 类定义</h4><ul>
-<li>**<code>std::error_category</code>**：错误类别的基类。</li>
-<li>**<code>std::error_condition</code>**：表示可移植的错误状态码。</li>
-<li>**<code>std::errc</code>**： 枚举类型，列举了所有标准<code>&lt;cerrno&gt;</code>宏定义对应的错误码。</li>
-<li>**<code>std::error_code</code>**：表示平台相关的错误码。</li>
-<li>**<code>std::system_error</code>**：异常类，用于报告包含<code>error_code</code>的错误状态。</li>
-<li>**<code>std::is_error_code_enum</code>**：类型萃取器，标识某个枚举类型是否为<code>error_code</code>枚举。</li>
-<li>**<code>std::is_error_condition_enum</code>**：类型萃取器，标识某个枚举类型是否为<code>error_condition</code>枚举。</li>
-<li>**<code>std::hash&lt;std::error_code&gt;</code>**：为 <code>std::error_code</code>提供哈希支持的模板特化版本。</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/05/31/c++/system_error/system_error/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/" class="post-title-link" itemprop="url">从零实现IR</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-30 19:13:06" itemprop="dateCreated datePublished" datetime="2025-05-30T19:13:06+08:00">2025-05-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-31 21:43:27" itemprop="dateModified" datetime="2025-05-31T21:43:27+08:00">2025-05-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E8%AF%91%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">编译器</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>转载：<a href="https://farena.in/compilers/programming/writing-an-ir-from-scratch/">Writing an IR from Scratch and survive to write a post</a></p>
-<p>​	在这篇文章中，我将介绍我为<code>Kunai</code>静态分析器设计的第一版中间表示（<code>IR</code>）。<code>Kunai</code>是我在攻读博士期间开发的一个 <code>Dalvik</code>字节码静态分析库，同时也是我深入学习<code>Dalvik</code>文件格式以及提升编程技能的实践项目。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/05/30/compiler/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0IR/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/30/c++/futex/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/30/c++/futex/" class="post-title-link" itemprop="url">futex</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-30 15:18:39 / 修改时间：15:29:28" itemprop="dateCreated datePublished" datetime="2025-05-30T15:18:39+08:00">2025-05-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>​	快速用户态锁（<code>Fast user-level locking</code>）是一种相较于传统内核机制（如<code>fcntl</code>锁和<code>System V</code>信号量）更轻量的加锁方式。在这种机制下，多个进程通过共享内存区域和原子操作来通信锁的状态。只有在锁发生争用时，内核才会介入，以执行排队和调度等操作。</p>
-<p>本文通过回顾相关思想与代码的演变历程，探讨用户态锁的相关问题，并通过基准测试和对现有数据库的改造，展示<code>futex</code>（<code>fast userspace mutex</code>）的性能优势。最后，展望<code>futex</code>接口未来的发展方向。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/05/30/c++/futex/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Scala 中的 case class 是一种功能强大的数据建模工具，常用于表示不可变的数据结构，尤其适用于模式匹配（Pattern Matching）。 二、case class 自动生成的内容声明为 case class 后，Scala 编译器会自动生成以下内容：    功能 说明    apply 方法 可以直接使用 Person(...) 创建对象，省略 new   字段默认 val 构造">
+<meta property="og:type" content="article">
+<meta property="og:title" content="样例类（Case Classes）">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/11/scala/%E6%A0%B7%E4%BE%8B%E7%B1%BB%EF%BC%88Case-Classes%EF%BC%89/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="Scala 中的 case class 是一种功能强大的数据建模工具，常用于表示不可变的数据结构，尤其适用于模式匹配（Pattern Matching）。 二、case class 自动生成的内容声明为 case class 后，Scala 编译器会自动生成以下内容：    功能 说明    apply 方法 可以直接使用 Person(...) 创建对象，省略 new   字段默认 val 构造">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-11T05:41:56.599Z">
+<meta property="article:modified_time" content="2025-06-11T05:47:33.117Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="scala">
+<meta property="article:tag" content="scala入门">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/11/scala/%E6%A0%B7%E4%BE%8B%E7%B1%BB%EF%BC%88Case-Classes%EF%BC%89/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/11/scala/%E6%A0%B7%E4%BE%8B%E7%B1%BB%EF%BC%88Case-Classes%EF%BC%89/","path":"2025/06/11/scala/样例类（Case-Classes）/","title":"样例类（Case Classes）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>样例类（Case Classes） | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81case-class-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text">二、case class 自动生成的内容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9Acopy-%E4%B8%8E%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D"><span class="nav-number">1.1.</span> <span class="nav-text">示例：copy 与模式匹配</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%B8%8E%E6%99%AE%E9%80%9A%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">三、与普通类的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B1%BB%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">普通类示例：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%BC%B4%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.</span> <span class="nav-text">四、伴生对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">五、不可变性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">5.</span> <span class="nav-text">六、应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E7%A4%BA%E4%BE%8B%EF%BC%9A%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC%EF%BC%88%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">七、示例：表达式求值（模式匹配）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E6%A0%B7%E4%BE%8B%E7%B1%BB"><span class="nav-number">8.</span> <span class="nav-text">定义一个样例类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83"><span class="nav-number">9.</span> <span class="nav-text">比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%B7%E8%B4%9D"><span class="nav-number">10.</span> <span class="nav-text">拷贝</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/11/scala/%E6%A0%B7%E4%BE%8B%E7%B1%BB%EF%BC%88Case-Classes%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="样例类（Case Classes） | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          样例类（Case Classes）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-11 13:41:56 / 修改时间：13:47:33" itemprop="dateCreated datePublished" datetime="2025-06-11T13:41:56+08:00">2025-06-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/scala/" itemprop="url" rel="index"><span itemprop="name">scala</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Scala 中的 <code>case class</code> 是一种功能强大的数据建模工具，常用于表示不可变的数据结构，尤其适用于模式匹配（Pattern Matching）。</p>
+<h2 id="二、case-class-自动生成的内容"><a href="#二、case-class-自动生成的内容" class="headerlink" title="二、case class 自动生成的内容"></a>二、case class 自动生成的内容</h2><p>声明为 <code>case class</code> 后，Scala 编译器会自动生成以下内容：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>apply</code> 方法</td>
+<td>可以直接使用 <code>Person(...)</code> 创建对象，省略 <code>new</code></td>
+</tr>
+<tr>
+<td>字段默认 <code>val</code></td>
+<td>构造参数自动变成不可变字段</td>
+</tr>
+<tr>
+<td><code>toString</code></td>
+<td>自动生成字符串表示，如 <code>Person(Alice,30)</code></td>
+</tr>
+<tr>
+<td><code>equals</code> 和 <code>hashCode</code></td>
+<td>值相等即认为对象相等，适合放在集合中使用</td>
+</tr>
+<tr>
+<td><code>copy</code> 方法</td>
+<td>创建对象副本，可修改部分字段</td>
+</tr>
+<tr>
+<td>支持模式匹配</td>
+<td>可直接用于 <code>match</code> 表达式中进行结构拆解</td>
+</tr>
+</tbody></table>
+<h3 id="示例：copy-与模式匹配"><a href="#示例：copy-与模式匹配" class="headerlink" title="示例：copy 与模式匹配"></a>示例：copy 与模式匹配</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">scala</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">val</span> p1 = <span class="type">Person</span>(<span class="string">&quot;Bob&quot;</span>, <span class="number">25</span>)</span><br><span class="line"><span class="keyword">val</span> p2 = p1.copy(age = <span class="number">26</span>)</span><br><span class="line"></span><br><span class="line">p2 <span class="keyword">match</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">Person</span>(n, a) =&gt; println(<span class="string">s&quot;<span class="subst">$n</span> is <span class="subst">$a</span> years old&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、与普通类的区别"><a href="#三、与普通类的区别" class="headerlink" title="三、与普通类的区别"></a>三、与普通类的区别</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>class</th>
+<th>case class</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>是否可省略 <code>new</code></td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td>自动生成方法</td>
+<td>否（需手动写）</td>
+<td>是（<code>apply</code>、<code>copy</code> 等）</td>
+</tr>
+<tr>
+<td>支持模式匹配</td>
+<td>否（需提取器）</td>
+<td>是（天然支持）</td>
+</tr>
+</tbody></table>
+<h3 id="普通类示例："><a href="#普通类示例：" class="headerlink" title="普通类示例："></a>普通类示例：</h3><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">scala</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">class</span> <span class="symbol">Animal</span>(<span class="symbol">val</span> <span class="symbol">name: <span class="symbol">String</span></span>)</span><br><span class="line"><span class="symbol">val</span> <span class="symbol">a</span> = <span class="symbol">new</span> <span class="symbol">Animal</span>(&quot;<span class="symbol">Cat</span>&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>普通类没有 <code>apply</code>、<code>copy</code>，不能用于模式匹配。</p>
+<hr>
+<h2 id="四、伴生对象"><a href="#四、伴生对象" class="headerlink" title="四、伴生对象"></a>四、伴生对象</h2><p>每个 <code>case class</code> 都自动生成一个<strong>伴生对象</strong>（<code>object</code>），里面包含 <code>apply</code> 和 <code>unapply</code> 方法，正是这让它支持无 <code>new</code> 创建对象和模式匹配。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">scala</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">// 实际上编译器会生成如下代码：</span><br><span class="line"><span class="keyword">object</span> Person &#123;</span><br><span class="line">  def apply(<span class="type">name</span>: String, age: <span class="type">Int</span>): Person = <span class="built_in">new</span> Person(<span class="type">name</span>, age)</span><br><span class="line">  def unapply(p: Person): <span class="keyword">Option</span>[(String, <span class="type">Int</span>)] = <span class="keyword">Some</span>((p.name, p.age))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、不可变性"><a href="#五、不可变性" class="headerlink" title="五、不可变性"></a>五、不可变性</h2><p>case class 默认将参数声明为 <code>val</code>，代表字段不可更改：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">scala</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">val <span class="selector-tag">p</span> = <span class="built_in">Person</span>(<span class="string">&quot;Eve&quot;</span>, <span class="number">22</span>)</span><br><span class="line"><span class="comment">// p.age = 23  // ❌ 编译错误</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你希望字段可变，可以显式使用 <code>var</code>，但这会破坏不可变性，通常不推荐。</p>
+<hr>
+<h2 id="六、应用场景"><a href="#六、应用场景" class="headerlink" title="六、应用场景"></a>六、应用场景</h2><ul>
+<li>用于构建不可变的数据对象</li>
+<li>与 <code>match</code> 语句结合，构建代数数据类型（ADT）</li>
+<li>作为轻量级模型类使用</li>
+<li>在分布式系统中传输序列化数据（可与 JSON 序列化工具集成）</li>
+</ul>
+<hr>
+<h2 id="七、示例：表达式求值（模式匹配）"><a href="#七、示例：表达式求值（模式匹配）" class="headerlink" title="七、示例：表达式求值（模式匹配）"></a>七、示例：表达式求值（模式匹配）</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">scala</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">sealed</span> <span class="class"><span class="keyword">trait</span> <span class="title">Expr</span></span></span><br><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Const</span>(<span class="params">v: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Expr</span></span></span><br><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Add</span>(<span class="params">lhs: <span class="type">Expr</span>, rhs: <span class="type">Expr</span></span>) <span class="keyword">extends</span> <span class="title">Expr</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">eval</span></span>(e: <span class="type">Expr</span>): <span class="type">Int</span> = e <span class="keyword">match</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">Const</span>(v)      =&gt; v</span><br><span class="line">  <span class="keyword">case</span> <span class="type">Add</span>(lhs, rhs) =&gt; eval(lhs) + eval(rhs)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> expr = <span class="type">Add</span>(<span class="type">Const</span>(<span class="number">1</span>), <span class="type">Const</span>(<span class="number">2</span>))</span><br><span class="line">println(eval(expr))  <span class="comment">// 输出 3</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>case class</code> 是 Scala 提供的简洁且强大的数据建模工具，特别适用于不可变编程和模式匹配场景。掌握样例类的语义和自动行为，是学习 Scala 的基础之一。</p>
+<p>样例类（Case classes）和普通类差不多，只有几点关键差别，接下来的介绍将会涵盖这些差别。样例类非常适合用于不可变的数据。下一节将会介绍他们在<a href="https://docs.scala-lang.org/zh-cn/tour/pattern-matching.html">模式匹配</a>中的应用。</p>
+<h2 id="定义一个样例类"><a href="#定义一个样例类" class="headerlink" title="定义一个样例类"></a>定义一个样例类</h2><p>一个最简单的样例类定义由关键字<code>case class</code>，类名，参数列表（可为空）组成：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span>(<span class="params">isbn: <span class="type">String</span></span>)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> frankenstein = <span class="type">Book</span>(<span class="string">&quot;978-0486282114&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注意在实例化样例类<code>Book</code>时，并没有使用关键字<code>new</code>，这是因为样例类有一个默认的<code>apply</code>方法来负责对象的创建。</p>
+<p>当你创建包含参数的样例类时，这些参数是公开（public）的<code>val</code></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span>(<span class="params">sender: <span class="type">String</span>, recipient: <span class="type">String</span>, body: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="keyword">val</span> message1 = <span class="type">Message</span>(<span class="string">&quot;guillaume@quebec.ca&quot;</span>, <span class="string">&quot;jorge@catalonia.es&quot;</span>, <span class="string">&quot;Ça va ?&quot;</span>)</span><br><span class="line"></span><br><span class="line">println(message1.sender)  <span class="comment">// prints guillaume@quebec.ca</span></span><br><span class="line">message1.sender = <span class="string">&quot;travis@washington.us&quot;</span>  <span class="comment">// this line does not compile</span></span><br></pre></td></tr></table></figure>
+
+<p>你不能给<code>message1.sender</code>重新赋值，因为它是一个<code>val</code>（不可变）。在样例类中使用<code>var</code>也是可以的，但并不推荐这样。</p>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>样例类在比较的时候是按值比较而非按引用比较：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span>(<span class="params">sender: <span class="type">String</span>, recipient: <span class="type">String</span>, body: <span class="type">String</span></span>)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> message2 = <span class="type">Message</span>(<span class="string">&quot;jorge@catalonia.es&quot;</span>, <span class="string">&quot;guillaume@quebec.ca&quot;</span>, <span class="string">&quot;Com va?&quot;</span>)</span><br><span class="line"><span class="keyword">val</span> message3 = <span class="type">Message</span>(<span class="string">&quot;jorge@catalonia.es&quot;</span>, <span class="string">&quot;guillaume@quebec.ca&quot;</span>, <span class="string">&quot;Com va?&quot;</span>)</span><br><span class="line"><span class="keyword">val</span> messagesAreTheSame = message2 == message3  <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>尽管<code>message2</code>和<code>message3</code>引用不同的对象，但是他们的值是相等的，所以<code>message2 == message3</code>为<code>true</code>。</p>
+<h2 id="拷贝"><a href="#拷贝" class="headerlink" title="拷贝"></a>拷贝</h2><p>你可以通过<code>copy</code>方法创建一个样例类实例的浅拷贝，同时可以指定构造参数来做一些改变。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span>(<span class="params">sender: <span class="type">String</span>, recipient: <span class="type">String</span>, body: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="keyword">val</span> message4 = <span class="type">Message</span>(<span class="string">&quot;julien@bretagne.fr&quot;</span>, <span class="string">&quot;travis@washington.us&quot;</span>, <span class="string">&quot;Me zo o komz gant ma amezeg&quot;</span>)</span><br><span class="line"><span class="keyword">val</span> message5 = message4.copy(sender = message4.recipient, recipient = <span class="string">&quot;claire@bourgogne.fr&quot;</span>)</span><br><span class="line">message5.sender  <span class="comment">// travis@washington.us</span></span><br><span class="line">message5.recipient <span class="comment">// claire@bourgogne.fr</span></span><br><span class="line">message5.body  <span class="comment">// &quot;Me zo o komz gant ma amezeg&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>上述代码指定<code>message4</code>的<code>recipient</code>作为<code>message5</code>的<code>sender</code>，指定<code>message5</code>的<code>recipient</code>为”<a href="mailto:&#x63;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#x62;&#x6f;&#117;&#x72;&#x67;&#111;&#x67;&#110;&#101;&#x2e;&#102;&#114;">&#x63;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#x62;&#x6f;&#117;&#x72;&#x67;&#111;&#x67;&#110;&#101;&#x2e;&#102;&#114;</a>”，而<code>message4</code>的<code>body</code>则是直接拷贝作为<code>message5</code>的<code>body</code>了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/scala/" rel="tag"># scala</a>
+              <a href="/tags/scala%E5%85%A5%E9%97%A8/" rel="tag"># scala入门</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/10/linux/fs/FUSE-%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="prev" title="FUSE-用户空间文件系统">
+                  <i class="fa fa-angle-left"></i> FUSE-用户空间文件系统
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/11/scala/%E6%B3%9B%E5%9E%8B%E7%B1%BB/" rel="next" title="泛型类">
+                  泛型类 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
