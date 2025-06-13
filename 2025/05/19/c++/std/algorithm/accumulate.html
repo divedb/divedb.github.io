@@ -1,0 +1,100 @@
+<h2 id="accumulate"><a href="#accumulate" class="headerlink" title="accumulate"></a>accumulate</h2><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p>​	<code>std::accumulate</code>是标准库函数，定义在 <code>&lt;numeric&gt;</code> 头文件中。它用来计算容器中元素的总和或执行其他类似的聚合操作。</p>
+<h4 id="2-语法"><a href="#2-语法" class="headerlink" title="2. 语法"></a>2. 语法</h4><pre><code class="cpp">// (constexpr since C++20)
+template &lt;class InputIt, class T&gt;
+T accumulate(InputIt first, InputIt last, T init);
+
+// (constexpr since C++20)
+template &lt;class InputIt, class T, class BinaryOp&gt;
+T accumulate(InputIt first, InputIt last, T init, BinaryOp op);
+</code></pre>
+<p>满足任意一个条件，造成未定义行为：</p>
+<ul>
+<li>T is not CopyConstructible</li>
+<li>T is not CopyAssignable</li>
+<li><code>op</code> modifies any element of <code>[first, last)</code>.</li>
+<li><code>op</code> invalidates any iterator or subrange in <code>[first, last]</code>.</li>
+</ul>
+<h4 id="3-基本用法"><a href="#3-基本用法" class="headerlink" title="3. 基本用法"></a>3. 基本用法</h4><h6 id="3-1-求和"><a href="#3-1-求和" class="headerlink" title="3.1 求和"></a>3.1 求和</h6><pre><code class="cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;numeric&gt;
+
+int main() {
+  std::vector&lt;int&gt; numbers = {1, 2, 3, 4, 5};
+  int sum = std::accumulate(numbers.begin(), numbers.end(), 0);
+  std::cout &lt;&lt; &quot;Sum: &quot; &lt;&lt; sum &lt;&lt; std::endl;
+  
+  return 0;
+}
+
+// Sum: 15
+</code></pre>
+<h6 id="3-2-连接字符串"><a href="#3-2-连接字符串" class="headerlink" title="3.2 连接字符串"></a>3.2 连接字符串</h6><pre><code class="cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;numeric&gt;
+#include &lt;string&gt;
+
+int main() {
+  std::vector&lt;std::string&gt; words = {&quot;Hello&quot;, &quot; &quot;, &quot;world&quot;, &quot;!&quot;};
+  std::string result = std::accumulate(words.begin(), words.end(), std::string{});
+  std::cout &lt;&lt; &quot;Concatenated String: &quot; &lt;&lt; result &lt;&lt; std::endl; 
+  
+  return 0;
+}
+
+// Concatenated String: Hello world!
+</code></pre>
+<h6 id="3-3-计算最大值"><a href="#3-3-计算最大值" class="headerlink" title="3.3 计算最大值"></a>3.3 计算最大值</h6><pre><code class="cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;numeric&gt;
+#include &lt;functional&gt; // 包含 std::max
+
+int main() {
+  std::vector&lt;int&gt; numbers = {4, 2, 9, 5, 1};
+  int max_value = std::accumulate(
+      numbers.begin(), 
+      numbers.end(), 
+      numbers[0], 
+      [](int a, int b) {
+          return std::max(a, b);
+      }
+  );
+  std::cout &lt;&lt; &quot;Maximum Value: &quot; &lt;&lt; max_value &lt;&lt; std::endl;
+
+  return 0;
+}
+
+// Maximum Value: 9
+</code></pre>
+<h5 id="4-源码实现（libc-）"><a href="#4-源码实现（libc-）" class="headerlink" title="4. 源码实现（libc++）"></a>4. 源码实现（libc++）</h5><pre><code class="cpp">template &lt;class _InputIterator, class _Tp&gt;
+_LIBCPP_CONSTEXPR_SINCE_CXX20 _Tp
+accumulate(_InputIterator __first, _InputIterator __last, _Tp __init) {
+  for (; __first != __last; ++__first)
+#if _LIBCPP_STD_VER &gt;= 20
+    __init = std::move(__init) + *__first;
+#else
+    __init = __init + *__first;
+#endif
+  return __init;
+}
+
+template &lt;class _InputIterator, class _Tp, class _BinaryOperation&gt;
+_LIBCPP_CONSTEXPR_SINCE_CXX20 _Tp
+accumulate(_InputIterator __first, _InputIterator __last, _Tp __init, _BinaryOperation __binary_op) {
+  for (; __first != __last; ++__first)
+#if _LIBCPP_STD_VER &gt;= 20
+    __init = __binary_op(std::move(__init), *__first);
+#else
+    __init = __binary_op(__init, *__first);
+#endif
+  return __init;
+}
+</code></pre>
+<h5 id="5-需要注意"><a href="#5-需要注意" class="headerlink" title="5. 需要注意"></a>5. 需要注意</h5><p>​	<code>std::accumulate</code> performs a left fold. In order to perform a right fold, one must reverse the order of the arguments to the binary operator, and use reverse iterators.</p>
+<p>If left to type inference, op operates on values of the same type as init which can result in unwanted casting of the iterator elements. For example, std::accumulate(v.begin(), v.end(), 0) likely does not give the result one wishes for when v is of type <code>std::vector&lt;double&gt;</code>.</p>
+<pre><code class="cpp">#include ...
+
+int main() {
+  vector&lt;double&gt; v;
+  auto a = std::accumulate(v.begin(), v.end(), 0);	// a的类型是int
+}
+</code></pre>

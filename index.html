@@ -123,17 +123,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -150,6 +150,92 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/12/linux/mm/slab%E5%A4%B4%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/12/linux/mm/slab%E5%A4%B4%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">slab头文件</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-12 14:53:47 / 修改时间：15:13:16" itemprop="dateCreated datePublished" datetime="2025-06-12T14:53:47+08:00">2025-06-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	<code>Linux</code>内核中的<code>slab</code>分配器是一种高效的内存管理机制，主要用于频繁分配和释放大小一致的对象。本文介绍<code>slab</code>分配器涉及的核心头文件、其定义的关键结构体和常见函数接口，帮助理解<code>slab</code>分配器的使用方式与实现原理。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/06/12/linux/mm/slab%E5%A4%B4%E6%96%87%E4%BB%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -483,7 +569,7 @@
 <h2 id="拷贝"><a href="#拷贝" class="headerlink" title="拷贝"></a>拷贝</h2><p>你可以通过<code>copy</code>方法创建一个样例类实例的浅拷贝，同时可以指定构造参数来做一些改变。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span>(<span class="params">sender: <span class="type">String</span>, recipient: <span class="type">String</span>, body: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="keyword">val</span> message4 = <span class="type">Message</span>(<span class="string">&quot;julien@bretagne.fr&quot;</span>, <span class="string">&quot;travis@washington.us&quot;</span>, <span class="string">&quot;Me zo o komz gant ma amezeg&quot;</span>)</span><br><span class="line"><span class="keyword">val</span> message5 = message4.copy(sender = message4.recipient, recipient = <span class="string">&quot;claire@bourgogne.fr&quot;</span>)</span><br><span class="line">message5.sender  <span class="comment">// travis@washington.us</span></span><br><span class="line">message5.recipient <span class="comment">// claire@bourgogne.fr</span></span><br><span class="line">message5.body  <span class="comment">// &quot;Me zo o komz gant ma amezeg&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>上述代码指定<code>message4</code>的<code>recipient</code>作为<code>message5</code>的<code>sender</code>，指定<code>message5</code>的<code>recipient</code>为”<a href="mailto:&#x63;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#x62;&#x6f;&#117;&#x72;&#x67;&#111;&#x67;&#110;&#101;&#x2e;&#102;&#114;">&#x63;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#x62;&#x6f;&#117;&#x72;&#x67;&#111;&#x67;&#110;&#101;&#x2e;&#102;&#114;</a>”，而<code>message4</code>的<code>body</code>则是直接拷贝作为<code>message5</code>的<code>body</code>了。</p>
+<p>上述代码指定<code>message4</code>的<code>recipient</code>作为<code>message5</code>的<code>sender</code>，指定<code>message5</code>的<code>recipient</code>为”<a href="mailto:&#99;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#98;&#x6f;&#x75;&#114;&#x67;&#111;&#x67;&#x6e;&#101;&#46;&#102;&#114;">&#99;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#98;&#x6f;&#x75;&#114;&#x67;&#111;&#x67;&#x6e;&#101;&#46;&#102;&#114;</a>”，而<code>message4</code>的<code>body</code>则是直接拷贝作为<code>message5</code>的<code>body</code>了。</p>
 
       
     </div>
@@ -1147,100 +1233,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/09/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/06/09/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">文件系统挂载分析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-06-09 22:49:45" itemprop="dateCreated datePublished" datetime="2025-06-09T22:49:45+08:00">2025-06-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-10 14:11:28" itemprop="dateModified" datetime="2025-06-10T14:11:28+08:00">2025-06-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文将针对内核版本<code>6.15.0</code>中的<code>mount</code>系统调用实现过程进行简单说明。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/06/09/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD%E5%88%86%E6%9E%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

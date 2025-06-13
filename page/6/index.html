@@ -123,17 +123,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -159,7 +159,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/14/c++/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/14/c++/std/coroutine/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3promise%E7%B1%BB%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -177,7 +177,110 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/14/c++/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="post-title-link" itemprop="url">理解C++中的co_await操作符</a>
+          <a href="/2025/04/14/c++/std/coroutine/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3promise%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">深入理解promise类型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-14 16:21:36" itemprop="dateCreated datePublished" datetime="2025-04-14T16:21:36+08:00">2025-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-13 10:52:17" itemprop="dateModified" datetime="2025-06-13T10:52:17+08:00">2025-06-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/co-routine/" itemprop="url" rel="index"><span itemprop="name">co_routine</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>翻译：<a href="https://lewissbaker.github.io/2018/09/05/understanding-the-promise-type">C++ Coroutines: Understanding the promise type</a></p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	这篇文章是关于C++协程TS (N4736)系列的第三篇。</p>
+<p>本系列的前几篇文章涵盖了：</p>
+<ul>
+<li>协程理论</li>
+<li>理解<code>operator co_await</code></li>
+</ul>
+<p>在这篇文章中，我将探讨编译器如何将您编写的协程代码转换为已编译的代码，以及如何通过定义您自己的<strong>Promise</strong>类型来自定义协程的行为。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/04/14/c++/std/coroutine/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3promise%E7%B1%BB%E5%9E%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/14/c++/std/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/14/c++/std/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="post-title-link" itemprop="url">理解C++中的co_await操作符</a>
         </h2>
 
         <div class="post-meta-container">
@@ -220,7 +323,7 @@
 <p>之前的《协程理论》文章概述了函数与协程的区别，但未深入C++协程TS（N4680）的具体语法和语义。协程TS引入的核心机制是通过新的<code>co_await</code>操作符实现协程的挂起与恢复。理解<code>co_await</code>的工作原理是解密协程行为的关键。本文将剖析<code>co_await</code>的机制，并介绍相关的Awaitable（可等待）和Awaiter（等待器）类型概念。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/04/14/c++/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/#more" rel="contents">
+              <a class="btn" href="/2025/04/14/c++/std/coroutine/%E7%90%86%E8%A7%A3C++%E4%B8%AD%E7%9A%84co_await%E6%93%8D%E4%BD%9C%E7%AC%A6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -251,7 +354,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/14/c++/coroutine/%E5%8D%8F%E7%A8%8B%E7%90%86%E8%AE%BA/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/14/c++/std/coroutine/%E5%8D%8F%E7%A8%8B%E7%90%86%E8%AE%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -269,7 +372,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/04/14/c++/coroutine/%E5%8D%8F%E7%A8%8B%E7%90%86%E8%AE%BA/" class="post-title-link" itemprop="url">协程理论</a>
+          <a href="/2025/04/14/c++/std/coroutine/%E5%8D%8F%E7%A8%8B%E7%90%86%E8%AE%BA/" class="post-title-link" itemprop="url">协程理论</a>
         </h2>
 
         <div class="post-meta-container">
@@ -287,7 +390,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-31 21:43:20" itemprop="dateModified" datetime="2025-05-31T21:43:20+08:00">2025-05-31</time>
+      <time title="修改时间：2025-06-13 10:51:56" itemprop="dateModified" datetime="2025-06-13T10:51:56+08:00">2025-06-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -310,11 +413,103 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>翻译：<a href="https://lewissbaker.github.io/2017/09/25/coroutine-theory">Coroutine Theory</a></p>
-<p>​	这是关于<code>C++</code>协程<code>TS</code>（<code>Technical Specification</code>）系列文章的第一篇，该语言特性已被纳入<code>C++20</code>标准。本系列将剖析<code>C++</code>协程的底层机制，并演示如何利用它们构建类似<code>cppcoro</code>库提供的高级抽象。</p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	这是关于<code>C++</code>协程<code>TS</code>（<code>Technical Specification</code>）系列文章的第一篇，该语言特性已被纳入<code>C++20</code>标准。本系列将剖析<code>C++</code>协程的底层机制，并演示如何利用它们构建类似<code>cppcoro</code>库提供的高级抽象。</p>
 <p>本文将阐述函数与协程的区别，并通过理论分析它们支持的操作。这些基础概念将帮助您建立对<code>C++</code>协程的认知框架。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/04/14/c++/coroutine/%E5%8D%8F%E7%A8%8B%E7%90%86%E8%AE%BA/#more" rel="contents">
+              <a class="btn" href="/2025/04/14/c++/std/coroutine/%E5%8D%8F%E7%A8%8B%E7%90%86%E8%AE%BA/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/11/c++/asio/asio%E7%9A%84%E5%BC%82%E6%AD%A5%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%A7%A3%E6%9E%902/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/11/c++/asio/asio%E7%9A%84%E5%BC%82%E6%AD%A5%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%A7%A3%E6%9E%902/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-11 11:44:25" itemprop="dateCreated datePublished" datetime="2025-04-11T11:44:25+08:00">2025-04-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-12 18:44:43" itemprop="dateModified" datetime="2025-04-12T18:44:43+08:00">2025-04-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/asio/" itemprop="url" rel="index"><span itemprop="name">asio</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="asio的异步与线程模型解析2"><a href="#asio的异步与线程模型解析2" class="headerlink" title="asio的异步与线程模型解析2"></a>asio的异步与线程模型解析2</h2><p>基于前文asio的异步与线程模型解析，进行gdb调试。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/04/11/c++/asio/asio%E7%9A%84%E5%BC%82%E6%AD%A5%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%A7%A3%E6%9E%902/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -581,6 +776,99 @@
 </li>
 </ol>
 
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/10/c++/asio/asio%E7%9A%84%E5%BC%82%E6%AD%A5%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/04/10/c++/asio/asio%E7%9A%84%E5%BC%82%E6%AD%A5%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">asio的异步与线程模型解析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-10 11:08:13" itemprop="dateCreated datePublished" datetime="2025-04-10T11:08:13+08:00">2025-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-11 11:48:38" itemprop="dateModified" datetime="2025-04-11T11:48:38+08:00">2025-04-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/asio/" itemprop="url" rel="index"><span itemprop="name">asio</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载：<a href="https://www.cnblogs.com/ishen/p/14593598.html">https://www.cnblogs.com/ishen/p/14593598.html</a></p>
+<h2 id="asio的异步与线程模型解析"><a href="#asio的异步与线程模型解析" class="headerlink" title="asio的异步与线程模型解析"></a>asio的异步与线程模型解析</h2><p>本文使用的asio版本1.76.0从<a href="https://github.com/boostorg/asio">github</a>获取，老版本中有一个很重要的结构叫做<code>io_service</code>，新版本中改成了<code>io_context</code>。下面主要通过c++14下的一个异步的例子分析boost.asio的线程模型，其代码结构比较复杂，时间有限不能分析的很详细，只是做大体结构分析。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/04/10/c++/asio/asio%E7%9A%84%E5%BC%82%E6%AD%A5%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%A7%A3%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1047,7 +1335,7 @@ c
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/01/31/c++/template/README/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1065,7 +1353,7 @@ c
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/" class="post-title-link" itemprop="url">双指针</a>
+          <a href="/2025/01/31/c++/template/README/" class="post-title-link" itemprop="url">未命名</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1076,23 +1364,14 @@ c
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-11-15 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-15T00:00:00+08:00">2024-11-15</time>
+      <time title="创建时间：2025-01-31 19:16:10" itemprop="dateCreated datePublished" datetime="2025-01-31T19:16:10+08:00">2025-01-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-18 13:02:25" itemprop="dateModified" datetime="2025-04-18T13:02:25+08:00">2025-04-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
-        </span>
+      <time title="修改时间：2025-02-01 11:25:50" itemprop="dateModified" datetime="2025-02-01T11:25:50+08:00">2025-02-01</time>
     </span>
 
   
@@ -1105,297 +1384,8 @@ c
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>​	<strong>双指针算法</strong>（Two-pointer technique）是一种常用的算法技巧，通常用来优化处理线性结构（如数组或链表）的问题。其基本思想是使用两个指针同时遍历数据结构，通常一个指针从左往右移动，另一个指针从右往左移动，或者两个指针一起从左到右遍历。双指针算法在解决一些问题时能够显著降低时间复杂度，特别是在解决 <strong>排序数组</strong>、<strong>滑动窗口</strong> 或 <strong>链表</strong> 等问题时非常有效。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/11/02/linux/fs/SPFS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/02/linux/fs/SPFS/" class="post-title-link" itemprop="url">SPFS</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-11-02 18:06:53" itemprop="dateCreated datePublished" datetime="2024-11-02T18:06:53+08:00">2024-11-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-05 22:26:32" itemprop="dateModified" datetime="2024-11-05T22:26:32+08:00">2024-11-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/filesystem/" itemprop="url" rel="index"><span itemprop="name">filesystem</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="SPFS"><a href="#SPFS" class="headerlink" title="SPFS"></a>SPFS</h2><h4 id="Module-Agenda"><a href="#Module-Agenda" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
-<li>Basic Linux filesystem information</li>
-<li>Where is the Linux filesystem code?</li>
-<li>Who uses what filesystems?</li>
-<li>Where do filesystems sit in the kernel?</li>
-<li>How to get started with filesystem development</li>
-<li>Some basic SPFS information</li>
-</ul>
-<h5 id="1-How-many-Filesystems"><a href="#1-How-many-Filesystems" class="headerlink" title="1. How many Filesystems?"></a>1. How many Filesystems?</h5><ul>
-<li>Linux has over 80 different filesystems</li>
-<li>They fall into several different categories:<ul>
-<li>Disk-based filesystems, filesystems with built-in fault-tolerance, filesystems optimized for flash memory, solid state media, record-oriented filesystems, shared-disk filesystems, distributed filesystems, distributed fault-tolerant filesystems, distributed parallel filesystems, distirbuted parallel fault-tolerant filesystems, peer-to-peer filesystems, special-purpose filesystems, pseudo filesystems, encrypted filesystems.</li>
-<li>There are many filesystems not in the source tree</li>
-</ul>
-</li>
-</ul>
-<h5 id="2-Whre-Are-They"><a href="#2-Whre-Are-They" class="headerlink" title="2. Whre Are They?"></a>2. Whre Are They?</h5><ul>
-<li>All different kernels can be found at <a href="http://www.kernel.org/">www.kernel.org</a></li>
-<li>Filesystems are located under the <code>fs</code> directory, for example:<ul>
-<li><code>linux-6.5.5/fs</code></li>
-</ul>
-</li>
-</ul>
-<h5 id="3-Which-Distributions-Use-Which-Filesystems"><a href="#3-Which-Distributions-Use-Which-Filesystems" class="headerlink" title="3. Which Distributions Use Which Filesystems?"></a>3. Which Distributions Use Which Filesystems?</h5><table>
-<thead>
-<tr>
-<th>Distribution</th>
-<th>Fils System</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Ubuntu&#x2F;Debian</td>
-<td>ext4</td>
-</tr>
-<tr>
-<td>Fedora</td>
-<td>btrfs</td>
-</tr>
-<tr>
-<td>CentOS</td>
-<td>XFS (CentOS EOL - Rocky?)</td>
-</tr>
-<tr>
-<td>RHEL</td>
-<td>XFS - was ext4 up to RHEL 6.0</td>
-</tr>
-<tr>
-<td>OpenSuSE</td>
-<td>btrfs</td>
-</tr>
-<tr>
-<td>SLES</td>
-<td>XFS</td>
-</tr>
-<tr>
-<td>Android</td>
-<td>ext4 or one of the flash-based filesystems such as YAFFS2</td>
-</tr>
-</tbody></table>
-<h5 id="4-How-Much-Code"><a href="#4-How-Much-Code" class="headerlink" title="4. How Much Code?"></a>4. How Much Code?</h5><ul>
-<li>High-end<ul>
-<li>XFS  - 73,000   LOC</li>
-<li>btrfs - 151,000 LOC</li>
-<li>ext4  - 63,000   LOC</li>
-<li>NFS  - 73,000   LOC</li>
-</ul>
-</li>
-<li>Low-end<ul>
-<li>bfs    - 1,000 LOC</li>
-<li>ext2  - 9,000 LOC</li>
-</ul>
-</li>
-</ul>
-<h5 id="5-Complexity"><a href="#5-Complexity" class="headerlink" title="5. Complexity"></a>5. Complexity</h5><ul>
-<li>There are 4 vectors of (over 100) operations that filesystems can provide:<ul>
-<li><code>inode_operations</code>                    - 29 different operations</li>
-<li><code>super_operations</code>                    - 19 different operations</li>
-<li><code>file_operation</code>                        - 33 different operations</li>
-<li><code>address_space_operations</code> - 22 different operations</li>
-</ul>
-</li>
-<li>No filesystem provide all functions</li>
-<li>SPFS provides only a small number (depends on file type)</li>
-</ul>
-<p><img src="/.tech//fig.1.png"></p>
-<h5 id="6-Where-Would-I-Normally-Start"><a href="#6-Where-Would-I-Normally-Start" class="headerlink" title="6. Where Would I Normally Start?"></a>6. Where Would I Normally Start?</h5><ul>
-<li>bfs, sysvfs, fat, …</li>
-<li>Look at features. Less features the better!<ul>
-<li>Filesystems are optimized for performance</li>
-<li>This makes the code harder to understand</li>
-</ul>
-</li>
-<li>But no need. That’s what SPFS is for!</li>
-</ul>
-<h5 id="7-SPFS-was-Developed-for-Teaching"><a href="#7-SPFS-was-Developed-for-Teaching" class="headerlink" title="7. SPFS was Developed for Teaching"></a>7. SPFS was Developed for Teaching</h5><ul>
-<li>It’s as simple as you can get</li>
-<li>It will be updated once per year (Ubuntu x.04 releases)</li>
-<li>It has <code>prints()</code> calls for each function - viewed with <code>dmesg(1)</code></li>
-<li>It’s also backed by an online open-source filesystem book<ul>
-<li><code>https://github.com/stevedpate/linux-fs-book</code></li>
-<li>450 pages and counting… looking for help to move it forwards</li>
-<li>There is a chapter on SPFS</li>
-</ul>
-</li>
-</ul>
-<hr>
-
-<h4 id="Module-Agenda-1"><a href="#Module-Agenda-1" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
-<li>Basic SPFS information including features&#x2F;properties&#x2F;limitations</li>
-<li>Important SPFS structures</li>
-<li>SPFS disk layout</li>
-<li>What happens during filesystem creation</li>
-</ul>
-<h5 id="1-Basic-Information"><a href="#1-Basic-Information" class="headerlink" title="1. Basic Information"></a>1. Basic Information</h5><ul>
-<li>A Linux filesystem contains the following minimal items:<ul>
-<li>A kernel module</li>
-<li>A basic set of commands (<code>mkfs</code> and <code>fsdb</code> at a minimum)</li>
-</ul>
-</li>
-<li>There may be other commands to support filesystem features:<ul>
-<li><code>e2fsprogs</code> - <code>badblocks</code>, <code>blkid</code>, <code>chattr</code>, <code>debugfs</code>, <code>dumpe2fs</code>, <code>e2freefrag</code>, <code>e2fsck</code>, <code>e2image</code>, <code>e2label</code>, <code>e2undo</code>, <code>e4defrag</code>, <code>filefrag</code>, <code>findfs</code>, <code>findsuper</code>, <code>logsave</code>, <code>lsattr</code>, <code>mke2fs</code>, <code>resize2fs</code>, <code>tune2fs</code>.</li>
-</ul>
-</li>
-<li>SPFS only has the following:<ul>
-<li>A kernel module, <code>mkfs</code>, <code>fsdb</code> and <code>fillfs</code> commands plus test programs.</li>
-</ul>
-</li>
-</ul>
-<h5 id="2-SPFS-Features-Properties"><a href="#2-SPFS-Features-Properties" class="headerlink" title="2. SPFS Features &#x2F; Properties"></a>2. SPFS Features &#x2F; Properties</h5><ul>
-<li>Single block size (2048 bytes)</li>
-<li>760 blocks in the whole filesystem (760 * 2048 byte block size &#x3D; ~1.5GB?MB)</li>
-<li>Maximum filename length of up to 28 characters</li>
-<li>Multi-level directories (directories within directories)</li>
-<li>File creation, deletion, rename, hard links, symlinks, …</li>
-<li>File undelete using the SPFS <code>fsdb</code> command</li>
-</ul>
-<h5 id="3-Some-Basic-SPFS-Concepts"><a href="#3-Some-Basic-SPFS-Concepts" class="headerlink" title="3. Some Basic SPFS Concepts"></a>3. Some Basic SPFS Concepts</h5><ul>
-<li><p>SPFS Superblock</p>
-<ul>
-<li><p>Contains information about the filesystem</p>
-</li>
-<li><p>Inode and data block usage</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_superblock</span> &#123;</span></span><br><span class="line">  __u32 s_magic; 								<span class="comment">// 0x53504653</span></span><br><span class="line">  __u32 s_mod;		</span><br><span class="line">  __u32 s_nifree;</span><br><span class="line">  __u32 s_inode[SP_MAXFILES];		<span class="comment">// 128</span></span><br><span class="line">  __u32 s_nbfree;</span><br><span class="line">  __u16 s_block[SP_MAXBLOCKS];	<span class="comment">// 760</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li><p>Inodes</p>
-<ul>
-<li><p>1 inode per file regardless of file type</p>
-</li>
-<li><p>Holds file size, ownershop, time stamps, which blocks are allocated</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_inode</span> &#123;</span></span><br><span class="line">  __u32 i_mode;										<span class="comment">// file type and permissions</span></span><br><span class="line">  __u32 i_nlink;									<span class="comment">// e.g. (S_IFDIR | 0755)</span></span><br><span class="line">  __u32 i_atime;</span><br><span class="line">  __u32 i_mtime;</span><br><span class="line">  __u32 i_ctime;</span><br><span class="line">  __u32 i_uid;</span><br><span class="line">  __u32 i_gid;</span><br><span class="line">  __u32 i_size;</span><br><span class="line">  __u32 i_blocks;</span><br><span class="line">  __u32 i_addr[SP_DIRECT_BLOCKS];	<span class="comment">// 64</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Directory entries</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sp_dirent</span> &#123;</span></span><br><span class="line">  __u32 d_ino;</span><br><span class="line">  <span class="type">char</span>  d_name[SP_NAMELEN];	<span class="comment">// 28</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-<p><img src="/.tech//fig.2.png"></p>
-<h5 id="4-What-Happens-During-mkfs"><a href="#4-What-Happens-During-mkfs" class="headerlink" title="4. What Happens During mkfs?"></a>4. What Happens During <code>mkfs</code>?</h5><ul>
-<li>Fill in the superblock structure fields</li>
-<li>Write the superblock to disk</li>
-<li>Write inodes 2 (root) and 3 (lost+found) to disk</li>
-<li>Write directory entries for both directories<ul>
-<li>“.” and “..” for “lost+found”</li>
-<li>“.”, “..” and “lost+found” for the root inode</li>
-</ul>
-</li>
-</ul>
-<h5 id="5-Introducing-mkfs-and-fsdb"><a href="#5-Introducing-mkfs-and-fsdb" class="headerlink" title="5. Introducing mkfs and fsdb"></a>5. Introducing <code>mkfs</code> and <code>fsdb</code></h5><ul>
-<li>Best way to learn the disk layout is to see it in action!</li>
-<li>We’ll create a filesystem with <code>mkfs</code> and use <code>fsdb</code> to explore what’s there</li>
-<li>Source code will be introduced soon</li>
-</ul>
-<p><code>lost+found</code> 目录是 Linux 和 Unix 文件系统中的一个特殊目录，通常存在于文件系统的根目录下。它的主要用途是存储在文件系统检查（例如，使用 <code>fsck</code> 命令）期间恢复的丢失文件或目录。</p>
-<h6 id="主要特点和用途"><a href="#主要特点和用途" class="headerlink" title="主要特点和用途"></a>主要特点和用途</h6><ol>
-<li><strong>恢复丢失的文件</strong>：<ul>
-<li>当文件系统发生损坏或崩溃时，文件系统检查工具会尝试修复错误，并可能找到一些无法与原有目录结构相匹配的孤立文件。这些文件会被放置在<code>lost+found</code>目录中。</li>
-</ul>
-</li>
-<li><strong>文件命名</strong>：<ul>
-<li>恢复的文件通常会被重命名为数字（例如，<code>#1</code>、<code>#2</code>），以便用户在恢复后可以检查它们。</li>
-</ul>
-</li>
-<li><strong>存在于不同的文件系统中</strong>：<ul>
-<li><code>lost+found</code>目录主要出现在使用<code>ext2</code>、<code>ext3</code>、<code>ext4</code>和其他一些Linux文件系统中。</li>
-</ul>
-</li>
-<li><strong>文件系统检查</strong>：<ul>
-<li><code>lost+found</code>目录是在文件系统创建时自动生成的，用户通常无需手动创建或删除它。运行文件系统检查（如<code>fsck</code>）时，工具会自动处理该目录中的文件。</li>
-</ul>
-</li>
-</ol>
-<hr>
-
-<h4 id="Module-Agenda-2"><a href="#Module-Agenda-2" class="headerlink" title="Module Agenda"></a>Module Agenda</h4><ul>
-<li>How to downlaod the source code</li>
-<li>Looking through the directory structure</li>
-<li>Walking through the <code>mkfs</code> and <code>fsdb</code> source code</li>
-</ul>
+          <p><a href="https://zhuanlan.zhihu.com/p/655902377">雾里看花：真正意义上的理解 C++ 模板</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/682031684">The History of constexpr in C++! (Part One)</a></p>
 
       
     </div>
@@ -1422,7 +1412,7 @@ c
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/10/22/linux/fs/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/12/19/c++/std/algorithm/reordering%20elements/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1440,7 +1430,7 @@ c
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/22/linux/fs/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">Ext2文件系统</a>
+          <a href="/2024/12/19/c++/std/algorithm/reordering%20elements/" class="post-title-link" itemprop="url">Reordering Elements</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1451,14 +1441,14 @@ c
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-10-22 12:08:04" itemprop="dateCreated datePublished" datetime="2024-10-22T12:08:04+08:00">2024-10-22</time>
+      <time title="创建时间：2024-12-19 20:14:32" itemprop="dateCreated datePublished" datetime="2024-12-19T20:14:32+08:00">2024-12-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-30 22:31:23" itemprop="dateModified" datetime="2025-04-30T22:31:23+08:00">2025-04-30</time>
+      <time title="修改时间：2025-04-09 13:30:24" itemprop="dateModified" datetime="2025-04-09T13:30:24+08:00">2025-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1466,7 +1456,7 @@ c
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
         </span>
     </span>
 
@@ -1480,23 +1470,35 @@ c
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>目录：</p>
-<ul>
-<li>Blocks</li>
-<li>Block Groups</li>
-<li>Directories</li>
-<li>Inodes</li>
-<li>Superblocks</li>
-<li>Symbolic Links</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/10/22/linux/fs/Ext2%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <h2 id="Reordering-Elements"><a href="#Reordering-Elements" class="headerlink" title="Reordering Elements"></a>Reordering Elements</h2><h4 id="1-Shifting"><a href="#1-Shifting" class="headerlink" title="1. Shifting"></a>1. Shifting</h4><p><code>reverse</code></p>
+<p><code>reverse_copy</code></p>
+<p><code>rotate</code></p>
+<p><code>rotate_copy</code></p>
+<p><code>shift_left</code></p>
+<p><code>shift_right</code></p>
+<p><code>shuffle</code></p>
+<h4 id="2-Sorting"><a href="#2-Sorting" class="headerlink" title="2. Sorting"></a>2. Sorting</h4><p><code>sort</code></p>
+<p><code>stable_sort</code></p>
+<p><code>partial_sort</code></p>
+<p><code>partial_sort_copy</code></p>
+<p><code>nth_element</code></p>
+<p><code>is_sorted</code></p>
+<p><code>is_sorted_until</code></p>
+<h4 id="3-Partitioning"><a href="#3-Partitioning" class="headerlink" title="3. Partitioning"></a>3. Partitioning</h4><p><code>partition</code></p>
+<p><code>partition_copy</code></p>
+<p><code>stable_parition</code></p>
+<p><code>is_paritioned</code></p>
+<p><code>partition_point</code></p>
+<h4 id="4-Permutations"><a href="#4-Permutations" class="headerlink" title="4. Permutations"></a>4. Permutations</h4><p><code>next_permutation</code></p>
+<p><code>prev_premutation</code></p>
+<p><code>is_permutation</code></p>
+<h4 id="5-Heap"><a href="#5-Heap" class="headerlink" title="5. Heap"></a>5. Heap</h4><p><code>make_heap</code></p>
+<p><code>push_heap</code></p>
+<p><code>pop_heap</code></p>
+<p><code>sort_heap</code></p>
+<p><code>is_heap</code></p>
+<p><code>is_heap_until</code></p>
+
       
     </div>
 
@@ -1515,7 +1517,7 @@ c
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

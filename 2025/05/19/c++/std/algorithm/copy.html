@@ -1,0 +1,31 @@
+<h2 id="copy"><a href="#copy" class="headerlink" title="copy"></a>copy</h2><blockquote>
+<p>  Defined in header <code>&lt;algorithm&gt;</code></p>
+</blockquote>
+<pre><code class="cpp">// constexpr since C++20
+template &lt;class InputIt, class OutputIt &gt;
+OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
+
+// since C++17
+template &lt;class ExecutionPolicy, class ForwardIt1, class ForwardIt2&gt;
+ForwardIt2 copy(ExecutionPolicy&amp;&amp; policy,
+                ForwardIt1 first, ForwardIt1 last, ForwardIt2 d_first );
+</code></pre>
+<h5 id="1-作用"><a href="#1-作用" class="headerlink" title="1. 作用"></a>1. 作用</h5><p>Copies the elements in the range, defined by <code>[first, last)</code>, to another range beginning at d_first (copy destination range).</p>
+<ol>
+<li>Copies all elements in the range <code>[first, last)</code> starting from first and proceeding to last.</li>
+</ol>
+<p> If d_first is in <code>[first, last)</code>, the behavior is undefined. In this case, <code>std::copy_backward</code> may be used instead.</p>
+<p>如果输出迭代器<code>d_first</code>在<code>[first, last)</code>范围内，行为是未定义的。</p>
+<ol start="2">
+<li>Copies the elements, but executed according to policy. This overload does not participate in overload resolution unless</li>
+</ol>
+<p> If <code>[first, last)</code> and the copy destination range overlaps, the behavior is undefined.</p>
+<pre><code class="cpp">// until C++20
+std::is_execution_policy_v&lt;std::decay_t&lt;ExecutionPolicy&gt;&gt; is true.
+
+// since C++20
+std::is_execution_policy_v&lt;std::remove_cvref_t&lt;ExecutionPolicy&gt;&gt; is true.
+</code></pre>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ol>
+<li><a href="https://en.cppreference.com/w/cpp/algorithm/copy">https://en.cppreference.com/w/cpp/algorithm/copy</a></li>
+</ol>

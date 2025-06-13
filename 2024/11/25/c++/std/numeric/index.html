@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Numeric库1. 简介​	标准库中的numeric是一个包含数值运算功能的头文件，提供了多个通用的算法和函数模板，主要用于数组、容器或数值的处理。 Common mathematical functions​	The header cmath provides standard C library mathematical functions such as std::fabs, std::s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="numeric">
+<meta property="og:url" content="https://huangpiao.tech/2024/11/25/c++/std/numeric/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="Numeric库1. 简介​	标准库中的numeric是一个包含数值运算功能的头文件，提供了多个通用的算法和函数模板，主要用于数组、容器或数值的处理。 Common mathematical functions​	The header cmath provides standard C library mathematical functions such as std::fabs, std::s">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-11-25T11:36:49.542Z">
+<meta property="article:modified_time" content="2024-11-27T02:22:00.896Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2024/11/25/c++/std/numeric/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2024/11/25/c++/std/numeric/","path":"2024/11/25/c++/std/numeric/","title":"numeric"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>numeric | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Numeric%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">Numeric库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Common-mathematical-functions"><span class="nav-number">1.0.1.0.1.</span> <span class="nav-text">Common mathematical functions</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Mathematical-special-functions-since-C-17"><span class="nav-number">1.0.1.0.2.</span> <span class="nav-text">Mathematical special functions (since C++17)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Mathematical-constants-since-C-20"><span class="nav-number">1.0.1.0.3.</span> <span class="nav-text">Mathematical constants (since C++20)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Basic-linear-algebra-algorithms-since-C-26"><span class="nav-number">1.0.1.0.4.</span> <span class="nav-text">Basic linear algebra algorithms (since C++26)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. 头文件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-complex"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">2.1 complex</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-complex-%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">std::complex 的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-complex-%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="nav-number">1.2.</span> <span class="nav-text">std::complex 类模板</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E"><span class="nav-number">1.2.1.</span> <span class="nav-text">声明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">构造函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">成员函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD"><span class="nav-number">1.4.</span> <span class="nav-text">运算符重载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E6%95%B0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%95%B0%E5%AD%A6%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">复数相关的数学函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">示例代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.7.</span> <span class="nav-text">应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-valarray"><span class="nav-number">1.7.0.1.</span> <span class="nav-text">2.2 valarray</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0-1"><span class="nav-number">1.8.</span> <span class="nav-text">构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="nav-number">1.9.</span> <span class="nav-text">常用成员函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%85%A8%E5%B1%80%E5%87%BD%E6%95%B0"><span class="nav-number">1.10.</span> <span class="nav-text">常用全局函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%87%BD%E6%95%B0"><span class="nav-number">1.10.1.</span> <span class="nav-text">数学函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E5%87%BD%E6%95%B0"><span class="nav-number">1.10.2.</span> <span class="nav-text">统计函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.11.</span> <span class="nav-text">优点</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2024/11/25/c++/std/numeric/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="numeric | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          numeric
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-11-25 19:36:49" itemprop="dateCreated datePublished" datetime="2024-11-25T19:36:49+08:00">2024-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-11-27 10:22:00" itemprop="dateModified" datetime="2024-11-27T10:22:00+08:00">2024-11-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Numeric库"><a href="#Numeric库" class="headerlink" title="Numeric库"></a>Numeric库</h2><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p>​	标准库中的<code>numeric</code>是一个包含数值运算功能的头文件，提供了多个通用的算法和函数模板，主要用于数组、容器或数值的处理。</p>
+<h6 id="Common-mathematical-functions"><a href="#Common-mathematical-functions" class="headerlink" title="Common mathematical functions"></a>Common mathematical functions</h6><p>​	The header <code>cmath</code> provides standard C library mathematical functions such as <code>std::fabs</code>, <code>std::sqrt</code>, and <code>std::sin</code>.</p>
+<h6 id="Mathematical-special-functions-since-C-17"><a href="#Mathematical-special-functions-since-C-17" class="headerlink" title="Mathematical special functions (since C++17)"></a>Mathematical special functions (since C++17)</h6><p>​	The header <code>cmath</code> also provides several mathematical special functions such as <code>std::beta</code>, <code>std::hermite</code>, and <code>std::cyl_bessel_i</code>.</p>
+<h6 id="Mathematical-constants-since-C-20"><a href="#Mathematical-constants-since-C-20" class="headerlink" title="Mathematical constants (since C++20)"></a>Mathematical constants (since C++20)</h6><p>​	The header <code>numbers</code> provides several mathematical constants, such as <code>std::numbers::pi</code> or <code>std::numbers::sqrt2</code></p>
+<h6 id="Basic-linear-algebra-algorithms-since-C-26"><a href="#Basic-linear-algebra-algorithms-since-C-26" class="headerlink" title="Basic linear algebra algorithms (since C++26)"></a>Basic linear algebra algorithms (since C++26)</h6><p>​	The header <code>linalg</code> provides basic linear algebra algorithms which are based on BLAS.</p>
+<h4 id="2-头文件"><a href="#2-头文件" class="headerlink" title="2. 头文件"></a>2. 头文件</h4><h5 id="2-1-complex"><a href="#2-1-complex" class="headerlink" title="2.1 complex"></a>2.1 complex</h5><p><code>&lt;complex&gt;</code> 头文件提供了复数（complex number）操作的支持，定义了 <code>std::complex</code> 类模板和一系列与复数相关的数学函数。</p>
+<hr>
+<h3 id="std-complex-的特点"><a href="#std-complex-的特点" class="headerlink" title="std::complex 的特点"></a><strong><code>std::complex</code> 的特点</strong></h3><ul>
+<li>提供了操作复数的简单接口。</li>
+<li>复数支持标准算术操作（加、减、乘、除）。</li>
+<li>支持与复数相关的数学函数，例如取模、相角、指数等。</li>
+<li>可用于 <code>float</code>、<code>double</code>、<code>long double</code> 等多种浮点数类型。</li>
+</ul>
+<hr>
+<h3 id="std-complex-类模板"><a href="#std-complex-类模板" class="headerlink" title="std::complex 类模板"></a><strong><code>std::complex</code> 类模板</strong></h3><h4 id="声明"><a href="#声明" class="headerlink" title="声明"></a><strong>声明</strong></h4><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">template &lt;typename T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">std</span>::<span class="title">complex</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>T</code> 是复数的数值类型，通常为 <code>float</code>、<code>double</code> 或 <code>long double</code>。</p>
+<h4 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a><strong>构造函数</strong></h4><ol>
+<li><p><strong>默认构造函数</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::complex&lt;<span class="type">double</span>&gt; c; <span class="comment">// 默认初始化为 (0, 0)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>指定实部和虚部</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::complex&lt;<span class="type">double</span>&gt; <span class="title">c</span><span class="params">(<span class="number">1.0</span>, <span class="number">2.0</span>)</span></span>; <span class="comment">// 初始化为 (1.0 + 2.0i)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>仅指定实部（虚部默认为 0）</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::complex&lt;<span class="type">double</span>&gt; <span class="title">c</span><span class="params">(<span class="number">1.0</span>)</span></span>; <span class="comment">// 初始化为 (1.0 + 0.0i)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>拷贝构造</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::complex&lt;<span class="type">double</span>&gt; <span class="title">c1</span><span class="params">(<span class="number">1.0</span>, <span class="number">2.0</span>)</span></span>;</span><br><span class="line">std::complex&lt;<span class="type">double</span>&gt; c2 = c1; <span class="comment">// 拷贝 c1</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h3 id="成员函数"><a href="#成员函数" class="headerlink" title="成员函数"></a><strong>成员函数</strong></h3><ol>
+<li><p><strong>获取实部和虚部</strong>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function"><span class="built_in">double</span> <span class="title">real</span>() <span class="keyword">const</span></span>; <span class="comment">// 返回实部</span></span><br><span class="line"><span class="function"><span class="built_in">double</span> <span class="title">imag</span>() <span class="keyword">const</span></span>; <span class="comment">// 返回虚部</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::complex&lt;<span class="type">double</span>&gt; <span class="title">c</span><span class="params">(<span class="number">1.0</span>, <span class="number">2.0</span>)</span></span>;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;Real part: &quot;</span> &lt;&lt; c.<span class="built_in">real</span>() &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;Imaginary part: &quot;</span> &lt;&lt; c.<span class="built_in">imag</span>() &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>修改实部和虚部</strong>：</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">c.real(<span class="keyword">new</span><span class="number">_</span>real); <span class="comment">// 修改实部</span></span><br><span class="line">c.imag(<span class="keyword">new</span><span class="number">_</span>imag); <span class="comment">// 修改虚部</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">c.real(<span class="number">3.0</span>)<span class="comment">;</span></span><br><span class="line">c.imag(<span class="number">4.0</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>赋值运算</strong>： 支持标准赋值运算符 <code>=</code>。</p>
+</li>
+</ol>
+<hr>
+<h3 id="运算符重载"><a href="#运算符重载" class="headerlink" title="运算符重载"></a><strong>运算符重载</strong></h3><ol>
+<li><p><strong>算术运算</strong>：</p>
+<ul>
+<li><code>+</code>：复数加法</li>
+<li><code>-</code>：复数减法</li>
+<li><code>*</code>：复数乘法</li>
+<li><code>/</code>：复数除法</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="symbol">std:</span>:complex&lt;<span class="type">double</span>&gt; <span class="keyword">c</span><span class="number">1</span>(<span class="number">1.0</span><span class="punctuation">,</span> <span class="number">2.0</span>)<span class="punctuation">,</span> <span class="keyword">c</span><span class="number">2</span>(<span class="number">3.0</span><span class="punctuation">,</span> <span class="number">4.0</span>)<span class="comment">;</span></span><br><span class="line">auto <span class="keyword">c</span><span class="number">3</span> <span class="operator">=</span> <span class="keyword">c</span><span class="number">1</span> + <span class="keyword">c</span><span class="number">2</span><span class="comment">; // (4.0, 6.0)</span></span><br><span class="line">auto <span class="keyword">c</span><span class="number">4</span> <span class="operator">=</span> <span class="keyword">c</span><span class="number">1</span> * <span class="keyword">c</span><span class="number">2</span><span class="comment">; // (-5.0, 10.0)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>比较运算</strong>：</p>
+<ul>
+<li><code>==</code> 和 <code>!=</code> 用于比较复数是否相等。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="keyword">if</span> (c1 == c2) &#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Equal&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>输入输出流</strong>：</p>
+<ul>
+<li>支持用 <code>std::cin</code> 和 <code>std::cout</code> 读取或输出复数，格式为 <code>(real, imag)</code>。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="复数相关的数学函数"><a href="#复数相关的数学函数" class="headerlink" title="复数相关的数学函数"></a><strong>复数相关的数学函数</strong></h3><p>以下函数在 <code>&lt;complex&gt;</code> 中定义，用于处理复数：</p>
+<ol>
+<li><p><strong>基本函数</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::<span class="built_in">real</span>(c); <span class="comment">// 实部</span></span><br><span class="line">std::<span class="built_in">imag</span>(c); <span class="comment">// 虚部</span></span><br><span class="line">std::<span class="built_in">abs</span>(c);  <span class="comment">// 模 (sqrt(real² + imag²))</span></span><br><span class="line">std::<span class="built_in">arg</span>(c);  <span class="comment">// 相角 (弧度)</span></span><br><span class="line">std::<span class="built_in">norm</span>(c); <span class="comment">// 范数 (real² + imag²)</span></span><br><span class="line">std::<span class="built_in">conj</span>(c); <span class="comment">// 共轭复数 (real, -imag)</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::complex&lt;<span class="type">double</span>&gt; <span class="title">c</span><span class="params">(<span class="number">3.0</span>, <span class="number">4.0</span>)</span></span>;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;Magnitude: &quot;</span> &lt;&lt; std::<span class="built_in">abs</span>(c) &lt;&lt; std::endl; <span class="comment">// 5.0</span></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;Angle: &quot;</span> &lt;&lt; std::<span class="built_in">arg</span>(c) &lt;&lt; std::endl;    <span class="comment">// 0.927295</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>指数和对数函数</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::<span class="built_in">exp</span>(c);  <span class="comment">// e^c</span></span><br><span class="line">std::<span class="built_in">log</span>(c);  <span class="comment">// 自然对数</span></span><br><span class="line">std::<span class="built_in">log10</span>(c); <span class="comment">// 以 10 为底的对数</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>三角函数</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::<span class="built_in">sin</span>(c);  <span class="comment">// 正弦</span></span><br><span class="line">std::<span class="built_in">cos</span>(c);  <span class="comment">// 余弦</span></span><br><span class="line">std::<span class="built_in">tan</span>(c);  <span class="comment">// 正切</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>反三角函数</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::<span class="built_in">asin</span>(c); <span class="comment">// 反正弦</span></span><br><span class="line">std::<span class="built_in">acos</span>(c); <span class="comment">// 反余弦</span></span><br><span class="line">std::<span class="built_in">atan</span>(c); <span class="comment">// 反正切</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>双曲函数</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::<span class="built_in">sinh</span>(c); <span class="comment">// 双曲正弦</span></span><br><span class="line">std::<span class="built_in">cosh</span>(c); <span class="comment">// 双曲余弦</span></span><br><span class="line">std::<span class="built_in">tanh</span>(c); <span class="comment">// 双曲正切</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>反双曲函数</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::<span class="built_in">asinh</span>(c); <span class="comment">// 反双曲正弦</span></span><br><span class="line">std::<span class="built_in">acosh</span>(c); <span class="comment">// 反双曲余弦</span></span><br><span class="line">std::<span class="built_in">atanh</span>(c); <span class="comment">// 反双曲正切</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h3 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a><strong>示例代码</strong></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;complex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::complex&lt;<span class="type">double</span>&gt; <span class="title">c1</span><span class="params">(<span class="number">3.0</span>, <span class="number">4.0</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 基本属性</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Real: &quot;</span> &lt;&lt; c<span class="number">1.</span><span class="built_in">real</span>() &lt;&lt; <span class="string">&quot;, Imag: &quot;</span> &lt;&lt; c<span class="number">1.</span><span class="built_in">imag</span>() &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模与相角</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Magnitude: &quot;</span> &lt;&lt; std::<span class="built_in">abs</span>(c1) &lt;&lt; std::endl; <span class="comment">// 5.0</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Angle (rad): &quot;</span> &lt;&lt; std::<span class="built_in">arg</span>(c1) &lt;&lt; std::endl; <span class="comment">// 0.927295</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 共轭复数</span></span><br><span class="line">    std::complex&lt;<span class="type">double</span>&gt; conj_c1 = std::<span class="built_in">conj</span>(c1);</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Conjugate: &quot;</span> &lt;&lt; conj_c1 &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 指数函数</span></span><br><span class="line">    std::complex&lt;<span class="type">double</span>&gt; exp_c1 = std::<span class="built_in">exp</span>(c1);</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;exp(c1): &quot;</span> &lt;&lt; exp_c1 &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a><strong>应用场景</strong></h3><ul>
+<li>电路分析（如交流电路中的阻抗计算）。</li>
+<li>信号处理（如傅里叶变换）。</li>
+<li>模拟和建模（如复杂函数的求解）。</li>
+<li>控制系统（如极点位置分析）。</li>
+</ul>
+<h5 id="2-2-valarray"><a href="#2-2-valarray" class="headerlink" title="2.2 valarray"></a>2.2 valarray</h5><p><code>std::valarray</code> 是一个专门为数值计算设计的类模板，提供了高效的数组操作，尤其适合应用于科学计算和矩阵运算。<code>std::valarray</code> 提供了丰富的成员函数和全局函数，以下是其常用的操作和函数：</p>
+<hr>
+<h3 id="构造函数-1"><a href="#构造函数-1" class="headerlink" title="构造函数"></a><strong>构造函数</strong></h3><ol>
+<li><p><strong>默认构造</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::valarray&lt;<span class="type">int</span>&gt; v; <span class="comment">// 空 valarray</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>指定大小和初始值</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::valarray&lt;<span class="type">int</span>&gt; <span class="title">v</span><span class="params">(<span class="number">5</span>)</span></span>;          <span class="comment">// 大小为 5，所有值初始化为 0</span></span><br><span class="line"><span class="function">std::valarray&lt;<span class="type">int</span>&gt; <span class="title">v</span><span class="params">(<span class="number">3</span>, <span class="number">5</span>)</span></span>;       <span class="comment">// 大小为 5，所有值初始化为 3</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>用 C 风格数组初始化</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="type">int</span> arr[] = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="function">std::valarray&lt;<span class="type">int</span>&gt; <span class="title">v</span><span class="params">(arr, <span class="number">5</span>)</span></span>;     <span class="comment">// 从数组初始化</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>拷贝构造和移动构造</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::valarray&lt;<span class="type">int</span>&gt; v1 = v;        <span class="comment">// 拷贝构造</span></span><br><span class="line">std::valarray&lt;<span class="type">int</span>&gt; v2 = std::<span class="built_in">move</span>(v); <span class="comment">// 移动构造</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h3 id="常用成员函数"><a href="#常用成员函数" class="headerlink" title="常用成员函数"></a><strong>常用成员函数</strong></h3><ol>
+<li><p><strong>大小</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">size</span><span class="params">()</span> <span class="type">const</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::valarray&lt;<span class="type">int</span>&gt; <span class="title">v</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line">std::cout &lt;&lt; v.<span class="built_in">size</span>(); <span class="comment">// 输出 10</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>元素访问</strong>：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">v[index] <span class="operator">=</span> value<span class="comment">; // 通过下标访问</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::valarray&lt;<span class="type">int</span>&gt; <span class="title">v</span><span class="params">(<span class="number">5</span>, <span class="number">4</span>)</span></span>; <span class="comment">// 4 个元素，值为 5</span></span><br><span class="line">v[<span class="number">2</span>] = <span class="number">10</span>;</span><br><span class="line">std::cout &lt;&lt; v[<span class="number">2</span>]; <span class="comment">// 输出 10</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>切片操作</strong>（<code>std::slice</code> 和 <code>std::slice_array</code>）：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">std::slice_array&lt;<span class="type">int</span>&gt; <span class="title">slice</span><span class="params">(<span class="type">size_t</span> start, <span class="type">size_t</span> size, <span class="type">size_t</span> stride)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::valarray&lt;<span class="keyword">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>&#125;;</span><br><span class="line">std::slice_array&lt;<span class="keyword">int</span>&gt; <span class="function"><span class="keyword">sub</span> = <span class="title">v</span>[<span class="title">std</span>::<span class="title">slice</span>(1, 3, 2)]</span>; // 提取从索引 <span class="number">1</span> 开始，步长为 <span class="number">2</span>，<span class="number">3</span> 个元素</span><br><span class="line"><span class="function"><span class="keyword">sub</span> *= 2</span>; // 修改切片中的值</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>子数组操作</strong>（<code>std::gslice</code> 和 <code>std::gslice_array</code>）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="built_in">gslice</span>(<span class="type">size_t</span> start, <span class="type">const</span> valarray&lt;<span class="type">size_t</span>&gt;&amp; sizes, <span class="type">const</span> valarray&lt;<span class="type">size_t</span>&gt;&amp; strides);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>掩码操作</strong>（<code>std::mask_array</code>）：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">mask_array&lt;T&gt; std::<span class="variable constant_">valarray</span>&lt;T&gt;::<span class="variable constant_">operator</span>[](<span class="keyword">const</span> <span class="variable constant_">std</span>::<span class="variable constant_">valarray</span>&lt;<span class="keyword">bool</span>&gt;&amp;);</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::valarray&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">std::valarray&lt;<span class="type">bool</span>&gt; mask = &#123;<span class="literal">true</span>, <span class="literal">false</span>, <span class="literal">true</span>, <span class="literal">false</span>, <span class="literal">true</span>&#125;;</span><br><span class="line">v[mask] = <span class="number">0</span>; <span class="comment">// 将满足条件的元素赋值为 0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>间接访问</strong>（<code>std::indirect_array</code>）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">indirect_array&lt;T&gt; std::valarray&lt;T&gt;::<span class="keyword">operator</span>[](<span class="type">const</span> std::valarray&lt;<span class="type">size_t</span>&gt;&amp;);</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::valarray&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">std::valarray&lt;<span class="type">size_t</span>&gt; indices = &#123;<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>&#125;;</span><br><span class="line">v[indices] = <span class="number">9</span>; <span class="comment">// 修改索引 0、2、4 的值为 9</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>数学运算</strong>：</p>
+<ul>
+<li>成员函数支持常规的算术操作：<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> 等，可以直接用于两个 <code>std::valarray</code> 或 <code>std::valarray</code> 和标量值。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="常用全局函数"><a href="#常用全局函数" class="headerlink" title="常用全局函数"></a><strong>常用全局函数</strong></h3><p><code>std::valarray</code> 支持丰富的全局函数，以下是常用的一些：</p>
+<h4 id="数学函数"><a href="#数学函数" class="headerlink" title="数学函数"></a><strong>数学函数</strong></h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt; <span class="title function_ invoke__">abs</span>(<span class="keyword">const</span> std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt;&amp; v);</span><br><span class="line">std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt; <span class="title function_ invoke__">sin</span>(<span class="keyword">const</span> std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt;&amp; v);</span><br><span class="line">std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt; <span class="title function_ invoke__">cos</span>(<span class="keyword">const</span> std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt;&amp; v);</span><br><span class="line">std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt; <span class="title function_ invoke__">sqrt</span>(<span class="keyword">const</span> std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt;&amp; v);</span><br><span class="line">std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt; <span class="title function_ invoke__">pow</span>(<span class="keyword">const</span> std::<span class="variable constant_">valarray</span>&lt;<span class="keyword">double</span>&gt;&amp; base, <span class="keyword">double</span> exp);</span><br></pre></td></tr></table></figure>
+
+<h4 id="统计函数"><a href="#统计函数" class="headerlink" title="统计函数"></a><strong>统计函数</strong></h4><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="function">T <span class="title">sum</span><span class="params">(<span class="type">const</span> std::valarray&lt;T&gt;&amp; v)</span></span>;  <span class="comment">// 求和</span></span><br><span class="line"><span class="function">T <span class="title">min</span><span class="params">(<span class="type">const</span> std::valarray&lt;T&gt;&amp; v)</span></span>;  <span class="comment">// 最小值</span></span><br><span class="line"><span class="function">T <span class="title">max</span><span class="params">(<span class="type">const</span> std::valarray&lt;T&gt;&amp; v)</span></span>;  <span class="comment">// 最大值</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;valarray&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::valarray&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Sum: &quot;</span> &lt;&lt; v.<span class="built_in">sum</span>() &lt;&lt; std::endl; <span class="comment">// 输出 15</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Min: &quot;</span> &lt;&lt; v.<span class="built_in">min</span>() &lt;&lt; std::endl; <span class="comment">// 输出 1</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Max: &quot;</span> &lt;&lt; v.<span class="built_in">max</span>() &lt;&lt; std::endl; <span class="comment">// 输出 5</span></span><br><span class="line"></span><br><span class="line">    std::valarray&lt;<span class="type">double</span>&gt; v2 = &#123;<span class="number">1.0</span>, <span class="number">4.0</span>, <span class="number">9.0</span>, <span class="number">16.0</span>&#125;;</span><br><span class="line">    std::valarray&lt;<span class="type">double</span>&gt; result = <span class="built_in">sqrt</span>(v2);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> x : result) std::cout &lt;&lt; x &lt;&lt; <span class="string">&quot; &quot;</span>; <span class="comment">// 输出 1 2 3 4</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a><strong>优点</strong></h3><ul>
+<li><strong>高效</strong>：支持 SIMD 优化，适合数值计算。</li>
+<li><strong>简洁</strong>：简化了复杂数组操作。</li>
+<li><strong>支持切片和掩码操作</strong>：灵活提取和修改子数组。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/15/algorithm/%E5%8F%8C%E6%8C%87%E9%92%88/" rel="prev" title="双指针">
+                  <i class="fa fa-angle-left"></i> 双指针
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/11/29/c++/std/vector/" rel="next" title="vector">
+                  vector <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

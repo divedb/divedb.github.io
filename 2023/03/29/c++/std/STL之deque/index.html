@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="STL之deque1. Block的大小对于deque&lt;T&gt;，如果sizeof&lt;T&gt;小于256，那么block的大小就是4096 &#x2F; sizeof(T),否则就是16。 __deque_block_size定义 1234template &lt;class _ValueType, class _DiffType&gt;struct __deque_block_size &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rockyの博客">
+<meta property="og:url" content="https://huangpiao.tech/2023/03/29/c++/std/STL%E4%B9%8Bdeque/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="STL之deque1. Block的大小对于deque&lt;T&gt;，如果sizeof&lt;T&gt;小于256，那么block的大小就是4096 &#x2F; sizeof(T),否则就是16。 __deque_block_size定义 1234template &lt;class _ValueType, class _DiffType&gt;struct __deque_block_size &amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-29T12:17:07.333Z">
+<meta property="article:modified_time" content="2023-04-08T13:31:53.197Z">
+<meta property="article:author" content="Rocky">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2023/03/29/c++/std/STL%E4%B9%8Bdeque/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2023/03/29/c++/std/STL%E4%B9%8Bdeque/","path":"2023/03/29/c++/std/STL之deque/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#STL%E4%B9%8Bdeque"><span class="nav-number">1.</span> <span class="nav-text">STL之deque</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Block%E7%9A%84%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">1. Block的大小</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">2. 构造函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E8%BE%85%E5%8A%A9%E7%BB%93%E6%9E%84"><span class="nav-number">1.0.1.</span> <span class="nav-text">3. 辅助结构</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2023/03/29/c++/std/STL%E4%B9%8Bdeque/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-29 20:17:07" itemprop="dateCreated datePublished" datetime="2023-03-29T20:17:07+08:00">2023-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-08 21:31:53" itemprop="dateModified" datetime="2023-04-08T21:31:53+08:00">2023-04-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="STL之deque"><a href="#STL之deque" class="headerlink" title="STL之deque"></a><code>STL</code>之<code>deque</code></h2><h5 id="1-Block的大小"><a href="#1-Block的大小" class="headerlink" title="1. Block的大小"></a>1. <code>Block</code>的大小</h5><p>对于<code>deque&lt;T&gt;</code>，如果<code>sizeof&lt;T&gt;</code>小于256，那么<code>block</code>的大小就是<code>4096 / sizeof(T)</code>,否则就是16。</p>
+<p><code>__deque_block_size</code>定义</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_ValueType</span>, <span class="keyword">class</span> <span class="title class_">_DiffType</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">__deque_block_size</span> &#123;</span><br><span class="line">  <span class="type">static</span> <span class="type">const</span> _DiffType value = <span class="built_in">sizeof</span>(_ValueType) &lt; <span class="number">256</span> ? <span class="number">4096</span> / <span class="built_in">sizeof</span>(_ValueType) : <span class="number">16</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span> <span class="title class_">_Allocator</span>&gt;</span><br><span class="line"><span class="type">const</span> <span class="keyword">typename</span> __deque_base&lt;_Tp, _Allocator&gt;::difference_type</span><br><span class="line">  __deque_base&lt;_Tp, _Allocator&gt;::__block_size =</span><br><span class="line">    __deque_block_size&lt;value_type, difference_type&gt;::value;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-构造函数"><a href="#2-构造函数" class="headerlink" title="2. 构造函数"></a>2. 构造函数</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span> <span class="title class_">_Allocator</span>&gt;</span><br><span class="line">deque&lt;_Tp, _Allocator&gt;::<span class="built_in">deque</span>(size_type __n) &#123;</span><br><span class="line">	<span class="keyword">if</span> (__n &gt; <span class="number">0</span>)</span><br><span class="line">		__append(__n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>__append</code>函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span> <span class="title class_">_Allocator</span>&gt;</span><br><span class="line"><span class="type">void</span> deque&lt;_Tp, _Allocator&gt;::__append(size_type __n) &#123;</span><br><span class="line">	allocator_type&amp; __a = __base::__alloc();</span><br><span class="line">  <span class="comment">// 计算剩余的空间</span></span><br><span class="line">	size_type __back_capacity = __back_spare();</span><br><span class="line">	<span class="keyword">if</span> (__n &gt; __back_capacity)</span><br><span class="line">		__add_back_capacity(__n - __back_capacity);</span><br><span class="line">	<span class="comment">// __n &lt;= __back_capacity</span></span><br><span class="line">	<span class="keyword">for</span> (__deque_block_range __br : __deque_range(__base::<span class="built_in">end</span>(), __base::<span class="built_in">end</span>() + __n)) &#123;</span><br><span class="line">		_ConstructTransaction __tx(<span class="keyword">this</span>, __br);</span><br><span class="line">		<span class="keyword">for</span> (; __tx.__pos_ != __tx.__end_; ++__tx.__pos_) &#123;</span><br><span class="line">			__alloc_traits::<span class="built_in">construct</span>(__a, std::__to_address(__tx.__pos_));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重点看下<code>__back_spare</code>函数如何计算剩余空间。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">size_type __back_spare() <span class="type">const</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> __capacity() - (__base::__start_ + __base::<span class="built_in">size</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>__capacity</code>函数</p>
+<p><code>__base::__map_</code>是一个<code>__split_buffer</code>结构。</p>
+<p><strong>思考</strong>：这个地方为什么要减去1。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">size_type __capacity() <span class="type">const</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> __base::__map_.<span class="built_in">size</span>() == <span class="number">0</span> ? </span><br><span class="line">    <span class="number">0</span> : __base::__map_.<span class="built_in">size</span>() * __base::__block_size - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加容量的函数</p>
+<p>也就是说<code>__base::__start_</code>是总的<code>front empty</code>的数量，只需要<code>pop_front</code>一次，<code>__base::__start_</code>就加1。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_LIBCPP_INLINE_VISIBILITY</span><br><span class="line">size_type __front_spare() <span class="type">const</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> __base::__start_;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>pop_front</code>验证下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span> <span class="title class_">_Allocator</span>&gt;</span><br><span class="line"><span class="type">void</span> deque&lt;_Tp, _Allocator&gt;::<span class="built_in">pop_front</span>() &#123;</span><br><span class="line">	allocator_type&amp; __a = __base::__alloc();</span><br><span class="line">	__alloc_traits::<span class="built_in">destroy</span>(__a, __to_address(*(__base::__map_.<span class="built_in">begin</span>() + </span><br><span class="line">                                              __base::__start_ / __base::__block_size) + </span><br><span class="line">                                            	__base::__start_ % __base::__block_size));</span><br><span class="line">	--__base::<span class="built_in">size</span>();</span><br><span class="line">	++__base::__start_;</span><br><span class="line">	__maybe_remove_front_spare();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>__recommend_blocks</code>计算添加几个<code>block</code>合适。后面的求余数是为了弥补<code>__n / __base::__block_size</code>等于0的情况，也就是说至少要一个<code>block</code>只要<code>n</code>不等于0。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> size_type __recommend_blocks(size_type __n) &#123;</span><br><span class="line">	<span class="keyword">return</span> __n / __base::__block_size + (__n % __base::__block_size != <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>__add_back_capacity</code>往后增加</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create back capacity for __n elements.</span></span><br><span class="line"><span class="comment">// Strong guarantee.  Either do it or don&#x27;t touch anything.</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>, <span class="keyword">class</span> <span class="title class_">_Allocator</span>&gt;</span><br><span class="line"><span class="type">void</span></span><br><span class="line">deque&lt;_Tp, _Allocator&gt;::__add_back_capacity(size_type __n) &#123;</span><br><span class="line">	allocator_type&amp; __a = __base::__alloc();</span><br><span class="line">	size_type __nb = __recommend_blocks(__n + __base::__map_.<span class="built_in">empty</span>());</span><br><span class="line">	<span class="comment">// Number of unused blocks at front:</span></span><br><span class="line">	size_type __front_capacity = __front_spare() / __base::__block_size;</span><br><span class="line">    __front_capacity = _VSTD::<span class="built_in">min</span>(__front_capacity, __nb);  <span class="comment">// don&#x27;t take more than you need</span></span><br><span class="line">    __nb -= __front_capacity;  <span class="comment">// number of blocks need to allocate</span></span><br><span class="line">    <span class="comment">// If __nb == 0, then we have sufficient capacity.</span></span><br><span class="line">    <span class="keyword">if</span> (__nb == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        __base::__start_ -= __base::__block_size * __front_capacity;</span><br><span class="line">        <span class="keyword">for</span> (; __front_capacity &gt; <span class="number">0</span>; --__front_capacity)</span><br><span class="line">        &#123;</span><br><span class="line">            pointer __pt = __base::__map_.<span class="built_in">front</span>();</span><br><span class="line">            __base::__map_.<span class="built_in">pop_front</span>();</span><br><span class="line">            __base::__map_.<span class="built_in">push_back</span>(__pt);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Else if __nb &lt;= __map_.capacity() - __map_.size() then we need to allocate __nb buffers</span></span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (__nb &lt;= __base::__map_.<span class="built_in">capacity</span>() - __base::__map_.<span class="built_in">size</span>())</span><br><span class="line">    &#123;   <span class="comment">// we can put the new buffers into the map, but don&#x27;t shift things around</span></span><br><span class="line">        <span class="comment">// until all buffers are allocated.  If we throw, we don&#x27;t need to fix</span></span><br><span class="line">        <span class="comment">// anything up (any added buffers are undetectible)</span></span><br><span class="line">        <span class="keyword">for</span> (; __nb &gt; <span class="number">0</span>; --__nb)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (__base::__map_.__back_spare() == <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            __base::__map_.<span class="built_in">push_back</span>(__alloc_traits::<span class="built_in">allocate</span>(__a, __base::__block_size));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (; __nb &gt; <span class="number">0</span>; --__nb, ++__front_capacity, __base::__start_ +=</span><br><span class="line">                                 __base::__block_size - (__base::__map_.<span class="built_in">size</span>() == <span class="number">1</span>))</span><br><span class="line">            __base::__map_.<span class="built_in">push_front</span>(__alloc_traits::<span class="built_in">allocate</span>(__a, __base::__block_size));</span><br><span class="line">        <span class="comment">// Done allocating, reorder capacity</span></span><br><span class="line">        __base::__start_ -= __base::__block_size * __front_capacity;</span><br><span class="line">        <span class="keyword">for</span> (; __front_capacity &gt; <span class="number">0</span>; --__front_capacity)</span><br><span class="line">        &#123;</span><br><span class="line">            pointer __pt = __base::__map_.<span class="built_in">front</span>();</span><br><span class="line">            __base::__map_.<span class="built_in">pop_front</span>();</span><br><span class="line">            __base::__map_.<span class="built_in">push_back</span>(__pt);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Else need to allocate __nb buffers, *and* we need to reallocate __map_.</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        size_type __ds = __front_capacity * __base::__block_size;</span><br><span class="line">        __split_buffer&lt;pointer, <span class="keyword">typename</span> __base::__pointer_allocator&amp;&gt;</span><br><span class="line">            __buf(<span class="built_in">max</span>&lt;size_type&gt;(<span class="number">2</span>* __base::__map_.<span class="built_in">capacity</span>(),</span><br><span class="line">                                 __nb + __base::__map_.<span class="built_in">size</span>()),</span><br><span class="line">                  __base::__map_.<span class="built_in">size</span>() - __front_capacity,</span><br><span class="line">                  __base::__map_.__alloc());</span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _LIBCPP_NO_EXCEPTIONS</span></span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span>  <span class="comment">// _LIBCPP_NO_EXCEPTIONS</span></span></span><br><span class="line">            <span class="keyword">for</span> (; __nb &gt; <span class="number">0</span>; --__nb)</span><br><span class="line">                __buf.<span class="built_in">push_back</span>(__alloc_traits::<span class="built_in">allocate</span>(__a, __base::__block_size));</span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _LIBCPP_NO_EXCEPTIONS</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">catch</span> (...)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">typename</span> __base::__map_pointer __i = __buf.<span class="built_in">begin</span>();</span><br><span class="line">                    __i != __buf.<span class="built_in">end</span>(); ++__i)</span><br><span class="line">                __alloc_traits::<span class="built_in">deallocate</span>(__a, *__i, __base::__block_size);</span><br><span class="line">            <span class="keyword">throw</span>;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span>  <span class="comment">// _LIBCPP_NO_EXCEPTIONS</span></span></span><br><span class="line">        <span class="keyword">for</span> (; __front_capacity &gt; <span class="number">0</span>; --__front_capacity)</span><br><span class="line">        &#123;</span><br><span class="line">            __buf.<span class="built_in">push_back</span>(__base::__map_.<span class="built_in">front</span>());</span><br><span class="line">            __base::__map_.<span class="built_in">pop_front</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">typename</span> __base::__map_pointer __i = __base::__map_.<span class="built_in">end</span>();</span><br><span class="line">                __i != __base::__map_.<span class="built_in">begin</span>();)</span><br><span class="line">            __buf.<span class="built_in">push_front</span>(*--__i);</span><br><span class="line">        _VSTD::<span class="built_in">swap</span>(__base::__map_.__first_, __buf.__first_);</span><br><span class="line">        _VSTD::<span class="built_in">swap</span>(__base::__map_.__begin_, __buf.__begin_);</span><br><span class="line">        _VSTD::<span class="built_in">swap</span>(__base::__map_.__end_, __buf.__end_);</span><br><span class="line">        _VSTD::<span class="built_in">swap</span>(__base::__map_.__end_cap(), __buf.__end_cap());</span><br><span class="line">        __base::__start_ -= __ds;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="3-辅助结构"><a href="#3-辅助结构" class="headerlink" title="3. 辅助结构"></a>3. 辅助结构</h4><p><code>__to_address</code>函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Tp</span>&gt;</span><br><span class="line"><span class="keyword">inline</span></span><br><span class="line">_Tp* __to_address(_Tp* __p) _NOEXCEPT &#123;</span><br><span class="line">	<span class="built_in">static_assert</span>(!is_function&lt;_Tp&gt;::value, <span class="string">&quot;_Tp is a function type&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> __p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Pointer</span>&gt;</span><br><span class="line"><span class="keyword">inline</span></span><br><span class="line"><span class="keyword">typename</span> __choose_to_address&lt;_Pointer&gt;::<span class="keyword">template</span> __return_type&lt;_Pointer&gt;</span><br><span class="line">__to_address(<span class="type">const</span> _Pointer&amp; __p) _NOEXCEPT &#123;</span><br><span class="line">  <span class="keyword">return</span> __choose_to_address&lt;_Pointer&gt;::__do_it(__p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/08/c++/std/STL%E4%B9%8Bmemory/" rel="next" title="">
+                   <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
