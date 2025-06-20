@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	编写驱动程序的第一步就是定义驱动程序为用户程序提供的能力。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字符设备驱动">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/15/linux/driver/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	编写驱动程序的第一步就是定义驱动程序为用户程序提供的能力。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-15T10:14:51.846Z">
+<meta property="article:modified_time" content="2025-06-20T06:25:55.481Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="驱动程序">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/15/linux/driver/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/15/linux/driver/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/","path":"2025/06/15/linux/driver/字符设备驱动/","title":"字符设备驱动"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>字符设备驱动 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%98-%E4%B8%BB%E8%AE%BE%E5%A4%87%E5%8F%B7%E5%92%8C%E6%AC%A1%E8%AE%BE%E5%A4%87%E5%8F%B7"><span class="nav-number">2.</span> <span class="nav-text">📘 主设备号和次设备号</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E7%BC%96%E5%8F%B7%E7%9A%84%E5%86%85%E9%83%A8%E8%A1%A8%E8%BE%BE"><span class="nav-number">2.1.</span> <span class="nav-text">设备编号的内部表达</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E5%92%8C%E9%87%8A%E6%94%BE%E8%AE%BE%E5%A4%87%E7%BC%96%E5%8F%B7"><span class="nav-number">2.2.</span> <span class="nav-text">分配和释放设备编号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E4%B8%BB%E8%AE%BE%E5%A4%87%E5%8F%B7"><span class="nav-number">2.3.</span> <span class="nav-text">动态分配主设备号</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%97-%E4%B8%80%E4%BA%9B%E9%87%8D%E8%A6%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">📗 一些重要的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">3.1.</span> <span class="nav-text">文件操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%99-%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E7%9A%84%E6%B3%A8%E5%86%8C"><span class="nav-number">4.</span> <span class="nav-text">📙 字符设备的注册</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#open%E5%92%8Crelease%E5%87%BD%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">open和release函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scull%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">scull内存使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8C%B2-read%E5%92%8Cwrite"><span class="nav-number">7.</span> <span class="nav-text">🌲 read和write</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#read%E6%96%B9%E6%B3%95"><span class="nav-number">7.1.</span> <span class="nav-text">read方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#write%E2%BD%85%E6%B3%95"><span class="nav-number">7.2.</span> <span class="nav-text">write⽅法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%94%A5-%E5%BF%AB%E9%80%9F%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">🔥 快速参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/15/linux/driver/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="字符设备驱动 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          字符设备驱动
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-15 18:14:51" itemprop="dateCreated datePublished" datetime="2025-06-15T18:14:51+08:00">2025-06-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-20 14:25:55" itemprop="dateModified" datetime="2025-06-20T14:25:55+08:00">2025-06-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	编写驱动程序的第一步就是定义驱动程序为用户程序提供的能力。</p>
+<span id="more"></span>
+
+<h4 id="📘-主设备号和次设备号"><a href="#📘-主设备号和次设备号" class="headerlink" title="📘 主设备号和次设备号"></a>📘 主设备号和次设备号</h4><p>​	对字符设备的访问是通过文件系统内的设备名称进行的。那些名称被称为特殊文件、设备文件，或者简单称之为文件系统树的节点，它们通常位于<code>/dev</code>目录。字符设备驱动程序的设备文件可通过<code>ls -l</code>命令输出的第一列中的<code>c</code>来识别。块设备也出现在在<code>/dev</code>下，但它们由字符<code>b</code>标识。</p>
+<p>​	如果执行<code>ls -l</code>命令，则可在设备文件项的最后修改日期前看到两个数（用逗号分隔），这个位置通常显示的是文件的长度；而对设备文件，这两个数就是相应设备的主设备号和次设备号。下面的列表给出了典型系统中的一些设备。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">rw-r--r--   1 root root     10, 235  6月 15 10:08 autofs</span><br><span class="line">crw-------  1 root root     10, 234  6月 15 10:08 btrfs-control</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       5,   1  6月 15 10:08 console</span><br><span class="line">crw-------  1 root root     10, 123  6月 15 10:08 cpu_dma_latency</span><br><span class="line">crw-------  1 root root     10, 203  6月 15 10:08 cuse</span><br><span class="line">crw-rw----+ 1 root audio    14,   9  6月 15 10:08 dmmidi</span><br><span class="line">crw-------  1 root root     10, 125  6月 15 10:08 ecryptfs</span><br><span class="line">crw-rw----  1 root video    29,   0  6月 15 10:08 fb0</span><br><span class="line">crw-rw-rw-  1 root root      1,   7  6月 15 10:08 full</span><br><span class="line">crw-rw-rw-  1 root root     10, 229  6月 15 10:08 fuse</span><br><span class="line">crw-------  1 root root    241,   0  6月 15 10:08 hidraw0</span><br><span class="line">crw-------  1 root root     10, 228  6月 15 10:08 hpet</span><br><span class="line">crw-------  1 root root     10, 183  6月 15 10:08 hwrng</span><br><span class="line">crw-r--r--  1 root root      1,  11  6月 15 10:08 kmsg</span><br><span class="line">crw-rw----  1 root disk     10, 237  6月 15 10:08 loop-control</span><br><span class="line">crw-------  1 root root     10, 227  6月 15 10:08 mcelog</span><br><span class="line">crw-rw----+ 1 root video   240,   0  6月 15 10:08 media0</span><br><span class="line">crw-r-----  1 root kmem      1,   1  6月 15 10:08 mem</span><br><span class="line">crw-rw----+ 1 root audio    14,   2  6月 15 10:08 midi</span><br><span class="line">crw-rw-rw-  1 root root      1,   3  6月 15 10:08 null</span><br><span class="line">crw-------  1 root root     10, 144  6月 15 10:08 nvram</span><br><span class="line">crw-r-----  1 root kmem      1,   4  6月 15 10:08 port</span><br><span class="line">crw-------  1 root root    108,   0  6月 15 10:08 ppp</span><br><span class="line">crw-------  1 root root     10,   1  6月 15 10:08 psaux</span><br><span class="line">crw-rw-rw-  1 root <span class="built_in">tty</span>       5,   2  6月 15 18:27 ptmx</span><br><span class="line">crw-rw-rw-  1 root root      1,   8  6月 15 10:08 random</span><br><span class="line">crw-rw-r--+ 1 root root     10, 242  6月 15 10:08 rfkill</span><br><span class="line">crw-------  1 root root    248,   0  6月 15 10:08 rtc0</span><br><span class="line">crw-rw----  1 root disk     21,   0  6月 15 10:08 sg0</span><br><span class="line">crw-rw----+ 1 root cdrom    21,   1  6月 15 10:08 sg1</span><br><span class="line">crw-rw----+ 1 root cdrom    21,   2  6月 15 10:08 sg2</span><br><span class="line">crw-------  1 root root     10, 231  6月 15 10:08 snapshot</span><br><span class="line">crw-rw-rw-  1 root <span class="built_in">tty</span>       5,   0  6月 15 10:08 <span class="built_in">tty</span></span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,   0  6月 15 10:08 tty0</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,   1  6月 15 10:08 tty1</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  10  6月 15 10:08 tty10</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  11  6月 15 10:08 tty11</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  12  6月 15 10:08 tty12</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  13  6月 15 10:08 tty13</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  14  6月 15 10:08 tty14</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  15  6月 15 10:08 tty15</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  16  6月 15 10:08 tty16</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  17  6月 15 10:08 tty17</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  18  6月 15 10:08 tty18</span><br><span class="line">crw--w----  1 root <span class="built_in">tty</span>       4,  19  6月 15 10:08 tty19</span><br><span class="line">crw--w----  1 gc   <span class="built_in">tty</span>       4,   2  6月 15 10:08 tty2</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7,   0  6月 15 10:08 vcs</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7,   1  6月 15 10:08 vcs1</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7,   2  6月 15 10:08 vcs2</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7,   3  6月 15 10:08 vcs3</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7,   4  6月 15 10:08 vcs4</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7,   5  6月 15 10:08 vcs5</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7,   6  6月 15 10:08 vcs6</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7, 128  6月 15 10:08 vcsa</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7, 129  6月 15 10:08 vcsa1</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7, 130  6月 15 10:08 vcsa2</span><br><span class="line">crw-rw----  1 root <span class="built_in">tty</span>       7, 131  6月 15 10:08 vcsa3</span><br><span class="line">crw-rw-rw-  1 root root      1,   5  6月 15 10:08 zero</span><br></pre></td></tr></table></figure>
+
+<p>通常而言，主设备号标识设备对应的驱动程序。例如，<code>/dev/null</code>和<code>/dev/zero</code>由驱动程序1管理，而虚拟控制台和串口终端由驱动程序4管理；类似地，<code>vcs</code>和<code>vcsa</code>设备都由驱动程序7管理。现代的<code>Linux</code>内核允许多个驱动程序共享主设备号，但我们看到的大多数设备仍然按照“一个主设备号对应一个驱动程序”的原则组织。</p>
+<p>​	次设备号由内核使用，用于确定设备文件所指的设备。依赖于驱动程序的编写方式，我们可以通过次设备号获得一个指向内核设备的直接指针，也可将次设备号当作设备本地数组的索引。不管用哪种方式，除了知道次设备号用来指向驱动程序所实现的设备之外，内核本身基本上不关心次设备的任何其它信息。</p>
+<h5 id="设备编号的内部表达"><a href="#设备编号的内部表达" class="headerlink" title="设备编号的内部表达"></a>设备编号的内部表达</h5><p>​	在内核中，<code>dev_t</code>类型用来保存设备编号：包括主设备号和次设备号。在内核的2.6.0版本中，<code>dev_t</code>是一个32位的数，其中的12位用来表示主设备号，而其余20位用来表示次设备号。当然，我们的代码不应该对设备编号的组织做任何假定，而应该始终使用<code>&lt;linux/kdev_t.h&gt;</code>中定义的宏。比如，要获得<code>dev_t</code>的主设备号或次设备号，应使用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MAJOR(<span class="type">dev_t</span> dev);</span><br><span class="line">MINOR(<span class="type">dev_t</span> dev);</span><br></pre></td></tr></table></figure>
+
+<p>相反，如果需要将主设备号和次设备号转换成<code>dev_t</code>类型，则使用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MKDEV(<span class="type">int</span> major, <span class="type">int</span> minor);</span><br></pre></td></tr></table></figure>
+
+<h5 id="分配和释放设备编号"><a href="#分配和释放设备编号" class="headerlink" title="分配和释放设备编号"></a>分配和释放设备编号</h5><p>​	在建立一个字符设备之前，我们的驱动程序首先要做的事情就是获得一个或者多个设备编号。完成该工作的必要函数是<code>register_chrdev_region</code>，该函数在<code>&lt;linux/fs.h&gt;</code>中声明：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="type">int</span> <span class="title function_">register_chrdev_region</span><span class="params">(<span class="type">dev_t</span> first, <span class="type">unsigned</span> count, <span class="type">const</span> <span class="type">char</span> *name)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>first</code>是要分配的设备编号范围的起始值。<code>first</code>的次设备号经常被置为0，但对该函数来讲并不是必须的。<code>count</code>是所请求的连续设备编号的个数。注意，如果<code>count</code>非常大，则所请求的范围可能和下一个主设备号重叠，但只要我们所请求的编号范围是可用的，则不会带来任何问题。最后，<code>name</code>是和该编号范围关联的设备名称，它将出现在<code>/proc/devices</code>和<code>sysfs</code>中。</p>
+<p>和⼤部分内核函数⼀样，<code>register_chrdev_region</code>的返回值在分配成功时为0。在错误情况下，将返回⼀个负的错误码，并且不能使⽤所请求的编号区域。</p>
+<p>​	如果我们提前明确知道所需要的设备编号，则<code>register_chrdev_region</code>会⼯作得很好。但是，我们经常不知道设备将要使⽤哪些主设备号；因此，<code>Linux</code>内核开发社区⼀直在努⼒转向设备编号的动态分配。在运⾏过程中使⽤下⾯的函数，内核将会为我们恰当分配所需要的主设备号：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file: fs/char_dev.c</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * alloc_chrdev_region() - register a range of char device numbers</span></span><br><span class="line"><span class="comment"> * @dev: output parameter for first assigned number</span></span><br><span class="line"><span class="comment"> * @baseminor: first of the requested range of minor numbers</span></span><br><span class="line"><span class="comment"> * @count: the number of minor numbers required</span></span><br><span class="line"><span class="comment"> * @name: the name of the associated device or driver</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Allocates a range of char device numbers.  The major number will be</span></span><br><span class="line"><span class="comment"> * chosen dynamically, and returned (along with the first minor number)</span></span><br><span class="line"><span class="comment"> * in @dev.  Returns zero or a negative error code.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">alloc_chrdev_region</span><span class="params">(<span class="type">dev_t</span> *dev, <span class="type">unsigned</span> baseminor, <span class="type">unsigned</span> count,</span></span><br><span class="line"><span class="params">                        <span class="type">const</span> <span class="type">char</span> *name)</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">char_device_struct</span> *<span class="title">cd</span>;</span></span><br><span class="line">  cd = __register_chrdev_region(<span class="number">0</span>, baseminor, count, name);</span><br><span class="line">  <span class="keyword">if</span> (IS_ERR(cd)) <span class="keyword">return</span> PTR_ERR(cd);</span><br><span class="line">  *dev = MKDEV(cd-&gt;major, cd-&gt;baseminor);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上⾯这个函数中，<code>dev</code>是仅⽤于输出的参数，在成功完成调⽤后将保存已分配范围的第⼀个编号。<code>firstminor</code>应该是要使⽤的被请求的第⼀个次设备号，它通常是0。<code>count</code>和<code>name</code>参数与<code>register_chrdev_region</code>函数是⼀样的。</p>
+<p>不论采⽤哪种⽅法分配设备编号，都应该在不再使⽤它们时释放这些设备编号。设备编号的释放需要使⽤下⾯的函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * unregister_chrdev_region() - unregister a range of device numbers</span></span><br><span class="line"><span class="comment"> * @from: the first in the range of numbers to unregister</span></span><br><span class="line"><span class="comment"> * @count: the number of device numbers to unregister</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This function will unregister a range of @count device numbers,</span></span><br><span class="line"><span class="comment"> * starting with @from.  The caller should normally be the one who</span></span><br><span class="line"><span class="comment"> * allocated those numbers in the first place...</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">unregister_chrdev_region</span><span class="params">(<span class="type">dev_t</span> from, <span class="type">unsigned</span> count)</span> &#123;</span><br><span class="line">  <span class="type">dev_t</span> to = from + count;</span><br><span class="line">  <span class="type">dev_t</span> n, next;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (n = from; n &lt; to; n = next) &#123;</span><br><span class="line">    next = MKDEV(MAJOR(n) + <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (next &gt; to) next = to;</span><br><span class="line">    kfree(__unregister_chrdev_region(MAJOR(n), MINOR(n), next - n));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通常，我们在模块的清除函数中调⽤<code>unregister_chrdev_region</code>函数。上⾯的函数为驱动程序的使⽤分配设备编号，但是它们并没有告诉内核关于拿来这些编号要做什么⼯作。在⽤户空间程序可访问上述设备编号之前，驱动程序需要将设备编号和内部函数连接起来。</p>
+<h5 id="动态分配主设备号"><a href="#动态分配主设备号" class="headerlink" title="动态分配主设备号"></a>动态分配主设备号</h5><p>​	⼀部分主设备号已经静态地分配给了⼤部分常见设备。在内核源码树的<code>Documentation/devices.txt</code>⽂件中可以找到这些设备的清单。将某个已经分配好的静态编号⽤于新驱动程序的机会⾮常⼩，但是尚未被分配的新编号是可⽤的。因此，作为驱动程序作者，我们有如下选择：可以简单选定⼀个尚未被使⽤的编号，或者通过动态⽅式分配主设备号。如果使⽤驱动程序的⼈只有我们⾃⼰，则选定⼀个编号的⽅法永远⾏得通；然⽽，⼀旦驱动程序被⼴泛使⽤，随机选定的主设备号可能造成冲突和⿇烦。</p>
+<p>​	因此，对于⼀个新的驱动程序，我们强烈建议读者不要随便选择⼀个当前未使⽤的设备号作为主设备号，⽽应该使⽤动态分配机制获取主设备号。换句话说，驱动程序应该始终使⽤<code>alloc_chrdev_region</code>⽽不是<code>register_chrdev_region</code>函数。动态分配的缺点是：由于分配的主设备号不能保证始终⼀致，所以⽆法预先创建设备节点。对于驱动程序的⼀般⽤法，这倒不是什么问题，因为⼀旦分配了设备号，就可以从<code>/proc/devices</code>中读取得到。</p>
+<p>​	因此，加载⼀个使⽤动态主设备号的设备驱动程序，对<code>insmod</code>的调⽤可替换为⼀个简单的脚本，该脚本在调⽤<code>insmod</code>之后读取<code>/proc/devices</code>以获得新分配的主设备号，然后创建对应的设备⽂件。</p>
+<p>典型的<code>/proc/devices</code>⽂件如下所⽰：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">Character devices:</span><br><span class="line">  1 mem</span><br><span class="line">  4 /dev/vc/0</span><br><span class="line">  4 <span class="built_in">tty</span></span><br><span class="line">  4 ttyS</span><br><span class="line">  5 /dev/tty</span><br><span class="line">  5 /dev/console</span><br><span class="line">  5 /dev/ptmx</span><br><span class="line">  5 ttyprintk</span><br><span class="line">  6 lp</span><br><span class="line">  7 vcs</span><br><span class="line"> 10 misc</span><br><span class="line"> 13 input</span><br><span class="line"> 14 sound/midi</span><br><span class="line"> 14 sound/dmmidi</span><br><span class="line"> 21 sg</span><br><span class="line"> 29 fb</span><br><span class="line"> 81 video4linux</span><br><span class="line"> 89 i2c</span><br><span class="line"> 99 ppdev</span><br><span class="line">108 ppp</span><br><span class="line">116 alsa</span><br><span class="line">128 ptm</span><br><span class="line">136 pts</span><br><span class="line">180 usb</span><br><span class="line">189 usb_device</span><br><span class="line">202 cpu/msr</span><br><span class="line">204 ttyMAX</span><br><span class="line">226 drm</span><br><span class="line">240 media</span><br><span class="line">241 hidraw</span><br><span class="line">242 ttyDBC</span><br><span class="line">243 bsg</span><br><span class="line">244 watchdog</span><br><span class="line">245 remoteproc</span><br><span class="line">246 ptp</span><br><span class="line">247 pps</span><br><span class="line">248 rtc</span><br><span class="line">249 dma_heap</span><br><span class="line">250 dax</span><br><span class="line">251 dimmctl</span><br><span class="line">252 ndctl</span><br><span class="line">253 tpm</span><br><span class="line">254 gpiochip</span><br><span class="line">261 accel</span><br><span class="line"></span><br><span class="line">Block devices:</span><br><span class="line">  2 fd</span><br><span class="line">  7 loop</span><br><span class="line">  8 sd</span><br><span class="line">  9 md</span><br><span class="line"> 11 sr</span><br><span class="line"> 65 sd</span><br><span class="line"> 66 sd</span><br><span class="line"> 67 sd</span><br><span class="line"> 68 sd</span><br><span class="line"> 69 sd</span><br><span class="line"> 70 sd</span><br><span class="line"> 71 sd</span><br><span class="line">128 sd</span><br><span class="line">129 sd</span><br><span class="line">130 sd</span><br><span class="line">131 sd</span><br><span class="line">132 sd</span><br><span class="line">133 sd</span><br><span class="line">134 sd</span><br><span class="line">135 sd</span><br><span class="line">252 device-mapper</span><br><span class="line">253 virtblk</span><br><span class="line">254 mdp</span><br><span class="line">259 blkext</span><br></pre></td></tr></table></figure>
+
+<h4 id="📗-一些重要的数据结构"><a href="#📗-一些重要的数据结构" class="headerlink" title="📗 一些重要的数据结构"></a>📗 一些重要的数据结构</h4><p>​	读者可能会想像到，设备编号的注册仅仅是驱动程序代码必须完成的许多⼯作中的第⼀件事情⽽已。我们很快就会看到其他⼀些重要的驱动程序组件，但在此之前还需要阐述另⼀个话题。⼤部分基本的驱动程序操作涉及到三个重要的内核数据结构，分别是<code>file_operations</code>、<code>file</code>和<code>inode</code>。在编写真正的驱动程序之前，需要对上述结构有⼀个基本的认识，因此在阐述如何实现基本的驱动程序操作之前，我们将快速描述上述数据结构。</p>
+<h5 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h5><p>​	迄今为⽌，我们已经为⾃⼰保留了⼀些设备编号，但尚未将任何驱动程序操作连接到这些编号。<code>file_operations</code>结构就是⽤来建⽴这种连接的。这个结构定义在<code>&lt;linux/fs.h＞</code>中，其中包含了⼀组函数指针。每个打开的⽂件（在内部由⼀个<code>file</code>结构表⽰）和⼀组函数关联（通过包含指向⼀个<code>file_operations</code>结构的<code>f_op</code>字段）。这些操作主要⽤来实现系统调⽤，命名为<code>open</code>、<code>read</code>等等。我们可以认为⽂件是⼀个“对象”，⽽操作它的函数是“⽅法”，如果采⽤⾯向对象编程的术语来表达就是，对象声明的动作将作⽤于其本⾝。这是我们在<code>Linux</code>内核中看到的⾯向对象编程的第⼀个例证。</p>
+<p>​	按照惯例，<code>file_operations</code>结构或者指向这类结构的指针称为<code>fops</code>。这个结构中的每⼀个字段都必须指向驱动程序中实现特定操作的函数，对于不⽀持的操作，对应的字段可置为<code>NULL</code>值。对各个函数⽽⾔，如果对应字段被赋为<code>NULL</code>指针，那么内核的具体处理⾏为是不尽相同的。</p>
+<p>​	下⾯列出了应⽤程序可在某个设备上调⽤的所有操作。为便于查询，我们尽量使之简洁，仅仅总结了每个操作以及使⽤<code>NULL</code>时的内核默认⾏为。</p>
+<p>​	在通读<code>fi1e_operations</code>⽅法的清单时，我们会注意到许多参数包含有<code>__user</code>字符串，它其实是⼀种形式的⽂档⽽已，表明指针是⼀个⽤户空间地址，因此不能被直接引用。对通常的编译来讲，<code>__user</code>没有任何效果，但是可由外部检查软件使用，用来寻找对用户空间地址的错误使用。</p>
+<h4 id="📙-字符设备的注册"><a href="#📙-字符设备的注册" class="headerlink" title="📙 字符设备的注册"></a>📙 字符设备的注册</h4><p>​	内核内部使用<code>struct cdev</code>结构来表示字符设备。在内核调用设备的操作之前，必须分配并注册一个或者多个上述结构。为此，我们的代码应包含<code>&lt;linux/cdev.h&gt;</code>，其中定义了这个结构以及与其相关的一些辅助函数。</p>
+<p>​	分配和初始化上述结构的⽅式有两种。如果读者打算在运⾏时获取⼀个独⽴的<code>cdev</code>结构，则应该如下编写代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> *<span class="title">my_cdev</span> =</span> cdev_alloc();</span><br><span class="line">my_cdev-&gt;ops = &amp;my_fops;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> 								<span class="title">kobj</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">module</span> 								*<span class="title">owner</span>;</span></span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> 	*<span class="title">ops</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> 							<span class="title">list</span>;</span></span><br><span class="line">  <span class="type">dev_t</span> 												dev;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> 									count;</span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
+
+<p>这时，可以将<code>cdev</code>结构嵌⼈到⾃⼰的设备特定结构中，<code>scull</code>就是这样做的。这种情况下，我们需要⽤下⾯的代码来初始化已分配到的结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">cdev_init</span><span class="params">(<span class="keyword">struct</span> cdev *cdev, <span class="keyword">struct</span> file_operations *fops)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>另外，还有⼀个<code>struct cdev</code>的字段需要初始化。和<code>file_operations</code>结构类似，<code>struct cdev</code>也有⼀个所有者字段，应被设置<code>THIS_MODULE</code>。在<code>cdev</code>结构设置好之后，最后的步骤是通过下⾯的调⽤告诉内核该结构的信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">cdev_add</span><span class="params">(<span class="keyword">struct</span> cdev *dev, <span class="type">dev_t</span> num, <span class="type">unsigned</span> <span class="type">int</span> count)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​	这⾥，<code>dev</code>是<code>cdev</code>结构，<code>num</code>是该设备对应的第⼀个设备编号，<code>count</code>是应该和该设备关联的设备编号的数量。<code>count</code>经常取1，但是在某些情形下，会有多个设备编号对应于⼀个特定的设备。例如，考虑<code>SCSI</code>磁带驱动程序，它通过每个物理设备的多个次设备号来允许⽤户空间选择不同的操作模式（⽐如密度）。</p>
+<p>​	在使⽤<code>cdev_add</code>时，需要本记重要的⼀点。⾸先，这个调⽤可能会失敗。如果它返回⼀个负的错误码，则设备不会被添加到系统中。但这个调⽤⼏乎总会成功返回，此时，我们又⾯临另⼀个问题：只要<code>cdev_add</code>返回了，我们的设备就“活”了，它的操作就会被内核调⽤。因此，在驱动程序还没有完全准备好处理设备上的操作时，就不能调⽤<code>cdev_add</code>。要从系统中移除⼀个字符设备，做如下调⽤：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">cdev_del</span><span class="params">(<span class="keyword">struct</span> cdev *dev)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>要清楚的是，在将<code>cdev</code>结构传递到<code>cdev_del</code>函数之后，就不应再访问<code>cdev</code>结构了。</p>
+<h4 id="open和release函数"><a href="#open和release函数" class="headerlink" title="open和release函数"></a><code>open</code>和<code>release</code>函数</h4><p>​	<code>open</code>方法提供给驱动程序以初始化的能力，从而为以后的操作完成初始化作准备。在大部分驱动程序中，<code>open</code>应完成如下工作：</p>
+<ul>
+<li>检查设备特定的错误（诸如设备未就绪或类似的硬件问题）。</li>
+<li>如果设备是首次打开，则对其进行初始化。</li>
+<li>如有必要，更新<code>f_op</code>指针。</li>
+<li>分配并填写置于<code>filp-&gt;private_data</code>里的数据结构。</li>
+</ul>
+<p>然而，首先要做的就是确定要打开的具体设备。注意，<code>open</code>方法的原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> (*open)(<span class="keyword">struct</span> inode* inode, <span class="keyword">struct</span> file* filp);</span><br></pre></td></tr></table></figure>
+
+<p>其中的<code>inode</code>参数在其<code>i_cdev</code>字段中包含了我们所需要的信息，即我们先前设置的<code>cdev</code>结构。唯⼀的问题是，我们通常不需要<code>cdev</code>结构本⾝，⽽是希望得到包含<code>cdev</code>结构的<code>scul1_dev</code>结构。<code>C</code>语⾔可以通过⼀些技巧完成这类转换，但不应滥⽤这类技巧，它会使得代码对其他⼈来讲难于阅读和理解。幸运的是，在这种情况下内核已经实现了此类技巧，它通过定义 <code>&lt;linux/kernel.h&gt;</code>中的<code>container_of</code>宏实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">container_of(pointer, container_type, container_field);</span><br></pre></td></tr></table></figure>
+
+<p>这个宏需要⼀个<code>container_field</code>字段的指针，该字段包含在<code>container_type</code>类型的结构中，然后返回包含该字段的结构指针。在<code>scull_open</code>中，这个宏⽤来找到适当的设备结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">scull_dev</span> *<span class="title">dev</span>;</span></span><br><span class="line">dev = container_of(inode-&gt;i_cdev, <span class="keyword">struct</span> scull_dev, cdev);</span><br><span class="line">filp-&gt;private_data = dev;</span><br></pre></td></tr></table></figure>
+
+<p>⼀旦代码找到<code>scu11_dev</code>结构之后，<code>scull</code>将⼀个指针保存到了<code>file</code>结构的<code>private_data</code>字段中，这样可以⽅便今后对该指针的访问。另外⼀个确定要打开的设备的⽅法是：检查保存在<code>inode</code>结构中的次设备号。如果读者利⽤<code>register_chrdev</code>注册⾃⼰的设备，则必须使⽤该技术。请⼀定使⽤<code>iminor</code>宏从<code>inode</code>结构中获得次设备号，并确保它对应于驱动程序真正准备打开的设备。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">scull_open</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp)</span> &#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">scull_dev</span> *<span class="title">dev</span>;</span> <span class="comment">/* device information */</span></span><br><span class="line"></span><br><span class="line">	dev = container_of(inode-&gt;i_cdev, <span class="keyword">struct</span> scull_dev, cdev);</span><br><span class="line">	filp-&gt;private_data = dev; <span class="comment">/* for other methods */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* now trim to 0 the length of the device if open was write-only */</span></span><br><span class="line">	<span class="keyword">if</span> ( (filp-&gt;f_flags &amp; O_ACCMODE) == O_WRONLY) &#123;</span><br><span class="line">		<span class="keyword">if</span> (mutex_lock_interruptible(&amp;dev-&gt;lock))</span><br><span class="line">			<span class="keyword">return</span> -ERESTARTSYS;</span><br><span class="line">	</span><br><span class="line">        scull_trim(dev); <span class="comment">/* ignore errors */</span></span><br><span class="line">		mutex_unlock(&amp;dev-&gt;lock);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;          <span class="comment">/* success */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​	这段代码看起来相当短⼩，因为在调⽤<code>open</code>时它并没有做针对某个特定设备的任何处理。由于<code>scull</code>设备被设计为全局且持久的，这段代码⽆需做什么⼯作。特别是，由于我们并不维护<code>scull</code>的打开计数，⽽只维护模块的使⽤计数，因此也就没有类似于“⾸次打开时初始化设备”的这类动作。</p>
+<p>​	对设备唯⼀的实际操作是，当设备以写⽅式打开时，它的长度将被截为0。出现这种特性的原因在于，在设计上，当⽤更短的⽂件覆盖⼀个<code>scull</code>设备时，设备数据区应相应缩⼩。这与⽤写⼈⽅式打开普通⽂件时将长度截短为0的⽅式很相似。如果设备以读取⽅式打开，则什么也不做。</p>
+<p>​	<code>release</code>⽅法的作⽤正好与<code>open</code>相反。有时读者会发现这个⽅法的实现被称为<code>device-close</code>，⽽不是<code>device_release</code>。⽆论是哪种形式，这个设备⽅法都应该完成下⾯的任务：</p>
+<ul>
+<li><p>释放由<code>open</code>分配的、保存在<code>filp-&gt;private_data</code>中的所有内容。</p>
+</li>
+<li><p>在最后⼀次关闭操作时关闭设备。</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">scull_release</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp)</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Linux v6.15</code>源码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* file: fs/open.c */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Careful here! We test whether the file pointer is NULL before</span></span><br><span class="line"><span class="comment"> * releasing the fd. This ensures that one clone task can&#x27;t release</span></span><br><span class="line"><span class="comment"> * an fd while another clone is opening it.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">SYSCALL_DEFINE1(close, <span class="type">unsigned</span> <span class="type">int</span>, fd)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> retval;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">file</span>;</span></span><br><span class="line"></span><br><span class="line">	file = file_close_fd(fd);</span><br><span class="line">	<span class="keyword">if</span> (!file)</span><br><span class="line">		<span class="keyword">return</span> -EBADF;</span><br><span class="line"></span><br><span class="line">	retval = filp_flush(file, current-&gt;files);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * We&#x27;re returning to user space. Don&#x27;t bother</span></span><br><span class="line"><span class="comment">	 * with any delayed fput() cases.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	fput_close_sync(file);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (likely(retval == <span class="number">0</span>))</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* can&#x27;t restart close syscall because file table entry was cleared */</span></span><br><span class="line">	<span class="keyword">if</span> (retval == -ERESTARTSYS ||</span><br><span class="line">	    retval == -ERESTARTNOINTR ||</span><br><span class="line">	    retval == -ERESTARTNOHAND ||</span><br><span class="line">	    retval == -ERESTART_RESTARTBLOCK)</span><br><span class="line">		retval = -EINTR;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> retval;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * &quot;id&quot; is the POSIX thread ID. We use the</span></span><br><span class="line"><span class="comment"> * files pointer for this..</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">filp_flush</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">fl_owner_t</span> id)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> retval = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">	<span class="comment">// 获取文件对象的引用计数（filp-&gt;f_count）</span></span><br><span class="line">	<span class="keyword">if</span> (CHECK_DATA_CORRUPTION(file_count(filp) == <span class="number">0</span>, filp,</span><br><span class="line">			<span class="string">&quot;VFS: Close: file count is 0 (f_op=%ps)&quot;</span>,</span><br><span class="line">			filp-&gt;f_op)) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 文件操作函数集中的flush方法（由驱动或文件系统实现）</span></span><br><span class="line">	<span class="keyword">if</span> (filp-&gt;f_op-&gt;flush)</span><br><span class="line">		retval = filp-&gt;f_op-&gt;flush(filp, id);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (likely(!(filp-&gt;f_mode &amp; FMODE_PATH))) &#123;</span><br><span class="line">    <span class="comment">// 表示文件不是通过open(O_PATH)打开</span></span><br><span class="line">		dnotify_flush(filp, id);</span><br><span class="line">    <span class="comment">// 释放该进程持有的所有POSIX文件锁（通过fcntl(F_SETLK)设置的锁）</span></span><br><span class="line">		locks_remove_posix(filp, id);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> retval;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重置<code>fdtable</code>中<code>fd</code>，将它加入位使用的<code>bitmap</code>中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* file: fs/file.c */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * file_close_fd - return file associated with fd</span></span><br><span class="line"><span class="comment"> * @fd: file descriptor to retrieve file for</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Doesn&#x27;t take a separate reference count.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Returns: The file associated with @fd (NULL if @fd is not open)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">struct</span> file *<span class="title function_">file_close_fd</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> fd)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">files_struct</span> *<span class="title">files</span> =</span> current-&gt;files;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">file</span>;</span></span><br><span class="line"></span><br><span class="line">	spin_lock(&amp;files-&gt;file_lock);</span><br><span class="line">	file = file_close_fd_locked(files, fd);</span><br><span class="line">	spin_unlock(&amp;files-&gt;file_lock);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> file;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * file_close_fd_locked - return file associated with fd</span></span><br><span class="line"><span class="comment"> * @files: file struct to retrieve file from</span></span><br><span class="line"><span class="comment"> * @fd: file descriptor to retrieve file for</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Doesn&#x27;t take a separate reference count.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Context: files_lock must be held.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Returns: The file associated with @fd (NULL if @fd is not open)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">struct</span> file *<span class="title function_">file_close_fd_locked</span><span class="params">(<span class="keyword">struct</span> files_struct *files, <span class="type">unsigned</span> fd)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 获取文件描述符表</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fdtable</span> *<span class="title">fdt</span> =</span> files_fdtable(files);</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">file</span>;</span></span><br><span class="line"></span><br><span class="line">	lockdep_assert_held(&amp;files-&gt;file_lock);</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 若fd超出有效范围（如负数或超过限制），直接返回NULL（对应close()返回-EBADF）。</span></span><br><span class="line">	<span class="keyword">if</span> (fd &gt;= fdt-&gt;max_fds)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 防止Spectre v1攻击</span></span><br><span class="line">	fd = array_index_nospec(fd, fdt-&gt;max_fds);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 获取文件对象指针</span></span><br><span class="line">	file = rcu_dereference_raw(fdt-&gt;fd[fd]);</span><br><span class="line">	<span class="keyword">if</span> (file) &#123;</span><br><span class="line">    <span class="comment">// 原子化地将fdt-&gt;fd[fd]设为NULL，确保其他线程看到一致状态。</span></span><br><span class="line">		rcu_assign_pointer(fdt-&gt;fd[fd], <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">// 将fd加入进程的“未使用描述符”位图（files-&gt;open_fds），供后续open()或dup()重用。</span></span><br><span class="line">		__put_unused_fd(files, fd);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="keyword">return</span> file;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个宏：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> rcu_dereference_check_fdtable(files, fdtfd) \</span></span><br><span class="line"><span class="meta">	rcu_dereference_check((fdtfd), lockdep_is_held(&amp;(files)-&gt;file_lock))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> files_fdtable(files) \</span></span><br><span class="line"><span class="meta">	rcu_dereference_check_fdtable((files), (files)-&gt;fdt)</span></span><br></pre></td></tr></table></figure>
+
+<p>✅ 作用详解</p>
+<p><code>rcu_dereference_check_fdtable(files, fdtfd)</code></p>
+<ul>
+<li>这是一个安全的<code>RCU</code>读取宏，用于从<code>files_struct</code>中读取<code>fdtable</code>。</li>
+<li><code>rcu_dereference_check(ptr, cond)</code>的含义是：如果<code>cond</code>为真，则允许直接访问<code>ptr</code>，否则必须处于<code>RCU</code>读取临界区。</li>
+</ul>
+<p>🔒 <code>lockdep_is_held(&amp;(files)-&gt;file_lock)</code> 检查当前是否已经持有<code>files-&gt;file_lock</code>，也就是说：</p>
+<ul>
+<li>如果你已经持有<code>file_lock</code>，可以直接读取；</li>
+<li>否则只能在<code>RCU</code>临界区内安全地读取。</li>
+</ul>
+<p>🚦 为什么要这么做？</p>
+<p>​	<code>files_struct</code>是每个进程都持有的结构体，记录所有打开的文件。它的成员<code>fdtable *fdt</code>指向实际的文件描述符数组。但<code>Linux</code>内核支持并发访问<code>fdt</code>，而<code>fdt</code>有时会被复制或替换（比如扩容时）。因此：</p>
+<ul>
+<li>普通读取可能造成竞态；</li>
+<li>使用<code>rcu_dereference_check()</code>确保要么：<ul>
+<li>处于<code>RCU</code>临界区。</li>
+<li>要么手动持有保护锁。</li>
+</ul>
+</li>
+</ul>
+<p>这是<code>RCU</code>读一致性检查的一部分。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* fs/file_table.c */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Equivalent to __fput_sync(), but optimized for being called with the last</span></span><br><span class="line"><span class="comment"> * reference.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * See file_ref_put_close() for details.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">fput_close_sync</span><span class="params">(<span class="keyword">struct</span> file *file)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (likely(file_ref_put_close(&amp;file-&gt;f_ref)))</span><br><span class="line">		__fput(file);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* the real guts of fput() - releasing the last reference to file</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __fput(<span class="keyword">struct</span> file *file)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dentry</span> *<span class="title">dentry</span> =</span> file-&gt;f_path.dentry;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vfsmount</span> *<span class="title">mnt</span> =</span> file-&gt;f_path.mnt;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">inode</span> =</span> file-&gt;f_inode;</span><br><span class="line">	<span class="type">fmode_t</span> mode = file-&gt;f_mode;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 表示文件曾被真正“打开”过</span></span><br><span class="line">	<span class="keyword">if</span> (unlikely(!(file-&gt;f_mode &amp; FMODE_OPENED)))</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line"></span><br><span class="line">	might_sleep();</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 通知用户空间有文件关闭</span></span><br><span class="line">	fsnotify_close(file);</span><br><span class="line">  </span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * The function eventpoll_release() should be the first called</span></span><br><span class="line"><span class="comment">	 * in the file cleanup chain.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	eventpoll_release(file);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 移除该文件上的所有POSIX文件锁或flock锁</span></span><br><span class="line">	locks_remove_file(file);</span><br><span class="line"></span><br><span class="line">	security_file_release(file);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 处理异步通知</span></span><br><span class="line">	<span class="keyword">if</span> (unlikely(file-&gt;f_flags &amp; FASYNC)) &#123;</span><br><span class="line">		<span class="keyword">if</span> (file-&gt;f_op-&gt;fasync)</span><br><span class="line">			file-&gt;f_op-&gt;fasync(<span class="number">-1</span>, file, <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 调用驱动的.release钩子</span></span><br><span class="line">	<span class="keyword">if</span> (file-&gt;f_op-&gt;release)</span><br><span class="line">		file-&gt;f_op-&gt;release(inode, file);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 释放字符设备引用计数</span></span><br><span class="line">	<span class="keyword">if</span> (unlikely(S_ISCHR(inode-&gt;i_mode) &amp;&amp; inode-&gt;i_cdev != <span class="literal">NULL</span> &amp;&amp;</span><br><span class="line">		     !(mode &amp; FMODE_PATH))) &#123;</span><br><span class="line">		cdev_put(inode-&gt;i_cdev);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 模块引用计数</span></span><br><span class="line">	fops_put(file-&gt;f_op);</span><br><span class="line">	file_f_owner_release(file);</span><br><span class="line">	put_file_access(file);</span><br><span class="line">  <span class="comment">// 减少文件路径对应 dentry 的引用计数</span></span><br><span class="line">	dput(dentry);</span><br><span class="line">	</span><br><span class="line">  <span class="keyword">if</span> (unlikely(mode &amp; FMODE_NEED_UNMOUNT))</span><br><span class="line">    <span class="comment">// 自动卸载匿名挂载命名空间中的挂载点</span></span><br><span class="line">		dissolve_on_fput(mnt);</span><br><span class="line">	mntput(mnt);</span><br><span class="line">  </span><br><span class="line">out:</span><br><span class="line">	file_free(file);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="scull内存使用"><a href="#scull内存使用" class="headerlink" title="scull内存使用"></a><code>scull</code>内存使用</h4><p>​	<code>scull</code>驱动程序引⼊了<code>Linux</code>内核中⽤于内存管理的两个核⼼函数。这两个函数定义在<code>&lt;linux/slab.h&gt;</code>中，它们是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">kmalloc</span><span class="params">(<span class="type">size_t</span> size , <span class="type">int</span> flags)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">kfree</span><span class="params">(<span class="type">void</span> *ptr)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​	对<code>kmalloc</code>的调⽤将试图分配<code>size</code>个字节⼤⼩的内存；其返回值指向该内存的指针，分配失败时返回<code>NULL</code>。<code>flags</code>参数⽤来描述内存的分配⽅法。到⽬前为⽌，我们始终使⽤<code>GFP_KERNEL</code>。由这个函数分配的内存应该通过<code>kfree</code>释放。我们不应该将⾮<code>kmalloc</code>返回的指针传递给<code>kfree</code>。但是，将<code>NULL</code>指针传递给<code>kfree</code>是合法的。</p>
+<p>​	对分配⼤的内存区域来说，<code>kmalloc</code>并不是最有效的⽅法，因此<code>scull</code>的实现⽅法并不是很巧妙。但更为巧妙的实现其代码读起来会较困难，⽽本节的⽬的只是讲解<code>read</code>和<code>write</code>，并⾮内存管理。</p>
+<p>​	另⼀⽅⾯，从理论和实际的⾓度考虑，我们不想限制“设备”的尺⼨。从理论⾓度来看，对所管理的数据项任意增加限制总是很糟糕的想法。从实际⾓度来看，为了在内存短缺的情况下进⾏测试，可利⽤<code>scull</code>暂时将系统的内存吃光。进⾏这样的测试有助于了解系统内部。可以使⽤命令<code>cp /dev/zero /dev/scullo</code>⽤光所有的系统<code>RAM</code>，也可以⽤<code>dd</code>⼯具选择复制多少数据到<code>scull</code>设备中。</p>
+<p>​	在<code>scull</code>中，每个设备都是⼀个指针链表，其中每个指针都指向⼀个<code>scull_qset</code>结构。默认情况下，每⼀个这样的结构通过⼀个中间指针数组最多可引⽤4000000个字节。源代码使⽤了⼀个有1000个指针的数组，每个指针指向⼀个4000字节的区域。我们把每⼀个内存区称为⼀个量⼦，⽽这个指针数组（或它的长度）称为量⼦集。</p>
+<h4 id="🌲-read和write"><a href="#🌲-read和write" class="headerlink" title="🌲 read和write"></a>🌲 <code>read</code>和<code>write</code></h4><p>​	<code>read</code>和<code>write</code>⽅法完成的任务是相似的，亦即，拷贝数据到应⽤程序空间，或反过来从应⽤程序空间拷贝数据。因此，它们的原型很相似，不妨同时介绍它们：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ssize_t</span> <span class="title function_">read</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">char</span> __user *buff, <span class="type">size_t</span> count, <span class="type">loff_t</span> *offp)</span>;</span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">write</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">const</span> <span class="type">char</span> __user *buff, </span></span><br><span class="line"><span class="params">              <span class="type">size_t</span> count, <span class="type">loff_t</span> *offp)</span> ;</span><br></pre></td></tr></table></figure>
+
+<p>​	对于这两个⽅法，参数<code>filp</code>是⽂件指针，参数<code>count</code>是请求传输的数据长度。参数<code>buff</code>是指向⽤户空间的缓冲区，这个缓冲区或者保存要写⼈的数据，或者是⼀个存放新读入数据的空缓冲区。最后的<code>offp</code>是⼀个指向<code>long offset type</code>（长偏移量类型）对象的指针，这个对象指明⽤户在⽂件中进⾏存取操作的位置。</p>
+<p>​	需要再次指出的是，<code>read</code>和<code>write</code>⽅法的<code>buff</code>参数是⽤户空间的指针。因此，内核代码不能直接引⽤其中的内容。出现这种限制的原因有如下⼏个：</p>
+<ul>
+<li><p>随着驱动程序所运⾏的架构的不同或者内核配置的不同，在内核模式中运⾏时，⽤户空间的指针可能是⽆效的。该地址可能根本⽆法被映射到内核空间，或者可能指向某些随机数据。</p>
+</li>
+<li><p>即使该指针在内核空间中代表相同的东西，但⽤户空间的内存是分页的，⽽在系统调⽤被调⽤时，涉及到的内存可能根本就不在<code>RAM</code>中。对⽤户空间内存的直接引⽤将导致页错误，⽽这对内核代码来说是不允许发⽣的事情。其结果可能是⼀个<code>oops</code>，它将导致调⽤该系统调⽤的进程死亡。</p>
+</li>
+<li><p>我们讨论的指针可能由⽤户程序提供，⽽该程序可能存在缺陷或者是个恶意程序。如果我们的驱动程序盲⽬引⽤⽤户提供的指针，将导致系统出现打开的后门，从⽽允许⽤户空间程序随意访问或覆盖系统中的内存。如果读者不打算因为⾃⼰的驱动程序⽽危及⽤户系统的安全性，则永远不应直接引⽤⽤户空间指针。</p>
+</li>
+</ul>
+<p>​	很显然，驱动程序必须访向⽤户空间的缓冲区以便完成⾃⼰的⼯作。为了确保安全，这种访问应始终通过内核提供的专⽤函数完成。我们将在这⾥介绍其中⼏个这类函数（在<code>&lt;asm/uaccess.h&gt;</code>中定义），其他的函数将在第六章的“使⽤<code>ioctl</code>的参数”⼀节中讲述，这些函数使⽤了⼀些特殊的、架构相关的⽅法来确保在内核和⽤户空间之间安全，正确地交换数据。</p>
+<p>​	<code>scull</code>的<code>read</code>和<code>write</code>代码要做的⼯作就是在⽤户地址空间和内核地址空间之间进⾏数据拷贝。这种能⼒是由下⾯的内核函数提供的，它们⽤于拷贝任意的⼀段字书序列，这也是⼤多数<code>read</code>和<code>write</code>⽅法实现的核⼼部分：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">long</span> <span class="title function_">copy_to_user</span><span class="params">(<span class="type">void</span> __user *to, <span class="type">const</span> <span class="type">void</span> *from, <span class="type">unsigned</span> <span class="type">long</span> count)</span>;</span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> <span class="title function_">copy_from_user</span><span class="params">(<span class="type">void</span> *to, <span class="type">const</span> <span class="type">void</span> __user *from, <span class="type">unsigned</span> <span class="type">long</span> count)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>虽然这些函数的⾏为很像<code>memcpy</code>函数，但当内核空间内运⾏的代码访问⽤户空间时要多加⼩⼼。被寻址的⽤户空间的页⾯可能当前并不在内存中，于是虚拟内存⼦系统会将该进程转⼊睡眠状态，直到该页⾯被传送⾄期望的位置。例如，当页⾯必须从交换空间取回时，这样的情况就会发⽣。对于驱动程序编写⼈员来说，这带来的结果就是访问⽤户空间的任何函数都必须是可重⼊的，并且必须能和其他驱动程序函数并发执⾏，更特别的是，必须处于能够合法休眠的状态。</p>
+<p>​	这两个函数的作⽤并不限于在内核空间和⽤户空间之间拷贝数据，它们还检查⽤户空间的指针是否有效。如果指针⽆效，就不会进⾏拷贝；另⼀⽅⾯，如果在拷贝过程中遇到⽆效地址，则仅仅会复制部分数据。在这两种情况下，返回值是还需要拷贝的内存数量值。<code>scull</code>代码如果发现这样的错误返回（即返回值不为0时），会给⽤户返回<code>-EFAULT</code>。</p>
+<p>​	如果并不需要检查⽤户空间指针，建议调⽤<code>__copy_to_user</code>和<code>__copy_from_user</code>。在预先知道參数已经检查过时，这两个函数还是很有⽤的。但要⼩⼼的是，如果我们并没有真正检查传递给这些函数的⽤户空间指针，则可能会导致内核崩溃或安全漏洞。</p>
+<p>​	⾄于实际的设备⽅法，<code>read</code>⽅法的任务是从设备拷贝数据到⽤户空间（使⽤<code>copy_to_user</code>），⽽<code>write</code>⽅法则是从⽤户空间拷贝数据到设备上（使⽤<code>copy_from_user</code>）。每次<code>read</code>或<code>write</code>系统调⽤都会请求⼀定数⽬的字节传输，不过驱动程序也并不限制⼩数据量的传输——读&#x2F;写之间的确切规则还是有些细微差异的。</p>
+<p>​	⽆论这些⽅法传输了多少数据，⼀般⽽⾔都需要更新<code>*offp</code>所表⽰的⽂件位置，以便反映系统调⽤完成之后当前⽂件位置。适当情况下，内核会将⽂件位置的改变传播回<code>file</code>结构。但是，<code>pread</code>和<code>pwrite</code>系统调⽤具有不同的语义；这两个系统调⽤从⼀个给定的⽂件偏移量开始操作，并且不会修改⽂件位置。它们会传⼊⼀个指针，该指针指向⽤户提供的位置，⽽且会丢弃驱动程序所作的任何修改。</p>
+<p>​	出错时，<code>read</code>和<code>write</code>⽅法都返回⼀个负值。⼤于等于0的返回值告诉调⽤程序成功传输了多少字节。如果在正确传输部分数据之后发⽣了错误，则返回值必须是成功传输的字节数，但这个错误只能在下⼀次函数调⽤时才会得到报告。当然，这种实现惯例要求驱动程序必须记住错误的发⽣，这样才能在将来把错误状态返回给应⽤程序。</p>
+<p>​	尽管内核函数通过返回负值来表⽰错误，⽽且该返回值表明了错误的类型，但运⾏在⽤户空间的程序看到的返回值始终是$-1$。为了找到出错原因，⽤户空间的程序必须访问<code>errno</code>变量。⽤户空间的这种⾏为源于<code>POSIX</code>标准，但该标准并未对内核内部的操作做任何要求。</p>
+<h5 id="read方法"><a href="#read方法" class="headerlink" title="read方法"></a><code>read</code>方法</h5><p>​	调⽤程序对<code>read</code>的返回值解释如下：</p>
+<ul>
+<li><p>如果返回值等于传递给<code>read</code>系统调⽤的<code>count</code>参数，则说明所请求的字节数传输成功完成了。这是最理想的情况。</p>
+</li>
+<li><p>如果返回值是正的，但是⽐<code>count</code>⼩，则说明只有部分数据成功传送。这种情况因设备的不同可能有许多原因。⼤部分情况下，程序会重新读数据。例如，如果⽤<code>fread</code>函数读数据，这个库函数就会不断调⽤系统调⽤，直⾄所请求的数据传输完毕为⽌。</p>
+</li>
+<li><p>如果返回值为0，则表⽰已经到达了⽂件尾。</p>
+</li>
+<li><p>负值意味着发⽣了错误，该值指明了发⽣了什么错误，错误码在<code>&lt;linux/errno.h&gt;</code>中定义。⽐如这样的⼀些错误：<code>-EINTR</code>（系统调⽤被中断）或<code>-EFAULT</code>（⽆效地址）。</p>
+</li>
+</ul>
+<p>上⾯的清单遗漏了⼀种情况，就是“现在还没有数据，但以后可能会有”。在这种情况下，<code>read</code>系统调⽤应该阻塞。</p>
+<h5 id="write⽅法"><a href="#write⽅法" class="headerlink" title="write⽅法"></a><code>write</code>⽅法</h5><p>​	与<code>read</code>类似，根据如下返回值规则，<code>write</code>也能传输少于请求的数据量：</p>
+<ul>
+<li><p>如果返回值等于<code>count</code>，则完成了所请求数⽬的字节传送。</p>
+</li>
+<li><p>如果返回值是正的，但⼩于<code>count</code>，则只传输了部分数据。程序很可能再次试图写入余下的数据。</p>
+</li>
+<li><p>如果值为0，意味着什么也没写入。这个结果不是错误，⽽且也没有理由返回⼀个错误码。再次重申，标准库会重复调⽤<code>write</code>。</p>
+</li>
+<li><p>负值意味发⽣了错误，与<code>read</code>相同，有效的错误码定义在<code>&lt;linux/errno.h&gt;</code>中。</p>
+</li>
+</ul>
+<p>不幸的是，有些错误程序只进⾏了部分传输就报错并异常退出。这种情况的发⽣是由于程序员习惯于认定<code>write</code>调⽤要么失败要么就完全成功。在⼤多数时候的确是这样的，设备驱动也应对此进行支持。</p>
+<h4 id="🔥-快速参考"><a href="#🔥-快速参考" class="headerlink" title="🔥 快速参考"></a>🔥 快速参考</h4><p>​	本章介绍了下列符号和头⽂件。<code>file_operations</code>结构和<code>file</code>结构的字段清单并没有在这里给出。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">dev_t</span></span><br><span class="line">  <span class="type">dev_t</span>是内核中⽤来表示设备编号的数据类型。</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">MAJOR</span><span class="params">(<span class="type">dev_t</span> dev)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">MINOR</span><span class="params">(<span class="type">dev_t</span> dev)</span>;</span><br><span class="line">	这两个宏从设备编号中抽取出主/次设备号。</span><br><span class="line">  </span><br><span class="line"><span class="type">dev_t</span> <span class="title function_">MKDEV</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> major, <span class="type">unsigned</span> <span class="type">int</span> minor)</span>;</span><br><span class="line">	这个宏由主/次设备号构造⼀个<span class="type">dev_t</span>数据项。</span><br><span class="line">    </span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/fs.h&gt;</span></span></span><br><span class="line">	⽂件系统头⽂件，它是编写设备驱动程序必需的头⽂件，其中声明了许多重要的函数和数据结构。</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">register_chrdev_region</span><span class="params">(<span class="type">dev_t</span> first, <span class="type">unsigned</span> <span class="type">int</span> count, <span class="type">char</span> *name)</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">alloc_chrdev_region</span><span class="params">(<span class="type">dev_t</span> *dev, <span class="type">unsigned</span> <span class="type">int</span> firstminor, <span class="type">unsigned</span> <span class="type">int</span> count, <span class="type">char</span> *name)</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">unregister_chrdev_region</span><span class="params">(<span class="type">dev_t</span> first,<span class="type">unsigned</span> <span class="type">int</span> count)</span>;</span><br><span class="line">	提供给驱动程序⽤来分配和释放设备编号范围的函数。在期望的主设备号预先知道的情况下，应调⽤</span><br><span class="line">  register_chrdev_region；⽽对动态分配，使⽤alloc_chrdev_region。</span><br><span class="line">    </span><br><span class="line"><span class="type">int</span> <span class="title function_">register_chrdev</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> major, <span class="type">const</span> <span class="type">char</span> *name,<span class="keyword">struct</span> file_operations *fops)</span>;</span><br><span class="line">	⽼的（<span class="number">2.6</span>之前的）字符设备注册例程。<span class="number">2.6</span>内核也提供了仿效该例程的函数，但是新代码不应该再使⽤该函数。如果主设备号</span><br><span class="line">  不是<span class="number">0</span>，则不加修改地使⽤；否则，系统将为该设备动态地分配编号。</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">unregister_chrdev</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> major, <span class="type">const</span> <span class="type">char</span> *name)</span>;</span><br><span class="line">	⽤于注销由register_chrdev函数注册的驱动程序。major和name字符串必须包含与注册该驱动程序时使⽤的相同的值。</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">inode</span>;</span></span><br><span class="line">	⼤多数设备驱动程序都会⽤到的三个重要数据结构。file_operations结构保存了字符驱动程序的⽅法；<span class="class"><span class="keyword">struct</span> <span class="title">file</span>表⽰</span></span><br><span class="line"><span class="class">  ⼀个打开的⽂件，⽽<span class="keyword">struct</span> <span class="title">inode</span>表示⼀个磁盘上的⽂件。</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">#<span class="title">include</span> &lt;</span>linux/cdev.h&gt;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">struct</span> cdev* <span class="title function_">cdev_alloc</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">cdev_init</span><span class="params">(<span class="keyword">struct</span> dev *dev, <span class="keyword">struct</span> file_operations *fops)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">cdev_add</span><span class="params">(<span class="keyword">struct</span> dev *dev, <span class="type">dev_t</span> num, <span class="type">unsigned</span> <span class="type">int</span> count)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">cdev_del</span><span class="params">(<span class="keyword">struct</span> cdev *dev)</span>;</span><br><span class="line">	⽤来管理cdev结构的函数，内核中使⽤该结构表示字符设备。</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line">    </span><br><span class="line">container_of(pointer, type, field);</span><br><span class="line">	⼀个⽅便使⽤的宏，它可⽤于从包含在某个结构中的指针获得结构本⾝的指针。</span><br><span class="line">    </span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;asm/uaccess.h&gt;</span></span></span><br><span class="line">	该头⽂件声明了在内核代码和⽤户空间之间移动数据的函数。</span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> <span class="title function_">copy_from_user</span><span class="params">(<span class="type">void</span> *to, <span class="type">const</span> <span class="type">void</span> *from, <span class="type">unsigned</span> <span class="type">long</span> count)</span>:</span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> <span class="title function_">copy_to_user</span><span class="params">(<span class="type">void</span> *to, <span class="type">const</span> <span class="type">void</span> *from, <span class="type">unsigned</span> <span class="type">long</span> count)</span>;</span><br><span class="line">	在⽤户空间和内核空间之间拷贝数据。</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F/" rel="tag"># 驱动程序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/14/linux/driver/%E6%9E%84%E9%80%A0%E5%92%8C%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9D%97/" rel="prev" title="构造和运行模块">
+                  <i class="fa fa-angle-left"></i> 构造和运行模块
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/20/linux/driver/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/" rel="next" title="调试技术">
+                  调试技术 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

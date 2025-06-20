@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	在Linux内核开发中，模块是一种动态可加载的内核代码片段，允许开发者在不重新编译内核的情况下添加新功能，如驱动程序。模块的构造（编写和编译）和运行（加载、卸载、调试）是驱动开发的基础环节。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="构造和运行模块">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/14/linux/driver/%E6%9E%84%E9%80%A0%E5%92%8C%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9D%97/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	在Linux内核开发中，模块是一种动态可加载的内核代码片段，允许开发者在不重新编译内核的情况下添加新功能，如驱动程序。模块的构造（编写和编译）和运行（加载、卸载、调试）是驱动开发的基础环节。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-14T13:15:52.961Z">
+<meta property="article:modified_time" content="2025-06-15T10:14:32.265Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="驱动程序">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/14/linux/driver/%E6%9E%84%E9%80%A0%E5%92%8C%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9D%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/14/linux/driver/%E6%9E%84%E9%80%A0%E5%92%8C%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9D%97/","path":"2025/06/14/linux/driver/构造和运行模块/","title":"构造和运行模块"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>构造和运行模块 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%9A-%E7%BC%96%E8%AF%91%E5%92%8C%E8%A3%85%E8%BD%BD"><span class="nav-number">2.</span> <span class="nav-text">📚 编译和装载</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%93%98-%E8%A3%85%E8%BD%BD%E5%92%8C%E5%8D%B8%E8%BD%BD%E6%A8%A1%E5%9D%97"><span class="nav-number">2.1.</span> <span class="nav-text">📘 装载和卸载模块</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%97-%E5%86%85%E6%A0%B8%E7%AC%A6%E5%8F%B7%E8%A1%A8"><span class="nav-number">3.</span> <span class="nav-text">📗 内核符号表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%99-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86"><span class="nav-number">4.</span> <span class="nav-text">📙 预备知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%95-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E5%85%B3%E9%97%AD"><span class="nav-number">5.</span> <span class="nav-text">📕 初始化和关闭</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B8%85%E9%99%A4%E5%87%BD%E6%95%B0"><span class="nav-number">5.1.</span> <span class="nav-text">清除函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">初始化过程中的错误处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%E8%A3%85%E8%BD%BD%E7%AB%9E%E4%BA%89"><span class="nav-number">5.3.</span> <span class="nav-text">模块装载竞争</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9A%80-%E6%A8%A1%E5%9D%97%E5%8F%82%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">🚀 模块参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8E%AF-%E5%9C%A8%E2%BD%A4%E6%88%B7%E7%A9%BA%E9%97%B4%E7%BC%96%E5%86%99%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">7.</span> <span class="nav-text">🎯 在⽤户空间编写驱动程序</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/14/linux/driver/%E6%9E%84%E9%80%A0%E5%92%8C%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="构造和运行模块 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          构造和运行模块
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-14 21:15:52" itemprop="dateCreated datePublished" datetime="2025-06-14T21:15:52+08:00">2025-06-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-15 18:14:32" itemprop="dateModified" datetime="2025-06-15T18:14:32+08:00">2025-06-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	在<code>Linux</code>内核开发中，模块是一种动态可加载的内核代码片段，允许开发者在不重新编译内核的情况下添加新功能，如驱动程序。模块的构造（编写和编译）和运行（加载、卸载、调试）是驱动开发的基础环节。</p>
+<span id="more"></span>
+
+<h4 id="📚-编译和装载"><a href="#📚-编译和装载" class="headerlink" title="📚 编译和装载"></a>📚 编译和装载</h4><p>💡示例：</p>
+<p>为自己的模块创建<code>makefile</code>非常简单。</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">obj-m := hello.o</span><br></pre></td></tr></table></figure>
+
+<p>上面这行不是<code>makefile</code>文件的常见形式。上面的赋值语句（它利用了<code>GNU make</code>的扩展语法）说明了有一个模块需要从目标文件<code>hello.o</code>中构造，而从该目标文件中构造的模块名称为<code>hello.ko</code>。</p>
+<p>如果我们要构造的模块名称为<code>module.ko</code>，并由两个源文件生成（比如<code>file1.c</code>和<code>file2.c</code>），则正确的<code>makefile</code>可如下编写：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">obj-m := module.o</span><br><span class="line">module-objs := file1.o file2.o</span><br></pre></td></tr></table></figure>
+
+<p>为了让上面这种类型的<code>makefile</code>文件正常工作，必须内核构造系统环境中调用它们。</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -C /lib/modules/<span class="variable">$(<span class="built_in">shell</span> uname -r)</span>/build M=`pwd` modules</span><br></pre></td></tr></table></figure>
+
+<p>上述命令首先改变目录到<code>-C</code>选项制定的位置（即内核源代码目录），其中保存有内核的顶层<code>makefile</code>文件。 <code>M=</code>选项让该<code>makefile</code>在构造<code>modules</code>⽬标之前返回到模块源代码⽬录 。 然后 ，<code>modueles</code>⽬标指向<code>obj-m</code>变量中设定的模块。 </p>
+<h5 id="📘-装载和卸载模块"><a href="#📘-装载和卸载模块" class="headerlink" title="📘 装载和卸载模块"></a>📘 装载和卸载模块</h5><p>​	在构造模块之后，下一步就是将模块装入内核。<code>insmod</code>可以为我们完成这项工作。<code>insmod</code>程序和<code>ld</code>有些类似，它将模块的代码和数据装入内核，然后使用内核的符号表解析模块中任何未解析的符号。然而，与链接器不同，内核不会修改模块的磁盘文件，而仅仅修改内存中的副本。<code>insmod</code>可以接受一些命令行选项，并且可以在模块链接到内核之前给模块中的整型和字符串型变量赋值。因此，一个良好设计的模块可以在装载时进行配置，这比编译时的配置为用户提供了更多的灵活性。</p>
+<p>​	<code>insmod</code>依赖于定义在<code>kernel/module.c</code>（<code>Linux6.7</code>拆分重构为了多个更小的文件）中的一个系统调用。函数<code>sys_init_module</code>（声明在<code>include/linux/syscalls.h</code>）给模块分配内核内存以便装载模块。然后，该系统调用将模块正文复制到内存区域，并通过内核符号表解析模块中的内核引用，最后调用模块的初始化函数。</p>
+<p>​	和<code>insmod</code>类似，<code>modprobe</code>也⽤来将模块装载到内核中。它和<code>insmod</code>的区别在于，它会考虑要装载的模块是否引⽤了⼀些当前内核不存在的符号。如果有这类引⽤，<code>modprobe</code>会在当前模块搜索路径中查找定义了这些符号的其他模块。如果<code>modprobe</code>找到了这些模块（即要装载的模块所依赖的模块），它会同时将这些模块装载到内核。如果在这种情况下使⽤<code>insmod</code>，则该命令会失败，并在系统⽇志⽂件中记录<code>unresolved symbols</code>（未解析的符号）消息。</p>
+<p>​	我们可以使⽤<code>rmmod</code>⼯具从内核中移除模块。⚠️注意，如果内核认为模块仍然在使⽤状态（例如，某个程序正打开由该模块导出的设备⽂件），或者内核被配置为禁⽌移除模块，则⽆法移除该模块。配置内核并使得内核在模块忙的时候仍能“强制”移除模块也是可能的。但是，如果读者在某种情况下希望利⽤这种特性，则重新引导系统可能是更加合适的做法。</p>
+<p>​	<code>lsmod</code>程序列出当前装载到内核中的所有模块，还提供了其他⼀些信息，⽐如其他模块是不是在使⽤某个特定模块等。<code>lsmod</code>通过读取<code>/proc/modules</code>虚拟⽂件来获得这些信息。</p>
+<h4 id="📗-内核符号表"><a href="#📗-内核符号表" class="headerlink" title="📗 内核符号表"></a>📗 内核符号表</h4><p>​	<code>insmod</code>使⽤公共内核符号表来解析模块中未定义的符号。公共内核符号表中包含了所有的全局内核项（即函数和变量）的地址，这是实现模块化驱动程序所必需的。当模块被装⼈内核后，它所导出的任何符号都会变成内核符号表的⼀部分。在通常情况下，模块只需实现⾃⼰的功能，⽽⽆需导出任何符号。但是，如果其他模块需要从某个模块中获得好处时，我们也可以导出符号。</p>
+<p>​	新模块可以使⽤由我们⾃⼰的模块导出的符号，这样，我们可以在其他模块上层叠新的模块。模块层叠技术也使⽤在很多主流的内核源代码中。例如，<code>msdos</code>⽂件系统依赖于由<code>fat</code>模块导出的符号；⽽每个<code>USB</code>输⼊设备模块层叠在<code>usbcore</code>和<code>input</code>模块之上。</p>
+<p>​	<code>modprobe</code>是处理层叠模块的⼀个实⽤⼯具。它的功能在很⼤程度上和<code>insmod</code>类似，但是它除了装⼊指定模块外还同时装⼈指定模块所依赖的其他模块。因此，⼀个<code>modprobe</code>命令有时候相当于调⽤⼏次<code>insmod</code>命令（然⽽，在从当前⽬录装⼈⾃⼰的模块时仍然需要使⽤<code>insmod</code>，因为<code>modprobe</code>只能从标准的已安装模块⽬录中搜索需要装⼊的模块）。</p>
+<p>​	通过上述层叠技术，我们可以将模块划分为多个层，通过简化每个层可缩短开发时间。<code>Linux</code>内核头⽂件提供了⼀个⽅便的⽅法来管理符号对模块外部的可见性，从⽽减少了可能造成的名字空间污染（名字空间中的名称可能会和内核其他地⽅定义的名称发⽣冲突），并且适当隐藏信息。如果⼀个模块需要向其他模块导出符号，则应该使⽤下⾯的宏。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">EXPORT_SYMBOL(name);</span><br><span class="line">EXPORT_SYMBOL_GPL(name):</span><br></pre></td></tr></table></figure>
+
+<p>这两个宏均⽤于将给定的符号导出到模块外部。<code>_GPL</code>版本使得要导出的模块只能被<code>GPL</code>许可证下的模块使⽤。符号必须在模块⽂件的全局部分导出，不能在函数中导出，这是因为上⾯这两个宏将被扩展为⼀个特殊变量的声明，⽽该变量必须是全局的。该变量将在模块可执⾏⽂件的特殊部分（即⼀个<code>ELF</code>段）中保存，在装载时，内核通过这个段来寻找模块导出的变量。</p>
+<h4 id="📙-预备知识"><a href="#📙-预备知识" class="headerlink" title="📙 预备知识"></a>📙 预备知识</h4><p>​	所有的模块代码中都包含下⾯两⾏代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;linux/init.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>module.h</code>包含有可装载模块需要的⼤量符号和函数的定义。包含<code>init.h</code>的⽬的是指定初始化和清除函数。⼤部分模块还包括<code>moduleparam.h</code>头⽂件，这样我们就可以在装载模块时向模块传递参数。尽管不是严格要求，但模块应该指定代码所使⽤的许可证。为此，我们只需要包含<code>MODULE_LICENSE</code>⾏：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MODULE_LICENSE（<span class="string">&quot;GPL&quot;</span>）；</span><br></pre></td></tr></table></figure>
+
+<p>内核能够识别的许可证有<code>GPL</code>（任⼀版本的<code>GNU</code>通⽤公共许可证）、<code>GPLv2</code>、<code>GPL and additional rights</code>、<code>Dual BSD/GPL</code>、<code>Dual MPL/GPL</code>以及<code>Proprietary</code>。如果⼀个模块没有显式地标记为上述内核可识别的许可证，则会被假定是专有的，⽽内核装载这种模块就会被“污染”。可在模块中包含的其他描述性定义包括<code>MODULE_AUTHOR</code>（描述模块作者）、<code>MODULE_DESCRIPTION</code>（⽤来说明模块⽤途的简短描述）、<code>MODULE_VERSION</code>（代码版本号）、<code>MODULE_ALIAS</code>（模块的</p>
+<p>别名）以及<code>MODULE_DEVICE_TABLE</code>（⽤来告诉⽤户空间模块所⽀持的设备）。上述<code>MODULB_</code>声明可出现在源⽂件中源代码函数以外的任何地⽅。但内核编码习惯是将这些声明放在⽂件的最后。</p>
+<h4 id="📕-初始化和关闭"><a href="#📕-初始化和关闭" class="headerlink" title="📕 初始化和关闭"></a>📕 初始化和关闭</h4><p>​	模块的初始化函数负责注册模块所提供的任何设施。⼀个可以被应⽤程序访问的新功能，它可能是⼀个完整的驱动程序或者仅仅是软件抽象。初始化函数的实际定义通常如下所⽰：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> __init <span class="title function_">initialization_function</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line">module_init(initialization_function);</span><br></pre></td></tr></table></figure>
+
+<p>​	初始化函数应该被声明为<code>static</code>，因为这种函数在特定⽂件之外没有其他意义。因为⼀个模块函数如果要对内核其他部分可见，则必须被显式导出，因此这并不是什么强制性规则。上述定义中的<code>__init</code>标记看起来似乎有点陌⽣，它对内核来讲是⼀种暗⽰，表明该函数仅在初始化期间使⽤。在模块被装载之后，模块装载器就会将初始化函数扔掉，这样可将该函数占⽤的内存释放出来，以作他⽤。<code>__init</code>和<code>__initdata</code>的使⽤是可选的，虽然有点繁琐，但是很值得使⽤。⚠️ 注意，不要在结束初始化之后仍要使⽤的函数（或者数据结构）上使⽤这两个标记。在内核源代码中可能还会遇到<code>__devinit</code>和<code>__devinitdata</code>，只有在内核未被配置为⽀持热插拔设备的情况下，这两个标记才会被解释为<code>__init</code>和<code>__initdata</code>。</p>
+<p>​	<code>module_init</code>的使⽤是强制性的。这个宏会在模块的⽬标代码中增加⼀个特殊的段，⽤于说明内核初始化函数所在的位置。没有这个定义，初始化函数永远不会被调⽤。模块可以注册许多不同类型的设施，包括不同类型的设备、⽂件系统、密码变换等。对每种设施，有对应的内核函数⽤来完成注册。传递到内核注册函数中的参数通常是指向⽤来描述新设施及设施名称的数据结构指针，⽽数据结构通常包含指向模块函数的指针，这样，模块体中的函数就会在恰当的时间被内核调用。⼤部分注册函数名字带有<code>register_</code>前缀，因此找到它们的另⼀种⽅法是在内核源码中<code>grep register_</code>。</p>
+<h5 id="清除函数"><a href="#清除函数" class="headerlink" title="清除函数"></a>清除函数</h5><p>​	每个重要的模块都需要⼀个清除函数，该函数在模块被移除前注销接⼜并向系统中返回所有资源。该函数定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> __exit <span class="title function_">cleanup_function</span><span class="params">(<span class="type">void</span>)</span> &#123;&#125;</span><br><span class="line">module_exit(cleanup_function);</span><br></pre></td></tr></table></figure>
+
+<p>清除函数没有返回值，因此被声明为<code>void</code>。<code>__exit</code>修饰词标记该代码仅⽤于模块卸载（编译器将把该函数放在特殊的<code>ELF</code>段中）。如果模块被直接内嵌到内核中，或者内核的配置不允许卸载模块，则被标记为<code>__exit</code>的函数将被简单地丢弃。出于以上原困，被标记为<code>__exit</code>的函数只能在模块被卸载或者系统关闭时被调⽤，其他的任何⽤法都是错误的。和前⾯类似，<code>module_exit</code>声明对于帮助内核找到模块的清除函数是必需的。</p>
+<p>如果⼀个模块未定义清除函数，则内核不允许卸载该模块。</p>
+<h5 id="初始化过程中的错误处理"><a href="#初始化过程中的错误处理" class="headerlink" title="初始化过程中的错误处理"></a>初始化过程中的错误处理</h5><p>​	当我们在内核中注册设施时要内存分配，要时刻铭记注册可能会失败。即使是最简单的动作，都需要内存分配，而所需要的内存可能无法获得。因此模块代码必须始终检查返回值，并确保所请求的操作已真正成功。</p>
+<p>​	如果在注册设施时遇到任何错误，首先要判断模块是否可以继续初始化。通常，在某个注册失败后可以通过降低功能来继续运转。因此，只要可能，模块应该继续向前并尽可能提供其功能。</p>
+<p>​	如果在发生了某个特定类型的错误之后无法继续装载模块，则要将出错之前的任何注册工作撤销掉。<code>Linux</code>中没有记录每个模块都注册了哪些设施。因此，当模块的初始化出现错误之后，模块必须自行撤销已注册的设施。如果由于某种原因我们未能撤销已注册的设施，则内核会处于一种不稳定状态，这是因为内核中包含了一些指向并不存在的代码的内部指针。在这种情况下，唯一有效的解决方法时重新引导系统。</p>
+<p>​	错误情况下的<code>goto</code>的仔细使用可避免大量复杂的、高度缩进的“结构化”逻辑。因此，内核经常使用<code>goto</code>来处理错误。</p>
+<p>💡示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __init <span class="title function_">my_init_function</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="type">int</span> err;</span><br><span class="line">  </span><br><span class="line">  err = register_this(ptr1, <span class="string">&quot;skull&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (err) <span class="keyword">goto</span> fail_this;</span><br><span class="line">  err = register_that(ptr2, <span class="string">&quot;skull&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (err) <span class="keyword">goto</span> fail_that;</span><br><span class="line">  err = register_those(ptr3, <span class="string">&quot;skull&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (err) <span class="keyword">goto</span> fail_those;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">fail_those: unregister_that(ptr2, <span class="string">&quot;skull&quot;</span>);</span><br><span class="line">fail_that: unregister_this(ptr1, <span class="string">&quot;skull&quot;</span>);</span><br><span class="line">fail_this: <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>Linux</code>内核中，错误编码时定义在<code>&lt;linux/errno.h&gt;</code>中的负整数。如果我们不想使⽤其他函数返回的错误编码，⽽想使⽤⾃⼰的错误编码，则应该包含<code>&lt;linux/errno.h&gt;</code>，以使⽤诸如<code>-ENODEV</code>、<code>-ENOMEM</code>之类的符号值。每次返回合适的错误编码是⼀个好习惯，因为⽤户程序可以通过<code>perror</code>函数或类似的途径将它们转换为有意义的字符串。</p>
+<p>​	如果初始化和清除⼯作涉及很多设施，则<code>goto</code>⽅法可能变得难以管理，因为所有⽤于清除设施的代码在初始化函数中重复，同时⼀些标号交织在⼀起。因此，有时候我们需要考虑重新构思代码的结构。</p>
+<p>​	每当发⽣错误时从初始化函数中调⽤清除函数，这种⽅法将减少代码的重复并且使代码更清晰、更有条理。当然，清除函数必须在撤销每项设施的注册之前检查它的状态。下⾯是这种⽅法的简单⽰例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">something</span>*     <span class="title">item1</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">somethingelse</span>* <span class="title">item2</span>;</span></span><br><span class="line"><span class="type">int</span> stuff_ok;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_cleanup</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (item1) release_thing(item1);</span><br><span class="line">  <span class="keyword">if</span> (item2) release_thing2(item2);</span><br><span class="line">  <span class="keyword">if</span> (stuff_ok) unregister_stuff();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> __init <span class="title function_">my_init</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="type">int</span> err = -ENOMEM;</span><br><span class="line">  </span><br><span class="line">  item1 = allocate_thing(arguments);</span><br><span class="line">  item2 = allocate_thing2(arguments2);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (!item1 || !item2) <span class="keyword">goto</span> fail;</span><br><span class="line">  err = register_stuff(item1, item2);</span><br><span class="line">  <span class="keyword">if</span> (!err) stuff_ok = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">goto</span> fail;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">fail:</span><br><span class="line">  my_cleanup();</span><br><span class="line">  <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如这段代码所示，根据调用的注册&#x2F;分配函数的语义，我们可以使用或不使用外部标志来标记每个初始化步骤的成功。不管是否需要使用标志，这种方式的初始化能够很好地扩展到大量设施的支持，因此比前面介绍的技术更具优越性。然而需要注意的是，因为清除函数被非退出代码调用，因此不能将清楚函数标记为<code>__exit</code>。</p>
+<h5 id="模块装载竞争"><a href="#模块装载竞争" class="headerlink" title="模块装载竞争"></a>模块装载竞争</h5><p>​	⾸先要始终铭记的是，在注册完成之后，内核的某些部分可能会的任何设施。换句话说，在初始化函数还在运⾏的时候，内核就模块。因此，在⾸次注册完成之后，代码就应该准备好被内核的⽴即使⽤我们刚刚注册完全可能会调⽤我们的其他部分调⽤；在⽤来⽀持某个设施的所有内部初始化完成之前，不要注册任何设施。</p>
+<p>​	我们还必须考虑，当初始化失败⽽内核的某些部分已经使⽤了模块所注册的某个设施时应该如何处理。如果这种情况可能发⽣在我们的模块上，则根本不应该出现初始化失败的情况，毕竟模块已经成功导出了可⽤的功能及符号。如果初始化⼀定要失败，则应该仔细处理内核其他部分正在进⾏的操作，并且要等待这些操作的完成。</p>
+<h4 id="🚀-模块参数"><a href="#🚀-模块参数" class="headerlink" title="🚀 模块参数"></a>🚀 模块参数</h4><p>​	由于系统的不同，驱动程序需要的参数也许会发⽣变化。这包括设备编号以及其他⼀些⽤来控制驱动程序操作⽅式的参数。例如，<code>SCSI</code>适配器的驱动程序经常要处理⼀些选项，这些选项⽤来控制标记命令队列的使⽤，⽽集成设备电路驱动程序允许⽤户控制<code>DAM</code>操作。如果读者的驱动程序⽤来控制⼀些早期的硬件，也许需要明确告知驱动程序硬件的<code>I/O</code>端⼜或者<code>I/O</code>内存地址的位置。为满⾜这种需求，内核允许对驱动程序指定参数，⽽这些参数可在装载驱动程序模块时改变。</p>
+<p>​	这些参数的值可在运⾏<code>insmod</code>或<code>modprobe</code>命令装载模块时赋值，⽽<code>modprob</code>还可以从它的配置⽂件（<code>/etc/modprobconf</code>）中读取参数值。这两个命令可在命令⾏接受⼏种参数类型的赋值。为了演⽰这种功能，我们假定对本章前⾯的<code>hello world</code>模块（命名为<code>hellop</code>）做了⼀些必要的增强。我们添加了两个参数：⼀个是整数值，其名称为<code>howmany</code>；另⼀个是字符串，名称为<code>whom</code>。在装载这个增强的模块时，将向<code>whom</code>问候<code>howmany</code>次。这样，我们可⽤下⾯的命令⾏来装载该模块：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ insmod hellop howmany=10 whom=<span class="string">&quot;Mom&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，在<code>insmod</code>改变模块参数之前，模块必须让这些参数对<code>insmod</code>命令可见。参数必须使⽤<code>module_param</code>宏来声明，这个宏在<code>moduleparam.h</code>中定义。<code>module_param</code>需要三个参数：变量的名称、类型以及⽤于<code>sysfs</code>入口项的访问许可掩码。这个宏必须放在任何函数之外，通常是在源⽂件的头部。这样，<code>hellop</code>通过下⾯的代码来声明它的参数并使之对<code>insmod</code>可见：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">char</span>* whom = <span class="string">&quot;world&quot;</span>；</span><br><span class="line"><span class="type">static</span> <span class="type">int</span> howmany=<span class="number">1</span>；</span><br><span class="line">module_param(howmany, <span class="type">int</span>,   S_IRUGO):</span><br><span class="line">module_param(whom,    charp, S_IRUGO);</span><br></pre></td></tr></table></figure>
+
+<p>内核⽀持的模块参数类型如下：</p>
+<ul>
+<li><p><code>bool</code></p>
+</li>
+<li><p><code>invbool</code></p>
+<p>布尔值（取<code>true</code>或<code>false</code>），关联的变量应该是<code>int</code>型。<code>invbool</code>类型反转其值，也就是说，<code>true</code>值变成<code>false</code>，⽽<code>false</code>变成<code>true</code>。</p>
+</li>
+<li><p><code>charp</code></p>
+<p>字符指针值。内核会为⽤户提供的字符串分配内存，并相应设置指针。</p>
+</li>
+<li><p><code>int</code></p>
+</li>
+<li><p><code>long</code></p>
+</li>
+<li><p><code>short</code></p>
+</li>
+<li><p><code>uint</code></p>
+</li>
+<li><p><code>ulong</code></p>
+</li>
+<li><p><code>ushort</code></p>
+</li>
+</ul>
+<p>具有不同长度的基本整数值。以<code>u</code>开头的类型⽤于⽆符号值。</p>
+<p>模块装载器也⽀持数组参数，在提供数组值时⽤逗号划分各数组成员。要声明数组参数，</p>
+<p>需要使⽤下⾯的宏：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">module_param_array(name, type, num, perm);</span><br></pre></td></tr></table></figure>
+
+<h4 id="🎯-在⽤户空间编写驱动程序"><a href="#🎯-在⽤户空间编写驱动程序" class="headerlink" title="🎯 在⽤户空间编写驱动程序"></a>🎯 在⽤户空间编写驱动程序</h4><p>​	⽤户空间驱动程序的优点可以归纳如下：</p>
+<ul>
+<li><p>可以和整个<code>C</code>库链接。驱动程序不⽤借助外部程序（即前⾯提到的和驱动程序⼀起发⾏的⽤于提供策略的⽤户程序）就可以完成许多⾮常规任务。</p>
+</li>
+<li><p>可以使⽤通常的调试器调试驱动程序代码，⽽不⽤费⼒地调试正在运⾏的内核。</p>
+</li>
+<li><p>如果⽤户空间驱动程序被挂起，则简单地杀掉它就⾏了。驱动程序带来的问题不会挂起整个系统，除⾮所驱动的硬件已经发⽣严重故障。</p>
+</li>
+<li><p>和内核内存不同，⽤户内存可以换出。如果驱动程序很⼤但是不经常使⽤，则除了正在使⽤的情况之外，不会占⽤太多内存。</p>
+</li>
+<li><p>良好设计的驱动程序仍然⽀持对设备的并发访问。</p>
+</li>
+<li><p>如果读者必须编写封闭源码的驱动程序，则⽤户空间驱动程序可更加容易地避免因为修改内核接⼜⽽导致的不明确的许可问题。</p>
+</li>
+</ul>
+<p>​	例如，<code>USB</code>驱动程序可在⽤户空间编写；具体可参阅<code>libusb</code>项⽬，以及内核源代码中的<code>gadgetfs</code>。<code>X</code>服务器是⽤户空间驱动程序的另⼀个例⼦。它⼗分清楚硬件可以做什么、不可以做什么，并且为所有的<code>X</code>客户提供图形资源。然⽽，值得注意的是⽬前基于帧缓冲区（<code>frame-buffer</code>）的图形环境正在慢慢成为发展趋势。这种环境下对于实际的图形操作，<code>X</code>服务器仅仅是⼀个基于真正内核空间驱动程序的服务器。</p>
+<p>​	通常，⽤户空间的驱动程序被实现为⼀个服务器进程，其任务是替代内核作的唯⼀代理。客户应⽤程序可连接到该服务器并和设备执⾏实际的通信；这硬件控制样，好的驱动程序进程可允许对设备的并发访问。其实这就是<code>X</code>服务器的本质。</p>
+<p>除了具备上述优点外，⽤户空间驱动程序也有很多缺点，下⾯列出其中最重要的⼏点：</p>
+<ul>
+<li><p>中断在⽤户空间中不可⽤。对该限制，在某些平台上也有相应的解决办法，⽐如<code>IA32</code>架构上的<code>vm86</code>系统调⽤。</p>
+</li>
+<li><p>只有通过<code>mmap</code>映射<code>/dev/mem</code>才能直接访问内存，但只有特权⽤户才可以执⾏这个操作。</p>
+</li>
+<li><p>只有在调⽤<code>ioperm</code>或<code>iopl</code>后才可以访问<code>I/O</code>端⼜。然⽽并不是所有平台都⽀持这两个系统调⽤，并且访问<code>/dev/port</code>可能⾮常慢，因⽽并⾮⼗分有效。同样只有特权⽤户才能引⽤这些系统调⽤和访问设备⽂件。</p>
+</li>
+<li><p>响应时间很慢。这是因为在客户端和硬件之间传递数据和动作需要上下⽂切换。</p>
+</li>
+<li><p>更严重的是，如果驱动程序被换出到磁盘，响应时间将令⼈难以忍受。使⽤<code>mlock</code>系统调⽤或许可以缓解这⼀问题，但由于⽤户空间程序⼀般需要链接多个库，因此通常需要占⽤多个内存页。同样，<code>mlock</code>也只有特权⽤户才能引⽤。</p>
+</li>
+<li><p>⽤户空间中不能处理⼀些⾮常重要的设备，包括（但不限于）⽹络接⼜和块设备等。</p>
+</li>
+</ul>
+<p>如上所述，我们看到⽤户空间驱动程序毕竟做不了太多的⼯作。然⽽依然存在⼀些有意义的应⽤，例如对<code>SCSI</code>扫描设备（由包<code>SANE</code>实现）和<code>CD</code>刻录设备（由<code>cdrecord</code>和其他⼯具实现）的⽀持。这两种情况下，⽤户空间驱动程序都依赖内核空间驱动程序<code>SCSI generic</code>，它导出底层通⽤的<code>SCSI</code>功能到⽤户空间程序，然后再由⽤户空间驱动程序驱动⾃⼰的硬件。</p>
+<p>​	有⼀种情况适合在⽤户空间处理在⽤户空间中我们可以研究如何很容易将户空间驱动程序封装，这就是管理这个硬件⽽到内核模块中。当我们准备处理⼀种新的、不常见的硬件时。不⽤担⼼挂起整个系统。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F/" rel="tag"># 驱动程序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/12/linux/mm/slab%E5%A4%B4%E6%96%87%E4%BB%B6/" rel="prev" title="slab头文件">
+                  <i class="fa fa-angle-left"></i> slab头文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/15/linux/driver/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="next" title="字符设备驱动">
+                  字符设备驱动 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

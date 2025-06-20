@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩 概要​	内核编程有其⾃⾝独特的调试难题。由于内核是⼀个不与特定进程相关的功能集合，所以内核代码⽆法轻易地放在调试器中执⾏，⽽且也很难跟踪。同样，要想重现内核代码中的错误也是相当困难的，因为这种错误可能导致整个系统崩溃，这样也就破坏了可以⽤来跟踪它们的现场。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="调试技术">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/20/linux/driver/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩 概要​	内核编程有其⾃⾝独特的调试难题。由于内核是⼀个不与特定进程相关的功能集合，所以内核代码⽆法轻易地放在调试器中执⾏，⽽且也很难跟踪。同样，要想重现内核代码中的错误也是相当困难的，因为这种错误可能导致整个系统崩溃，这样也就破坏了可以⽤来跟踪它们的现场。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-20T06:27:56.265Z">
+<meta property="article:modified_time" content="2025-06-20T06:59:20.920Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="驱动程序">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/20/linux/driver/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/20/linux/driver/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/","path":"2025/06/20/linux/driver/调试技术/","title":"调试技术"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>调试技术 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">🧩 概要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9A%80-%E5%86%85%E6%A0%B8%E4%B8%AD%E7%9A%84%E8%B0%83%E8%AF%95%E6%94%AF%E6%8C%81"><span class="nav-number">2.</span> <span class="nav-text">🚀 内核中的调试支持</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8E%AF-%E9%80%9A%E8%BF%87%E6%89%93%E5%8D%B0%E8%B0%83%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">🎯 通过打印调试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#printk"><span class="nav-number">4.</span> <span class="nav-text">printk</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/20/linux/driver/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="调试技术 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          调试技术
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-20 14:27:56 / 修改时间：14:59:20" itemprop="dateCreated datePublished" datetime="2025-06-20T14:27:56+08:00">2025-06-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	内核编程有其⾃⾝独特的调试难题。由于内核是⼀个不与特定进程相关的功能集合，所以内核代码⽆法轻易地放在调试器中执⾏，⽽且也很难跟踪。同样，要想重现内核代码中的错误也是相当困难的，因为这种错误可能导致整个系统崩溃，这样也就破坏了可以⽤来跟踪它们的现场。</p>
+<span id="more"></span>
+
+<h4 id="🚀-内核中的调试支持"><a href="#🚀-内核中的调试支持" class="headerlink" title="🚀 内核中的调试支持"></a>🚀 内核中的调试支持</h4><p>​	这⾥，我们列出了⽤于内核开发的⼏个配置选项。除特别指出外，所有这些选项均出现在内核配置⼯具的<code>kernel hacking</code>菜单中。注意，并⾮所有体系架构都⽀持其中的某些选项。</p>
+<ul>
+<li><p><code>CONFIG_DEBUG_KERNEL</code></p>
+<p>该选项仅仅使得其他的调试选项可⽤。我们应该打开该选项，但它本⾝不会打开所有的调试功能。</p>
+</li>
+<li><p><code>CONFIG_DEBUG_SLAB</code></p>
+<p>这是⼀个⾮常重要的选项，它打开内核内存分配函数中的多个类型的检查；打开该检查后，就可以检测许多内存溢出及忘记初始化的错误。在将已分配内存返回给调⽤者之前，内核将把其中的每个字节设置为<code>0xa5</code>，⽽在释放后将其设置为<code>0x6b</code>。如果读者在⾃⼰驱动程序的输出中，或者在<code>oops</code>信息中看到上述“毒剂”字符，则可以轻松判断问题所在。在打开该调试选项后，内核还会在每个已分配内存对象的前⾯和后⾯放置⼀些特殊的防护值；这样，当这些防护值发⽣变化时，内核就可以知道有些代码超出了内存的正常访问范围，并“⼤声抱怨”。同时，该选项还会检查更多隐蔽的错误。</p>
+</li>
+<li><p><code>CONFIG_DEBUG_PAGE_ALLOC</code></p>
+<p>在释放时，全部内存页从内核地址空间中移出。该选项将⼤⼤降低运⾏速度，但可以快速定位特定的内存损坏错误的所在位置。</p>
+</li>
+<li><p><code>CONFIG_DEBUG_SPINLOCK</code></p>
+<p>打开该选项，内核将捕获对未初始化⾃旋锁的操作，也会捕获诸如两次解开同⼀锁的操作等其他错误。</p>
+</li>
+<li><p><code>CONFIG_DEBUG_SPINLOCK_SLEEP</code></p>
+<p>该选项将检查拥有⾃旋锁时的休眠企图。实际上，如果调⽤可能引起休眠的函数，这个选项也会⽣效，即使该函数可能不会导致真正的休眠。</p>
+</li>
+<li><p><code>CONFIG_INIT_DEBUG</code></p>
+<p>标记为<code>__init</code>（或者<code>__initdata</code>）的符号将会在系统初始化或者模块装载之后被丢弃。该选项可⽤来检查初始化完成之后对⽤于初始化的内存空间的访向企图。</p>
+</li>
+<li><p><code>CONFIG_DEBUG_INFO</code></p>
+<p>该选项将使内核的构造包含完整的调试信息。如果读者打算利⽤<code>gdb</code>调试内核，将需要这些信息。如果计划使⽤gdb，还应该打开CONFIG_FRAME_POINTER选项。</p>
+</li>
+<li><p><code>CONFIG_MAGIC_SYSRQ</code></p>
+<p>打开<code>SysRq</code>魔法（<code>magic SysRq</code>）按键。</p>
+</li>
+<li><p><code>CONFIG_DEBUG_STACKOVERFLOW</code></p>
+</li>
+<li><p><code>CONFIG_DEBUG_STACK_USAGE</code></p>
+<p>这些选项可帮助跟踪内核栈的溢出问题。栈溢出的确切信号是不包含任何合理的反向跟踪信息的<code>oops</code>清单。第⼀个选项将在内核中增加明确的溢出检查；⽽第⼆个选项将让内核监视栈的使⽤，并通过<code>SysRq</code>按键输出⼀些统计信息。</p>
+</li>
+<li><p><code>CONFIG_KALLSYMS</code></p>
+<p>该选项出现在<code>General setup/Standard features</code>（⼀般设置&#x2F;标准功能）菜单中，将在内核中包含符号信息；该选项默认是打开的。该符号信息⽤于调试上下⽂；没有此符号，<code>oops</code>清单只能给出⼗六进制的内核反向跟踪信息，这通常没有多少⽤处。</p>
+</li>
+<li><p><code>CONFIG_IKCONFIG</code></p>
+</li>
+<li><p><code>CONFIG_IKCONFIG_PROC</code></p>
+<p>这些选项出现在<code>General setup</code>（⼀般设置”菜单中，会让完整的内核配置状态包含到内核中，并可通过<code>/proc</code>访问。⼤多数内核开发者清楚地知道⾃⼰所使⽤的配置，因此并不需要这两个选项（会使得内核变⼤）。然⽽，如果读者要调试的内核是由其他⼈建⽴的，则上述选项会⽐较有⽤。</p>
+</li>
+<li><p><code>CONFIG_ACPI_DEBUG</code></p>
+<p>该选项出现在<code>Power management/ACPI</code>（电源管理&#x2F;<code>ACPI</code>）菜单中。该选项将打开<code>ACPI</code>（<code>Advanced Configuration and Power Interface</code>，⾼级配置和电源接⼜）中的详细调试信息。如果怀疑⾃⼰所遇到的问题和<code>ACPI</code>相关，则可使⽤该选项。</p>
+</li>
+<li><p><code>CONFIG_DEBUG_DRIVER</code></p>
+<p>在<code>Device drivers</code>（设备驱动程序）菜单中。该选项打开驱动程序核⼼中的调试信息，它可以帮助跟踪底层⽀持代码中的问题。</p>
+</li>
+<li><p><code>CONFIG_SCSI_CONSTANTS</code></p>
+<p>该选项出现在<code>Device drivers/SCSI device support</code>（设备驱动程序&#x2F;<code>SCSI</code>设备⽀持）菜单中，它将打开详细的<code>SCSI</code>错误消息。如果读者要编写<code>SCSI</code>驱动程序，则可使⽤该选项。</p>
+</li>
+<li><p><code>CONFIG_INPUT_EVBUG</code></p>
+<p>读选项可在<code>Device drivers/Input device support</code>（设备驱动程序&#x2F;输⼊设备⽀持）中找到，它会打开对输⼈事件的详细记录。如果读者要针对输⼈设备编写驱动程序，则可使⽤该选项。注意该选项会导致的安全问题：它会记录你键⼊的任何东西，包括密码。</p>
+</li>
+<li><p><code>CONFIG_PROFILING</code></p>
+<p>该选项可在<code>Profiling support</code>（剖析⽀持）菜单中找到。剖析通常⽤于系统性能的调节，但对跟踪内核挂起及相关问题也会有帮助。</p>
+</li>
+</ul>
+<h4 id="🎯-通过打印调试"><a href="#🎯-通过打印调试" class="headerlink" title="🎯 通过打印调试"></a>🎯 通过打印调试</h4><p>​	最普通的调试技术就是监视，即在应⽤程序编程中，在⼀些适当的地点调⽤<code>printf</code>显示监视信息。调试内核代码的时候，可以⽤<code>printk</code>来完成相同的⼯作。</p>
+<h4 id="printk"><a href="#printk" class="headerlink" title="printk"></a>printk</h4><p>在前⾯的章节中，我们只是简单假设prink⼯作起来和printf很类似。接下来将介绍它</p>
+<p>们之间的⼀些不同点。</p>
+<p>差别之⼀就是，通过附加不同⽇志级别（loglevel），或者说消息优先级，可让printk根</p>
+<p>据这些级别所表⽰的严重程度对消息进⾏分类。我们通常采⽤宏来指⽰⽇志级别，例如，</p>
+<p>KERN_</p>
+<p>INFO，我们在前⾯已经看到它被添加在⼀些打印语句的前⾯，它就是⼀个可以</p>
+<p>使⽤的消息⽇志级别。表⽰⽇志级别的宏会展开为⼀个字符串，在编译时由预处理器将</p>
+<p>它和消息⽂本拼接在⼀起；这也就是为什么下⾯的例⼦中优先级和格式字串间没有逗号</p>
+<p>的原因。下⾯有两个printk的例⼦，</p>
+<p>⼀个是调试信息，</p>
+<p>⼀个是临界信息：</p>
+<p>printk(KERN_DEBUG”HereIam:8s:8i\n”,<em>FILE___LINE</em>-):</p>
+<p>printk(KERN_CRIT”I’mtrashed;givingupon8p\n”,ptr);</p>
+<p>在头⽂件&lt;linux&#x2F;kernel.h&gt;中定义了⼋种可⽤的⽇志级别字符串，下⾯以严重程度的降序</p>
+<p>来列出这些级别：</p>
+<p>KERN_EMERG</p>
+<p>⽤于紧急事件消息，它们⼀般KERN_ALERT</p>
+<p>⽤于需要⽴即采取动作的情况。</p>
+<p>KERN_CRIT</p>
+<p>临界状态，通常涉及严重的硬KERN_ERR</p>
+<p>⽤于报告错误状态。设备驱动程KERN_WARNING</p>
+<p>KERN_NOTICE</p>
+<p>有必要进⾏提⽰的正常情形。许KERN_INFO</p>
+<p>提⽰性信息。很多驱动程序在息。</p>
+<p>KERN_DEBUG</p>
+<p>⽤于调试信息。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F/" rel="tag"># 驱动程序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/15/linux/driver/%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="prev" title="字符设备驱动">
+                  <i class="fa fa-angle-left"></i> 字符设备驱动
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

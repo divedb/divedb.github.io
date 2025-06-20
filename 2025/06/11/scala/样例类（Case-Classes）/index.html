@@ -128,13 +128,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-count">85</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -316,7 +316,7 @@
 <h2 id="拷贝"><a href="#拷贝" class="headerlink" title="拷贝"></a>拷贝</h2><p>你可以通过<code>copy</code>方法创建一个样例类实例的浅拷贝，同时可以指定构造参数来做一些改变。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span>(<span class="params">sender: <span class="type">String</span>, recipient: <span class="type">String</span>, body: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="keyword">val</span> message4 = <span class="type">Message</span>(<span class="string">&quot;julien@bretagne.fr&quot;</span>, <span class="string">&quot;travis@washington.us&quot;</span>, <span class="string">&quot;Me zo o komz gant ma amezeg&quot;</span>)</span><br><span class="line"><span class="keyword">val</span> message5 = message4.copy(sender = message4.recipient, recipient = <span class="string">&quot;claire@bourgogne.fr&quot;</span>)</span><br><span class="line">message5.sender  <span class="comment">// travis@washington.us</span></span><br><span class="line">message5.recipient <span class="comment">// claire@bourgogne.fr</span></span><br><span class="line">message5.body  <span class="comment">// &quot;Me zo o komz gant ma amezeg&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>上述代码指定<code>message4</code>的<code>recipient</code>作为<code>message5</code>的<code>sender</code>，指定<code>message5</code>的<code>recipient</code>为”<a href="mailto:&#99;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#98;&#x6f;&#x75;&#114;&#x67;&#111;&#x67;&#x6e;&#101;&#46;&#102;&#114;">&#99;&#x6c;&#97;&#105;&#114;&#101;&#x40;&#98;&#x6f;&#x75;&#114;&#x67;&#111;&#x67;&#x6e;&#101;&#46;&#102;&#114;</a>”，而<code>message4</code>的<code>body</code>则是直接拷贝作为<code>message5</code>的<code>body</code>了。</p>
+<p>上述代码指定<code>message4</code>的<code>recipient</code>作为<code>message5</code>的<code>sender</code>，指定<code>message5</code>的<code>recipient</code>为”<a href="mailto:&#x63;&#x6c;&#97;&#x69;&#114;&#101;&#x40;&#x62;&#111;&#x75;&#114;&#x67;&#x6f;&#x67;&#110;&#x65;&#46;&#102;&#114;">&#x63;&#x6c;&#97;&#x69;&#114;&#101;&#x40;&#x62;&#111;&#x75;&#114;&#x67;&#x6f;&#x67;&#110;&#x65;&#46;&#102;&#114;</a>”，而<code>message4</code>的<code>body</code>则是直接拷贝作为<code>message5</code>的<code>body</code>了。</p>
 
     </div>
 

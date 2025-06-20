@@ -123,13 +123,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-count">85</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -150,6 +150,378 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/02/linux/fs/btrfs%E5%AE%9E%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/02/linux/fs/btrfs%E5%AE%9E%E9%AA%8C/" class="post-title-link" itemprop="url">btrfs实验</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-02 23:33:05" itemprop="dateCreated datePublished" datetime="2025-06-02T23:33:05+08:00">2025-06-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-03 19:48:19" itemprop="dateModified" datetime="2025-06-03T19:48:19+08:00">2025-06-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="📘-btrfs设计"><a href="#📘-btrfs设计" class="headerlink" title="📘 btrfs设计"></a>📘 <code>btrfs</code>设计</h4><p>​	<code>btrfs</code>的实现依赖于简单且广为人知的结构。它在性能方面表现良好，但其长期目标是<strong>在文件系统不断增长和老化的过程中保持性能稳定</strong>，这比短期跑分表现更为重要。为此，<code>btrfs</code>使用基准测试来模拟整个文件系统生命周期中的性能表现。</p>
+<h4 id="📗-B树数据结构"><a href="#📗-B树数据结构" class="headerlink" title="📗 B树数据结构"></a>📗 <code>B</code>树数据结构</h4><p>​	<code>btrfs</code>的<code>B</code>树是一个通用的数据存储机制，能够存储多种不同类型的数据。在内部，它仅识别三种结构：</p>
+<ul>
+<li>键（<code>key</code>）</li>
+<li>项（<code>item</code>）</li>
+<li>块头（<code>block header</code>）</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">btrfs_header</span> &#123;</span></span><br><span class="line">  u8     csum[<span class="number">32</span>];</span><br><span class="line">  u8     fsid[<span class="number">16</span>];</span><br><span class="line">  __le64 bytenr;</span><br><span class="line">  __le64 flags;</span><br><span class="line"></span><br><span class="line">  u8     chunk_tree_uid[<span class="number">16</span>];</span><br><span class="line">  __le64 generation;</span><br><span class="line">  __le64 owner;</span><br><span class="line">  __le32 nritems;</span><br><span class="line">  u8     level;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">btrfs_disk_key</span> &#123;</span></span><br><span class="line">  __le64 objectid;</span><br><span class="line">  u8     type;</span><br><span class="line">  __le64 offset;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">btrfs_item</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">btrfs_disk_key</span> <span class="title">key</span>;</span></span><br><span class="line">  __le32 offset;</span><br><span class="line">  __le32 size;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>树的上层节点只包含<code>[key, 块指针]</code>对。而树的叶子节点被划分为两个相对生长的区域：一侧是固定大小的<code>item</code>项数组，另一侧是可变大小的<code>item</code>数据区。每个<code>item</code>的<code>offset</code>和<code>size</code>字段指定了该项数据在叶子节点中的存储位置。</p>
+<p><img src="/images/linux/btrfs/Leaf-structure.png"></p>
+<p>每个<code>item</code>的数据大小不固定，<code>btrfs</code>使用不同类型的<code>item</code>数据来定义各种文件系统结构。<code>btrfs_disk_key</code>中的<code>type</code>字段指明了该项存储的数据类型。</p>
+<p>块头结构中包含了如下内容：</p>
+<ul>
+<li>当前块的内容校验和</li>
+<li>所属文件系统的<code>UUID</code></li>
+<li>当前块在树中的层级</li>
+<li>块号（即该块应被存储的位置）</li>
+</ul>
+<p>这些字段可在读取数据时对元数据进行完整性验证。所有指向<code>btree</code>块的引用也会一并记录其预期的<code>generation</code>字段，这有助于<code>btrfs</code>检测出媒介上的幽灵写入或误写入的情况。</p>
+<p>为了简化文件系统的回写代码，上层节点指针中不会存储下层节点的校验和。节点的<code>generation</code>字段在其被插入<code>B</code>树时就已确定，而校验和只有在实际写盘前才会计算。因此，只用<code>generation</code>字段就可以让<code>btrfs</code>检测到幽灵写入，而无需在每次更新校验和时都回溯并修改上层节点。</p>
+<p><code>generation</code>字段对应的是分配该块时的事务<code>ID</code>，这不仅支持增量备份，也被写时复制（<code>copy-on-write</code>）事务子系统所使用。</p>
+<h4 id="📚-文件系统数据结构"><a href="#📚-文件系统数据结构" class="headerlink" title="📚 文件系统数据结构"></a>📚 文件系统数据结构</h4><p>​	文件系统中的每个对象都有一个<code>objectid</code>，在创建时动态分配。一个尚未使用的<code>objectid</code>表现为文件系统<code>B-tree</code>键空间中的一个“空洞”——即该<code>objectid</code>在树中尚不存在。<code>objectid</code>占据键中最高有效位，使得属于同一个对象的所有项目都可以在<code>B-tree</code>中逻辑上聚集在一起。</p>
+<p>键中的<code>offset</code>字段表示对象中某项数据的字节偏移量。对于文件数据块（<code>extents</code>），该偏移量表示该数据块在文件中的起始位置。<code>type</code>字段表示该项的类型信息，并预留了扩展空间以备将来使用。</p>
+<p>🍃 <code>inode</code>节点</p>
+<p>​	<code>inode</code>节点存储在<code>struct btrfs_inode_item</code>中，其键的 offset 固定为 0，type 类型值为 1。对于某个对象，inode 项在 B-tree 中始终具有最低的键值。它存储传统的 <code>stat</code> 数据（如文件大小、权限、时间戳等），但不包含嵌入式文件内容或扩展属性数据，这些数据保存在其他类型的项中。</p>
+<h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><p>小文件（尺寸小于一个 B-tree 叶子节点块）可以直接打包存储在 extent 项中。此时，键的 offset 表示文件中该数据的字节偏移，<code>struct btrfs_item</code> 的 size 字段记录实际存储的数据大小。一个文件可以包含多个这样的项目。</p>
+<p>大文件的数据则以 extent 形式存储。<code>struct btrfs_file_extent_item</code> 记录该数据块的版本号（generation）及其对应的磁盘位置（磁盘块起始地址及块数）。Extent 项还记录了该数据块在文件中的逻辑偏移及其使用的磁盘块数量。这种方式允许 Btrfs 在无需读取旧数据的情况下直接覆盖某段数据。例如，在一个 128MB 的 extent 中间写入 1MB 数据，可能会生成如下三个 extent 项：</p>
+<ul>
+<li><code>[旧 extent: 0-64MB]</code></li>
+<li><code>[新 extent: 1MB]</code></li>
+<li><code>[旧 extent: 65MB–128MB]</code></li>
+</ul>
+<p>文件数据的校验和（checksum）存储在专用的 B-tree 中，结构为 <code>struct btrfs_csum_item</code>。校验和键的 offset 对应于 extent 的起始字节编号。校验在数据压缩或加密之后进行，反映实际写入磁盘的字节。</p>
+<p>一个校验项可能包含多个校验和。注意，内嵌于 B-tree 中的小文件数据由所在 B-tree block 的校验和覆盖。</p>
+<hr>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p>目录索引有两种方式：</p>
+<ol>
+<li><p><strong>按文件名索引</strong>：用于名称查找。其键形式为：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">复制编辑</span><br><span class="line">目录 objectid</span><br><span class="line">BTRFS_DIR_ITEM_KEY</span><br><span class="line"><span class="number">64</span> 位文件名哈希值（默认使用 crc<span class="number">32</span><span class="keyword">c</span>，可扩展）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>按 inode 顺序索引</strong>：用于 <code>readdir</code> 操作，以 inode 顺序返回目录内容。这种方式更接近磁盘块的排列顺序，有利于批量读取（如备份、复制）。它也能快速验证 inode 是否链接到该目录，键结构为：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">复制编辑</span><br><span class="line">目录 objectid</span><br><span class="line"><span class="keyword">BTRFS_DIR_INDEX_KEY</span></span><br><span class="line"><span class="keyword"></span>inode 序号（每新建一个文件或目录时递增）</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h2 id="引用计数的-Extent"><a href="#引用计数的-Extent" class="headerlink" title="引用计数的 Extent"></a>引用计数的 Extent</h2><p>引用计数是快照子系统的基础。每个分配给 B-tree 或文件的数据块（extent）都会在 <code>struct btrfs_extent_item</code> 中记录引用数量。保存这些项的树结构也充当了磁盘使用情况的分配图。</p>
+<p>部分树（如 extent tree 和树根目录）不会对 extent 进行引用计数，仅依赖写时复制日志保护。不过，磁盘上所有分配块都使用相同类型的 extent item。</p>
+<hr>
+<h2 id="Extent-块组"><a href="#Extent-块组" class="headerlink" title="Extent 块组"></a>Extent 块组</h2><p>Extent block group 将磁盘划分为至少 256MB 的块区，便于优化分配策略。每个 block group 记录可用块的数量。文件和目录优先尝试其所属的首选块组。</p>
+<p>Block group 带有标志位，表示其适用于数据或元数据分配。在格式化时，磁盘会被划分为交错的元数据组（约占 33%）和数据组（约占 66%）。尽量避免数据和元数据混存，提高 fsck 检查效率并减少挂载期间写回的寻道开销（但会略微增加读取时的寻道次数）。</p>
+<hr>
+<h2 id="Extent-树与设备映射（DM）集成"><a href="#Extent-树与设备映射（DM）集成" class="headerlink" title="Extent 树与设备映射（DM）集成"></a>Extent 树与设备映射（DM）集成</h2><p>Btrfs 的 extent 树用于灵活划分磁盘空间，可为某个或一组树根、目录或 inode 提供特定分配策略。管理员可控制文件系统的哪些部分使用条带、镜像或绑定到指定设备。</p>
+<p>Btrfs 计划通过与设备映射器（DM）集成，简化大规模存储池管理。原则上每个磁盘可拥有一个 extent 树，管理员可将其分配给子卷、目录或文件。</p>
+<hr>
+<h2 id="显式反向引用（Back-References）"><a href="#显式反向引用（Back-References）" class="headerlink" title="显式反向引用（Back References）"></a>显式反向引用（Back References）</h2><p>反向引用有三个主要目的：</p>
+<ol>
+<li><strong>精确追踪引用者</strong>：防止错误释放仍被引用的 extent。</li>
+<li><strong>定位引用者</strong>：当发现某个块损坏时，能快速找出使用它的对象。</li>
+<li><strong>支持迁移与维护</strong>：例如文件系统收缩或存储池维护时迁移块。</li>
+</ol>
+<hr>
+<h3 id="文件-extent-的反向引用"><a href="#文件-extent-的反向引用" class="headerlink" title="文件 extent 的反向引用"></a>文件 extent 的反向引用</h3><p>一个文件 extent 可能被以下引用：</p>
+<ul>
+<li>多个快照、子卷，或同一子卷的不同版本</li>
+<li>同一子卷中不同文件</li>
+<li>同一文件的不同偏移</li>
+</ul>
+<p>旧的 <code>extent_ref_v0</code> 结构（现已不再使用）包含以下字段：</p>
+<ul>
+<li>子卷根的 objectid</li>
+<li>引用树的 generation</li>
+<li>引用该 extent 的文件的 objectid</li>
+<li>文件中引用的 offset</li>
+</ul>
+<p>创建或写时复制时的引用形式：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pgsql</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">(root objectid, <span class="keyword">transaction</span> <span class="built_in">id</span>, inode objectid, <span class="built_in">offset</span>)</span><br></pre></td></tr></table></figure>
+
+<p>删除快照或截断文件时通过以下方式查找并删除反向引用：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">scss</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">(btrfs_header_owner(leaf), <span class="built_in">btrfs_header_generation</span>(leaf), inode objectid, <span class="attribute">offset</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="B-tree-extent-的反向引用"><a href="#B-tree-extent-的反向引用" class="headerlink" title="B-tree extent 的反向引用"></a>B-tree extent 的反向引用</h3><p>B-tree extent 可被：</p>
+<ul>
+<li>不同子卷引用</li>
+<li>同一子卷的多个版本引用</li>
+</ul>
+<p>理论上，为实现完整反向映射，需记录块中最小键。但实际上只记录最小 objectid 和树层级（level），作为提示信息。搜索时，只需在 btree 中找到指向该块的引用，并停在上一级节点。</p>
+<p>某些树（如 extent tree 和树根树）不做引用计数，其反向引用的 generation 始终为 0。</p>
+<p>创建树块时插入反向引用：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pgsql</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">(root objectid, <span class="keyword">transaction</span> <span class="built_in">id</span> <span class="keyword">or</span> <span class="number">0</span>, level, 最小 objectid)</span><br></pre></td></tr></table></figure>
+
+<p>B-tree 的反向引用通过 objectid 字段与文件数据区分，最大层级为 255，而文件 objectid 从 256 起。</p>
+<p>删除反向引用时，使用以下信息：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">if <span class="keyword">backref </span>是 tree root:</span><br><span class="line">    root_objectid = root-&gt;root_key.objectid</span><br><span class="line"><span class="symbol">else:</span></span><br><span class="line">    root_objectid = <span class="keyword">btrfs_header_owner(parent)</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line">(root_objectid, <span class="keyword">btrfs_header_generation(parent) </span><span class="keyword">or </span><span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="反向引用键的构造"><a href="#反向引用键的构造" class="headerlink" title="反向引用键的构造"></a>反向引用键的构造</h2><p>反向引用包含四个 64 位字段，会被哈希成一个 64 位值作为 key 的 offset。key 的 objectid 为 extent 的起始字节，key 类型为 <code>BTRFS_EXTENT_REF_KEY</code>。</p>
+<p>若哈希冲突（offset 溢出），会通过增加 hash 值继续向前查找，直到匹配项出现。</p>
+<hr>
+<h2 id="快照与子卷"><a href="#快照与子卷" class="headerlink" title="快照与子卷"></a>快照与子卷</h2><p>子卷（subvolume）本质上是一个命名的 B-tree，保存文件与目录。它们有独立 inode，可设置属主与属组。子卷可以设置写入配额，一旦超限禁止写入。子卷中所有块与 extent 都使用引用计数以支持快照功能。最多可创建 2⁶⁴ 个子卷。</p>
+<p>快照与子卷结构完全相同，只是在创建时其根块（root block）初始共享另一子卷的根。创建快照时，会增加原根块的引用计数。写时复制机制确保原子性修改，互不干扰。</p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本实验基于一块模拟磁盘，借助<code>btrfs-progs</code>工具，通过执行创建目录、创建文件、写入数据等操作，观察<code>btrfs</code>文件系统在磁盘上的数据结构变化。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/06/02/linux/fs/btrfs%E5%AE%9E%E9%AA%8C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">理解btrfs的内部机制</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-02 17:10:48" itemprop="dateCreated datePublished" datetime="2025-06-02T17:10:48+08:00">2025-06-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-04 22:51:44" itemprop="dateModified" datetime="2025-06-04T22:51:44+08:00">2025-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	本文是系列文章的第一部分，旨在解释<code>btrfs</code>文件系统磁盘格式的基础知识。在系列的最后，我们将实现一个不依赖外部库或<code>ioctl</code>调用的程序，打印出一个未挂载的<code>btrfs</code>文件系统镜像中所有常规文件的绝对路径。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/06/02/linux/fs/%E7%90%86%E8%A7%A3btrfs%E7%9A%84%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/" class="post-title-link" itemprop="url">btrfs历史</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-02 13:37:08 / 修改时间：17:09:52" itemprop="dateCreated datePublished" datetime="2025-06-02T13:37:08+08:00">2025-06-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>翻译：<a href="https://lwn.net/Articles/342892/">A short history of btrfs</a></p>
+<h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	你或许已经听说过文件系统领域的新星 —— <code>btrfs</code>。毕竟，<code>Linus Torvalds</code>已经在他的一台笔记本上将其作为根文件系统使用了。但除了几个高频关键词，比如<em>写时复制（<code>copy-on-write</code>）</em>、<em>校验和（<code>checksums</code>）</em>、<em>可写快照（<code>writable snapshots</code>）</em>，以及一些耸人听闻的传闻，比如“<code>Phoronix</code>的性能测试结果”、 “<code>btrfs</code>是<code>ZFS</code>的山寨版”、 “<code>btrfs</code>是<code>Oracle</code>主宰<code>Linux</code>的秘密计划”之外，你可能对它了解并不多。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/06/02/linux/fs/btrfs%E5%8E%86%E5%8F%B2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -570,7 +942,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-12 21:55:32" itemprop="dateModified" datetime="2025-06-12T21:55:32+08:00">2025-06-12</time>
+      <time title="修改时间：2025-06-17 21:44:34" itemprop="dateModified" datetime="2025-06-17T21:44:34+08:00">2025-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -592,7 +964,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h4 id="📘-fs-h常见数据结构"><a href="#📘-fs-h常见数据结构" class="headerlink" title="📘 fs.h常见数据结构"></a>📘 <code>fs.h</code>常见数据结构</h4><p>​	<code>Linux</code>内核中的<code>include/linux/fs.h</code>是文件系统相关的核心头文件，定义了众多用于<code>VFS</code>（虚拟文件系统）的重要数据结构。理解这些结构是掌握<code>Linux</code>文件系统实现的基础。</p>
+          <h4 id="🧩-概要"><a href="#🧩-概要" class="headerlink" title="🧩 概要"></a>🧩 概要</h4><p>​	<code>Linux</code>内核中的<code>include/linux/fs.h</code>是文件系统核心头文件，定义了很多用于<code>VFS</code>（虚拟文件系统）的重要数据结构。理解这些结构是掌握<code>Linux</code>文件系统实现的基础。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/05/28/linux/fs/fs%E5%A4%B4%E6%96%87%E4%BB%B6/#more" rel="contents">
@@ -785,423 +1157,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/05/28/c++/std/functional/functional%E5%BA%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/22/c++/lang/features/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/22/c++/lang/features/" class="post-title-link" itemprop="url">features</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-22 22:29:23" itemprop="dateCreated datePublished" datetime="2025-05-22T22:29:23+08:00">2025-05-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-31 21:43:16" itemprop="dateModified" datetime="2025-05-31T21:43:16+08:00">2025-05-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>​	<code>C++</code>标准定义了一组预处理宏，用于标识自<code>C++11</code>起引入的语言和库特性。这些宏旨在提供一种<strong>简单且可移植</strong>的方式，用于检测特性是否可用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/05/22/c++/lang/features/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/22/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/22/linux/fs/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">文件系统概念</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-22 22:28:07 / 修改时间：22:28:38" itemprop="dateCreated datePublished" datetime="2025-05-22T22:28:07+08:00">2025-05-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/filesystem/" itemprop="url" rel="index"><span itemprop="name">filesystem</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>​	想要深入理解文件系统，例如 ext2、NFS 和 FUSE，并且需要实践，这是一个非常棒的目标！文件系统是操作系统核心的重要组成部分，理解它们能让你对计算机的工作方式有更深的认识。以下是一些结合理论学习和实践操作的建议：</p>
-<p><strong>1. 扎实的理论基础：</strong></p>
-<ul>
-<li><strong>操作系统教材:</strong> 找一本经典的操作系统教材（例如《Operating System Concepts》、《Modern Operating Systems》），仔细阅读文件系统相关的章节。理解以下核心概念：<ul>
-<li>文件和目录的组织结构</li>
-<li>文件系统的层次结构</li>
-<li>磁盘块管理（分配、回收）</li>
-<li>索引节点（inodes）及其作用</li>
-<li>目录项（directory entries）</li>
-<li>文件权限管理</li>
-<li>缓存机制（buffer cache、page cache）</li>
-<li>日志（journaling）和文件系统一致性</li>
-<li>虚拟文件系统（VFS）的概念和作用</li>
-<li>网络文件系统（NFS）的基本原理</li>
-<li>用户空间文件系统（FUSE）的概念</li>
-</ul>
-</li>
-<li><strong>文件系统特定文档:</strong><ul>
-<li><strong>ext2&#x2F;ext3&#x2F;ext4:</strong> 阅读 Linux 内核文档中关于 ext 文件系统的部分，或者搜索相关的技术文章和白皮书。了解 inode 结构、数据块分配算法、目录结构等细节。</li>
-<li><strong>NFS:</strong> 阅读 RFC 文档（例如 RFC 1094, RFC 1813, RFC 3010）或者相关的技术指南，理解 NFS 的协议、服务器端和客户端的工作流程、挂载过程、权限处理等。</li>
-<li><strong>FUSE:</strong> 仔细阅读 FUSE 的官方文档和 API 说明，理解其架构、用户空间如何实现文件系统操作、内核模块的作用等。</li>
-</ul>
-</li>
-</ul>
-<p><strong>2. 动手实践 - 从使用到探索：</strong></p>
-<ul>
-<li><p><strong>常用命令实践:</strong> 熟练使用 Linux 下与文件系统相关的常用命令：</p>
-<ul>
-<li><code>ls</code>, <code>cd</code>, <code>pwd</code>, <code>mkdir</code>, <code>rm</code>, <code>cp</code>, <code>mv</code>, <code>touch</code>：基本的文件和目录操作。</li>
-<li><code>df</code>, <code>du</code>：查看磁盘空间使用情况。</li>
-<li><code>mount</code>, <code>umount</code>：挂载和卸载文件系统。</li>
-<li><code>chmod</code>, <code>chown</code>：修改文件权限和所有者。</li>
-<li><code>mkfs.&lt;fstype&gt;</code>：创建不同类型的文件系统（例如 <code>mkfs.ext4</code>, <code>mkfs.vfat</code>）。</li>
-<li><code>tune2fs</code>, <code>dumpe2fs</code>, <code>fsck</code>：ext 文件系统的管理和维护工具。</li>
-<li><code>nfsstat</code>, <code>showmount</code>：NFS 相关的工具。</li>
-</ul>
-</li>
-<li><p><strong>创建和分析文件系统:</strong></p>
-<ul>
-<li><strong>创建 ext 文件系统:</strong> 使用 <code>mkfs.ext4</code> 在一个小的分区或镜像文件上创建一个 ext4 文件系统。</li>
-<li><strong>挂载和观察:</strong> 将其挂载到你的 Linux 系统上，创建一些文件和目录。</li>
-<li><strong>使用 <code>dumpe2fs</code>:</strong> 使用 <code>dumpe2fs</code> 命令查看该文件系统的元数据，例如超级块信息、inode 数量、块大小等，将理论知识与实际结构对应起来。</li>
-<li><strong>使用 <code>debugfs</code>:</strong> 这是一个更底层的 ext 文件系统调试工具，可以让你直接查看和修改文件系统的内部结构（谨慎使用！）。尝试查找特定的 inode 或数据块。</li>
-</ul>
-</li>
-<li><p><strong>体验 NFS：</strong></p>
-<ul>
-<li><strong>搭建 NFS 服务器:</strong> 在一台 Linux 机器上配置并启动 NFS 服务器，共享一个目录。</li>
-<li><strong>配置 NFS 客户端:</strong> 在另一台 Linux 机器上配置 NFS 客户端，挂载服务器共享的目录。</li>
-<li><strong>观察行为:</strong> 在客户端创建、修改、删除文件，观察这些操作在服务器端的反应，理解 NFS 的基本工作流程和协议。</li>
-<li><strong>分析配置:</strong> 研究 NFS 的配置文件（例如 <code>/etc/exports</code>，<code>/etc/fstab</code>，<code>nfs.conf</code>），理解不同的配置选项。</li>
-</ul>
-</li>
-<li><p><strong>玩转 FUSE：</strong></p>
-<ul>
-<li><p><strong>阅读 FUSE API:</strong> 仔细阅读 FUSE 的 C API 文档，了解你需要实现哪些函数来创建一个用户空间文件系统。</p>
-</li>
-<li><p><strong>学习 FUSE 示例:</strong> 网上有很多简单的 FUSE 文件系统示例（例如 mirror 文件系统、memory 文件系统）。先尝试编译和运行这些示例，理解 FUSE 的基本框架。</p>
-</li>
-<li><p>编写简单的 FUSE 文件系统:</p>
-<p> 尝试自己编写一个简单的 FUSE 文件系统，例如：</p>
-<ul>
-<li>一个只读的文件系统，将一个目录树镜像到 FUSE 挂载点。</li>
-<li>一个简单的 key-value 存储，通过文件和目录结构来访问数据。</li>
-<li>一个基于内存的简单文件系统。</li>
-</ul>
-</li>
-<li><p><strong>调试和改进:</strong> 使用 <code>fusermount -d</code> 选项来调试你的 FUSE 文件系统，观察内核和用户空间文件系统之间的交互。</p>
-</li>
-</ul>
-</li>
-</ul>
-<p><strong>3. 深入内核（可选但强烈建议）：</strong></p>
-<ul>
-<li><strong>阅读 Linux 内核源码:</strong> 如果你对文件系统的底层实现非常感兴趣，可以尝试阅读 Linux 内核中相关部分的源代码（<code>fs/ext4/</code>, <code>fs/nfs/</code>, <code>fs/fuse/</code> 等目录）。这是一个非常深入的学习过程，但能让你真正理解文件系统的工作原理。</li>
-<li><strong>使用 <code>strace</code> 和 <code>ltrace</code>:</strong> 这两个工具可以帮助你跟踪用户空间程序在进行文件系统操作时调用的系统调用，以及库函数的调用，让你了解程序是如何与内核中的文件系统交互的。</li>
-<li><strong>学习 VFS 接口:</strong> 理解虚拟文件系统（VFS）是如何抽象不同类型的文件系统，并提供统一的接口给上层应用程序和内核其他组件。</li>
-</ul>
-<p><strong>4. 持续学习和交流：</strong></p>
-<ul>
-<li><strong>阅读相关书籍和文章:</strong> 除了教材，还有很多深入探讨特定文件系统的书籍和技术文章。</li>
-<li><strong>参与社区讨论:</strong> 参与 Linux 相关的论坛、邮件列表、Stack Overflow 等社区，与其他开发者交流学习经验，解决遇到的问题。</li>
-<li><strong>关注最新的发展:</strong> 文件系统技术也在不断发展，关注最新的内核特性、NFS 协议更新、FUSE 的新功能等。</li>
-</ul>
-<p><strong>实践建议总结：</strong></p>
-<ul>
-<li><strong>从小处着手:</strong> 先从基本概念和常用命令开始，逐步深入到更复杂的原理和实现。</li>
-<li><strong>理论结合实践:</strong> 每学习一个理论知识点，都尝试通过实际操作来验证和理解。</li>
-<li><strong>勇于探索和实验:</strong> 不要害怕出错，在实验中学习往往是最有效的。</li>
-<li><strong>多阅读文档和源码:</strong> 这是深入理解文件系统细节的关键。</li>
-<li><strong>保持耐心和热情:</strong> 学习文件系统是一个循序渐进的过程，需要时间和精力。</li>
-</ul>
-<p>通过以上这些方法，相信你能够很好地理解 ext2、NFS 和 FUSE 文件系统，并获得宝贵的实践经验。祝你学习顺利！</p>
-<h3 id="1-iSCSI（Internet-Small-Computer-System-Interface）"><a href="#1-iSCSI（Internet-Small-Computer-System-Interface）" class="headerlink" title="1. iSCSI（Internet Small Computer System Interface）"></a>1. <strong>iSCSI（Internet Small Computer System Interface）</strong></h3><ul>
-<li><strong>作用</strong>：通过 TCP&#x2F;IP 网络传输 SCSI 命令，实现远程块设备的挂载。</li>
-<li><strong>用途</strong>：主要用于 <strong>SAN（Storage Area Network）</strong> 架构中。</li>
-<li><strong>开发者要理解的内容</strong>：<ul>
-<li>iSCSI target（服务端）和 initiator（客户端）</li>
-<li>SCSI 命令格式</li>
-<li>块设备映射原理</li>
-<li>多路径（MPIO）处理和容错</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h3 id="2-NFS（Network-File-System）"><a href="#2-NFS（Network-File-System）" class="headerlink" title="2. NFS（Network File System）"></a>2. <strong>NFS（Network File System）</strong></h3><ul>
-<li><strong>作用</strong>：网络文件系统协议，允许通过网络访问远程文件。</li>
-<li><strong>用途</strong>：常用于 <strong>NAS（Network Attached Storage）</strong>。</li>
-<li><strong>开发者要理解的内容</strong>：<ul>
-<li>NFS 协议版本（如 v3 vs v4）</li>
-<li>文件句柄、读写语义</li>
-<li>挂载、权限、锁机制（file locking）</li>
-<li>与 POSIX 文件系统兼容性</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h3 id="3-CIFS-SMB（Common-Internet-File-System-Server-Message-Block）"><a href="#3-CIFS-SMB（Common-Internet-File-System-Server-Message-Block）" class="headerlink" title="3. CIFS &#x2F; SMB（Common Internet File System &#x2F; Server Message Block）"></a>3. <strong>CIFS &#x2F; SMB（Common Internet File System &#x2F; Server Message Block）</strong></h3><ul>
-<li><strong>作用</strong>：微软的共享文件协议，在 Windows 上广泛使用。</li>
-<li><strong>用途</strong>：也属于 NAS 类型协议。</li>
-<li><strong>开发者要理解的内容</strong>：<ul>
-<li>协议报文结构（SMB1 &#x2F; SMB2 &#x2F; SMB3）</li>
-<li>文件共享控制</li>
-<li>会话、身份认证（NTLM &#x2F; Kerberos）</li>
-<li>与 Samba 的对接开发</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h2 id="🏗️-SAN-与-NAS-简述"><a href="#🏗️-SAN-与-NAS-简述" class="headerlink" title="🏗️ SAN 与 NAS 简述"></a>🏗️ SAN 与 NAS 简述</h2><table>
-<thead>
-<tr>
-<th>类型</th>
-<th>全称</th>
-<th>访问方式</th>
-<th>协议</th>
-<th>适合场景</th>
-<th>举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>SAN</strong></td>
-<td>Storage Area Network</td>
-<td><strong>块级访问</strong></td>
-<td>iSCSI, Fibre Channel</td>
-<td>数据库、大型虚拟化平台</td>
-<td>iSCSI target、FC SAN</td>
-</tr>
-<tr>
-<td><strong>NAS</strong></td>
-<td>Network Attached Storage</td>
-<td><strong>文件级访问</strong></td>
-<td>NFS, CIFS&#x2F;SMB</td>
-<td>共享文件、备份</td>
-<td>Synology、QNAP</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id><a href="#" class="headerlink" title></a></h2><p>fuse</p>
-<p><a href="https://zhuanlan.zhihu.com/p/106719192">5分钟搞懂用户空间文件系统FUSE工作原理</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/05/20/linux/%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rocky">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rockyの博客">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Rockyの博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/20/linux/%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4/" class="post-title-link" itemprop="url">进程地址空间</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-20 22:06:57 / 修改时间：22:15:56" itemprop="dateCreated datePublished" datetime="2025-05-20T22:06:57+08:00">2025-05-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/memory/" itemprop="url" rel="index"><span itemprop="name">memory</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>翻译：<a href="https://www.kernel.org/doc/gorman/html/understand/understand007.html">https://www.kernel.org/doc/gorman/html/understand/understand007.html</a></p>
-<h4 id="第4章-进程地址空间"><a href="#第4章-进程地址空间" class="headerlink" title="第4章 进程地址空间"></a>第4章 进程地址空间</h4><p>​	虚拟内存的主要优势之一在于每个进程拥有独立的虚拟地址空间，而这一空间由操作系统映射到物理内存中。本章将讨论进程地址空间的结构以及<code>Linux</code>是如何管理它的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/05/20/linux/%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
