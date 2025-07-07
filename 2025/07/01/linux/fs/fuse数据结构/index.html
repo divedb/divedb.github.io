@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="​	 概述FUSE是File system in User Space，它是一个用户空间的文件系统框架，通过fuse，程序员可以在用户态实现文件系统，并且不需要特权用户的支持。 fuse包括三个模块：  内核模块：实现了一个完整文件系统的框架，但具体操作没有实现（由程序员在用户空间实现）。 用户空间库：提供编程接口，程序员通过实现fuse提供的fuse_operations或fuse_ll_ope">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fuse数据结构">
+<meta property="og:url" content="https://huangpiao.tech/2025/07/01/linux/fs/fuse%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="​	 概述FUSE是File system in User Space，它是一个用户空间的文件系统框架，通过fuse，程序员可以在用户态实现文件系统，并且不需要特权用户的支持。 fuse包括三个模块：  内核模块：实现了一个完整文件系统的框架，但具体操作没有实现（由程序员在用户空间实现）。 用户空间库：提供编程接口，程序员通过实现fuse提供的fuse_operations或fuse_ll_ope">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-07-01T15:40:43.500Z">
+<meta property="article:modified_time" content="2025-07-03T00:35:53.946Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="fuse">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/07/01/linux/fs/fuse%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/07/01/linux/fs/fuse%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/","path":"2025/07/01/linux/fs/fuse数据结构/","title":"fuse数据结构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>fuse数据结构 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%85%83%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C"><span class="nav-number"></span> <span class="nav-text">1. 文件系统元数据操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%93%8D%E4%BD%9C"><span class="nav-number"></span> <span class="nav-text">2. 文件内容操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C"><span class="nav-number"></span> <span class="nav-text">3. 目录操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%96%87%E4%BB%B6-%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86"><span class="nav-number"></span> <span class="nav-text">4. 文件&#x2F;目录管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%89%A9%E5%B1%95%E5%B1%9E%E6%80%A7%EF%BC%88xattr%EF%BC%89"><span class="nav-number"></span> <span class="nav-text">5. 扩展属性（xattr）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%96%87%E4%BB%B6%E9%94%81%E4%B8%8E%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="nav-number"></span> <span class="nav-text">6. 文件锁与并发控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD"><span class="nav-number"></span> <span class="nav-text">7. 高级功能</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/07/01/linux/fs/fuse%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="fuse数据结构 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          fuse数据结构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-07-01 23:40:43" itemprop="dateCreated datePublished" datetime="2025-07-01T23:40:43+08:00">2025-07-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-03 08:35:53" itemprop="dateModified" datetime="2025-07-03T08:35:53+08:00">2025-07-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>​	</p>
+<h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p><code>FUSE</code>是<code>File system in User Space</code>，它是一个用户空间的文件系统框架，通过<code>fuse</code>，程序员可以在用户态实现文件系统，并且不需要特权用户的支持。</p>
+<p><code>fuse</code>包括三个模块：</p>
+<ul>
+<li>内核模块：实现了一个完整文件系统的框架，但具体操作没有实现（由程序员在用户空间实现）。</li>
+<li>用户空间库：提供编程接口，程序员通过实现<code>fuse</code>提供的<code>fuse_operations</code>或<code>fuse_ll_operations</code>的所有或部分操作来实现文件系统</li>
+<li><code>mount</code>工具：<code>fusermount</code>用于挂载用<code>fuse</code>实现的文件系统。</li>
+</ul>
+<p><code>fuse</code>源码中提供了几个简单的例子，在<code>src/example</code>目录下，示范如何用<code>fuse</code>开发用户空间的文件系统。 </p>
+<ul>
+<li><p><code>null.c,hello.c</code>：一个简单的使用<code>fuse</code>的例子，演示了使用<code>fuse</code>建立本地用户空间文件系统的基本过程</p>
+</li>
+<li><p><code>hello_ll.c</code>：与上述<code>hello.c</code>实例实现的功能一样，只不过在具体实现代码中调用了更加低层的<code>fuse</code>函数来完成。</p>
+</li>
+<li><p><code>fu***mp.c</code>：这个实例实现了用<code>fuse</code>完全挂载本地文件系统挂载到用户空间文件系统的过程，展示了比较完整的<code>fuse</code>的使用过程。</p>
+</li>
+<li><p><code>fu***mp_fh.c</code>：这个实例是上面<code>./fu***mp</code>的扩展（使得基于<code>fuse</code>的这个文件系统更加的完善，例如：增加了<code>fflush</code>、<code>lock</code>等的支持）。</p>
+</li>
+</ul>
+<p><strong>学习理解fuse源码</strong></p>
+<p>l kernel&#x2F;inode.c  —&gt; 主要完成fuse文件驱动模块的注册，提供对supper block的维护函数以及其它(驱动的组织开始文件)</p>
+<p>l kernel&#x2F;dev.c   —&gt; fuse 的(虚拟)设备驱动</p>
+<p>l kernel&#x2F;control.c —&gt; 提供对于dentry的维护及其它</p>
+<p>l kernel&#x2F;dir.c  —&gt; 主要提供对于目录inode索引节点的维护</p>
+<p>l kernel&#x2F;file.c  —&gt; 主要提供对于文件inode索引节点的维护</p>
+<p>l lib&#x2F;helper.c —&gt; “fuse_main()”调用的主入口</p>
+<p>l lib&#x2F;fuse_kern_chan.c—&gt;主要实现fuse应用层访问(读写)fuse driver的功能  </p>
+<p>l lib&#x2F;fuse_mt.c —&gt; fuse 的mount管理</p>
+<p>l lib&#x2F;fuse.c  —&gt; lib库主框架文件，实现了主要框架及对”用户实现的文件系统操作代码”的封装</p>
+<p>l lib&#x2F;fuse_lowlevel.c –&gt; 实现比较底层的函数封装，供fuse.c等使用</p>
+<p>l lib&#x2F;fuse_loop.c —&gt; fuse lib循环监视”fuse driver”的通信缓存</p>
+<p>l lib&#x2F;fuse_loop_mt.c —&gt; 同上</p>
+<p>l lib&#x2F;fuse_session.c —&gt; fuse会话管理</p>
+<p><strong>FUSE挂载参数</strong></p>
+<p>fuse提供一系列挂载选项，如direct_io(跳过页缓存），allow_root(允许root访问挂载的文件系统），allow_other（允许其他用户访问挂载的文件系统），nonempty（允许把文件系统挂载到非空目录），big_writes（支持大于4k的写操作，仅fuse2.8以上版本支持）等，更详细的参数说明参见源码包中的文档。</p>
+<p><strong>FUSE****性能开销</strong></p>
+<p>使用fuse会给文件系统带来性能上的损失，因涉及到多次内核态到用户态的切换，我通过测试本地ext3和fuse-ext3的读写性能进行对比分析发现：</p>
+<p>l 在cache情形下，文件系统的读写请求都通过页高速缓存满足，fuse-ext3的性能只有ext3的15%~30%；</p>
+<p>l 在sync-write情形下，读与上相同，写的性能两者差不多，因设计到磁盘操作，fuse的开销就显得微不足道。</p>
+<h3 id="1-文件系统元数据操作"><a href="#1-文件系统元数据操作" class="headerlink" title="1. 文件系统元数据操作"></a><strong>1. 文件系统元数据操作</strong></h3><table>
+<thead>
+<tr>
+<th align="left">函数指针</th>
+<th align="left">作用</th>
+<th align="left">对应系统调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>getattr</code></td>
+<td align="left">获取文件属性（权限&#x2F;大小&#x2F;时间等）</td>
+<td align="left"><code>stat()</code></td>
+</tr>
+<tr>
+<td align="left"><code>fgetattr</code></td>
+<td align="left">通过已打开的文件描述符获取属性</td>
+<td align="left"><code>fstat()</code></td>
+</tr>
+<tr>
+<td align="left"><code>access</code></td>
+<td align="left">检查文件访问权限</td>
+<td align="left"><code>access()</code></td>
+</tr>
+<tr>
+<td align="left"><code>statfs</code></td>
+<td align="left">获取文件系统统计信息（空间大小等）</td>
+<td align="left"><code>statfs()</code></td>
+</tr>
+<tr>
+<td align="left"><code>utime</code></td>
+<td align="left">修改文件访问&#x2F;修改时间（旧版）</td>
+<td align="left"><code>utime()</code></td>
+</tr>
+<tr>
+<td align="left"><code>utimens</code></td>
+<td align="left">纳秒级精度修改文件时间</td>
+<td align="left"><code>utimensat()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="2-文件内容操作"><a href="#2-文件内容操作" class="headerlink" title="2. 文件内容操作"></a><strong>2. 文件内容操作</strong></h3><table>
+<thead>
+<tr>
+<th align="left">函数指针</th>
+<th align="left">作用</th>
+<th align="left">对应系统调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>open</code></td>
+<td align="left">打开文件</td>
+<td align="left"><code>open()</code></td>
+</tr>
+<tr>
+<td align="left"><code>create</code></td>
+<td align="left">创建并打开文件</td>
+<td align="left"><code>open(O_CREAT)</code></td>
+</tr>
+<tr>
+<td align="left"><code>read</code></td>
+<td align="left">读取文件内容</td>
+<td align="left"><code>read()</code></td>
+</tr>
+<tr>
+<td align="left"><code>write</code></td>
+<td align="left">写入文件内容</td>
+<td align="left"><code>write()</code></td>
+</tr>
+<tr>
+<td align="left"><code>read_buf</code></td>
+<td align="left">零拷贝读取（优化大文件）</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>write_buf</code></td>
+<td align="left">零拷贝写入（优化大文件）</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>flush</code></td>
+<td align="left">刷新缓冲区（如关闭前）</td>
+<td align="left"><code>close()</code>时触发</td>
+</tr>
+<tr>
+<td align="left"><code>release</code></td>
+<td align="left">释放文件资源（真正关闭）</td>
+<td align="left"><code>close()</code></td>
+</tr>
+<tr>
+<td align="left"><code>fsync</code></td>
+<td align="left">同步文件数据到磁盘</td>
+<td align="left"><code>fsync()</code></td>
+</tr>
+<tr>
+<td align="left"><code>ftruncate</code></td>
+<td align="left">修改文件大小</td>
+<td align="left"><code>ftruncate()</code></td>
+</tr>
+<tr>
+<td align="left"><code>fallocate</code></td>
+<td align="left">预分配磁盘空间</td>
+<td align="left"><code>fallocate()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="3-目录操作"><a href="#3-目录操作" class="headerlink" title="3. 目录操作"></a><strong>3. 目录操作</strong></h3><table>
+<thead>
+<tr>
+<th align="left">函数指针</th>
+<th align="left">作用</th>
+<th align="left">对应系统调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>getdir</code></td>
+<td align="left">已废弃，改用<code>readdir</code></td>
+<td align="left"><code>readdir()</code></td>
+</tr>
+<tr>
+<td align="left"><code>opendir</code></td>
+<td align="left">打开目录</td>
+<td align="left"><code>opendir()</code></td>
+</tr>
+<tr>
+<td align="left"><code>readdir</code></td>
+<td align="left">读取目录项</td>
+<td align="left"><code>readdir()</code></td>
+</tr>
+<tr>
+<td align="left"><code>releasedir</code></td>
+<td align="left">关闭目录</td>
+<td align="left"><code>closedir()</code></td>
+</tr>
+<tr>
+<td align="left"><code>fsyncdir</code></td>
+<td align="left">同步目录内容</td>
+<td align="left"><code>fsync()</code> on dir</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="4-文件-目录管理"><a href="#4-文件-目录管理" class="headerlink" title="4. 文件&#x2F;目录管理"></a><strong>4. 文件&#x2F;目录管理</strong></h3><table>
+<thead>
+<tr>
+<th align="left">函数指针</th>
+<th align="left">作用</th>
+<th align="left">对应系统调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>mknod</code></td>
+<td align="left">创建特殊文件（设备&#x2F;管道等）</td>
+<td align="left"><code>mknod()</code></td>
+</tr>
+<tr>
+<td align="left"><code>mkdir</code></td>
+<td align="left">创建目录</td>
+<td align="left"><code>mkdir()</code></td>
+</tr>
+<tr>
+<td align="left"><code>unlink</code></td>
+<td align="left">删除文件</td>
+<td align="left"><code>unlink()</code></td>
+</tr>
+<tr>
+<td align="left"><code>rmdir</code></td>
+<td align="left">删除空目录</td>
+<td align="left"><code>rmdir()</code></td>
+</tr>
+<tr>
+<td align="left"><code>rename</code></td>
+<td align="left">重命名&#x2F;移动文件</td>
+<td align="left"><code>rename()</code></td>
+</tr>
+<tr>
+<td align="left"><code>link</code></td>
+<td align="left">创建硬链接</td>
+<td align="left"><code>link()</code></td>
+</tr>
+<tr>
+<td align="left"><code>symlink</code></td>
+<td align="left">创建符号链接</td>
+<td align="left"><code>symlink()</code></td>
+</tr>
+<tr>
+<td align="left"><code>readlink</code></td>
+<td align="left">读取符号链接目标</td>
+<td align="left"><code>readlink()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="5-扩展属性（xattr）"><a href="#5-扩展属性（xattr）" class="headerlink" title="5. 扩展属性（xattr）"></a><strong>5. 扩展属性（xattr）</strong></h3><table>
+<thead>
+<tr>
+<th align="left">函数指针</th>
+<th align="left">作用</th>
+<th align="left">对应系统调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>setxattr</code></td>
+<td align="left">设置扩展属性</td>
+<td align="left"><code>setxattr()</code></td>
+</tr>
+<tr>
+<td align="left"><code>getxattr</code></td>
+<td align="left">获取扩展属性</td>
+<td align="left"><code>getxattr()</code></td>
+</tr>
+<tr>
+<td align="left"><code>listxattr</code></td>
+<td align="left">列出所有扩展属性</td>
+<td align="left"><code>listxattr()</code></td>
+</tr>
+<tr>
+<td align="left"><code>removexattr</code></td>
+<td align="left">删除扩展属性</td>
+<td align="left"><code>removexattr()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="6-文件锁与并发控制"><a href="#6-文件锁与并发控制" class="headerlink" title="6. 文件锁与并发控制"></a><strong>6. 文件锁与并发控制</strong></h3><table>
+<thead>
+<tr>
+<th align="left">函数指针</th>
+<th align="left">作用</th>
+<th align="left">对应系统调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>lock</code></td>
+<td align="left">文件锁操作（POSIX锁）</td>
+<td align="left"><code>fcntl(F_SETLK)</code></td>
+</tr>
+<tr>
+<td align="left"><code>flock</code></td>
+<td align="left">文件锁（BSD风格）</td>
+<td align="left"><code>flock()</code></td>
+</tr>
+<tr>
+<td align="left"><code>ioctl</code></td>
+<td align="left">设备控制命令</td>
+<td align="left"><code>ioctl()</code></td>
+</tr>
+<tr>
+<td align="left"><code>poll</code></td>
+<td align="left">监控文件事件（可读&#x2F;可写等）</td>
+<td align="left"><code>poll()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="7-高级功能"><a href="#7-高级功能" class="headerlink" title="7. 高级功能"></a><strong>7. 高级功能</strong></h3><table>
+<thead>
+<tr>
+<th align="left">函数指针</th>
+<th align="left">作用</th>
+<th align="left">对应系统调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>bmap</code></td>
+<td align="left">块映射（用于swap文件等）</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>init</code></td>
+<td align="left">初始化FUSE连接（传递参数）</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>destroy</code></td>
+<td align="left">清理文件系统资源</td>
+<td align="left">-</td>
+</tr>
+</tbody></table>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fuse</span> &#123;</span></span><br><span class="line">  <span class="comment">/* 与内核通信的会话对象 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fuse_session</span> *<span class="title">se</span>;</span></span><br><span class="line">  <span class="comment">/* 文件名哈希表（用于通过路径查找节点）*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> **<span class="title">name_table</span>;</span></span><br><span class="line">  <span class="comment">/* 文件名哈希表的大小 */</span></span><br><span class="line">	<span class="type">size_t</span> name_table_size;</span><br><span class="line">  <span class="comment">/* inode哈希表（通过inode编号快速查找节点）*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> **<span class="title">id_table</span>;</span></span><br><span class="line">  <span class="comment">/* inode哈希表的大小 */</span></span><br><span class="line">	<span class="type">size_t</span> id_table_size;</span><br><span class="line">  <span class="comment">/* 自增计数器，用于生成唯一inode编号 */</span></span><br><span class="line">	<span class="type">fuse_ino_t</span> ctr;</span><br><span class="line">  <span class="comment">/* 世代号（用于防止 inode 重用冲突）*/</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> generation;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> hidectr;</span><br><span class="line">	<span class="type">pthread_mutex_t</span> lock;</span><br><span class="line">  <span class="comment">/* 文件系统配置（如超时、UID 等）*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fuse_config</span> <span class="title">conf</span>;</span></span><br><span class="line">	<span class="type">int</span> intr_installed;</span><br><span class="line">  <span class="comment">/* 用户定义的文件系统操作集合 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fuse_fs</span> *<span class="title">fs</span>;</span></span><br><span class="line">  <span class="comment">/* 是否允许某些操作不传递完整路径（仅inode）*/</span></span><br><span class="line">	<span class="type">int</span> nullpath_ok;</span><br><span class="line">	<span class="type">int</span> curr_ticket;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">lock_queue_element</span> *<span class="title">lockq</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lock</span> &#123;</span></span><br><span class="line">  <span class="comment">/* 锁类型（F_RDLCK/F_WRLCK/F_UNLCK） */</span></span><br><span class="line">	<span class="type">int</span> type;</span><br><span class="line">  <span class="comment">/* 锁定字节范围 */</span></span><br><span class="line">	<span class="type">off_t</span> start;</span><br><span class="line">	<span class="type">off_t</span> end;</span><br><span class="line">  <span class="comment">/* 持有锁的进程ID */</span></span><br><span class="line">	<span class="type">pid_t</span> pid;</span><br><span class="line">  <span class="comment">/* 锁所有者标识（用于多线程区分）*/</span></span><br><span class="line">	<span class="type">uint64_t</span> owner;</span><br><span class="line">  <span class="comment">/* 形成链表（一个文件可有多个锁）*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">lock</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">name_next</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">id_next</span>;</span></span><br><span class="line">  <span class="comment">/* 唯一inode编号 */</span></span><br><span class="line">	<span class="type">fuse_ino_t</span> nodeid;</span><br><span class="line">  <span class="comment">/* 防重用标识（与nodeid共同唯一标识节点）*/</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> generation;</span><br><span class="line">	<span class="type">int</span> refctr;</span><br><span class="line">  <span class="comment">/* 父目录节点 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">parent</span>;</span></span><br><span class="line">  <span class="comment">/* 当前节点在父目录中的名称 */</span></span><br><span class="line">	<span class="type">char</span> *name;</span><br><span class="line">  <span class="comment">/* 被查找（lookup）的引用计数 */</span></span><br><span class="line">	<span class="type">uint64_t</span> nlookup;</span><br><span class="line">	<span class="type">int</span> open_count;</span><br><span class="line">  <span class="comment">/* 属性最后更新时间戳 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">stat_updated</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">mtime</span>;</span></span><br><span class="line">	<span class="type">off_t</span> size;</span><br><span class="line">  <span class="comment">/* 文件锁链表 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">lock</span> *<span class="title">locks</span>;</span></span><br><span class="line">  <span class="comment">/* 是否隐藏文件（特殊用途）*/</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> is_hidden : <span class="number">1</span>;</span><br><span class="line">  <span class="comment">/* 属性缓存是否有效 */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> cache_valid : <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> treelock;</span><br><span class="line">	<span class="type">int</span> ticket;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这些结构体是 FUSE（用户空间文件系统）实现中的核心数据结构，用于管理文件系统的节点、锁和全局状态。以下是详细解释：</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/fuse/" rel="tag"># fuse</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/26/algorithm/%E7%BA%BF%E6%80%A7dp/" rel="prev" title="线性dp">
+                  <i class="fa fa-angle-left"></i> 线性dp
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/07/01/linux/fs/fuse%E4%B8%B4%E6%97%B6/" rel="next" title="fuse临时">
+                  fuse临时 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

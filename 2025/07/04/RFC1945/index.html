@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="摘要超文本传输协议（HTTP）是一种应用层协议，具有轻量级和高效的特性，适用于分布式、协作式的超媒体信息系统。HTTP是一种通用的、无状态的、面向对象的协议，通过扩展其请求方法（命令），可以应用于多种场景，例如名称服务器和分布式对象管理系统等。HTTP的一个重要特性是其对数据表示类型的明确标识，这使得数据传输的两端可以独立实现，无需关心对方的具体数据格式。  💡HTTP协议中，数据是有“类型”的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RFC1945">
+<meta property="og:url" content="https://huangpiao.tech/2025/07/04/RFC1945/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="摘要超文本传输协议（HTTP）是一种应用层协议，具有轻量级和高效的特性，适用于分布式、协作式的超媒体信息系统。HTTP是一种通用的、无状态的、面向对象的协议，通过扩展其请求方法（命令），可以应用于多种场景，例如名称服务器和分布式对象管理系统等。HTTP的一个重要特性是其对数据表示类型的明确标识，这使得数据传输的两端可以独立实现，无需关心对方的具体数据格式。  💡HTTP协议中，数据是有“类型”的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://huangpiao.tech/.tech//zlh/Downloads/deepseek_mermaid_20250703_2a2ad7.png">
+<meta property="article:published_time" content="2025-07-03T16:10:05.632Z">
+<meta property="article:modified_time" content="2025-07-07T14:46:37.017Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="网络">
+<meta property="article:tag" content="http">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://huangpiao.tech/.tech//zlh/Downloads/deepseek_mermaid_20250703_2a2ad7.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/07/04/RFC1945/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/07/04/RFC1945/","path":"2025/07/04/RFC1945/","title":"RFC1945"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RFC1945 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Purpose"><span class="nav-number">2.1.</span> <span class="nav-text">Purpose</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD"><span class="nav-number">2.2.</span> <span class="nav-text">术语</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">总体操作流程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HTTP%E4%B8%8EMIME"><span class="nav-number">2.4.</span> <span class="nav-text">HTTP与MIME</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%B0%E6%B3%95%E7%BA%A6%E5%AE%9A%E4%B8%8E%E9%80%9A%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">记法约定与通用语法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A2%9E%E5%BC%BA%E5%9E%8BBNF"><span class="nav-number">3.1.</span> <span class="nav-text">增强型BNF</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%A7%84%E5%88%99"><span class="nav-number">4.</span> <span class="nav-text">基本规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E5%8F%82%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">协议参数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#HTTP%E7%89%88%E6%9C%AC"><span class="nav-number">5.1.</span> <span class="nav-text">HTTP版本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E6%A0%87%E8%AF%86%E7%AC%A6%EF%BC%88URI%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">统一资源标识符（URI）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="nav-number">5.2.1.</span> <span class="nav-text">通用语法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#HTTP-URL"><span class="nav-number">5.2.2.</span> <span class="nav-text">HTTP URL</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A5%E6%9C%9F-%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F"><span class="nav-number">5.3.</span> <span class="nav-text">日期&#x2F;时间格式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%AF%B7%E6%B1%82%E8%A1%8C%EF%BC%88Request-Line%EF%BC%89%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-number"></span> <span class="nav-text">1. 请求行（Request Line）的局限性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Host-%E5%A4%B4%E9%83%A8%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number"></span> <span class="nav-text">2. Host 头部的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%85%B3%E9%94%AE%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="nav-number"></span> <span class="nav-text">3. 关键场景分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA%EF%BC%88Virtual-Host%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">(1) 虚拟主机（Virtual Host）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-HTTPS-%E5%8A%A0%E5%AF%86%EF%BC%88SNI-%E6%89%A9%E5%B1%95%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">(2) HTTPS 加密（SNI 扩展）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">3.</span> <span class="nav-text">(3) 反向代理&#x2F;负载均衡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%8A%80%E6%9C%AF%E5%AF%B9%E6%AF%94"><span class="nav-number"></span> <span class="nav-text">4. 技术对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%BF%9D%E5%8F%8D%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%90%8E%E6%9E%9C"><span class="nav-number"></span> <span class="nav-text">5. 违反协议的后果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E7%8E%B0%E4%BB%A3%E6%89%A9%E5%B1%95%E5%BA%94%E7%94%A8"><span class="nav-number"></span> <span class="nav-text">6. 现代扩展应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">总结</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/07/04/RFC1945/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RFC1945 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RFC1945
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-07-04 00:10:05" itemprop="dateCreated datePublished" datetime="2025-07-04T00:10:05+08:00">2025-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 22:46:37" itemprop="dateModified" datetime="2025-07-07T22:46:37+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h4><p>超文本传输协议（<code>HTTP</code>）是一种应用层协议，具有轻量级和高效的特性，适用于分布式、协作式的超媒体信息系统。<code>HTTP</code>是一种通用的、无状态的、面向对象的协议，通过扩展其请求方法（命令），可以应用于多种场景，例如名称服务器和分布式对象管理系统等。<code>HTTP</code>的一个重要特性是其对数据表示类型的明确标识，这使得数据传输的两端可以独立实现，无需关心对方的具体数据格式。</p>
+<blockquote>
+<p>💡<code>HTTP</code>协议中，数据是有“类型”的，例如<code>Content-Type: application/json</code>，告诉接收方数据是<code>JSON</code>、<code>HTML</code>还是图片。</p>
+</blockquote>
+<p>自1990年以来，<code>HTTP</code>已被全球范围的<code>World-Wide Web</code>（万维网）信息系统广泛采用。本规范描述 <code>HTTP/1.0</code>协议的通用使用方式。</p>
+<span id="more"></span>
+
+<h4 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h4><h5 id="Purpose"><a href="#Purpose" class="headerlink" title="Purpose"></a>Purpose</h5><p>超文本传输协议（<code>HTTP</code>）是一种应用层协议，专为分布式协作式超媒体信息系统设计，具有轻量高效的特点。<br>自1990年以来，<code>HTTP</code>已被全球范围的万维网（<code>World-Wide Web</code>）信息系统广泛采用。本规范描述了被广泛称为<code>HTTP/1.0</code>的通用实现标准，重点阐述了大多数<code>HTTP/1.0</code>客户端和服务器普遍支持的功能特性。</p>
+<p>本规范分为两部分：</p>
+<ul>
+<li>文档主体部分描述了在大多数实现中表现一致的<code>HTTP</code>功能。</li>
+<li>附录<code>D</code>则列出了那些实现较少或存在不一致的功能。</li>
+</ul>
+<p>在实际应用中，信息系统不仅需要简单的数据检索，还需要更多功能，例如搜索、前端更新和批注。<code>HTTP</code>通过可扩展的方法机制（<code>Method</code>）表示请求的意图，并基于统一资源标识符（<code>URI</code>）的引用规范，通过资源定位符（<code>URL</code>）或资源名称（<code>URN</code>来指定方法操作的目标资源。其消息格式借鉴了互联网邮件和多用途互联网邮件扩展（<code>MIME</code>）的成熟方案。</p>
+<p>此外，<code>HTTP</code>还作为通用协议，协调用户代理与代理&#x2F;网关之间的通信，可对接<code>SMTP</code>、<code>NNTP</code>、<code>FTP</code>、<code>Gopher</code>和<code>WAIS</code>等多种互联网协议。这种设计既实现了跨应用超媒体资源访问，又显著简化了用户代理的实现复杂度。</p>
+<p><img src="/.tech//zlh/Downloads/deepseek_mermaid_20250703_2a2ad7.png" alt="deepseek_mermaid_20250703_2a2ad7"></p>
+<h5 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h5><p>本规范中使用了若干术语，用于描述<code>HTTP</code>通信中的参与方角色以及通信对象：</p>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>connection</code></td>
+<td>建立于两个应用程序之间的传输层虚拟电路，专用于通信交互。</td>
+</tr>
+<tr>
+<td><code>message</code></td>
+<td><code>HTTP</code>通信的基本单元，由的八位组结构化序列构成。</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td><code>HTTP</code>请求消息。</td>
+</tr>
+<tr>
+<td><code>response</code></td>
+<td><code>HTTP</code>响应消息。</td>
+</tr>
+<tr>
+<td><code>resource</code></td>
+<td>通过<code>URI</code>标识的网络数据对象或服务。</td>
+</tr>
+<tr>
+<td><code>entity</code></td>
+<td>数据资源的某种具体表现形式，或服务资源的某次响应表现，可包含在请求或响应消息中。  一个实体包含两部分。实体头（<code>entity headers</code>）：提供关于实体的元信息； 实体主体（<code>entity body</code>）：携带实际的数据内容。</td>
+</tr>
+<tr>
+<td><code>client</code></td>
+<td>用于建立连接并发送请求的应用程序。</td>
+</tr>
+<tr>
+<td><code>user agent</code></td>
+<td>发起请求的客户端，通常是浏览器、编辑器、爬虫、或其他面向用户的工具。</td>
+</tr>
+<tr>
+<td><code>server</code></td>
+<td>用于接收连接并处理请求、返回响应的应用程序。</td>
+</tr>
+<tr>
+<td><code>origin server</code></td>
+<td>资源实际存储或即将被创建的服务器。</td>
+</tr>
+<tr>
+<td><code>proxy</code></td>
+<td>一种中间程序，既作为服务器接收请求，又作为客户端代表其他客户端发起请求。  代理可以内部直接处理请求，或将请求转发给其他服务器（在转发时可能对请求进行转换）。  代理必须能够解析请求消息，并在必要时对请求内容进行重写再转发。代理常被用作客户端与防火墙之间的网关； 为不支持某些协议的用户代理处理请求的辅助程序。</td>
+</tr>
+<tr>
+<td><code>gateway</code></td>
+<td>一种为其他服务器充当中介的服务器。  与代理不同，网关对客户端表现得像是请求资源的源服务器，客户端通常不知道自己正在通过网关通信。网关常被用作服务器端与防火墙之间的网关； 协议转换器，将<code>HTTP</code>请求转发给非<code>HTTP</code>系统上的资源。</td>
+</tr>
+<tr>
+<td><code>tunnel</code></td>
+<td>一种中间程序，仅作为两个连接之间的透明中继。  隧道建立后，不参与<code>HTTP</code>通信的任何内容解析，尽管它可能是由<code>HTTP</code>请求启动的。  当两端连接关闭时，隧道也随之终止。隧道常用于以下场景：  必须经过某个中介程序，但该程序无法或不应解析通信内容时。 比如：<code>HTTPS</code>通过<code>HTTP</code>代理隧道传输。</td>
+</tr>
+<tr>
+<td><code>cache</code></td>
+<td>程序本地存储的响应消息，以及管理这些消息的存储、检索和删除的子系统。缓存的作用是存储可缓存的响应，以便在后续相同请求时减少响应时间和网络带宽消耗。</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>同一个程序可能既是客户端，也可以是服务器；本文中的术语是描述在当前连接中扮演的角色，而不是指程序的全部功能。同样，服务器在不同请求中可能分别扮演：</p>
+<ul>
+<li>源服务器</li>
+<li>代理</li>
+<li>网关</li>
+<li>隧道</li>
+</ul>
+<h5 id="总体操作流程"><a href="#总体操作流程" class="headerlink" title="总体操作流程"></a>总体操作流程</h5><p><code>HTTP</code>协议基于请求&#x2F;响应模型。客户端与服务器建立连接后，向服务器发送请求。请求由：</p>
+<ul>
+<li>请求方法、<code>URI</code>和协议版本。</li>
+<li>后面跟着类似<code>MIME</code>格式的消息体，其中包含请求的附加信息、客户端信息。</li>
+<li>以及可能存在的请求内容。</li>
+</ul>
+<p>服务器则以状态行（<code>status line</code>）作为响应头，其中包含：</p>
+<ul>
+<li>协议版本和表示成功或失败的状态码。</li>
+<li>随后是类似<code>MIME</code>格式的消息体，包含服务器信息、实体的元数据。</li>
+<li>以及可能的响应内容。</li>
+</ul>
+<p>大多数<code>HTTP</code>通信由用户代理发起，请求服务器上的资源。在最简单的场景中，<code>UA</code>与原始服务器<code>O</code>之间通过单一连接直接通信：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">	 request chain ------------------------&gt;</span><br><span class="line">UA -------------------v------------------- O</span><br><span class="line">   &lt;------------------------ reponse chain</span><br></pre></td></tr></table></figure>
+
+<p>当请求&#x2F;响应链中存在一个或多个中间实体（<code>intermediary</code>）时，情况会变得更复杂。常见的三类中间实体包括代理、网关和隧道：</p>
+<ul>
+<li>代理：充当转发代理，接收包含完整<code>URI</code>的请求，可对请求的部分或全部内容进行重写，然后将修改后的请求转发给目标 <code>URI</code>所指向的服务器。</li>
+<li>网关：作为上层接收方，负责与其他服务器进行交互，并在必要时将请求转换为底层服务器所使用的协议。</li>
+<li>隧道：作为两个连接之间的中继，不会更改消息内容。当通信必须经过某个无法理解消息内容的中间设备（如防火墙）时，常使用隧道。</li>
+</ul>
+<p>下图展示了<code>UA</code>与原始服务器<code>O</code>之间，存在三个中间实体<code>A</code>、<code>B</code>和<code>C</code>的场景：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   request chain --------------------------------------&gt;</span><br><span class="line">UA -----v----- A -----v----- B -----v----- C -----v----- O</span><br><span class="line">   &lt;------------------------------------- response chain</span><br></pre></td></tr></table></figure>
+
+<p>在该示意图中，请求或响应需要经过四段独立的连接。这一区别非常重要，因为某些<code>HTTP</code>功能选项可能只适用于最近的非隧道邻居，有些只适用于链路两端，还有些适用于整个链路。尽管图示为线性结构，实际上每个参与者可能同时处理多个并发连接。例如，<code>B</code>可能在处理来自<code>A</code>的请求的同时，还在接收来自其他客户端的请求，或向其他服务器转发请求。</p>
+<p>在请求处理过程中，除了隧道之外的任何一方都可以使用内部缓存（<code>cache</code>）来优化响应。当链路中的某个节点已有可用缓存时，请求&#x2F;响应链路将被缩短。例如，如果<code>B</code>缓存了之前来自<code>O</code>（通过<code>C</code>）的响应，而<code>UA</code>和<code>A</code>均未缓存，则链路如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   request chain ----------&gt;</span><br><span class="line">UA -----v----- A -----v----- B - - - - - - C - - - - - - O</span><br><span class="line">   &lt;--------- response chain</span><br></pre></td></tr></table></figure>
+
+<p>并非所有响应都可以被缓存，某些请求还可能包含对缓存行为的特殊要求。部分<code>HTTP/1.0</code>应用程序会采用启发式规则判断响应是否可缓存，但这些规则尚未标准化。</p>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th align="left">请求头</th>
+<th align="left">作用</th>
+<th align="left">示例场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Cache-Control: max-stale</code></td>
+<td align="left">允许返回过期缓存</td>
+<td align="left">弱网环境降级处理</td>
+</tr>
+<tr>
+<td align="left"><code>Cache-Control: no-cache</code></td>
+<td align="left">强制重新验证</td>
+<td align="left">支付结果查询</td>
+</tr>
+<tr>
+<td align="left"><code>Authorization</code></td>
+<td align="left">私有内容缓存隔离</td>
+<td align="left">用户个人数据</td>
+</tr>
+</tbody></table>
+</blockquote>
+<p>在互联网环境下，<code>HTTP</code>通常基于<code>TCP/IP</code>连接进行通信，默认端口为<code>TCP 80</code>，但也可使用其他端口。不过，这并不意味着 <code>HTTP</code>只能运行在<code>TCP/IP</code>之上，它同样可以基于其他可靠传输协议，只要这些协议能保证可靠传输即可。<code>HTTP/1.0</code>请求和响应如何映射到底层传输协议的数据单元，不属于本规范的讨论范围。</p>
+<p>除了实验性应用之外，目前通用做法是：每次请求前由客户端建立连接，服务器在发送完响应后关闭连接。客户端和服务器都应做好连接被提前关闭的准备，无论是由于用户操作、自动超时，还是程序故障导致的关闭，都应当以可预期的方式进行处理。无论是哪一方关闭连接，一旦连接断开，当前请求即被视为终止，无论其状态如何。</p>
+<h5 id="HTTP与MIME"><a href="#HTTP与MIME" class="headerlink" title="HTTP与MIME"></a><code>HTTP</code>与<code>MIME</code></h5><p><code>HTTP/1.0</code>使用了许多<code>MIME</code>协议（定义于<code>RFC 1521</code>）中的结构。附录<code>C</code>说明了<code>HTTP</code>使用互联网媒体类型（<code>Internet Media Types</code>）与互联网电子邮件（<code>Internet mail</code>）使用方式的差异，并阐释了这些差异的原因。</p>
+<h4 id="记法约定与通用语法"><a href="#记法约定与通用语法" class="headerlink" title="记法约定与通用语法"></a>记法约定与通用语法</h4><h5 id="增强型BNF"><a href="#增强型BNF" class="headerlink" title="增强型BNF"></a>增强型<code>BNF</code></h5><p>本规范中的所有机制，既采用文字说明，也采用增强型巴科斯-诺尔范式（<code>BNF</code>）表示，这种表示方式类似于<code>RFC 822</code>。实现者需要熟悉这种记法，才能准确理解规范内容。增强型<code>BNF</code>包含以下构造方式：</p>
+<p>✅ <code>name = definition</code></p>
+<p>规则名称直接写出（不包含尖括号<code>&lt;</code>和<code>&gt;</code>），通过等号<code>=</code>与其定义部分分隔。空白字符（<code>whitespace</code>）通常不具备语法意义，但当规则定义跨多行书写时，应通过缩进来表示行的延续。部分基础规则采用全大写形式，如<code>SP</code>、<code>LWS</code>、<code>HT</code>、<code>CRLF</code>、<code>DIGIT</code>、<code>ALPHA</code>等。定义中在需要帮助辨识的地方会使用尖括号将规则名称括起来，以提高可读性。</p>
+<blockquote>
+<p>假设语法规则很长，可以这样写：</p>
+<p><code>long-rule = element1 element2 element3 element4</code><br>                    <code>element5 element6 element7</code></p>
+</blockquote>
+<p>✅ <code>literal</code></p>
+<p>双引号<code>&quot; &quot;</code>用于表示字面文本（<code>literal text</code>）。除非另有说明，⚠️字面文本的匹配不区分大小写。</p>
+<p>✅ <code>rule1 | rule2</code></p>
+<p>规则之间用竖线 <code>|</code> 分隔，表示可选的替代项。例如，<code>yes | no</code>表示可以匹配”yes”或”no”。</p>
+<p>✅ <code>(rule1 rule2)</code></p>
+<p>括号<code>()</code>用于将多个元素组合为一个整体。例如，<code>(elem (foo | bar) elem)</code>表示可以匹配<code>elem foo elem</code>或<code>elem bar elem</code>。</p>
+<p>✅ <code>*rule</code></p>
+<p>星号<code>*</code>表示重复出现，完整形式为<code>&lt;n&gt;*&lt;m&gt;element</code>，表示元素出现次数在<code>n</code>到<code>m</code>次之间。常见情况如下：</p>
+<ul>
+<li><code>*(element)</code>：可重复任意次数，包括0次（默认0次到无限次）；</li>
+<li><code>1*element</code>：至少出现1次；</li>
+<li><code>1*2element</code>：出现1或2次。</li>
+</ul>
+<p>✅ <code>[rule]</code></p>
+<p>方括号<code>[]</code>表示<strong>可选内容</strong>，<code>[foo bar]</code>等价于<code>*1(foo bar)</code>，表示出现0或1次。</p>
+<p>✅ <code>N rule</code></p>
+<p>具体指定重复次数，<code>&lt;n&gt;(element)</code>表示恰好<code>n</code>次重复，等价于<code>&lt;n&gt;*&lt;n&gt;(element)</code>。例如：</p>
+<ul>
+<li><code>2DIGIT</code>表示一个由两位数字组成的数字；</li>
+<li><code>3ALPHA</code>表示由3个字母组成的字符串。</li>
+</ul>
+<p>✅ <code>#rule</code></p>
+<p>井号<code>#</code>定义以逗号分隔的元素列表，语法类似于<code>*</code>，完整形式为<code>&lt;n&gt;#&lt;m&gt;element</code>，表示由<code>n</code>到<code>m</code>个元素组成，元素之间用一个或多个逗号 <code>,</code> 和可选的线性空白符（<code>LWS</code>）分隔。这样，原本复杂的列表规则：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( *LWS element *( *LWS <span class="string">&quot;,&quot;</span> *LWS element ))</span><br></pre></td></tr></table></figure>
+
+<p>可以简化表示为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1#element</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<ul>
+<li>允许列表中存在空元素，但空元素不计入总数量。<br>例如，<code>(element), , (element)</code>被视为两个元素，而非三个。</li>
+<li>如果要求至少有一个元素，那么必须包含至少一个非空元素。</li>
+</ul>
+<p>默认值为0和无限，因此：</p>
+<ul>
+<li><code>#(element)</code>：允许任意数量，包括0个；</li>
+<li><code>1#element</code>：至少1个；</li>
+<li><code>1#2element</code>：1个或2个。</li>
+</ul>
+<p>✅ <code>; comment</code></p>
+<p>分号<code>;</code>通常与规则主体有一定间隔，用于引入<strong>注释</strong>，注释内容持续到行尾。这是在规范中并列加入说明性注释的简单方式。</p>
+<p>✅ 隐含的<code>*LWS</code></p>
+<p>本规范描述的语法以单词为单位。除非特别说明，相邻的单词（<code>token</code>或<code>quoted-string</code>）之间、<code>token</code>与特殊分隔符（<code>tspecials</code>）之间，都可以包含线性空白符（<code>LWS</code>），不会改变语义。</p>
+<p>不过，任意两个<code>token</code>之间必须至少有一个分隔符（<code>tspecials</code>），否则会被解析为单一<code>token</code>。</p>
+<p>尽管如此，应用程序在生成<code>HTTP</code>内容时，仍应尽可能遵循通用格式，因为有些实现可能无法正确处理非标准格式。</p>
+<h4 id="基本规则"><a href="#基本规则" class="headerlink" title="基本规则"></a>基本规则</h4><p>本规范通篇使用以下规则来描述基本的解析结构。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">OCTET          = &lt;any 8-bit sequence of data&gt;</span><br><span class="line">CHAR           = &lt;any US-ASCII character (octets 0 - 127)&gt;</span><br><span class="line">UPALPHA        = &lt;any US-ASCII uppercase letter <span class="string">&quot;A&quot;</span>..<span class="string">&quot;Z&quot;</span>&gt;</span><br><span class="line">LOALPHA        = &lt;any US-ASCII lowercase letter <span class="string">&quot;a&quot;</span>..<span class="string">&quot;z&quot;</span>&gt;</span><br><span class="line">ALPHA          = UPALPHA | LOALPHA</span><br><span class="line">DIGIT          = &lt;any US-ASCII digit <span class="string">&quot;0&quot;</span>..<span class="string">&quot;9&quot;</span>&gt;</span><br><span class="line">CTL            = &lt;any US-ASCII control character</span><br><span class="line">                 (octets 0 - 31) and DEL (127)&gt;</span><br><span class="line">CR             = &lt;US-ASCII CR, carriage <span class="built_in">return</span> (13)&gt;</span><br><span class="line">LF             = &lt;US-ASCII LF, linefeed (10)&gt;</span><br><span class="line">SP             = &lt;US-ASCII SP, space (32)&gt;</span><br><span class="line">HT             = &lt;US-ASCII HT, horizontal-tab (9)&gt;</span><br><span class="line">&lt;<span class="string">&quot;&gt;            = &lt;US-ASCII double-quote mark (34)&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>HTTP/1.0</code>使用<code>CR LF</code>（回车 + 换行）这两个字节作为协议元素的行结束标志，<code>Entity-Body</code>除外。<code>Entity-Body</code>内的行结束标志由其关联的媒体类型决定。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CRLF           = CR LF</span><br></pre></td></tr></table></figure>
+
+<p><code>HTTP/1.0</code>的头字段可以使用换行符进行折行（<code>folding</code>），前提是每个续行（<code>continuation line</code>）以空格或水平制表符开头。所有线性空白（包括折行部分）在语义上等价于单个空格字符。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LWS            = [CRLF] 1*( SP | HT )</span><br></pre></td></tr></table></figure>
+
+<p>📜 示例：</p>
+<p>例如，原来一行的<code>HTTP</code>头字段：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36</span><br></pre></td></tr></table></figure>
+
+<p>这就是一个折行（<code>folded</code>）后的头字段：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36</span><br><span class="line">             (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  注意第二行开头有空格，这告诉解析器两行是同一个字段。</p>
+</blockquote>
+<p>解析器在处理时，会把这些行重新拼接成一整行，相当于：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36</span><br></pre></td></tr></table></figure>
+
+<p>不过，需要注意的是，并非所有应用程序都支持头字段的折行，<code>HTTP/1.0</code>的应用程序不应主动生成折行。<code>TEXT</code>规则仅用于描述性字段内容及消息解析器不处理的字段值。<code>TEXT</code>词汇可包含非<code>US-ASCII</code>字符集的八位组。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TEXT           = &lt;any OCTET except CTLs,</span><br><span class="line">                  but including LWS&gt;</span><br></pre></td></tr></table></figure>
+
+<p>接收方若在报头字段TEXT中发现非<code>US-ASCII</code>字符集的八位组，可假定其代表<code>ISO-8859-1</code>字符。</p>
+<p>协议中多处使用十六进制数字字符：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HEX            = <span class="string">&quot;A&quot;</span> | <span class="string">&quot;B&quot;</span> | <span class="string">&quot;C&quot;</span> | <span class="string">&quot;D&quot;</span> | <span class="string">&quot;E&quot;</span> | <span class="string">&quot;F&quot;</span></span><br><span class="line">               | <span class="string">&quot;a&quot;</span> | <span class="string">&quot;b&quot;</span> | <span class="string">&quot;c&quot;</span> | <span class="string">&quot;d&quot;</span> | <span class="string">&quot;e&quot;</span> | <span class="string">&quot;f&quot;</span> | DIGIT</span><br></pre></td></tr></table></figure>
+
+<p>许多<code>HTTP/1.0</code>头字段值由多个单词组成，单词之间通过线性空白或特殊字符（<code>special characters</code>）分隔。这些特殊字符若用于参数值中，必须放置在双引号括起来的字符串中。</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">word           <span class="punctuation">=</span> token <span class="string">| quoted-string</span></span><br><span class="line">token          <span class="punctuation">=</span> <span class="number">1</span>*&lt;any CHAR except CTLs or tspecials&gt;</span><br><span class="line">tspecials      <span class="punctuation">=</span> <span class="string">&quot;(&quot;</span> <span class="string">| &quot;</span><span class="punctuation">)</span><span class="string">&quot; | &quot;</span>&lt;<span class="string">&quot; | &quot;</span>&gt;<span class="string">&quot; | &quot;</span>@<span class="string">&quot;</span></span><br><span class="line">               <span class="string">| &quot;</span><span class="punctuation">,</span><span class="string">&quot; | &quot;</span><span class="punctuation">;</span><span class="string">&quot; | &quot;</span><span class="punctuation">:</span><span class="string">&quot; | &quot;</span>\<span class="string">&quot; | &lt;&quot;</span>&gt;</span><br><span class="line">               <span class="string">| &quot;</span>/<span class="string">&quot; | &quot;</span>[<span class="string">&quot; | &quot;</span>]<span class="string">&quot; | &quot;</span>?<span class="string">&quot; | &quot;</span><span class="punctuation">=</span><span class="string">&quot;</span></span><br><span class="line">               <span class="string">| &quot;</span>&#123;<span class="string">&quot; | &quot;</span>&#125;<span class="string">&quot; | SP | HT</span></span><br></pre></td></tr></table></figure>
+
+<p>在某些<code>HTTP</code>头字段中，可以使用圆括号包裹注释内容。只有当字段的定义中明确允许”comment”的字段值时，才可以包含注释。在其它字段中，圆括号被视为字段值的一部分。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">comment        = <span class="string">&quot;(&quot;</span> *( ctext | comment ) <span class="string">&quot;)&quot;</span></span><br><span class="line">ctext          = &lt;any TEXT excluding <span class="string">&quot;(&quot;</span> and <span class="string">&quot;)&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>用双引号括起来的一段文本会被解析为单个单词。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">quoted-string  = ( &lt;<span class="string">&quot;&gt; *(qdtext) &lt;&quot;</span>&gt; )</span><br><span class="line">qdtext         = &lt;any CHAR except &lt;<span class="string">&quot;&gt; and CTLs,</span></span><br><span class="line"><span class="string">                 but including LWS&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>HTTP/1.0</code>中，不允许使用反斜杠 (<code>\</code>) 进行单字符转义。</p>
+<h4 id="协议参数"><a href="#协议参数" class="headerlink" title="协议参数"></a>协议参数</h4><h5 id="HTTP版本"><a href="#HTTP版本" class="headerlink" title="HTTP版本"></a><code>HTTP</code>版本</h5><p><code>HTTP</code>协议采用「&lt;主版本号&gt;.&lt;次版本号&gt;」的方式表示协议版本。这种版本机制主要用于表明发送方所采用的消息格式及其对之后<code>HTTP</code>通信的理解能力，而不是表示具体实现了哪些功能。</p>
+<p>🔍 举例说明</p>
+<ul>
+<li>如果客户端发送的是<code>HTTP/1.0</code>，它告诉服务器：<ul>
+<li>“我发的请求是1.0格式”；</li>
+<li>“我理解1.0的协议内容”；</li>
+<li>并不是说“我支持缓存”或“我支持持久连接”这种功能级别的声明。</li>
+</ul>
+</li>
+</ul>
+<p>如果新增的消息组件不改变协议的通信行为，或者只是扩展了某些字段的取值范围，则无需修改版本号。只有在新增功能不会改变消息的基本解析算法，但可能影响消息语义、表明发送方具备额外能力时，才会增加次版本号（<code>minor</code>）。而当协议中的消息格式发生更改时，才会增加主版本号（<code>major</code>）。</p>
+<p><code>HTTP</code>消息的版本号通过消息首行中的<code>HTTP-Version</code>字段表示。如果首行未声明协议版本，接收方必须假定该消息采用最简单的<code>HTTP/0.9</code>格式。</p>
+<p>语法定义如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTP-Version = <span class="string">&quot;HTTP&quot;</span> <span class="string">&quot;/&quot;</span> 1*DIGIT <span class="string">&quot;.&quot;</span> 1*DIGIT</span><br></pre></td></tr></table></figure>
+
+<p>请注意，主版本号和次版本号是独立的整数，且每个部分都可能超过一位数字。因此，<code>HTTP/2.4</code>小于<code>HTTP/2.13</code>，后者又小于<code>HTTP/12.3</code>。接收方在解析时应忽略版本号前的零，发送方不应生成带前导零的版本号。本规范定义了<code>HTTP</code>协议的0.9和1.0两个版本。凡是发送完整请求（<code>Full-Request</code>）或完整响应（<code>Full-Response</code>）的应用，必须在消息中声明版本为 <code>HTTP/1.0</code>。</p>
+<p><code>HTTP/1.0</code>服务器必须遵循以下要求：</p>
+<ul>
+<li>能够识别<code>HTTP/0.9</code>和<code>HTTP/1.0</code>请求的<code>Request-Line</code>格式；</li>
+<li>能够理解符合<code>HTTP/0.9</code>或<code>HTTP/1.0</code>格式的任何合法请求；</li>
+<li>必须以客户端请求所用的协议版本格式正确响应。</li>
+</ul>
+<p><code>HTTP/1.0</code>客户端必须遵循以下要求：</p>
+<ul>
+<li>能够识别<code>HTTP/1.0</code>响应的<code>Status-Line</code>格式；</li>
+<li>能够理解符合<code>HTTP/0.9</code>或<code>HTTP/1.0</code>格式的任何合法响应。</li>
+</ul>
+<p>代理和网关应用在转发请求时，必须特别注意请求的版本号是否高于自身支持的协议版本。由于版本号表明了发送方的协议能力，代理或网关不得发送高于自身支持版本号的消息。如果收到高版本的请求，代理&#x2F;网关必须：</p>
+<ul>
+<li>要么将请求的版本号降级；</li>
+<li>要么直接返回错误响应。</li>
+</ul>
+<p>对于版本号低于自身的请求，代理&#x2F;网关可以选择将版本号升级再转发；但无论如何，其对该请求的响应必须遵循前文所述服务器行为的要求。</p>
+<h5 id="统一资源标识符（URI）"><a href="#统一资源标识符（URI）" class="headerlink" title="统一资源标识符（URI）"></a>统一资源标识符（<code>URI</code>）</h5><p><code>URI</code>曾有多种名称，包括<code>WWW</code>地址、通用文档标识符、通用资源标识符，以及后来结合的统一资源定位符（<code>URL</code>）和统一资源名称（<code>URN</code>）。</p>
+<p>从<code>HTTP</code>的角度看，统一资源标识符只是一些特定格式的字符串，用于通过名称、位置或其他属性来标识一个网络资源。</p>
+<h6 id="通用语法"><a href="#通用语法" class="headerlink" title="通用语法"></a>通用语法</h6><p>在<code>HTTP</code>中，<code>URI</code>可以是：</p>
+<ul>
+<li>绝对形式（<code>absolute form</code>），或</li>
+<li>相对于某个已知基准<code>URI</code>的相对形式（<code>relative form</code>）。</li>
+</ul>
+<p>两种形式的区别在于：绝对<code>URI</code>总是以「方案名（<code>scheme</code>）」加冒号（<code>:</code>）开头。</p>
+<p>语法定义如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">URI</span>            = ( absoluteURI | relativeURI ) [ <span class="string">&quot;#&quot;</span> fragment ]</span><br><span class="line"></span><br><span class="line"><span class="attr">absoluteURI</span>    = scheme <span class="string">&quot;:&quot;</span> *( uchar | reserved )</span><br><span class="line"></span><br><span class="line"><span class="attr">relativeURI</span>    = net_path | abs_path | rel_path</span><br><span class="line"></span><br><span class="line"><span class="attr">net_path</span>       = <span class="string">&quot;//&quot;</span> net_loc [ abs_path ]</span><br><span class="line"><span class="attr">abs_path</span>       = <span class="string">&quot;/&quot;</span> rel_path</span><br><span class="line"><span class="attr">rel_path</span>       = [ path ] [ <span class="string">&quot;;&quot;</span> params ] [ <span class="string">&quot;?&quot;</span> query ]</span><br><span class="line"></span><br><span class="line"><span class="attr">path</span>           = fsegment *( <span class="string">&quot;/&quot;</span> segment )</span><br><span class="line"><span class="attr">fsegment</span>       = <span class="number">1</span>*pchar</span><br><span class="line"><span class="attr">segment</span>        = *pchar</span><br><span class="line"></span><br><span class="line"><span class="attr">params</span>         = param *( <span class="string">&quot;;&quot;</span> param )</span><br><span class="line"><span class="attr">param</span>          = *( pchar | <span class="string">&quot;/&quot;</span> )</span><br><span class="line"></span><br><span class="line"><span class="attr">scheme</span>         = <span class="number">1</span>*( ALPHA | DIGIT | <span class="string">&quot;+&quot;</span> | <span class="string">&quot;-&quot;</span> | <span class="string">&quot;.&quot;</span> )</span><br><span class="line"><span class="attr">net_loc</span>        = *( pchar | <span class="string">&quot;;&quot;</span> | <span class="string">&quot;?&quot;</span> )</span><br><span class="line"><span class="attr">query</span>          = *( uchar | reserved )</span><br><span class="line"><span class="attr">fragment</span>       = *( uchar | reserved )</span><br><span class="line"></span><br><span class="line"><span class="attr">pchar</span>          = uchar | <span class="string">&quot;:&quot;</span> | <span class="string">&quot;@&quot;</span> | <span class="string">&quot;&amp;&quot;</span> | <span class="string">&quot;=&quot;</span> | <span class="string">&quot;+&quot;</span></span><br><span class="line"><span class="attr">uchar</span>          = unreserved | escape</span><br><span class="line"><span class="attr">unreserved</span>     = ALPHA | DIGIT | safe | extra | national</span><br><span class="line"></span><br><span class="line"><span class="attr">escape</span>         = <span class="string">&quot;%&quot;</span> HEX HEX</span><br><span class="line"><span class="attr">reserved</span>       = <span class="string">&quot;;&quot;</span> | <span class="string">&quot;/&quot;</span> | <span class="string">&quot;?&quot;</span> | <span class="string">&quot;:&quot;</span> | <span class="string">&quot;@&quot;</span> | <span class="string">&quot;&amp;&quot;</span> | <span class="string">&quot;=&quot;</span> | <span class="string">&quot;+&quot;</span></span><br><span class="line"><span class="attr">extra</span>          = <span class="string">&quot;!&quot;</span> | <span class="string">&quot;*&quot;</span> | <span class="string">&quot;&#x27;&quot;</span> | <span class="string">&quot;(&quot;</span> | <span class="string">&quot;)&quot;</span> | <span class="string">&quot;,&quot;</span></span><br><span class="line"><span class="attr">safe</span>           = <span class="string">&quot;$&quot;</span> | <span class="string">&quot;-&quot;</span> | <span class="string">&quot;_&quot;</span> | <span class="string">&quot;.&quot;</span></span><br><span class="line"><span class="attr">unsafe</span>         = CTL | SP | &lt;<span class="string">&quot;&gt; | &quot;</span><span class="comment">#&quot; | &quot;%&quot; | &quot;&lt;&quot; | &quot;&gt;&quot;</span></span><br><span class="line"><span class="attr">national</span>       = &lt;any OCTET excluding ALPHA, DIGIT, reserved, extra, safe, and unsafe</span><br></pre></td></tr></table></figure>
+
+<p>📜 语法说明</p>
+<ul>
+<li><code>absoluteURI</code>：如<code>http://example.com/index.html</code>。</li>
+<li><code>relativeURI</code>：如<code>/path/to/resource</code>，其含义依赖于上下文中的基准<code>URI</code>。</li>
+<li><code>escape</code>：百分号编码，如<code>%20</code>表示空格。</li>
+<li><code>reserved / safe / unsafe</code>：对字符的分类，决定是否需要转义。</li>
+</ul>
+<p>🔍 与<code>URL</code>标准的关系</p>
+<p>更完整的<code>URL</code>语法和语义，请参考<code>RFC 1738</code>和<code>RFC 1808</code>。</p>
+<p>需要注意的是：</p>
+<ul>
+<li>上述<code>BNF</code>语法包含了一些<code>RFC 1738</code>中不允许出现在<code>URL</code>中的「<code>national</code>」字符；</li>
+<li>这是因为<code>HTTP</code>服务器对于地址中<code>rel_path</code>部分的未保留字符（<code>unreserved characters</code>）并不做严格限制；</li>
+<li>同时，<code>HTTP</code>代理可能会收到包含非标准<code>URI</code>的请求，这些<code>URI</code>不一定符合<code>RFC 1738</code>的规范。</li>
+</ul>
+<h6 id="HTTP-URL"><a href="#HTTP-URL" class="headerlink" title="HTTP URL"></a><code>HTTP URL</code></h6><p><code>HTTP</code>协议使用<code>&quot;http&quot;</code>方案（<code>scheme</code>）来定位网络上的资源。本节定义<code>HTTP URL</code>的专用语法和语义。</p>
+<p>语法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http_URL   = <span class="string">&quot;http:&quot;</span> <span class="string">&quot;//&quot;</span> host [ <span class="string">&quot;:&quot;</span> port ] [ abs_path ]</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<ul>
+<li><code>host</code>表示合法的互联网主机名，或符合<code>RFC 1123</code>第2.1节定义的点分十进制格式的<code>IP</code>地址；</li>
+<li><code>port</code>为端口号，由数字组成。</li>
+</ul>
+<p>如果<code>port</code>部分为空或未给出，则默认使用端口80。其语义是：目标资源位于指定主机的该端口上，由服务器监听<code>TCP</code>连接，资源的<code>Request-URI</code>是<code>abs_path</code>。如果<code>URL</code>中未包含<code>abs_path</code>，在作为<code>Request-URI</code>使用时，必须视为<code>/</code>（参见第5.1.2 节）。</p>
+<p>📌 注意：<br>尽管<code>HTTP</code>协议本身与传输层协议无关，但<code>HTTP URL</code>只能通过<code>TCP</code>位置来标识资源，非<code>TCP</code>的资源必须通过其他<code>URI</code>方案进行标识。</p>
+<ul>
+<li>主机名部分的所有大写字母（<code>UPALPHA</code>）需转换为小写（<code>LOALPHA</code>），因为主机名不区分大小写；</li>
+<li>如果端口为80，可以省略<code>&quot;:&quot; port</code>；</li>
+<li>如果<code>abs_path</code>为空，需将其替换为 “&#x2F;”。</li>
+</ul>
+<h5 id="日期-时间格式"><a href="#日期-时间格式" class="headerlink" title="日期&#x2F;时间格式"></a>日期&#x2F;时间格式</h5><p><code>HTTP/1.0</code>应用在历史上支持三种不同的日期&#x2F;时间表示格式：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Sun</span>, <span class="number">06</span> Nov <span class="number">1994</span> <span class="number">08</span>:<span class="number">49</span>:<span class="number">37</span> GMT    ; RFC <span class="number">822</span>（已由RFC <span class="number">1123</span>更新）</span><br><span class="line"><span class="attribute">Sunday</span>, <span class="number">06</span>-Nov-<span class="number">94</span> <span class="number">08</span>:<span class="number">49</span>:<span class="number">37</span> GMT   ; RFC <span class="number">850</span>（已被RFC <span class="number">1036</span>废弃）</span><br><span class="line"><span class="attribute">Sun</span> Nov  <span class="number">6</span> <span class="number">08</span>:<span class="number">49</span>:<span class="number">37</span> <span class="number">1994</span>         ; ANSI C的asctime()格式</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一种格式是互联网标准，属于<code>RFC 1123</code>的固定子集（<code>RFC 1123</code>是对<code>RFC 822</code>的更新），推荐使用；</li>
+<li>第二种格式虽然广泛使用，但基于已废弃的<code>RFC 850</code>，且年份只有两位；</li>
+<li><code>HTTP/1.0</code>的客户端和服务器在解析日期时，应该接受上述三种格式，但不应当生成第三种（<code>asctime</code>）格式。</li>
+</ul>
+<p>📌 注意：<br>接收端应尽可能兼容来自非<code>HTTP</code>应用生成的日期值，例如通过代理或网关转发的<code>SMTP</code>、<code>NNTP</code>消息中可能包含这些日期格式。</p>
+<p>✅ 时区要求</p>
+<p>所有<code>HTTP/1.0</code>的日期&#x2F;时间必须采用协调世界时 (<code>UT</code>)，也称为格林尼治标准时间 (<code>GMT</code>)，不能使用其他时区。在前两种格式中，使用<code>GMT</code>标识时区；第三种格式未明确指定时区，但应视为<code>GMT</code>。</p>
+<p>语法规范：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">HTTP-<span class="built_in">date</span>      = rfc1123-<span class="built_in">date</span> | rfc850-<span class="built_in">date</span> | asctime-<span class="built_in">date</span></span><br><span class="line"></span><br><span class="line">rfc1123-<span class="built_in">date</span>   = wkday <span class="string">&quot;,&quot;</span> SP date1 SP <span class="built_in">time</span> SP <span class="string">&quot;GMT&quot;</span></span><br><span class="line">rfc850-<span class="built_in">date</span>    = <span class="built_in">weekday</span> <span class="string">&quot;,&quot;</span> SP date2 SP <span class="built_in">time</span> SP <span class="string">&quot;GMT&quot;</span></span><br><span class="line">asctime-<span class="built_in">date</span>   = wkday SP date3 SP <span class="built_in">time</span> SP <span class="number">4</span>DIGIT</span><br><span class="line"></span><br><span class="line">date1          = <span class="number">2</span>DIGIT SP <span class="built_in">month</span> SP <span class="number">4</span>DIGIT</span><br><span class="line">                 ; 例如: <span class="number">02</span> Jun <span class="number">1982</span></span><br><span class="line">date2          = <span class="number">2</span>DIGIT <span class="string">&quot;-&quot;</span> <span class="built_in">month</span> <span class="string">&quot;-&quot;</span> <span class="number">2</span>DIGIT</span><br><span class="line">                 ; 例如: <span class="number">02</span>-Jun<span class="number">-82</span></span><br><span class="line">date3          = <span class="built_in">month</span> SP (<span class="number">2</span>DIGIT | (SP <span class="number">1</span>DIGIT))</span><br><span class="line">                 ; 例如: Jun  <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">time</span>           = <span class="number">2</span>DIGIT <span class="string">&quot;:&quot;</span> <span class="number">2</span>DIGIT <span class="string">&quot;:&quot;</span> <span class="number">2</span>DIGIT</span><br><span class="line">                 ; 范围：<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> - <span class="number">23</span>:<span class="number">59</span>:<span class="number">59</span></span><br><span class="line"></span><br><span class="line">wkday          = <span class="string">&quot;Mon&quot;</span> | <span class="string">&quot;Tue&quot;</span> | <span class="string">&quot;Wed&quot;</span> | <span class="string">&quot;Thu&quot;</span> | <span class="string">&quot;Fri&quot;</span> | <span class="string">&quot;Sat&quot;</span> | <span class="string">&quot;Sun&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">weekday</span>        = <span class="string">&quot;Monday&quot;</span> | <span class="string">&quot;Tuesday&quot;</span> | <span class="string">&quot;Wednesday&quot;</span> | <span class="string">&quot;Thursday&quot;</span> | <span class="string">&quot;Friday&quot;</span> | <span class="string">&quot;Saturday&quot;</span> | <span class="string">&quot;Sunday&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">month</span>          = <span class="string">&quot;Jan&quot;</span> | <span class="string">&quot;Feb&quot;</span> | <span class="string">&quot;Mar&quot;</span> | <span class="string">&quot;Apr&quot;</span> | <span class="string">&quot;May&quot;</span> | <span class="string">&quot;Jun&quot;</span></span><br><span class="line">               | <span class="string">&quot;Jul&quot;</span> | <span class="string">&quot;Aug&quot;</span> | <span class="string">&quot;Sep&quot;</span> | <span class="string">&quot;Oct&quot;</span> | <span class="string">&quot;Nov&quot;</span> | <span class="string">&quot;Dec&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>📌 注意：<br> <code>HTTP</code>对日期&#x2F;时间格式的要求仅适用于协议数据流中，不要求客户端或服务器在用户界面、日志记录等其它场景采用这些格式。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">POST / HTTP/1.1</span><br><span class="line">Host: example.com/listener</span><br><span class="line">User-Agent: curl/8.6.0</span><br><span class="line">Accept: */*</span><br><span class="line">Content-Type: application/json</span><br><span class="line">Content-Length: 345</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">&quot;data&quot;</span>: <span class="string">&quot;ABC123&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+<p>在 HTTP 协议中，<strong>Host 头部</strong>的存在是为了解决一个关键问题：<strong>单台服务器托管多个域名&#x2F;网站（虚拟主机）时的请求路由</strong>。尽管请求行（Request Line）中包含 URL 路径，但仅有路径信息无法满足现代 Web 服务的需求。以下是详细解释：</p>
+<hr>
+<h3 id="1-请求行（Request-Line）的局限性"><a href="#1-请求行（Request-Line）的局限性" class="headerlink" title="1. 请求行（Request Line）的局限性"></a><strong>1. 请求行（Request Line）的局限性</strong></h3><p>原始的 HTTP&#x2F;1.0 请求例如：</p>
+<p>text</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/index.html</span> <span class="meta">HTTP/1.0</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>问题</strong>：当一台服务器托管 <code>example.com</code> 和 <code>test.com</code> 时，仅凭路径 <code>/index.html</code> 无法区分用户想访问哪个域名下的资源。</li>
+</ul>
+<hr>
+<h3 id="2-Host-头部的作用"><a href="#2-Host-头部的作用" class="headerlink" title="2. Host 头部的作用"></a><strong>2. Host 头部的作用</strong></h3><p>HTTP&#x2F;1.1 强制要求 <code>Host</code> 头部：</p>
+<p>text</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/index.html</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>example.com</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>核心功能</strong>：告诉服务器客户端请求的是哪个域名。</li>
+<li><strong>必要性</strong>：<ul>
+<li>支持虚拟主机（单 IP 多网站）</li>
+<li>实现 CDN 精准调度</li>
+<li>处理 HTTPS 的 SNI（Server Name Indication）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-关键场景分析"><a href="#3-关键场景分析" class="headerlink" title="3. 关键场景分析"></a><strong>3. 关键场景分析</strong></h3><h4 id="1-虚拟主机（Virtual-Host）"><a href="#1-虚拟主机（Virtual-Host）" class="headerlink" title="(1) 虚拟主机（Virtual Host）"></a><strong>(1) 虚拟主机（Virtual Host）</strong></h4><ul>
+<li><strong>物理架构</strong>：<br>单台服务器（如 IP <code>192.0.2.1</code>）同时托管：<ul>
+<li><code>example.com</code></li>
+<li><code>test.com</code></li>
+</ul>
+</li>
+<li><strong>无 Host 头部时</strong>：<br>服务器无法区分请求该返回哪个网站的内容。</li>
+</ul>
+<h4 id="2-HTTPS-加密（SNI-扩展）"><a href="#2-HTTPS-加密（SNI-扩展）" class="headerlink" title="(2) HTTPS 加密（SNI 扩展）"></a><strong>(2) HTTPS 加密（SNI 扩展）</strong></h4><ul>
+<li><strong>TLS 握手阶段</strong>：<br>客户端通过 <code>Host</code> 告诉服务器该发送哪个域名的证书（在加密前完成域名匹配）。</li>
+</ul>
+<h4 id="3-反向代理-负载均衡"><a href="#3-反向代理-负载均衡" class="headerlink" title="(3) 反向代理&#x2F;负载均衡"></a><strong>(3) 反向代理&#x2F;负载均衡</strong></h4><ul>
+<li><strong>代理服务器</strong>：<br>根据 <code>Host: api.service.com</code> 和 <code>Host: web.service.com</code> 将流量路由到不同后端集群。</li>
+</ul>
+<hr>
+<h3 id="4-技术对比"><a href="#4-技术对比" class="headerlink" title="4. 技术对比"></a><strong>4. 技术对比</strong></h3><table>
+<thead>
+<tr>
+<th align="left">组件</th>
+<th align="left">信息类型</th>
+<th align="left">示例</th>
+<th align="left">作用域</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>请求行（URL路径）</strong></td>
+<td align="left">资源路径</td>
+<td align="left"><code>GET /index.html HTTP/1.1</code></td>
+<td align="left">仅定位服务器内资源</td>
+</tr>
+<tr>
+<td align="left"><strong>Host 头部</strong></td>
+<td align="left">目标域名</td>
+<td align="left"><code>Host: example.com</code></td>
+<td align="left">定位虚拟主机</td>
+</tr>
+<tr>
+<td align="left"><strong>IP 地址</strong></td>
+<td align="left">物理服务器位置</td>
+<td align="left"><code>192.0.2.1:80</code></td>
+<td align="left">网络层寻址</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="5-违反协议的后果"><a href="#5-违反协议的后果" class="headerlink" title="5. 违反协议的后果"></a><strong>5. 违反协议的后果</strong></h3><p>如果 HTTP&#x2F;1.1 请求缺失 <code>Host</code> 头部：</p>
+<ul>
+<li><p>服务器返回 <strong>400 Bad Request</strong><br>（HTTP&#x2F;1.1 规范强制要求）</p>
+</li>
+<li><p>示例错误：</p>
+<p>text</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">400</span> Bad Request</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>text/plain</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>close</span><br><span class="line"></span><br><span class="line"><span class="language-css">Missing Host <span class="selector-tag">header</span></span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="6-现代扩展应用"><a href="#6-现代扩展应用" class="headerlink" title="6. 现代扩展应用"></a><strong>6. 现代扩展应用</strong></h3><ul>
+<li><strong>HTTP&#x2F;2 和 HTTP&#x2F;3</strong>：<br>通过 <code>:authority</code> 伪头部字段继承 <code>Host</code> 的功能。</li>
+<li><strong>云原生场景</strong>：<br>Kubernetes Ingress 根据 <code>Host</code> 路由到不同 Service。</li>
+</ul>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><ul>
+<li><strong>历史原因</strong>：HTTP&#x2F;1.1 引入 <code>Host</code> 解决多域名托管问题。</li>
+<li><strong>核心价值</strong>：解耦「物理 IP」和「逻辑域名」，实现灵活的 Web 架构。</li>
+<li><strong>不可替代性</strong>：即使请求行包含路径，<code>Host</code> 仍是现代互联网基础设施（CDN&#x2F;HTTPS&#x2F;微服务）的基石。</li>
+</ul>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+              <a href="/tags/http/" rel="tag"># http</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/07/01/linux/fs/fuse%E4%B8%B4%E6%97%B6/" rel="prev" title="fuse临时">
+                  <i class="fa fa-angle-left"></i> fuse临时
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/07/04/c++/%E5%8F%82%E6%95%B0%E5%8C%85/" rel="next" title="参数包">
+                  参数包 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

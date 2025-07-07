@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="📝概述在Linux设备模型中，kobject是一个核心概念，它提供了一种统一的方式来管理和组织内核对象。你可以把它想象成一个基石，许多更复杂的内核结构（如kset、device、driver等）都是建立在它之上的。 🎯kobject是什么？从根本上说，一个kobject是一个嵌入在其他内核数据结构中的结构体，主要作用是：  引用计数：这是kobject最重要的功能之一。每个kobject有一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kobject对象">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/24/linux/misc/kobject%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="📝概述在Linux设备模型中，kobject是一个核心概念，它提供了一种统一的方式来管理和组织内核对象。你可以把它想象成一个基石，许多更复杂的内核结构（如kset、device、driver等）都是建立在它之上的。 🎯kobject是什么？从根本上说，一个kobject是一个嵌入在其他内核数据结构中的结构体，主要作用是：  引用计数：这是kobject最重要的功能之一。每个kobject有一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-24T05:26:52.796Z">
+<meta property="article:modified_time" content="2025-06-24T06:09:56.462Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="kobject">
+<meta property="article:tag" content="miscellaneous">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/24/linux/misc/kobject%E5%AF%B9%E8%B1%A1/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/24/linux/misc/kobject%E5%AF%B9%E8%B1%A1/","path":"2025/06/24/linux/misc/kobject对象/","title":"kobject对象"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>kobject对象 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%9D%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">📝概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8E%AFkobject%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">🎯kobject是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8C%B2kobject%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9A%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">🌲kobject的结构体定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9A%80kobject%E7%9A%84%E4%B8%BB%E8%A6%81%E6%93%8D%E4%BD%9C"><span class="nav-number">4.</span> <span class="nav-text">🚀kobject的主要操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%94%A5kobject%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.</span> <span class="nav-text">🔥kobject类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%90%9Bkobject%E7%9A%84%E7%94%A8%E9%80%94"><span class="nav-number">6.</span> <span class="nav-text">🐛kobject的用途</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%AC%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">🧬总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/24/linux/misc/kobject%E5%AF%B9%E8%B1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="kobject对象 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kobject对象
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-24 13:26:52 / 修改时间：14:09:56" itemprop="dateCreated datePublished" datetime="2025-06-24T13:26:52+08:00">2025-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="📝概述"><a href="#📝概述" class="headerlink" title="📝概述"></a>📝概述</h4><p>在<code>Linux</code>设备模型中，<code>kobject</code>是一个核心概念，它提供了一种统一的方式来管理和组织内核对象。你可以把它想象成一个基石，许多更复杂的内核结构（如<code>kset</code>、<code>device</code>、<code>driver</code>等）都是建立在它之上的。</p>
+<h4 id="🎯kobject是什么？"><a href="#🎯kobject是什么？" class="headerlink" title="🎯kobject是什么？"></a>🎯<code>kobject</code>是什么？</h4><p>从根本上说，一个<code>kobject</code>是一个嵌入在其他内核数据结构中的结构体，主要作用是：</p>
+<ul>
+<li>引用计数：这是<code>kobject</code>最重要的功能之一。每个<code>kobject</code>有一个引用计数。当有代码需要使用一个内核对象时，引用计数会增加；当不再需要时，引用计数会减少。当引用计数降到零时，<code>kobject</code>会被自动销毁。这有效防止了对象被过早释放，导致“悬空指针”等问题。</li>
+<li>管理父子关系：<code>kobject</code>可以形成树状结构，每个<code>kobject</code>可以有一个父<code>kobject</code>。这在设备模型中尤为重要，因为它能反映设备在硬件拓扑中的层次关系（例如，一个<code>USB</code>设备插在一个<code>USB</code>控制器上）。</li>
+<li><code>sysfs</code>表示：每个<code>kobject</code>在<code>/sys</code>文件系统中都有一个对应的目录。这使得用户空间程序能够通过文件系统接口查看和操作内核对象的信息，实现了内核和用户空间的交互。</li>
+</ul>
+<h4 id="🌲kobject的结构体定义"><a href="#🌲kobject的结构体定义" class="headerlink" title="🌲kobject的结构体定义"></a>🌲<code>kobject</code>的结构体定义</h4><p><code>kobject</code>的定义通常在<code>&lt;linux/kobject.h&gt;</code>中，核心字段包括：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> &#123;</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *name;                    <span class="comment">// 对象在sysfs中的名称</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">entry</span>;</span>              <span class="comment">// 用于连接到kset的链表节点</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> *<span class="title">parent</span>;</span>              <span class="comment">// 指向父kobject</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kset</span> *<span class="title">kset</span>;</span>                   <span class="comment">// 所属的kset</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kobj_type</span> *<span class="title">ktype</span>;</span>             <span class="comment">// 指向对象的类型信息</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sysfs_dirent</span> *<span class="title">sd</span>;</span>             <span class="comment">// 在sysfs中对应的目录项</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kref</span> <span class="title">kref</span>;</span>                    <span class="comment">// 引用计数器</span></span><br><span class="line">  </span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_initialized : <span class="number">1</span>;  <span class="comment">// 状态标志</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_in_sysfs : <span class="number">1</span>;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_add_uevent_sent : <span class="number">1</span>;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_remove_uevent_sent : <span class="number">1</span>;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> uevent_supress: <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_DEBUG_KOBJECT_RELEASE</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">delayed_work</span>	<span class="title">release</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="🚀kobject的主要操作"><a href="#🚀kobject的主要操作" class="headerlink" title="🚀kobject的主要操作"></a>🚀<code>kobject</code>的主要操作</h4><p><code>kobject</code>通常作为其他结构体的一部分使用，它有一套标准的<code>API</code>来管理其生命周期和属性：</p>
+<ol>
+<li><p>初始化：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 初始化一个`kobject`。它设置引用计数为1，并关联其类型。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">kobject_init(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> kobj_type *ktype);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 初始化并立即将其添加到设备模型和sysfs中。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">kobject_init_and_add(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> kobj_type *ktype, <span class="keyword">struct</span> kobject *parent, </span><br><span class="line">                     <span class="type">const</span> <span class="type">char</span> *fmt, ...);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加到设备模型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将kobject添加到设备模型中，并在sysfs中创建对应的目录。它会增加父kobject的引用计数。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">kobject_add(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> kobject *parent, <span class="type">const</span> <span class="type">char</span> *fmt, ...);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>引用计数管理：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增加`kobject`的引用计数。调用者必须负责在不再需要时调用`kobject_put`。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">kobject_get(<span class="keyword">struct</span> kobject *kobj);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 减少`kobject`的引用计数。当引用计数减到0时，`kobject_put`会调用`kobj-&gt;ktype-&gt;release`函数释</span></span><br><span class="line"><span class="comment"> * 放`kobject`所属的内存。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">kobject_put(<span class="keyword">struct</span> kobject *kobj);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从设备模型中移除</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 从设备模型中删除`kobject`，并从`sysfs`中移除对应的目录。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">kobject_del(<span class="keyword">struct</span> kobject *kobj);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="🔥kobject类型"><a href="#🔥kobject类型" class="headerlink" title="🔥kobject类型"></a>🔥<code>kobject</code>类型</h4><p>每个<code>kobject</code>都必须关联一个<code>kobj_type</code>。这个结构体定义了<code>kobject</code>的行为特性，特别是它的释放函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobj_type</span> &#123;</span></span><br><span class="line">  <span class="type">void</span> (*release)(<span class="keyword">struct</span> kobject *kobj);					<span class="comment">// 引用计数归零时调用的释放函数</span></span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">sysfs_ops</span> *<span class="title">sysfs_ops</span>;</span>							<span class="comment">// sysfs操作函数集</span></span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> **<span class="title">default_groups</span>;</span>	<span class="comment">// 默认属性组</span></span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">kobj_ns_type_operations</span> *(*<span class="title">child_ns_type</span>)(</span></span><br><span class="line"><span class="class">      <span class="title">const</span> <span class="keyword">struct</span> <span class="title">kobject</span> *<span class="title">kobj</span>);</span></span><br><span class="line">  <span class="type">const</span> <span class="type">void</span> *(*namespace)(<span class="type">const</span> <span class="keyword">struct</span> kobject *kobj);</span><br><span class="line">  <span class="type">void</span> (*get_ownership)(<span class="type">const</span> <span class="keyword">struct</span> kobject *kobj, <span class="type">kuid_t</span> *uid, <span class="type">kgid_t</span> *gid);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>release</code>函数是<code>kobject</code>生命周期管理的核心。当<code>kobject_put</code>将引用计数减为0时，它会调用这个<code>release</code>函数。通常，这个<code>release</code>函数会负责释放包含<code>kobject</code>的那个更大的数据结构所占用的内存。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">my_device</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> <span class="title">kobj</span>;</span></span><br><span class="line">  <span class="comment">// ... 其他设备特有的数据</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_device_release</span><span class="params">(<span class="keyword">struct</span> kobject *kobj)</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">my_device</span> *<span class="title">dev</span> =</span> container_of(kobj, <span class="keyword">struct</span> my_device, kobj);</span><br><span class="line">  <span class="comment">// 释放 my_device 结构体本身及其内部资源</span></span><br><span class="line">  kfree(dev);</span><br><span class="line">  printk(KERN_INFO <span class="string">&quot;my_device released!\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在初始化my_device的kobject时，会将其ktype-&gt;release设置为my_device_release</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="🐛kobject的用途"><a href="#🐛kobject的用途" class="headerlink" title="🐛kobject的用途"></a>🐛<code>kobject</code>的用途</h4><p><code>kobject</code>自身不承载太多具体的业务逻辑，它更像是一个“基类”或“框架”。它通常被嵌入到更高级的内核结构中，例如：</p>
+<ul>
+<li><code>struct device</code>：代表一个物理或虚拟设备。<code>device</code>结构体内部包含一个<code>kobject</code>。</li>
+<li><code>struct device_driver</code>：代表一个设备驱动。<code>device_driver</code>结构体内部也包含一个<code>kobject</code>。</li>
+<li><code>struct kset</code>：用于组织和管理一组相关的<code>kobject</code>。<code>kset</code>自身也包含一个 <code>kobject</code>。</li>
+</ul>
+<p>通过<code>kobject</code>提供的通用功能（引用计数、<code>sysfs</code>表示、父子关系），这些复杂的内核结构可以共享一套统一的管理机制。</p>
+<h4 id="🧬总结"><a href="#🧬总结" class="headerlink" title="🧬总结"></a>🧬总结</h4><p><code>kobject</code>是<code>Linux</code>设备模型中一个非常基础但至关重要的构建块。它提供了统一的对象管理机制，通过引用计数实现了对象的生命周期管理，并通过在<code>sysfs</code>中创建文件系统接口方便了用户空间对内核对象的访问。理解<code>kobject</code>的工作原理，是深入理解<code>Linux</code>设备模型、驱动开发以及内核内部机制的关键一步。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/kobject/" rel="tag"># kobject</a>
+              <a href="/tags/miscellaneous/" rel="tag"># miscellaneous</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/24/linux/misc/kobject/" rel="prev" title="kobject">
+                  <i class="fa fa-angle-left"></i> kobject
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/25/linux/driver/%E6%97%B6%E9%97%B4%E3%80%81%E5%BB%B6%E8%BF%9F%E5%8F%8A%E5%BB%B6%E7%BC%93%E6%93%8D%E4%BD%9C/" rel="next" title="时间、延迟及延缓操作">
+                  时间、延迟及延缓操作 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

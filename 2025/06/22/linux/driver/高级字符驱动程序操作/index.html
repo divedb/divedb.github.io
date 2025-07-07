@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="🧩概述本章阐述编写全功能字符设备驱动程序的几个概念。首先，我们要实现ioctl系统调用，它是用于设备控制的公共接口。然后，我们介绍和用户空间保持同步的几种途径。读完本章，读者将掌握如何使进程休眠并被唤醒、如何实现非阻塞I&#x2F;O，以及在设备可读取或写入时如何通知用户空间，等等。最后，我们介绍如何在驱动程序中实现几种不同的设备访问策略。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高级字符驱动程序操作">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/22/linux/driver/%E9%AB%98%E7%BA%A7%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="🧩概述本章阐述编写全功能字符设备驱动程序的几个概念。首先，我们要实现ioctl系统调用，它是用于设备控制的公共接口。然后，我们介绍和用户空间保持同步的几种途径。读完本章，读者将掌握如何使进程休眠并被唤醒、如何实现非阻塞I&#x2F;O，以及在设备可读取或写入时如何通知用户空间，等等。最后，我们介绍如何在驱动程序中实现几种不同的设备访问策略。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-22T01:56:17.235Z">
+<meta property="article:modified_time" content="2025-06-26T07:49:49.345Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="驱动程序">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/22/linux/driver/%E9%AB%98%E7%BA%A7%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%93%8D%E4%BD%9C/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/22/linux/driver/%E9%AB%98%E7%BA%A7%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%93%8D%E4%BD%9C/","path":"2025/06/22/linux/driver/高级字符驱动程序操作/","title":"高级字符驱动程序操作"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>高级字符驱动程序操作 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%A7%A9%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">🧩概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9A%80-ioctl"><span class="nav-number">2.</span> <span class="nav-text">🚀 ioctl</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E6%8B%A9ioctl%E5%91%BD%E4%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">选择ioctl命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">2.2.</span> <span class="nav-text">返回值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E5%91%BD%E4%BB%A4"><span class="nav-number">2.3.</span> <span class="nav-text">预定义命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E2%BD%A4ioctl%E5%8F%82%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">使⽤ioctl参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9D%83%E8%83%BD%E4%B8%8E%E5%8F%97%E9%99%90%E6%93%8D%E4%BD%9C"><span class="nav-number">2.5.</span> <span class="nav-text">权能与受限操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%BE%AEioctl%E7%9A%84%E8%AE%BE%E5%A4%87%E6%8E%A7%E5%88%B6"><span class="nav-number">2.6.</span> <span class="nav-text">⾮ioctl的设备控制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8E%AF%E9%98%BB%E5%A1%9E%E5%9E%8BI-O"><span class="nav-number">3.</span> <span class="nav-text">🎯阻塞型I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%91%E7%9C%A0%E7%9A%84%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">休眠的简单介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BC%91%E7%9C%A0"><span class="nav-number">3.1.1.</span> <span class="nav-text">简单休眠</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%98%BB%E5%A1%9E%E5%92%8C%E2%BE%AE%E9%98%BB%E5%A1%9E%E5%9E%8B%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">阻塞和⾮阻塞型操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%BC%80%E4%B8%AA%E9%98%BB%E5%A1%9EI-O%E2%BD%B0%E4%BE%8B"><span class="nav-number">3.3.</span> <span class="nav-text">⼀个阻塞I&#x2F;O⽰例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%BE%BC%E7%BA%A7%E4%BC%91%E7%9C%A0"><span class="nav-number">3.4.</span> <span class="nav-text">⾼级休眠</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E8%BF%9B%E7%A8%8B%E5%A6%82%E4%BD%95%E4%BC%91%E7%9C%A0"><span class="nav-number">3.4.1.</span> <span class="nav-text">📌进程如何休眠</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E2%BC%BF%E2%BC%AF%E4%BC%91%E7%9C%A0"><span class="nav-number">3.4.2.</span> <span class="nav-text">📌⼿⼯休眠</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E7%8B%AC%E5%8D%A0%E7%AD%89%E5%BE%85"><span class="nav-number">3.4.3.</span> <span class="nav-text">📌独占等待</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E5%94%A4%E9%86%92%E7%9A%84%E7%9B%B8%E5%85%B3%E7%BB%86%E8%8A%82"><span class="nav-number">3.4.4.</span> <span class="nav-text">📌唤醒的相关细节</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E6%97%A7%E7%9A%84%E5%8E%86%E5%8F%B2%EF%BC%9Asleep-on"><span class="nav-number">3.4.5.</span> <span class="nav-text">📌旧的历史：sleep_on</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E6%B5%8B%E8%AF%95Scullpipe%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">3.4.6.</span> <span class="nav-text">📌测试Scullpipe驱动程序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%94%A5poll%E5%92%8Cselect"><span class="nav-number">4.</span> <span class="nav-text">🔥poll和select</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97%E4%B8%8Eread%E5%92%8Cwrite%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="nav-number">4.1.</span> <span class="nav-text">🔗与read和write的交互</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E4%BB%8E%E8%AE%BE%E5%A4%87%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">4.1.1.</span> <span class="nav-text">📌从设备读取数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%F0%9F%93%8C%E5%90%91%E8%AE%BE%E5%A4%87%E5%86%99%E6%95%B0%E6%8D%AE"><span class="nav-number">4.1.2.</span> <span class="nav-text">📌向设备写数据</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97%E5%88%B7%E6%96%B0%E5%BE%85%E5%A4%84%E7%90%86%E8%BE%93%E5%87%BA"><span class="nav-number">4.2.</span> <span class="nav-text">🔗刷新待处理输出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97%E5%BA%95%E5%B1%82%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">4.3.</span> <span class="nav-text">🔗底层的数据结构</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%90%9B%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5"><span class="nav-number">5.</span> <span class="nav-text">🐛异步通知</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97%E4%BB%8E%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E7%9A%84%E2%BE%93%E5%BA%A6%E8%80%83%E8%99%91"><span class="nav-number">5.1.</span> <span class="nav-text">🔗从驱动程序的⾓度考虑</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%9B%A0%EF%B8%8F%E5%AE%9A%E4%BD%8D%E8%AE%BE%E5%A4%87"><span class="nav-number">6.</span> <span class="nav-text">🛠️定位设备</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97llseek%E5%AE%9E%E7%8E%B0"><span class="nav-number">6.1.</span> <span class="nav-text">🔗llseek实现</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E2%BD%82%E4%BB%B6%E7%9A%84%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">7.</span> <span class="nav-text">设备⽂件的访问控制</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/22/linux/driver/%E9%AB%98%E7%BA%A7%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="高级字符驱动程序操作 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高级字符驱动程序操作
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-22 09:56:17" itemprop="dateCreated datePublished" datetime="2025-06-22T09:56:17+08:00">2025-06-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-26 15:49:49" itemprop="dateModified" datetime="2025-06-26T15:49:49+08:00">2025-06-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="🧩概述"><a href="#🧩概述" class="headerlink" title="🧩概述"></a>🧩概述</h4><p>本章阐述编写全功能字符设备驱动程序的几个概念。首先，我们要实现<code>ioctl</code>系统调用，它是用于设备控制的公共接口。然后，我们介绍和用户空间保持同步的几种途径。读完本章，读者将掌握如何使进程休眠并被唤醒、如何实现非阻塞<code>I/O</code>，以及在设备可读取或写入时如何通知用户空间，等等。最后，我们介绍如何在驱动程序中实现几种不同的设备访问策略。</p>
+<span id="more"></span>
+
+<h4 id="🚀-ioctl"><a href="#🚀-ioctl" class="headerlink" title="🚀 ioctl"></a>🚀 <code>ioctl</code></h4><p>除了读取和写⼊设备之外，⼤部分驱动程序还需要另外⼀种能⼒，即通过设备驱动程序执⾏各种类型的硬件控制。简单数据传输之外，⼤部分设备可以执⾏其他⼀些操作，⽐如，⽤户空间经常会请求设备锁门、弹出介质、报告错误信息、改变波特率或者执⾏⾃破坏，等等。这些操作通常通过<code>ioctl</code>⽅法⽀持，该⽅法实现了同名的系统调⽤</p>
+<p>在用户空间，<code>ioctl</code>系统调用具有如下原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">ioctl</span><span class="params">(<span class="type">int</span> fd, <span class="type">unsigned</span> <span class="type">long</span> cmd, ...)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>由于使⽤了⼀连串的<code>.</code>的缘故，这个原型在<code>Unix</code>系统调⽤中显得⽐较特别，通常这些点代表可变的参数表。但是在实际系统中，系统调⽤不会真正使⽤可变的参数，⽽是必须具有精确定义的原型，这是因为⽤户程序只能通过硬件“门”才能访问它们。所以，原型中的这些点并不是数⽬不定的参数，⽽是⼀个可选参数，习惯上⽤<code>char *argp</code>定义。这⾥⽤点只是为了在编译时防⽌编译器进⾏类型检查。第三个参数的具体形式依赖于要完成的控制命令，也就是第⼆个参数。某些控制命令不需要参数，某些需要⼀个整数参数，⽽某些则需要⼀个指针参数。使⽤指针可以向<code>ioctl</code>调⽤传递任意数据，这样设备可以与⽤户空间交换任意数量的数据。</p>
+<p><code>ioctl</code>调⽤的⾮结构化本质导致很多内核开发者倾向于放弃它。从本质上讲，每个<code>ioctl</code>命令就是⼀个独⽴的系统调⽤，⽽且是⾮公开的，因此没有任何办法可以以⼀种容易理解的⽅式来审核这些调⽤。让这种⾮结构化的<code>ioctl</code>参数在所有系统上表现⼀致也是⾮常困难的，为了理解这⼀点，试想在：<code>64</code>位系统上运⾏<code>32</code>位模式的⽤户空间进程。结果，有许多需求要求我们通过其他途径实现繁杂的控制操作，例如：将命令嵌⼊到数据流中，或者使⽤虚拟⽂件系统，⽐如<code>sysfs</code>或者设备相关的⽂件系统。但现实情况中，对真正的设备操作来说，<code>ioctl</code>仍然是最简单且最直接的选择。</p>
+<p>驱动程序的<code>ioctl</code>⽅法原型和⽤户空间的版本存在⼀些不同：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> (*ioctl)(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp, <span class="type">unsigned</span> <span class="type">int</span> cmd, <span class="type">unsigned</span> <span class="type">long</span> arg);</span><br></pre></td></tr></table></figure>
+
+<p><code>inode</code>和<code>filp</code>两个指针的值对应于应⽤程序传递的⽂件描述符<code>fd</code>，这和传给<code>open</code>⽅法的参数⼀样。参数<code>cmd</code>由⽤户空间不经修改地传递给驱动程序，<code>arg</code>参数可能是指针值。如果调⽤程序没有传递第三个参数，那么<code>arg</code>参数就是未定义状态。⼤多数<code>ioctl</code>的实现中都包括⼀个<code>switch</code>语句来根据<code>cmd</code>参数选择对应的操作。</p>
+<h5 id="选择ioctl命令"><a href="#选择ioctl命令" class="headerlink" title="选择ioctl命令"></a>选择<code>ioctl</code>命令</h5><p>在编写<code>ioctl</code>代码之前，需要选择对应不同命令的编号。多数程序员的第⼀本能是从<code>0</code>或者<code>1</code>开始选择⼀组⼩的编号。然⽽，有许多理由要求不能这样选择命令编号。为了防⽌对错误的设备使⽤正确的命令，命令号应该在系统范围内唯⼀。程序可能会发现⾃⼰正在试图对<code>FIFO</code>和<code>audio</code>等这类⾮串⾏设备输⼊流修改波特率。如果每⼀个<code>ioctl</code>命令都是唯⼀的，应⽤程序进⾏这种操作时就会得到⼀个<code>EINVAL</code>错误，⽽不是⽆意间成功地完成了意想不到的操作。</p>
+<p>为⽅便创建唯⼀的<code>ioctl</code>命令号，每⼀个命令号被分为多个位字段。<code>Linux</code>的第⼀个版本使⽤了⼀个<code>16</code>位整数：⾼<code>8</code>位是与设备相关的“魔幻”数，低<code>8</code>位是⼀个序列号码，在设备内是唯⼀的。当时采⽤这种⽅案是因为、⽤<code>Linus</code>⾃⼰的话说，他有点“⽆头绪”，后来才得到⼀个更好的位字段分割⽅案。遗憾的是，相当多的驱动程序仍使⽤旧的约定，因为修改命令号会导致很多已有的⼆进制程序⽆法运⾏。</p>
+<p>要按<code>Linux</code>内核的约定⽅法为驱动程序选择ioctl编号，应该⾸先看看<code>include/asm/ioctl.h</code>和<code>Documentarion/ioctl-number.txt</code>这两个⽂件。头⽂件定义了要使⽤的位字段：类型（幻数）、序数、传送⽅向以及参数⼤⼩等等。<code>ioctl-number.txt</code>⽂件中罗列了内核所使⽤的幻数，这样，在选择⾃⼰的幻数时就可以避免和内核冲突。这个⽂件也给出了为什么应该使⽤这个约定的原因。</p>
+<p>定义号码的新⽅法使⽤了<code>4</code>个位字段，其含义如下⾯所给出。下⾯所介绍的新符号都定义在<code>&lt;linux/iocnl.h&gt;</code>中。</p>
+<ul>
+<li><p><code>type</code></p>
+<p>幻数。选择⼀个号码（先仔细阅读<code>ioctl-number.txt</code>），并在整个驱动程序中使⽤这个号码。这个字段有<code>8</code>位宽（<code>_IOC_TYPEBITS</code>）。</p>
+</li>
+<li><p><code>number</code></p>
+<p>序数（顺序编号）。它也是<code>8</code>位宽（<code>_IOC_NRBITS</code>）。</p>
+</li>
+<li><p><code>direction</code></p>
+<p>如果相关命令涉及到数据的传输，则该位字段定义数据传输的⽅向。可以使⽤的值包括<code>_IOC_NONE</code>（没有数据传输）、<code>_IOC_READ</code>、<code>_IOC_WRITE</code>以及<code>_IOC_READ | _IOC_WRITE</code>（双向传输数据）。数据传输是从应⽤程序的⾓度看的，也就是说，<code>_IOC_READ</code>意味着从设备中读取数据，所以驱动程序必须向⽤户空间写⼈数据。注意，该字段是⼀个位掩码，因此可以⽤逻辑<code>AND</code>操作从中分解出<code>_IOC_READ</code>和<code>_IOC_WRITE</code>。</p>
+</li>
+<li><p><code>size</code></p>
+<p>所涉及的⽤户数据⼤⼩。这个字段的宽度与体系结构有关，通常是<code>13</code>位或<code>14</code>位，具体可通过宏<code>_IOC_SIZEBITS</code>找到针对特定体系结构的具体数值。系统井不强制使⽤这个位字段，也就是说，内核不会检查这个位字段。对该位字段的正确使⽤可帮助我们检测⽤户空间程序的错误，并且如果我们从不改变相关数据项⼤⼩的话，这个位字段还可以帮助我们实现向后的兼容性。但是，如果需要很⼤的数据传输，则可以忽略这个位字段。</p>
+</li>
+</ul>
+<p><code>&lt;linux/ioctl.h&gt;</code>中包含的<code>&lt;asm/ioctl.h&gt;</code>头⽂件定义了⼀些构造命令编号的宏：<code>_IO(type, nr)</code>⽤于构造⽆参数的命令编号；<code>_IOR(type, nr, datatype)</code>⽤于构造从驱动程序中读取数据的命令编号；<code>_IOW(type, nr, datatype)</code>⽤于写⼊数据的命令；<code>_IOWR(type, nr, datatype)</code>⽤于双向传输。<code>type</code>和<code>number</code>位字段通过参数传⼊，⽽<code>size</code>位字段通过对<code>datatype参数取</code>sizeof&#96;获得。</p>
+<p>这个头⽂件还定义了⽤于解开位字段的宏：<code>_IOC_DIR(nr)</code>、<code>_IOC_TYPE(nr)</code>、<code>_IOC_NR(nr)</code>和<code>_IOC_SIZE(nr)</code>。</p>
+<h5 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h5><p><code>ioctl</code>的实现通常就是⼀个基于命令号的<code>switch</code>语句。但是当命令号不能匹配任何合法的操作时，默认的选择是什么？对于这个问题颇有争议。有些内核函数会返回<code>-EINVAL</code>，因为命令参数不是合法的参数。然⽽，<code>POSIX</code>标准规定，如果使⽤了不合适的<code>ioctl</code>命令参数，应该返回<code>-ENOTTY</code>。<code>C</code>库将这个错误码解释为<code>Inappropriate ioctl for device</code>，不合适的设备<code>ioctl</code>，这看起来更贴切些。尽管如此，对⾮法的<code>ioctl</code>命令返回<code>-EINVAL</code>仍然是很普遍的做法。</p>
+<h5 id="预定义命令"><a href="#预定义命令" class="headerlink" title="预定义命令"></a>预定义命令</h5><p>尽管<code>ioctl</code>系统调⽤绝⼤部分⽤于操作设备，但还有⼀些命令是可以由内核识别的。要注意，当这些命令⽤于我们的设备时，它们会在我们⾃⼰的⽂件操作被调⽤之前被解码。所以，如果你为⾃⼰的<code>ioctl</code>命令选⽤了与这些预定义命令相同的编号，就永远不会收到该命令的请求，⽽且由于<code>ioctl</code>编号冲突，应⽤程序的⾏为将⽆法预测。</p>
+<p>预定义命令分为三组：</p>
+<ul>
+<li><p>可⽤于任何⽂件（普通、设备、<code>FIFO</code>和套接字）的命令</p>
+</li>
+<li><p>只⽤于普通⽂件的命令</p>
+</li>
+<li><p>特定于⽂件系统类型的命令</p>
+</li>
+</ul>
+<p>最后⼀组命令只能在宿主⽂件系统上执⾏（见<code>chattr</code>命令）。设备驱动程序开发⼈员只对第⼀组感兴趣，它们的魔幻数都是<code>T</code>。<code>ext2_ioctl</code>是其中最有意思的函数，它实现了只追加（<code>append-only</code>）标志和不可变（<code>immutable</code>）标志。</p>
+<p>下列<code>ioctl</code>命令对任何⽂件（包括设备特定⽂件）都是预定义的：</p>
+<ul>
+<li><p><code>FIOCLEX</code></p>
+<p>设置执⾏时关闭标志（<code>File IOctl CLose on EXec</code>）。设置了这个标志之后，当调⽤进程执⾏⼀个新程序时，⽂件描述符将被关闭。</p>
+</li>
+<li><p><code>FIONCLEX</code></p>
+<p>清除执⾏时关闭标志（<code>File IOctl Not CLose on EXec</code>）。该命令将恢复通常的⽂件⾏为，并撤销上述<code>FIOCLEX</code>命令所做的⼯作。</p>
+</li>
+<li><p><code>FIOASYNC</code></p>
+<p>设置或复位⽂件异步通知。注意，直到<code>Linux 2.2.4</code>版本的内核都不正确地使⽤了这个命令来修改<code>O_SYNC</code>标志。因为这两个动作都可以通过<code>fcntl</code>完成，所以实际上没有⼈会使⽤<code>FIOASYNC</code>命令，列在这⾥只是为了保持完整。</p>
+</li>
+<li><p><code>FIOQSIZE</code></p>
+<p>该命令返回⽂件或目录的⼤⼩。不过，当⽤于设备⽂件时，会导致<code>ENOTTY</code>错误的返回。</p>
+</li>
+<li><p><code>FIONBIO</code></p>
+<p>意指<code>File IOctl Non-Blocking I/O</code>，即“⽂件<code>ioctl</code>⾮阻塞型<code>I/O</code>”。该调⽤修改<code>filp-&gt;f_flags</code>中的<code>O_NONBLOCK</code>标志。传递给系统调⽤的第三个参数指明了是设置还是消除该标志。注意，修改这个标志的常⽤⽅法是由<code>fcntl</code>系统调⽤使⽤<code>F_SETFL</code>命令来完成。</p>
+</li>
+</ul>
+<p><code>fcntl</code>看起来很像<code>ioctl</code>。实际上，<code>fcntl</code>调⽤也要传递⼀个命令参数和⼀个可选参数，在这点上它类似于<code>ioctl</code>。它和<code>ioctl</code>的不同主要是由于历史原困造成的：当<code>Unix</code>的开发⼈员⾯对控制<code>I/O</code>操作的问题时，他们认为⽂件和设备是不同的。那时，与<code>ioctl</code>实现相关的唯⼀设备就是终端，这也解释了为什么⾮法的<code>ioctl</code>命令的标准返回值是<code>-ENOTTY</code>。现在情况虽然不同了，但是<code>fcntl</code>还是为了向后兼容⽽保留了下来。</p>
+<h5 id="使⽤ioctl参数"><a href="#使⽤ioctl参数" class="headerlink" title="使⽤ioctl参数"></a>使⽤<code>ioctl</code>参数</h5><p>在分析<code>scull</code>驱动程序的<code>ioctl</code>代码之前，还有⼀点要解释，就是怎样使⽤可选参数。如果它是个整数，那么很简单，直接使⽤就可以了。如果是个指针，就需要注意⼀些问题了。</p>
+<p>当⽤⼀个指针指向⽤户空间时，必须确保指向的⽤户空间是合法的。对未验证的⽤户空间指针的访问，可能导致内核<code>oops</code>、系统崩溃或者安全问题。驱动程序应该负责对每个⽤到的⽤户空间地址做适当的检查，如果是⾮法地址则应该返回⼀个错误。</p>
+<p><code>copy_from_user</code>和<code>copy_to_user</code>这两个函数可安全地与⽤户空间交换数据。这两个函数也可以在<code>ioctl</code>⽅法中使⽤，但是因为<code>ioctl</code>调⽤通常涉及到⼩的数据项，因此可通过其他⽅法更有效地操作。为此，我们⾸先要通过函数<code>access_ok</code>验证地址（⽽不传输数据），该函数在<code>&lt;asm/uaccess.h&gt;</code>中声明：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">access_ok</span><span class="params">(<span class="type">int</span> type, <span class="type">const</span> <span class="type">void</span> *addr, <span class="type">unsigned</span> <span class="type">long</span> size)</span>:</span><br></pre></td></tr></table></figure>
+
+<p>第⼀个参数应该是<code>VERIFY_READ</code>或<code>VERIFY_WRITE</code>，取决于要执⾏的动作是读取还是写⼊⽤户空间内存区。<code>addr</code>参数是⼀个⽤户空间地址，<code>size</code>是字节数。例如，如果<code>ioctl</code>要从⽤户空间读取⼀个整数，<code>size</code>就是<code>sizeof(int)</code>。如果在指定地址处既要读取又要写⼊，则应该⽤<code>VERIFY_WRITE</code>，因为它是<code>VERIFY_READ</code>的超集。与⼤多数函数不同，<code>access_ok</code>返回⼀个布尔值：<code>1</code>表⽰成功（访问成功），<code>0</code>表⽰失败（访问不成功）。如果返回失败，驱动程序通常要返回<code>-EFAULT</code>给调⽤者。</p>
+<p>关于<code>access_ok</code>，有两点有趣之处需要注意。第⼀，它并没有完成验证内存的全部⼯作，⽽只检查了所引⽤的内存是否位于进程有对应访问权限的区域内，特别是要确保访问地址没有指向内核空间的内存区。第⼆、⼤多数驱动程序代码中都不需要真正调⽤<code>access_ok</code>，因为后⾯要讲到的内存管理程序会处理它。</p>
+<p><code>scull</code>的源代码在<code>switch</code>语句前，通过分析<code>ioctl</code>编号的位字段来检查参数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="title function_">scull_ioctl</span><span class="params">(<span class="keyword">struct</span> file* filp, <span class="type">unsigned</span> <span class="type">int</span> cmd, <span class="type">unsigned</span> <span class="type">long</span> arg)</span> &#123;</span><br><span class="line">  <span class="type">int</span> err = <span class="number">0</span>, tmp;</span><br><span class="line">  <span class="type">int</span> retval = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * extract the type and number bitfields, and don&#x27;t decode</span></span><br><span class="line"><span class="comment">   * wrong cmds: return ENOTTY (inappropriate ioctl) before access_ok()</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">if</span> (_IOC_TYPE(cmd) != SCULL_IOC_MAGIC) <span class="keyword">return</span> -ENOTTY;</span><br><span class="line">  <span class="keyword">if</span> (_IOC_NR(cmd) &gt; SCULL_IOC_MAXNR) <span class="keyword">return</span> -ENOTTY;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * the direction is a bitmask, and VERIFY_WRITE catches R/W</span></span><br><span class="line"><span class="comment">   * transfers. `Type&#x27; is user-oriented, while</span></span><br><span class="line"><span class="comment">   * access_ok is kernel-oriented, so the concept of &quot;read&quot; and</span></span><br><span class="line"><span class="comment">   * &quot;write&quot; is reversed</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">if</span> (_IOC_DIR(cmd) &amp; _IOC_READ)</span><br><span class="line">    err = !access_ok_wrapper(VERIFY_WRITE, (<span class="type">void</span> __user*)arg, _IOC_SIZE(cmd));</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (_IOC_DIR(cmd) &amp; _IOC_WRITE)</span><br><span class="line">    err = !access_ok_wrapper(VERIFY_READ, (<span class="type">void</span> __user*)arg, _IOC_SIZE(cmd));</span><br><span class="line">  <span class="keyword">if</span> (err) <span class="keyword">return</span> -EFAULT;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span> (cmd) &#123;</span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCRESET:</span><br><span class="line">      scull_quantum = SCULL_QUANTUM;</span><br><span class="line">      scull_qset = SCULL_QSET;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCSQUANTUM: <span class="comment">/* Set: arg points to the value */</span></span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      retval = __get_user(scull_quantum, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCTQUANTUM: <span class="comment">/* Tell: arg is the value */</span></span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      scull_quantum = arg;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCGQUANTUM: <span class="comment">/* Get: arg is pointer to result */</span></span><br><span class="line">      retval = __put_user(scull_quantum, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCQQUANTUM: <span class="comment">/* Query: return it (it&#x27;s positive) */</span></span><br><span class="line">      <span class="keyword">return</span> scull_quantum;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCXQUANTUM: <span class="comment">/* eXchange: use arg as pointer */</span></span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      tmp = scull_quantum;</span><br><span class="line">      retval = __get_user(scull_quantum, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">if</span> (retval == <span class="number">0</span>) retval = __put_user(tmp, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCHQUANTUM: <span class="comment">/* sHift: like Tell + Query */</span></span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      tmp = scull_quantum;</span><br><span class="line">      scull_quantum = arg;</span><br><span class="line">      <span class="keyword">return</span> tmp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCSQSET:</span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      retval = __get_user(scull_qset, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCTQSET:</span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      scull_qset = arg;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCGQSET:</span><br><span class="line">      retval = __put_user(scull_qset, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCQQSET:</span><br><span class="line">      <span class="keyword">return</span> scull_qset;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCXQSET:</span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      tmp = scull_qset;</span><br><span class="line">      retval = __get_user(scull_qset, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">if</span> (retval == <span class="number">0</span>) retval = put_user(tmp, (<span class="type">int</span> __user*)arg);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_IOCHQSET:</span><br><span class="line">      <span class="keyword">if</span> (!capable(CAP_SYS_ADMIN)) <span class="keyword">return</span> -EPERM;</span><br><span class="line">      tmp = scull_qset;</span><br><span class="line">      scull_qset = arg;</span><br><span class="line">      <span class="keyword">return</span> tmp;</span><br><span class="line"></span><br><span class="line">      <span class="comment">/*</span></span><br><span class="line"><span class="comment">       * The following two change the buffer size for scullpipe.</span></span><br><span class="line"><span class="comment">       * The scullpipe device uses this same ioctl method, just to</span></span><br><span class="line"><span class="comment">       * write less code. Actually, it&#x27;s the same driver, isn&#x27;t it?</span></span><br><span class="line"><span class="comment">       */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_P_IOCTSIZE:</span><br><span class="line">      scull_p_buffer = arg;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SCULL_P_IOCQSIZE:</span><br><span class="line">      <span class="keyword">return</span> scull_p_buffer;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">default</span>: <span class="comment">/* redundant, as cmd was checked against MAXNR */</span></span><br><span class="line">      <span class="keyword">return</span> -ENOTTY;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> retval;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在调⽤<code>access_ok</code>之后，驱动程序就可以安全地进⾏数据传输。除了<code>copy_from_user</code>和<code>copy_to_user</code>函数外，还可以使⽤最常⽤的数据⼤⼩（1、2、4及8个字节）优化过的⼀组函数。这些函数定义在<code>&lt;asm/uaccess.h&gt;</code>中：</p>
+<ul>
+<li><p><code>put_user(datum, ptr）</code></p>
+</li>
+<li><p><code>__put_user(datum, ptr)</code></p>
+<p>这些宏把<code>datum</code>写到⽤户空间。它们相对⽐较快，当要传递单个数据时，应该⽤这些宏⽽不是⽤<code>copy_to_user</code>。由于这些宏在展开时不做类型检查，所以可以传递给<code>put_user</code>任意类型的指针，只要⽤户空间地址就⾏。传递的数据⼤⼩依赖于<code>ptr</code>参数的类型，在编译时由编译器的内建指令<code>sizeof</code>和<code>typeof</code>确定。总之，如果<code>ptr</code>是⼀个字符指针，就传递<code>1</code>个字节、<code>2</code>、<code>4</code>、<code>8</code>字节的情况类似。</p>
+<p><code>put_user</code>进⾏检查以确保进程可以写⼈指定的内存地址，并在成功时返回<code>0</code>，出错时返回<code>-EFAULT</code>。<code>__put_user</code>做的检查少些（它不调用<code>access_ok</code>），但如果地址指向⽤户不能写入的内存，也会出现操作失败。因⽽，<code>__put_user</code>应该在已经使⽤<code>access_ok</code>检验过内存区后再使⽤。</p>
+<p>⼀般的⽤法是，实现⼀个读取⽅法时，可以调⽤<code>__put_user</code>来节省⼏个时钟周期、或者在复制多项数据之前调⽤⼀次<code>access_ok</code>，就像上⾯的<code>ioctl</code>代码⼀样。</p>
+</li>
+<li><p><code>get_user(local, ptr)</code></p>
+</li>
+<li><p><code>__get_user(local, ptr)</code></p>
+<p>这些宏⽤于从⽤户空间接收⼀个数据。除了传输⽅向相反之外，它们与<code>put_user</code>和<code>__put_user</code>差不多。接收的数值被保存在局部变量<code>local</code>中，返回值则指明了操作是否成功。同样，<code>__get_user</code>应该在操作地址已被<code>access_ok</code>检验后使⽤。</p>
+</li>
+</ul>
+<p>如果试图使⽤上⾯列出的函数传递⼤⼩不符合任意⼀个特定值的数值，结果通常是编译器会给出⼀条奇怪的消息，⽐如<code>conversion to non-scalar type requested</code>。在这种情况下，必须使⽤<code>copy_to_user</code>或者<code>copy_from_user</code>。</p>
+<h5 id="权能与受限操作"><a href="#权能与受限操作" class="headerlink" title="权能与受限操作"></a>权能与受限操作</h5><p>对设备的访问由设备⽂件的权限控制，驱动程序通常不进⾏权限检查。不过也有这种情况，允许⽤户对设备读&#x2F;写，⽽其他的操作被禁⽌。例如，不是所有的磁带驱动器使⽤者都可以设置它的默认块⼤⼩，允许⽤户使⽤磁盘设备也并不意味着就可以格式化磁盘。在类似的情况下，驱动程序必须进⾏额外的检查以确认⽤户是否有权进⾏请求的操作。</p>
+<p>根据<code>Unix</code>系统的传统，特权操作仅限于超级⽤户账号。这种特权要么全有，要么全⽆—超级⽤户⼏乎可以做任何事，⽽所有其他⽤户则受到严格的限制。<code>Linux</code>内核提供了⼀个更为灵活的系统，称为权能（<code>capabiliy</code>）。基于权能的系统抛弃了那种要么全有要么全⽆的特权分配⽅式，⽽是把特权操作划分为独⽴的组。这样，某个特定的⽤户或程序就可以被授权执⾏某⼀指定的特权操作，同时又没有执⾏其他不相关操作的能⼒。内核专为许可管理使⽤仅能并导出了两个系统调⽤<code>capget</code>和<code>capset</code>，这样就可以从⽤户空间来管理权能。</p>
+<p>全部权能操作都可以在<code>&lt;linux/capability.h&gt;</code>中找到，其中包含了系统能够理解的所有权能；不修改内核源代码，驱动程序作者或系统管理员就⽆法定义新的权能。对驱动程序开发者来讲有意义的权能如下所⽰：</p>
+<ul>
+<li><p><code>CAP_DAC_OVERRIDE</code></p>
+<p>越过⽂件或⽬录的访问限制（数据访向控制或<code>DAC</code>）的能⼒。</p>
+</li>
+<li><p><code>CAP_NET_ADMIN</code></p>
+<p>执⾏⽹络管理任务的能⼒，包括那些能影响⽹络接⼜的任务。</p>
+</li>
+<li><p><code>CAP_SYS_MODULE</code></p>
+<p>装载或卸载内核模块的能⼒。</p>
+</li>
+<li><p><code>CAP_SYS_RAWIO</code></p>
+<p>执⾏“裸”<code>I/O</code>操作的能⼒。例如，访问设备端口或直接与<code>USB</code>设备通信。</p>
+</li>
+<li><p><code>CAP_SYS_ADMIN</code></p>
+<p>截获的能⼒，它提供了访问许多系统管理操作的途径。</p>
+</li>
+<li><p><code>CAP_SYS_TTY_CONFIG</code></p>
+<p>执⾏<code>tty</code>配置任务的能⼒。</p>
+</li>
+</ul>
+<p>在执⾏⼀项特权操作之前，设备驱动程序应该检查调用进程是否有合适的权能；如果不进行这类检查，将导致⽤户进程执⾏⾮授权操查，从⽽影响系统稳定性或安全性。权能的检查通过<code>capable</code>函数实现（定义在<code>＜sys/sched.h&gt;</code>中）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">capable</span><span class="params">(<span class="type">int</span> capability)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>scull</code>⽰例驱动程序中，任何⽤户都被允许查询<code>quantum</code>和<code>quantum</code>集的⼤⼩。但是只有授权⽤户可以更改这些值，因为不恰当的值会降低系统性能。<code>scull</code>的<code>ioctl</code>实现了在必要时检查⽤户的特权级别：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!capable(CAP_SYS_ADMIN))</span><br><span class="line">	<span class="keyword">return</span> -EPERM;</span><br></pre></td></tr></table></figure>
+
+<p>因为缺少针对该任务的更多特定权能，所以这⾥使⽤了<code>CAP_SYS_ADMIN</code>。从调⽤⽅的观点（例如从⽤户空间）看，传送和接收参数的<code>6</code>种途径如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> quantum;</span><br><span class="line"></span><br><span class="line">ioctl(fd, SCULL_IOCSQUANTUM, &amp;quantum): <span class="comment">/*通过指针设置*/</span></span><br><span class="line">ioctl(fd, SCULL_IOCTQUANTUM, quantum);	<span class="comment">/*通过值设置*/</span></span><br><span class="line">ioctl(fd, SCULL_IOCGQUANTUM, &amp;quantum);	<span class="comment">/*通过指针获取*/</span></span><br><span class="line">quantum = ioctl(fd, SCULL_IOCQQUANTUM);	<span class="comment">/*通过返回值获取*/</span></span><br><span class="line">ioctl(fd, SCULL_IOCXQUANTUM, &amp;quantum);	<span class="comment">/*通过指针交换*/</span></span><br><span class="line">quantum = ioctl(fd, SCULL_IOCHQUANTUM, quantum);	<span class="comment">/*通过值交换*/</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，正常的驱动程序不会混⽤多种调⽤模式，在这⾥只是为了⽰范各种不同的⽅法。通常情况下数据交换形式应该保持⼀致，要么都⽤指针，要么都⽤数值，尽量避免混用。</p>
+<h5 id="⾮ioctl的设备控制"><a href="#⾮ioctl的设备控制" class="headerlink" title="⾮ioctl的设备控制"></a>⾮<code>ioctl</code>的设备控制</h5><p>有时通过向设备写⼊控制序列可以更好地控制设备。在控制台驱动程序中就使⽤了这⼀技术，称“转义序列（<code>escape sequence</code>）”，⽤于控制移动光标、改变默认颜⾊或执⾏其他的配置任务。⽤这种⽅法实现设备控制的好处是，⽤户仅通过写数据就可以控制设备，⽆需使⽤（有时还得编写）配置设备的程序。如果我们⽤这种⽅式控制设备，发出命令的程序甚⾄⽆需运⾏在设备所在的同⼀系统上。</p>
+<p>例如，<code>setterm</code>程序通过打印转义序列来配置控制台（或某个终端）。控制程序可以运⾏在⾮被控设备所在的计算机上，然后⽤⼀个简单的数据流重定向就可以完成配置⼯作。每次我们运⾏⼀个远程的<code>tty</code>会话时，就会发⽣这种情况：转义序列从远程打印，⽽影响的却是本地<code>tty</code>；当然，这⼀技术不仅仅限于<code>tty</code>设备。</p>
+<p>通过打印序列进⾏控制的缺点是，它给设备增加了策略限制。例如，只有确定控制序列不会出现在写入设备的正常数据中时，才能使⽤这种技术。对<code>tty</code>设备来讲，只能部分满⾜这个要求。尽管⽂本显⽰设备的⽤途是显⽰<code>ASCII</code>字符，但有时写入数据流中也会出现控制字符，从⽽影响控制台的设置。例如，对⼀个⼆进制⽂件使⽤<code>cat</code>命令时，因为输出可能包含任何字符，其结果是经常会造成控制台的字体错误。</p>
+<p>通过写入来控制的⽅式⾮常适合于那种不传送数据⽽只响应命令的设备，如机器⼈。例如，笔者编写过⼀个驱动程序，该驱动程序控制相机在两个轴上移动。在这个驱动程序⾥，“设备”只是⼀对⽼式的步进马达，不能读写。“发送数据流”的概念对步进马达来说没什么意义。在这种情况下，驱动程序将所写的数据解释为<code>ASCII</code>命令，并把请求转换为脉冲序列来操纵步进马达。这种思路，与给调制解调器发送<code>AT</code>指令以设置通信的⽅法基本类似，主要区别在于连接调制解调器的串⼜还要发送真正的数据。直接设备控制的优点是使⽤<code>cat</code>就可以移动相机，⽽不必编写和编译⽤于实现<code>ioctl</code>调⽤的代码。</p>
+<p>当编写这种“⾯向命令的”驱动程序时，没什么必要实现<code>ioctl</code>⽅法。在解释器中新增⼀条指令，其实现和使⽤都更简单。</p>
+<p>尽管如此，有时可能需要做相反的事情：不是⽤<code>write</code>解释器来避免使⽤<code>ioctl</code>，⽽是只使⽤<code>ioctl</code>，完全不使⽤<code>write</code>。同时，驱动程序附带了⼀个特定的命令⾏⼯具，专门负责把命令送给驱动程序。这种⽅法把内核空间的复杂性转移到了⽤户空间，这样处理起来可能会容易些，并且有助于缩⼩驱动程序的规模，然⽽，⽤户却⽆法再使⽤简单的命令</p>
+<p>（如<code>cat</code>或<code>echo</code>）来操作驱动程序。</p>
+<h4 id="🎯阻塞型I-O"><a href="#🎯阻塞型I-O" class="headerlink" title="🎯阻塞型I/O"></a>🎯阻塞型<code>I/O</code></h4><p>在第三章中，我们讨论了如何实现驱动程序的<code>read</code>和<code>write</code>⽅法。现在我们讨论另⼀个重要问题：如果驱动程序⽆法⽴即满⾜请求，该如何响应？当数据不可⽤时，⽤户可能调⽤<code>read</code>；或者进程试图写入数据，但因为输出缓冲区已满，设备还未准备好接受数据。调⽤进程通常不会关⼼这类问题，程序员只会简单调⽤<code>read</code>和<code>write</code>，然后等待必要的⼯作结束后返回调⽤。因此，在这种情况下，我们的驱动程序应该（默认）阻塞该进程，将其置⼊休眠状态直到请求可继续。</p>
+<p>这⼀⼩节说明了如何使进程进⼊休眠并在将来唤醒。不过，我们⾸先要解释⼀些新的概念。</p>
+<h5 id="休眠的简单介绍"><a href="#休眠的简单介绍" class="headerlink" title="休眠的简单介绍"></a>休眠的简单介绍</h5><p>“休眠（<code>sleep</code>）”对进程来讲意味着什么？当⼀个进程被置入休眠时，它会被标记为⼀种特殊状态并从调度器的运⾏队列中移⾛。直到某些情况下修改了这个状态，进程才会在任意<code>CPU</code>上调度，也即运⾏该进程。休眠中的进程会被搁置在⼀边，等待将来的某个事件发⽣。</p>
+<p>对<code>Linux</code>设备驱动程序来讲，让⼀个进程进入休眠状态很容易。但是，为了将进程以⼀种安全的⽅式进入休眠，我们需要牢记两条规则。</p>
+<p>第⼀条规则是：永远不要在原⼦上下⽂中进⼈休眠。我们已经在第五章介绍过原⼦操作，⽽原⼦上下⽂就是指下⾯这种状态：在执⾏多个步骤时，不能有任何的并发访问。这意味着，对休眠来说，我们的驱动程序不能在拥有⾃旋锁、<code>seqlock</code>或者<code>RCU</code>锁时休眠。如果我们已经禁⽌了中断，也不能休眠。在拥有信号量时休眠是合法的，但是必须仔细检查拥有信号量时休眠的代码。如果代码在拥有信号量时休眠，任何其他等待该信号量的线程也会休眠，因此任何拥有信号量⽽休眠的代码必须很短，并且还要确保拥有信号量并不会阻塞最终会唤醒我们⾃⼰的那个进程。</p>
+<p>另外⼀个需要铭记的是：当我们被唤醒时，我们永远⽆法知道休眠了多长时间，或者休眠期间都发⽣了些什么事情。我们通常也⽆法知道是否还有其他进程在同⼀事件上休眠，这个进程可能会在我们之前被唤醒并将我们等待的资源拿⾛。这样，我们对唤醒之后的状态不能做任何假定，因此必须检查以确保我们等待的条件真正为真。</p>
+<p>另外⼀个相关的问题是，除⾮我们知道有其他⼈会在其他地⽅唤醒我们，否则进程不能休眠。完成唤醒任务的代码还必须能够找到我们的进程，这样才能唤醒休眠的进程。为确保唤醒发⽣，需整体理解我们的代码，并清楚地知道对每个休眠⽽⾔哪些事件序列会结束休眠。能够找到休眠的进程意味着，需要维护⼀个称为等待队列的数据结构。顾名思义，等待队列就是⼀个进程链表，其中包含了等待某个特定事件的所有进程。</p>
+<p>在<code>Linux</code>中，⼀个等待队列通过⼀个“等待队列头（<code>wait_queue_head</code>）”来管理，等待队列头是⼀个类型为<code>wait_queue_head_t</code>的结构体，定义在<code>&lt;linux/wait.h&gt;</code>中。可通过如下⽅法静态定义并初始化⼀个等待队列头：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DECLARE_WAIT_QUEUE_HEAD(name);</span><br></pre></td></tr></table></figure>
+
+<p>或者使⽤动态⽅法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">wait_queue_head_t</span> my_queue;</span><br><span class="line">init_waitqueue_head(&amp;my_queue);</span><br></pre></td></tr></table></figure>
+
+<p>稍后我们将继续解释等待队列结构，但现在还需要继续讨论休眠和唤醒。</p>
+<h6 id="简单休眠"><a href="#简单休眠" class="headerlink" title="简单休眠"></a>简单休眠</h6><p>当进程休眠时，它将期待某个条件会在未来成为真。我们前⾯提到，当⼀个休眠进程被唤醒时，它必须再次检查它所等待的条件的确为真。<code>Linux</code>内核中最简单的休眠⽅式是称为<code>wait_event</code>的宏（以及它的⼏个变种）：在实现休眠的同时，它也检查进程等待的条件。<code>wait_event</code>的形式如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wait_event(<span class="built_in">queue</span>, condition)</span><br><span class="line">wait_event_interruptible(<span class="built_in">queue</span>, condition)</span><br><span class="line">wait_event_timeout(<span class="built_in">queue</span>, condition, timeout)</span><br><span class="line">wait_event_interruptible_timeout(<span class="built_in">queue</span>, condition, timeout)</span><br></pre></td></tr></table></figure>
+
+<p>在上⾯所有的形式中，<code>queue</code>是等待队列头。注意，它“通过值”传递，⽽不是通过指针。<code>condition</code>是任意⼀个布尔表达式，上⾯的宏在休眠前后都要对该表达式求值；在条件为真之前，进程会保持休眠。注意，该条件可能会被多次求值，因此对该表达式的求值不能带来任何副作⽤。</p>
+<p>如果使⽤<code>wait_event</code>，进程将被置于⾮中断休眠，如我们先前提到的，这通常不是我们所期望的。最好的选择是使⽤<code>wait_event_interruptible</code>，它可以被信号中断。这个版本可返回⼀个整数值，⾮零值表⽰休眠被某个信号中断，⽽驱动程序也许要返回<code>-ERESTARTSYS</code>。后⾯的两个版本（<code>wait_event_timeout</code>和<code>wait_event_interruprible_timeout</code>）只会等待限定的时间；当给定的时间（以<code>jiffy</code>表⽰，第七章将讨论）到期时，这两个宏都会返回<code>0</code>值，⽽⽆论<code>condition</code>如何求值。</p>
+<p>当然，整个过程的另外⼀半是唤醒。其他的某个执⾏线程（可能是另⼀个进程或者中断处理例程）必须为我们执⾏唤醒，因为我们的进程正在休眠中。⽤来唤醒休眠进程的基本函数是<code>wake_up</code>，它也有多种形式，但这⾥先介绍其中两个：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">wake_up</span><span class="params">(<span class="type">wait_queue_head_t</span> *<span class="built_in">queue</span>)</span>:</span><br><span class="line"><span class="type">void</span> <span class="title function_">wake_up_interruptible</span><span class="params">(<span class="type">wait_queue_head_t</span> *<span class="built_in">queue</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>wake_up</code>会唤醒等待在给定<code>queue</code>上的所有进程（实际情况要复杂⼀些，读者很快会看到）。另⼀个形式（<code>wake_up_interruptible</code>）只会唤醒那些执⾏可中断休眠的进程。通常，这两种形式很难区分（如果使⽤可中断休眠的话）：在实践中，约定作法是在使⽤<code>wait_event</code>时使⽤<code>wake_up</code>，⽽在使⽤<code>wait_event_interruptible</code>时使⽤<code>wake_up_interruptible</code>。</p>
+<p>现在我们看看休眠和唤醒的⼀个简单例⼦。在⽰例源代码中，读者可以找到⼀个称为<code>sleepy</code>的模块，它实现了⼀个具有简单⾏为的设备：任何试图从该设备上读取的进程均被置于休眠。只要某个进程向该设备写⼊，所有休眠的进程就会被唤醒。这⼀⾏为通过下⾯的<code>read</code>和<code>write</code>⽅法实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="title function_">DECLARE_WAIT_QUEUE_HEAD</span><span class="params">(wq)</span>;</span><br><span class="line"><span class="type">static</span> <span class="type">int</span> flag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">sleepy_read</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">char</span> __user *buf, <span class="type">size_t</span> count, <span class="type">loff_t</span> *pos)</span> &#123;</span><br><span class="line">  printk(KERN_DEBUG <span class="string">&quot;process %i (%s) going to sleep\n&quot;</span>, current-&gt;pid, current-&gt;comm);</span><br><span class="line">  wait_event_interruptible(wq, flag != <span class="number">0</span>);</span><br><span class="line">  flag = <span class="number">0</span>;</span><br><span class="line">  printk(KERN_DEBUG, <span class="string">&quot;awoken %i (%s)\n&quot;</span>, current-&gt;pid, current-&gt;comm);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">sleepy_write</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">char</span> __user *buf, <span class="type">size_t</span> count, <span class="type">loff_t</span> *pos)</span> &#123;</span><br><span class="line">  printk(KERN_DEBUG <span class="string">&quot;process %i (%s) awakening the readers...\n&quot;</span>, </span><br><span class="line">         current-&gt;pid, current-&gt;comm);</span><br><span class="line">  flag = <span class="number">1</span>;</span><br><span class="line">  wait_up_interruptible(wq);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意上⾯例⼦中<code>flag</code>变量的使⽤。因为<code>wait_event_interruptible</code>要检查改变为真的条件，因此我们使⽤<code>flag</code>来构造这个条件。</p>
+<p>请读者想像当两个进程在等待时调⽤<code>sleepy_write</code>，会发⽣什么情况。因为<code>sleepy_read</code>会在唤醒时将<code>flag</code>重置为<code>0</code>，因此，读者会认为第⼆个被唤醒的进程会⽴即进入休眠状态。在单处理器系统中，这⼏乎是始终会发⽣的情况。然⽽，我们必须理解并不是永远会发⽣这种情况。<code>wake_up_interruptible</code>调⽤会唤醒两个休眠的进程，⽽在重置<code>f1ag</code>之前，这两个进程都完全有可能注意到标志为⾮零。对这个不重要的模块来讲，这种竞态并不重要。但在真实的驱动程序中，这种类型的竞态可能导致很难诊断的、偶然的崩溃。如果要确保只有⼀个进程能看到⾮零值，则必须以原⼦⽅式进⾏检查。我们将很快看到真实的驱动程序如何处理这类问题，但⾸先要讨论另外⼀个主题。</p>
+<h5 id="阻塞和⾮阻塞型操作"><a href="#阻塞和⾮阻塞型操作" class="headerlink" title="阻塞和⾮阻塞型操作"></a>阻塞和⾮阻塞型操作</h5><p>在分析⽤于休眠进程的、功能完整的<code>read</code>和<code>write</code>⽅法之前，还有最后⼀个问题需要讨论。在实现正确的<code>Unix</code>语义时，有时我们要实现⾮阻塞的操作，尽管操作不能完整执⾏。有时调⽤进程会通知我们它不想阻塞，⽽不管其<code>I/O</code>是否可以继续。显式的⾮阻塞<code>I/O</code>由<code>filp-&gt;f_flags</code>中的<code>O_NONBLOCK</code>标志决定。这个标志在<code>&lt;linux/fcntl.h&gt;</code>中定义，这个头⽂件⾃动包含在<code>&lt;linux/fs.h&gt;</code>中。这个标志的名字取⾃“⾮阻塞打开（<code>open-nonblock</code>）”，因为它可以在打开时指定（⽽且本来也只能在那时指定）。浏览⼀下源代码，会发现⼀些对<code>O_NDELAY</code>标志的引⽤，这是<code>O_NONBLOCK</code>的另⼀个名字，是为保持和<code>System V</code>代码的兼容性⽽设计的。这个标志在默认时要被清除，因为等待数据的进程⼀般只是休眠。在执⾏阻塞型操作（这是默认的）的情况下，应该实现下列动作以保持和标准语义⼀致：</p>
+<ul>
+<li><p>如果⼀个进程调⽤了<code>read</code>但是还没有数据可读，此进程必须阻塞。数据到达时进程被唤醒，并把数据返回给调⽤者。即使数据数⽬少于<code>count</code>参数指定的数⽬也是如此。</p>
+</li>
+<li><p>如果⼀个进程调⽤了<code>write</code>但缓冲区没有空间，此进程必须阻塞，⽽且必须休眠在与读取进程不同的等待队列上。当向硬件设备写⼈⼀些数据，从⽽腾出了部分输出缓冲区后，进程即被唤醒，<code>write</code>调⽤成功。即使缓冲区中可能没有所要求的<code>count</code>字节的空间⽽只写⼊了部分数据，也是如此。</p>
+</li>
+</ul>
+<p>上⾯的描述假设输入和输出缓冲区都存在，实际上它们也确实存在于绝大多数设备中。输⼈缓冲区⽤于当数据已到达⽽又⽆⼈读取时，把数据暂存起来避免丢失；相反，如果调⽤<code>write</code>时系统不能接收数据，就将它们保留在⽤户空间缓冲区避免丢失。除此以外，输出缓冲区⼏乎总是可以提⾼硬件的性能。</p>
+<p>在驱动程序中实现输出缓冲区可以提⾼性能，这得益于减少了上下⽂切换和⽤户级&#x2F;内核级转换的次数。假设⼀个慢速设备没有输出缓冲区，那么每次系统调⽤只能接收⼀个或⼏个字符，然后进程在<code>write</code>上休眠，另⼀个进程开始运⾏（这⾥有⼀次上下⽂切換），当前⼀个进程被唤醒后，它重新开始运⾏（引起另⼀次上下⽂切换），<code>write</code>返回（内核&#x2F;⽤户转换），接着进程重复系统调⽤写⼈更多数据（⽤户&#x2F;内核转换），接着调⽤又阻塞，然后再次进⾏以上的循环。如果输出缓冲区⾜够⼤，那么<code>write</code>调⽤⾸次操作就成功了—缓存的数据可以在以后的中断时间送给设备——⽽不必返回⽤户空间为第⼆次或第三次的<code>write</code>调⽤进⾏控制。显然，输出缓冲区多⼤才合适是与设备相关的。</p>
+<p>在<code>scull</code>中没有使⽤输入缓冲区，因为调⽤<code>read</code>时，数据已经就绪了。类似地，也没有输出缓冲区，因为数据只是简单地被复制到与设备对应的内存区。其实该设备本⾝就是一个缓冲区，因此不必实现另外的缓冲区。</p>
+<p>如果指定了<code>O_NONBLOCK</code>标志，<code>read</code>和<code>write</code>的⾏为就会有所不同。如果在数据没有就绪时调⽤<code>read</code>或是在缓冲区没有空间时调⽤<code>write</code>，则该调⽤简单地返回<code>-EAGAIN</code>。</p>
+<p>读者可能已经想到，⾮阻塞型操作会立即返回，使得应⽤程序可以查询数据。在处理⾮阻塞型⽂件时，应⽤程序调⽤<code>stdio</code>函数必须⾮常⼩⼼，因为很容易把⼀个⾮阻塞返回误认为是<code>EOF</code>，所以必须始终检查<code>errno</code>。</p>
+<p>⾃然，<code>O_NONBLOCK</code>在<code>open</code>⽅法中也是有意义的。它⽤于在<code>open</code>调⽤可能会阻塞很长时间的场合。例如，打开⼀个还没有进程向其中写⼊的<code>FIFO</code>或是访问⼀个被锁住的磁盘⽂件。通常情况下，打开⼀个设备不是成功就是失败，不必等待外部事件。但是有时候打开设备需要很长时间的初始化，这时就可以选择在<code>open</code>⽅法中⽀持<code>O_NONBLOCK</code>标志，如果该标志被置位，则在设备开始初始化后会⽴刻返回⼀个<code>-EAGAIN</code>。驱动程序中也可以实现阻塞型<code>open</code>以⽀持和⽂件锁⽅式类似的访问策略。</p>
+<p>有些驱动程序还为<code>O_NONBLOCK</code>实现了特殊的语义。例如，在磁带还没有插⼊时打开⼀个磁带设备通常会阻塞，如果磁带驱动程序是⽤<code>O_NONBLOCK</code>打开的，则不管磁带在不在，<code>open</code>都会⽴即成功返回。</p>
+<p>只有<code>read</code>、<code>write</code>和<code>open</code>⽂件操作受⾮阻塞标志的影响。</p>
+<h5 id="⼀个阻塞I-O⽰例"><a href="#⼀个阻塞I-O⽰例" class="headerlink" title="⼀个阻塞I/O⽰例"></a>⼀个阻塞<code>I/O</code>⽰例</h5><p>最后，我们通过⼀个⽰例来分析实现阻塞<code>I/O</code>的真实驱动程序⽅法。这个例⼦来⾃<code>scullpipe</code>驱动程序，它是<code>scull</code>实现类似管道设备的特殊形式。</p>
+<p>在驱动程序内部，阻塞在<code>read</code>调⽤的进程在数据到达时被唤醒；通常硬件会发出⼀个中断来通知这个事件，然后作为中断处理的⼀部分，驱动程序会唤醒等待进程。<code>scullpipe</code>驱动程序的⼯作⽅法则不同，它不需要任何特殊的硬件或是中断处理程序就可以运⾏。我们选择使⽤另⼀个进程来产⽣数据并唤醒读取进程；类似地，读取进程⽤来唤醒等待缓冲区空间可⽤的写⼊进程。</p>
+<p>该设备驱动程序使⽤了⼀个包含两个等待队列和⼀个缓冲区的设备结构。缓冲区⼤⼩可以⽤通常的⽅式配置（在编译、加载或运⾏时）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">scull_pipe</span> &#123;</span></span><br><span class="line">  <span class="type">wait_queue_head_t</span> inq, outq;				<span class="comment">/*读取和写入队列*/</span></span><br><span class="line">  <span class="type">char</span> *buffer, *end;									<span class="comment">/*缓冲区的起始和结尾*/</span></span><br><span class="line">  <span class="type">int</span> buffersize;											<span class="comment">/*缓冲区大小*/</span></span><br><span class="line">  <span class="type">char</span> *rp, *wp;											<span class="comment">/*读取和写入的位置*/</span></span><br><span class="line">  <span class="type">int</span> nreaders, nwriters;							<span class="comment">/*读和写的数量*</span></span><br><span class="line"><span class="comment">  struct fasync_struct *async_queue;	/*异步读取者*/</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">semaphore</span> <span class="title">sem</span>;</span>								<span class="comment">/*互斥信号量*/</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> <span class="title">cdev</span>;</span>										<span class="comment">/*字符设备结构*/</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>read</code>实现负责管理阻塞型和非阻塞型输入，如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">scull_p_read</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">char</span> __user *buf, <span class="type">size_t</span> count,</span></span><br><span class="line"><span class="params">                            <span class="type">loff_t</span> *f_pos)</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">scull_pipe</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (down_interruptible(&amp;dev-&gt;sem)) &#123;</span><br><span class="line">    <span class="keyword">return</span> -ERESTARTSYS;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/*无数据可读取*/</span></span><br><span class="line">  <span class="keyword">while</span> (dev-&gt;rp == dev-&gt;wp) &#123;</span><br><span class="line">    <span class="comment">/*释放锁*/</span></span><br><span class="line">    up(&amp;dev-&gt;sem);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (filp-&gt;f_flags &amp; O_NONBLOCK) &#123;</span><br><span class="line">      <span class="keyword">return</span> -EAGAIN;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    PDEBUG(<span class="string">&quot;\&quot;%s\&quot; reading: going to sleep\n&quot;</span>, current-&gt;comm);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (wait_event_interruptible(dev-&gt;inq, (dev-&gt;rp != dev-&gt;wp))) &#123;</span><br><span class="line">      <span class="keyword">return</span> -ERESTARTSYS;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (down_interruptible(&amp;dev-&gt;sem)) &#123;</span><br><span class="line">    	<span class="keyword">return</span> -ERESTARTSYS;</span><br><span class="line">  	&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/*数据已就绪，返回*/</span></span><br><span class="line">  <span class="keyword">if</span> (dev-&gt;wp &gt; dev-&gt;rp) &#123;</span><br><span class="line">    count = min(count, (<span class="type">size_t</span>)(dev-&gt;wp - dev-&gt;rp));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">/*写入指针回卷，返回数据直到dev-&gt;end*/</span></span><br><span class="line">    count = min(count, (<span class="type">size_t</span>)(dev-&gt;end -dev-&gt;rp));</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (copy_to_user(buf, dev-&gt;rp, count)) &#123;</span><br><span class="line">    up(&amp;dev-&gt;sem);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> -EFAULT;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  dev-&gt;rp += count;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (dev-&gt;rp == dev-&gt;end) &#123;</span><br><span class="line">    dev-&gt;rp = dev-&gt;buffer;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  up(&amp;dev-&gt;sem);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/*唤醒所有写入者并返回*/</span></span><br><span class="line">  wake_up_interruptible(&amp;dev-&gt;outq);</span><br><span class="line">  PDEBUG(<span class="string">&quot;\&quot;%s\&quot; did read %li bytes\n&quot;</span>, current-&gt;comm, (<span class="type">long</span>)count);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到代码中保留了⼀些<code>PDEBUG</code>语句。编译该驱动程序时可以启⽤消息以便跟踪不同进程间的交互。</p>
+<p>现在仔细看看<code>scull_p_read</code>是如何处理等待数据的。<code>while</code>循环在拥有设备信号量时测试缓冲区。如果其中有数据，则可以⽴即将数据返回给⽤户⽽不需要休眠，这样，整个循环体就被跳过了。相反，如果缓冲区为空，则必须休眠。但在休眠之前必须释放设备信号量，因为如果在拥有该信号量时休眠，任何写⼊者都没有机会来唤醒。在释放信号量之后，快速检查⽤户请求的是否是⾮阻塞<code>I/O</code>，如果是，则返回，否则调⽤<code>wait_event_interruptible</code>。</p>
+<p>在上⾯这个函数调⽤返回时，说明其他⼈已经唤醒了我们，但我们不知道到底是什么情况。⼀种可能性是进程接收到⼀个信号。包含<code>wait_even_interruptible</code>调⽤的<code>if</code>语句检查这种情况。这条语句确保对信号进⾏正确的预定响应，该信号可能是⽤来唤醒进程的（因为进程处于可中断睡眠中）。如果⼀个信号到达⽽且没有被进程阻塞，正确的动作是让内核的上层去处理这个事件。为此，驱动程序返回给调⽤者<code>-ERESTARTSYS</code>，这个值由虚拟⽂件系统层（<code>VFS</code>）内部使⽤，它或者重启系统调⽤，或者给⽤户空间返回<code>-EINTR</code>。我们将在所有的<code>read</code>和<code>write</code>实现中使⽤同样的语句进⾏信号处理。</p>
+<p>但是，就算不是因为信号⽽被唤醒，我们还是⽆法确信是否有数据可获得。其他⼈可能也在等待数据，⽽且可能贏得竞争并拿⾛了数据。因此，我们必须重新获得设备信号量，</p>
+<p>只有这样才能测试读取缓冲区（在<code>while</code>循环中），并真正知道我们是否可以将缓冲区的数据返回给⽤户。整个代码的最终结果就是，当我们从<code>while</code>循环中退出时，我们拥有信号量，⽽且缓冲区中包含有可使⽤的数据。</p>
+<p>出于完整性考虑，还要注意<code>scull_p_read</code>可能在我们获取设备信号量之后休眠的另外⼀种情况，即调⽤<code>copy_to_user</code>。如果<code>scull</code>在内核和⽤户空间复制数据时休眠，则会在拥有设备信号量时休眠。在这种情况下，拥有信号量是可以接受的，因为这不会死锁系统（我们知道内核会将数据复制到⽤户空间然后唤醒我们，同时不会试图锁上同⼀信号量），⽽且重要的是，在驱动程序休眠时，设备的内存数组不会被修改。</p>
+<h5 id="⾼级休眠"><a href="#⾼级休眠" class="headerlink" title="⾼级休眠"></a>⾼级休眠</h5><p>我们介绍过的函数可以满⾜许多驱动程序的休眠需求。但是在某些情况下，我们需要对<code>Linux</code>的等待队列机制有更加深⼊的理解。复杂的锁定以及性能需求会强制驱动程序使⽤低层的函数来实现休眠。本⼩节中，我们将讨论⼀些低层次的细节，以便理解进程休眠时到底发⽣了什么事情。</p>
+<h6 id="📌进程如何休眠"><a href="#📌进程如何休眠" class="headerlink" title="📌进程如何休眠"></a>📌进程如何休眠</h6><p>如果读者浏览<code>&lt;linux/wait.h&gt;</code>头⽂件，将看到<code>wait_queue_head_t</code>类型后⾯的数据结构相当简单，它由⼀个⾃旋锁和⼀个链表组成。链表中保存的是⼀个等待队列⼊⼜，该⼊⼜声明为<code>wait_queue_t</code>类型。这个结构中包含了休眠进程的信息及其期望被唤醒的相关细节信息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * A single wait-queue entry structure:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">wait_queue_entry</span> &#123;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span>			flags;</span><br><span class="line">	<span class="type">void</span>							*private;</span><br><span class="line">	<span class="type">wait_queue_func_t</span>	func;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">entry</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">wait_queue_head</span> &#123;</span></span><br><span class="line">	<span class="type">spinlock_t</span>				lock;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">head</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">wait_queue_head</span> <span class="title">wait_queue_head_t</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>将进程置于休眠的第⼀个步骤通常是分配并初始化⼀个<code>wait_queue_entry</code>结构，然后将其加⼊到对应的等待队列。在完成这些⼯作之后，不管谁负责唤醒该进程，都能找到正确的进程。</p>
+<p>第⼆个步骤是设置进程的状态，将其标记为休眠。<code>&lt;linux/sched.h&gt;</code>中定义了多个任务状态。<code>TASK_RUNNING</code>表⽰进程可运⾏，尽管进程并不⼀定在任何给定时间都运⾏在某个处理器上。有两个状态表明进程处于休眠状态：<code>TASK_INTERRUPTIBLE</code>和<code>TASK_UNINTERRUPTIBLE</code>；显然，它们分别对应于两种休眠。其他的状态对驱动程序编写者来说通常不需要关⼼。</p>
+<p>在<code>2.6</code>内核中，通常不需要驱动程序代码来直接操作进程状态。但是如果需要，则可调⽤：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">set_current_state</span><span class="params">(<span class="type">int</span> new_state)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在⽼的代码中，读者通常可能会找到下⾯的语句：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">current-&gt;state = TASK_INTERRUPTIBLE；</span><br></pre></td></tr></table></figure>
+
+<p>但是我们不⿎励以这种⽅式直接修改<code>current</code>，因为数据结构的改变很容易导致该代码⽆法运⾏，⽽且上述修改进程当前状态的代码并不会将⾃⼰置于休眠状态。通过改变当前状态，我们只是改变了调度器处理该进程的⽅式，但尚未使进程让出处理器。</p>
+<p>放弃处理器是最后的步骤，但在此之前还要做另外⼀件事情：我们必须⾸先检查休眠等待的条件。如果不作这个检查，可能引⼈竞态。试想，如果在上述过程中条件变成了真，⽽其他线程正试图唤醒我们，这时会发⽣什么呢？我们会丢掉被唤醒的机会，从⽽可能休眠更长的时间。因此，深⼊到休眠的代码，我们会看到下⾯的语句：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!condition)</span><br><span class="line">	schedule():</span><br></pre></td></tr></table></figure>
+
+<p>在设置了进程状态之后检查条件，我们解决了所有可能的事件序列。 如果我们等待的条件在设置进程状态前发⽣，我们回在这个检查中注意且不会真正休眠。如果唤醒在其后发生，不管我们是否真正进⼊休眠，进程都会被置于可运⾏状态。</p>
+<p>当然，对<code>schedule</code>的调⽤将调⽤调度器，并让出<code>CPU</code>。⽆论在什么时候调⽤这个函数，都将告诉内核重新选择其他进程运⾏，并在必要时将控制切换到那个进程。这样，我们⽆法知道，在调度返回到我们的代码之前需要多少时间。</p>
+<p>在<code>if</code>测试以及可能的<code>schedule</code>调⽤（并返回）之后，需要完成⼀些清理⼯作。因为代码不再期望休眠，因此必须确保任务状态被重置<code>TASK_RUNNING</code>。如果代码从<code>schedule</code>中返回，则不需要这⼀步。但是，如果因为不需要休眠⽽跳过了对<code>schedule</code>的调⽤，那么进程状态就是不正确的。将进程从等待队列中移⾛也是必要的，否则它可能会被多次唤醒。</p>
+<h6 id="📌⼿⼯休眠"><a href="#📌⼿⼯休眠" class="headerlink" title="📌⼿⼯休眠"></a>📌⼿⼯休眠</h6><p>在早期的<code>Linux</code>内核版本中，特殊休眠需要程序员⼿⼯处理上⾯讲过的所有步骤。这是⼀个冗长⽽乏味的过程，涉及到相当多的、容易导致错误的代码。如果开发者愿意，仍可以沿⽤这种⼿⼯休眠的⽅式。<code>&lt;linux/sched.h&gt;</code>中包含有所有必需的定义，⽽内核源代码中也含有⼤量的例⼦。但是，也有⼀种更加简单的⽅式。</p>
+<p>第⼀个步骤是建⽴并初始化⼀个等待队列⼈⼜。这通常通过下⾯的宏完成：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DEFINE_WAIT(my_wait);</span><br></pre></td></tr></table></figure>
+
+<p>其中的<code>name</code>是等待队列⼈⼜变量的名称。我们也可以通过下⾯两个步骤完成这个⼯作：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">wait_queue_t</span> my_wait；</span><br><span class="line">init_wait(&amp;my_wait);</span><br></pre></td></tr></table></figure>
+
+<p>但是，在实现休眠的循环前使用<code>DEFINE_WAIT</code>通常更加容易。下⼀个步骤是将我们的等待队列入口添加到队列中，并设置进程的状态。这两个任务都可通过下⾯的函数完成：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">prepare_to_wait</span><span class="params">(<span class="type">wait_queue_head_t</span> *<span class="built_in">queue</span>, <span class="type">wait_queue_t</span> *wait, <span class="type">int</span> state)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>queue</code>和<code>wait</code>分别是等待队列头和进程⼊⼜。<code>state</code>是进程的新状态；它应该是<code>TASK_INTERRUPTIBLE</code>（⽤于可中断休眠，通常也是我们所期望的）或者<code>TASK_UNINTERRUPTIBLE</code>（⽤于不可中断休眠）。</p>
+<p>在调⽤<code>prepare_to_wait</code>之后，进程即可调⽤<code>schedule</code>，当然在这之前，应确保仍有必要等待。</p>
+<p>⼀旦<code>schedule</code>返回，就到了清理时间了。这个⼯作也可通过下⾯的特殊函数完成：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">finish_wait</span><span class="params">(<span class="type">wait_queue_head_t</span> *<span class="built_in">queue</span>, <span class="type">wait_queue_t</span> *wait)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>之后，代码可测试其状态，并判断是否需要重新等待。</p>
+<p>现在看看实际的例⼦。前⾯我们分析了<code>scullpipe</code>的<code>read</code>⽅法，其中使⽤了<code>wait_event</code>。但这个驱动程序的<code>write</code>⽅法使⽤了<code>prepare_to_wait</code>和<code>finish_wait</code>。通常，我们不应该在⼀个驱动程序中混合使⽤两种⽅法，但是这⾥只是希望说明处理休眠的两种⽅法⽽已。为了完整，我们⾸先看看<code>write</code>⽅法本⾝：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*有多少可用空间*/</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">spacefree</span><span class="params">(<span class="keyword">struct</span> scull_pipe *dev)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (dev-&gt;rp == dev-&gt;wp) &#123;</span><br><span class="line">    <span class="keyword">return</span> dev-&gt;buffersize - <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// ?</span></span><br><span class="line">  <span class="keyword">return</span> ((dev-&gt;rp + dev-&gt;buffersize - dev-&gt;wp) % dev-&gt;buffersize) - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">scull_p_write</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">const</span> <span class="type">char</span> __user *buf,</span></span><br><span class="line"><span class="params">                             size_tcount, <span class="type">loff_t</span> *f_pos)</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">scull_pipe</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line">  <span class="type">int</span> result;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (down_interruptible(&amp;dev-&gt;sem))</span><br><span class="line">  	<span class="keyword">return</span> -ERESTARTSYS;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*确保有空间可写*/</span></span><br><span class="line">  result = scull_getwritespace(dev, filp);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (result)</span><br><span class="line">  	<span class="keyword">return</span> result;	<span class="comment">/*scull_getwritespace会调用up(&amp;dev-&gt;sem)*/</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/*有空间可⽤，接受数据*/</span></span><br><span class="line">  count = min(count, (<span class="type">size_t</span>)spacefree(dev));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (dev-&gt;wp &gt;= dev-&gt;rp)</span><br><span class="line">		count = min(count, (<span class="type">size_t</span>)(dev-&gt;end - dev-&gt;wp));	<span class="comment">/*直到缓冲区结尾*/</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  	count = min(count, (<span class="type">size_t</span>)(dev-&gt;rp - dev-&gt;wp - <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">  PDEBUG(<span class="string">&quot;Going to accept %li bytes to %p from %p\n&quot;</span>, (<span class="type">long</span>)count, dev-&gt;wp, buf):</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (copy_from_user(dev-&gt;wp, buf, count)) &#123;</span><br><span class="line">  	up(&amp;dev-&gt;sem);</span><br><span class="line">		</span><br><span class="line">    <span class="keyword">return</span>-EFAULT;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  dev-&gt;wp += count;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (dev-&gt;wp == dev-&gt;end)</span><br><span class="line">  	dev-&gt;wp = dev-&gt;buffer;	<span class="comment">/*回卷*/</span></span><br><span class="line"></span><br><span class="line">  up(&amp;dev-&gt;sem);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*最后，唤醒读者*/</span></span><br><span class="line"></span><br><span class="line">  wake_up_interruptible(&amp;dev-&gt;ing);	<span class="comment">/*阻塞在read()和select()上*/</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/*通知异步读取者，将在本章后⾯解释*/</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (dev-&gt;async_queue)</span><br><span class="line">    kill_fasync(&amp;dev-›async_queue, SIGIO, POLL_IN);</span><br><span class="line"></span><br><span class="line">  PDEBUG(<span class="string">&quot;\&quot;%s\&quot; did write %li bytes\n&quot;</span>, current-&gt;comm, (<span class="type">long</span>)count);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> count; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码看起来和<code>read</code>⽅法⾮常相似，除了我们将休眠的代码放在了独⽴的<code>scull_getwritespace</code>函数中。该函数确保新数据有可⽤的缓冲区空间，并且在必要时休眠，直到空间可⽤。⼀旦获得缓冲区空间，<code>scull_p_write</code>即可将⽤户数据复制到其中，调整指针，并唤醒可能正在等待谈取数据的任何进程。</p>
+<p>处理真正休眠的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*等待有可⽤于写入的空间；调⽤者必须拥有设备信号量。</span></span><br><span class="line"><span class="comment"> *在错误情况下，信号量将在返回前释放。*/</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">scull_getwritespace</span><span class="params">(<span class="keyword">struct</span> scullpipe *dev, <span class="keyword">struct</span> file *filp)</span> &#123;</span><br><span class="line">	<span class="keyword">while</span> (spacefree(dev) == <span class="number">0</span>) &#123;</span><br><span class="line">		DEFINE_WAIT(wait)</span><br><span class="line">		up(&amp;dev-&gt;sem);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (filp-&gt;f_flags &amp; O_NONBLOCK)</span><br><span class="line">			<span class="keyword">return</span> -EAGAIN;</span><br><span class="line"></span><br><span class="line">		PDEBUG(<span class="string">&quot;\&quot;%s\&quot; writing: going to sleep\n&quot;</span>, current-&gt;comm);</span><br><span class="line"></span><br><span class="line">		prepare_to_wait(&amp;dev-&gt;outq, &amp;wait, TASK_INTERRUPTIBLE);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (spacefree(dev) == <span class="number">0</span>)</span><br><span class="line">			schedule();</span><br><span class="line"></span><br><span class="line">		finish_wait(&amp;dev-&gt;outq, &amp;wait):</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (signal_pending(current))</span><br><span class="line">			<span class="keyword">return</span> -ERESTARTSYS; <span class="comment">/*信号：通知fs层做相应处理*/</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (down_interruptible(&amp;dev-&gt;sem))</span><br><span class="line">			<span class="keyword">return</span> -ERESTARTSYS;</span><br><span class="line">  &#125;</span><br><span class="line">	</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次注意其中的<code>while</code>循环。如果不需要休眠的情况下空间即可⽤，该函数⽴即返回。否则，该函数释放设备信号量并等待。代码使⽤了<code>DEFINE_WAIT</code>来设置等待队列入口，并调⽤<code>prepare_to_wait</code>来进⼊真正的休眠。之后对缓冲区做必要的检查—我们必须处理以下情况：在我们进入<code>while</code>循环（并释放信号量）之后，但在将⾃⼰放到等待队列之前，缓冲区空间变得可⽤。若不作这个检查，如果读取进程在此时完全清空了缓冲区，则我们将失去唯⼀被唤醒的机会，从⽽会永远休眠。在到达必须休眠的条件时，即可调⽤<code>schedule</code>。</p>
+<p>对上述情况还需要再次考虑：如果唤醒发⽣在<code>if</code>测试以及对<code>schedule</code>的调⽤之间，会发⽣什么呢？在这种情况下，不会出现任何问题。休眠将会把进程状态置为<code>TASK_RUNNING</code>，⽽<code>schedule</code>会返回—尽管根本没必要调⽤<code>schedule</code>。只要测试发⽣在进程已经将⾃⼰放在等待队列并修改了其状态之后，就不会出现任何问题。</p>
+<p>在最后，我们调⽤<code>finish_wait</code>。对<code>signal_pending</code>的调⽤告诉我们是否因为信号⽽被唤醒。如果是，我们需要返回给⽤户并让⽤户再次重试；否则，我们将获取信号量，并像通常那样再次测试空闲空间。</p>
+<h6 id="📌独占等待"><a href="#📌独占等待" class="headerlink" title="📌独占等待"></a>📌独占等待</h6><p>我们已经看到，当某个进程在等待队列上调⽤<code>wake_up</code>时，所有等待在该队列上的进程都将被置为可运⾏状态。在许多情况下，这是正确的⾏为；但在其他情况下，我们可以预先知道只会有⼀个被唤醒的进程可以获得期望的资源，⽽其他被唤醒的进程只会再次休眠。这些被唤醒进程中的每⼀个都要获得处理器，为资源（以及锁）竞争，然后又再次进⼊体眠。如果等待队列中的进程数量⾮常庞⼤，这种“疯狂兽群”⾏为将严重影响系统性能。</p>
+<p>为了解决现实世界中的“疯狂兽群”问题，内核开发者内核增加了“独占等待”选项。⼀个独占等待的⾏为和通常的休眠类似，但有如下两个重要的不同：</p>
+<ul>
+<li><p>等待队列⼊⼜设置了<code>WQ_FLAG_EXCLUSIVE</code>标志时，则会被添加到等待队列的尾部。⽽没有这个标志的⼊⼜会被添加到头部。</p>
+</li>
+<li><p>在某个等待队列上调⽤<code>wake_up</code>时，它会在唤醒第⼀个具有<code>WQ_FLAG_EXCLUSIVE</code>标志的进程之后停⽌唤醒其他进程。</p>
+</li>
+</ul>
+<p>最终结果是，执⾏独占等待的进程每次只会被唤醒其中⼀个（以某种有序的⽅式），从⽽不会产⽣“疯狂兽群”问题。但是，内核每次仍然会唤醒所有⾮独占等待进程。</p>
+<p>如果满⾜下⾯两个条件，在驱动程序中利⽤独占等待是值得考虑的。这两个条件是：对某个资源存在严重竞争，并且唤醒单个进程就能完整消耗该资源。⽐如，对<code>ApacheWeb</code>服务器来说，独占等待就⾮常适合；当新的连接到来时，只应有⼀个<code>Apache</code>进程（通常有许多<code>Apache</code>进程）被唤醒并处理该连接。但是，我们并没有在<code>scullpipe</code>驱动程序中使⽤独占等待，因为读取进程很少会竞争数据（或者写⼊进程竞争缓冲区空间），另外我们也不知道某个读取进程在唤醒后，是不是会消耗所有的可⽤数据。</p>
+<p>将进程置于可中断等待状态是调⽤<code>prepare_to_wait_exclusive</code>的⼀种简单⽅式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">prepare_to_wait_exclusive</span><span class="params">(<span class="type">wait_queue_head_t</span> *<span class="built_in">queue</span>,</span></span><br><span class="line"><span class="params">                               <span class="type">wait_queue_t</span> *wait,</span></span><br><span class="line"><span class="params">                               <span class="type">int</span> state)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数可⽤来替换<code>prepare_to_wait</code>函数，它设置等待队列⼊⼜的“独占”标志，井将进程添加到等待队列的尾部。注意，使⽤<code>wait_event</code>及其变种⽆法执⾏独占等待。</p>
+<h6 id="📌唤醒的相关细节"><a href="#📌唤醒的相关细节" class="headerlink" title="📌唤醒的相关细节"></a>📌唤醒的相关细节</h6><p>相⽐内核中真正发⽣的事情，我们介绍过的唤醒进程的内容要简单多了。当⼀个进程被唤醒时，实际的结果由等待队列⼊口中的⼀个函数控制。默认的唤醒函数将进程设置为可运⾏状态，并且如果该进程具有更⾼的优先级，则会执⾏⼀次上下⽂切换以便切换到该进程。设备驱动程序基本没有必要提供不同的唤醒函数。如果读者认为有此必要，可参阅<code>&lt;linux/wait.h&gt;</code>获得关于如何设置的信息。</p>
+<p>我们也没有看到<code>wake_up</code>的所有变种。⼤部分驱动程序开发者从来不需要这些变种，但出于完整性，这⾥给出所有的<code>wake_up</code>变种：</p>
+<ul>
+<li><p><code>wake_up(wait_queue_head_t *queue);</code><br><code>wake_up_interruptible(wait_queue_head_t *queue);</code></p>
+<p><code>wake_up</code>会唤醒队列上所有⾮独占等待的进程，以及单个独占等待者（如果存在）。<code>wake_up_interruptibie</code>完成相同的⼯作，只是它会跳过不可中断休眼的那些进程。这两个函数会在返回前让唤醒的⼀个或者多个进程被调度（尽管这种情况在原⼦上下⽂中调⽤时不会发⽣）。</p>
+</li>
+<li><p><code>wake_up_nr(wait_queue_head_t *queue, int nr);</code></p>
+</li>
+<li><p><code>wake_up_interruptible_nr(wait_queue_head_t *queue, int nr);</code></p>
+<p>上述函数的功能和<code>wake_up</code>类似，只是它们只会唤醒<code>nr</code>个独占等待进程，⽽不是只有⼀个。注意，传递<code>0</code>表明请求唤醒所有的独占等待进程，⽽不是不唤醒任何⼀个。</p>
+</li>
+<li><p><code>wake_up_all(wait_queue_head_t *queue);</code></p>
+</li>
+<li><p><code>wake_up_interruptible_all(wait_queue_head_t *queue);</code></p>
+<p>上述形式的<code>wake_up</code>不管进程是否执⾏独占等待均唤醒它们（尽管中断形式仍然会跳过执⾏⾮中断等待的进程）。</p>
+</li>
+<li><p><code>wake_up_interruptible_sync(wait_queue_head_t *queue);</code></p>
+</li>
+</ul>
+<p>通常，被唤醒的进程可能会抢占当前的进程，并在<code>wake_up</code>返回前被调度到处理器上。换句话说，对<code>wake_up</code>的调⽤可能不是原⼦的。如果调⽤<code>wake_up</code>的进程运⾏在原⼦上下⽂（例如拥有⾃旋锁，或者是⼀个中断处理例程）中，则重新调度就不会发⽣。通常，这⼀保护是适当的。但是，如果你不希望在这时被调度出处理器，则可使⽤<code>wake_up_interruptible</code>的<code>sync</code>（同步）变种。这⼀函数经常在调⽤者打算强制重新调度的情况下使⽤，并且在只有很少的⼯作需要⾸先完成时更加有效。</p>
+<p>如果读者感觉上⾯描述的东西不是⾮常清晰，不要着急。除了<code>wake_up_interruptible</code>之外，很少有驱动程序需要调⽤其他<code>wake_up</code>函数。</p>
+<h6 id="📌旧的历史：sleep-on"><a href="#📌旧的历史：sleep-on" class="headerlink" title="📌旧的历史：sleep_on"></a>📌旧的历史：<code>sleep_on</code></h6><p>如果读者花些时间深⼈到内核源代码，可能会遇到我们尚未讨论过的两个函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">sleep_on</span><span class="params">(<span class="type">wait_queue_head_t</span> *<span class="built_in">queue</span>)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">interruptible_sleep_on</span><span class="params">(<span class="type">wait_queue_head_t</span> *<span class="built_in">queue</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>读者可以能会想到，这两个函数将当前进程⽆条件休眠在给定的队列上。但是，我们极不赞成使⽤这两个函数—永远不要使⽤它们。如果考虑下⾯的情形，就能清楚知道问题所在：<code>sleep_on</code>没有提供对竞态的任何保护⽅法。在代码决定休眠及<code>sleep_on</code>真正产⽣作⽤之间，总是存在⼀个窗⼜，⽽窗⼜期间出现的唤醒将会被丢失。为此，调⽤<code>sleep_on</code>的代码整体上是不安全的。</p>
+<p>在不远的将来，对<code>sleep_on</code>及其变种（还有两个超时形式未列出）的调⽤将从内核中删除。</p>
+<h6 id="📌测试Scullpipe驱动程序"><a href="#📌测试Scullpipe驱动程序" class="headerlink" title="📌测试Scullpipe驱动程序"></a>📌测试<code>Scullpipe</code>驱动程序</h6><p>我们已经看到<code>sullpipe</code>驱动程序实现阻塞<code>I/O</code>的⽅式。如果读者打算试试这个驱动程序，则其源代码可和本书其他⽰例程序⼀起找到。实际的阻塞<code>I/O</code>可通过打开两个窗⼜看到。第⼀个窗⼜中运⾏类似<code>cat /dev/scullpipe</code>这样的命令，然后在另⼀窗⼜中复制⼀个⽂件到<code>/dev/scullpipe</code>，之后将看到该⽂件的内容会出现在第⼀个窗⼜中。</p>
+<p>测试⾮阻塞活动要⿇烦些，因为⼀般的程序不会做⾮阻塞型操作。<code>misc-progs</code>源码⽬录中包含⼀个简单的程序<code>nbtest</code>，⽤来测试⾮阻塞型操作，其代码罗列如下。它所做的事情就是⽤⾮阻塞型<code>I/O</code>把输⼊复制到输出，并在期间稍做延迟。延退时间由命令⾏传递，默认是<code>1</code>秒。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">	<span class="type">int</span> delay = <span class="number">1</span>, n, m = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (argc &gt; <span class="number">1</span>)</span><br><span class="line">		delay = atoi(argv(<span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">	fcntl(<span class="number">0</span>, F_SETFL, fcntl(<span class="number">0</span>, F_GETFL) | O_NONBLOCK);	<span class="comment">/*stdin*/</span></span><br><span class="line">	fcntl(<span class="number">1</span>, F_SETFL, fcntl(<span class="number">1</span>, F_GETFL) | O_NONBLOCK);	<span class="comment">/*stdout*/</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">		n = read(<span class="number">0</span>, buffer, <span class="number">4096</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (n &gt;= <span class="number">0</span>)</span><br><span class="line">			m = write(<span class="number">1</span>, buffer, n);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (( n &lt; <span class="number">0</span> || m &lt; <span class="number">0</span>) &amp;&amp; (errno != EAGAIN))</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		sleep(delay);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">	perror(n &lt; <span class="number">0</span> ? <span class="string">&quot;stdin&quot;</span><span class="string">&quot;stdout&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果读者使用<code>strace</code>这类进程跟踪⼯具下运⾏上⾯的程序，则会看到每个操作的成功或失败，这取决⼲操作发⽣时数据是否可获得。</p>
+<h4 id="🔥poll和select"><a href="#🔥poll和select" class="headerlink" title="🔥poll和select"></a>🔥<code>poll</code>和<code>select</code></h4><p>使⽤⾮阻塞<code>I/O</code>的应⽤程序也经常使⽤<code>poll</code>、<code>select</code>和<code>epoll</code>系统调⽤。<code>poll</code>、<code>select</code>和<code>epoll</code>的功能本质上是⼀样的：都允许进程决定是否可以对⼀个或多个打开的⽂件做⾮阻塞的读取或写⼈。这些调⽤也会阻塞进程，直到给定的⽂件描述符集合中的任意一个可读或可写。因此，它们常常⽤于那些要使⽤多个输入或输出流⽽又不会阻塞于其中任何⼀个流的应⽤程序中。同⼀功能之所以要由多个独⽴的函数提供，是因为其中两个几乎是同时由两个不同的<code>Unix</code>团体分别实现的：<code>select</code>在<code>BSD Unix</code>中引⼊，⽽<code>poll</code>由<code>SystemV</code>引⼊。<code>epoll</code>系统调⽤在<code>2.5.45</code>中引⼊，它⽤于将<code>poll</code>函数扩展到能够处理数千个⽂件描述符。</p>
+<p>对上述系统调⽤的⽀持需要来⾃设备驱动程序的相应⽀持。所有三个系统调⽤均通过驱动程序的<code>poll</code>⽅法提供。该⽅法具有如下的原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="title function_">int</span> <span class="params">(*poll)</span><span class="params">(<span class="keyword">struct</span> file *filp, poll_table *wait)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>当⽤户空间程序在驱动程序关联的⽂件描述符上执⾏<code>poll</code>、<code>select</code>或<code>epoll</code>系统调⽤时，该驱动程序⽅法将被调⽤。该设备⽅法分为两步处理：</p>
+<ul>
+<li><p>在⼀个或多个可指⽰<code>poll</code>状态变化的等待队列上调⽤<code>poll_wait</code>。如果当前没有⽂件描述符可⽤来执⾏<code>I/O</code>，则内核将使进程在传递到该系统调⽤的所有⽂件描述符对应的等待队列上等待。</p>
+</li>
+<li><p>返回⼀个⽤来描述操作是否可以⽴即⽆阻塞执⾏的位掩码。</p>
+</li>
+</ul>
+<p>这些操作通常简单明了，各个驱动程序的这些操作看起来也⾮常类似。然⽽，实际上它们依赖于只有驱动程序才能提供的信息，因此必须为每个驱动程序分别实现对应的操作。传递给<code>poll</code>⽅法的第⼆个参数，<code>poll_table</code>结构，⽤于在内核中实现<code>poll</code>、<code>select</code>以及<code>epoll</code>系统调⽤。它在<code>&lt;linux/poll.h&gt;</code>中声明，驱动程序源代码必须包含这个头⽂件。驱动程序编写者不需要了解该结构的细节，且需要将其当成⼀个不透明对象使⽤。它被传递给驱动程序⽅法，以使每个可以唤醒进程和修改<code>poll</code>操作状态的等待队列都可以被驱动程序装载。通过<code>poll_wait</code>函数，驱动程序向<code>poll_table</code>结构添加⼀个等待队列：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">poll_wait</span><span class="params">(<span class="keyword">struct</span> file *, <span class="type">wait_queue_head_t</span> *, poll_table *)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>poll</code>⽅法执⾏的第⼆项任务是返回描述哪个操作可以⽴即执⾏的位掩码，这也很直接，例如，如果设备已有数据就绪，⼀个<code>read</code>操作可以⽴刻完成⽽不⽤休眠，那么<code>poll</code>⽅法应该指出这种情况。⼏个标志（在<code>&lt;linux/poll.h&gt;</code>定义）⽤来指明可能的操作：</p>
+<ul>
+<li><p><code>POLLIN</code></p>
+<p>如果设备可以⽆阻塞地读取，就设置该位。</p>
+</li>
+<li><p><code>POLLRDNORM</code></p>
+<p>如果“通常”的数据已经就绪，可以读取，就设置该位。⼀个可读设备返回（<code>POLLIN | POLLRDNORM</code>）。</p>
+</li>
+<li><p><code>POLLRDBAND</code></p>
+<p>这⼀位指⽰可以从设备读取<code>out-of-band</code>（频带之外）的数据。它当前只可以在<code>Linux</code>内核的<code>DECnet</code>代码中使⽤，通常不⽤于设备驱动程序。</p>
+</li>
+<li><p><code>POLLPRI</code></p>
+<p>可以⽆阻塞地读取⾼优先级（即<code>out-of-band</code>）的数据。设置该位会导致<code>select</code>报告⽂件发⽣⼀个异常，这是由于<code>select</code>把<code>out-of-band</code>的数据作为异常对待。</p>
+</li>
+<li><p><code>POLLHUP</code></p>
+<p>当读取设备的进程到达⽂件尾时，驱动程序必须设置<code>POLLHUP</code>（挂起）位。依照<code>select</code>的功能描述，调⽤<code>select</code>的进程会被告知设备是可读的。</p>
+</li>
+<li><p><code>POLLERR</code></p>
+<p>设备发⽣了错误。如果调⽤<code>poll</code>，就会报告设备既可读也可以写，因为读写都会⽆阻塞地返回⼀个错误码。</p>
+</li>
+<li><p><code>POLLOUT</code></p>
+<p>如果设备可以⽆阻塞地写⼊，就在返回值中设置该位。</p>
+</li>
+<li><p><code>POLLWRNORM</code></p>
+<p>该位和<code>POLLOUT</code>的意义⼀样，有时其实就是同⼀个数字。⼀个可写的设备将返回（<code>POLLOUT|POLLWRNORM</code>）。</p>
+</li>
+<li><p><code>POLLWRBAND</code></p>
+<p>与<code>POLLRDBAND</code>类似，这⼀位表⽰具有⾮零优先级的数据可以被写⼊设备。只有数据报（<code>datagram</code>）的<code>poll</code>实现中使⽤了这⼀位，因为数据报可以传输<code>out-of-band</code>数据。</p>
+</li>
+</ul>
+<p><code>POLLRDBAND</code>和<code>POLLWRBAND</code>只在与套接字相关的⽂件描述符中才是有意义的。设备驱动程序通常⽤不到这两个标志。</p>
+<p>描述<code>poll</code>很费事，实际的使⽤则相对简单多了。考虑⼀下<code>scullpipe</code>的<code>poll</code>实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">scull_p_poll</span><span class="params">(<span class="keyword">struct</span> file *filp, poll_table *wait)</span> &#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">scull_pipe</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> mask = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 *缓冲区是环形的：也就是说，如果wp在rp之后，则表明缓冲区已满，</span></span><br><span class="line"><span class="comment">	 *⽽如果它们两个相等，则表明是空的。</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	down(&amp;dev-&gt;sem);</span><br><span class="line">	poll_wait(filp, &amp;dev-&gt;inq, wait):</span><br><span class="line">	poll_wait(filp, &amp;dev-&gt;outq, wait);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*可读取*/</span></span><br><span class="line">	<span class="keyword">if</span> (dev-&gt;rp != dev-&gt;wp) &#123;</span><br><span class="line">		mask |= POLLIN | POLURDNORM;    </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/*可写⼈*/</span></span><br><span class="line">	<span class="keyword">if</span>(spacefree(dev)) &#123;</span><br><span class="line">    mask |= POLLOUT | POLLWRNORM;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">	up(&amp;dev-&gt;sem);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> mask;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码简单地增加两个<code>scullpipe</code>等待队列到<code>poll_table</code>中，然后根据数据的可读或可写状态设置相应的位掩码。</p>
+<p>上述<code>poll</code>代码中缺少对⽂件尾的⽀持，这是因为<code>scullpipe</code>不⽀持⽂件尾条件。对⼤多数真实的设备，在当前（或将来）没有数据可获得时，<code>poll</code>⽅法应该返回<code>POLLHUP</code>。如果调⽤者使⽤<code>select</code>系统调⽤，则会报告⽂件是可读的。在两种情况下应⽤程序都能知道它⼀定可以执⾏⽆阻塞的<code>read</code>，⽽<code>read</code>⽅法将会返回<code>0</code>来指⽰已到了⽂件尾。</p>
+<p>在真正的<code>FIFO</code>实现中，读取进程在所有的写⼊进程都关闭了⽂件后就能看到⽂件尾。然⽽在<code>scullpipe</code>中读取进程却永远看不到⽂件的结尾。之所以有这种不同，是因为<code>FIFO</code>⼀般被作为两个进程的通信通道使⽤，⽽<code>scullpipe</code>就是⼀个垃圾桶—只要还有⼀个读取进程存在，任何进程都可以往⾥⾯扔数据。此外，重新实现内核中已有的东西也没什么意义，因此，我们在例⼦中采⽤了不同的实现⾏为。</p>
+<p>像<code>FIFO</code>那样实现⽂件尾意味着要在<code>read</code>和<code>poll</code>中检查<code>dev-&gt;nwrites</code>，如果没有进程为写入⽽打开设备，就报告⽂件结束。不过遗憾的是，如果读取进程在写入进程之前打开了<code>scullpipe</code>设备，马上就会看到⽂件尾，从⽽没有机会等待数据的到达。修正这个问题的最好⽅法是像真正的<code>FIFO</code>那样实现阻塞的<code>open</code>操作。</p>
+<h5 id="🔗与read和write的交互"><a href="#🔗与read和write的交互" class="headerlink" title="🔗与read和write的交互"></a>🔗与<code>read</code>和<code>write</code>的交互</h5><p><code>poll</code>和<code>select</code>调⽤的⽬的是确定接下来的<code>I/O</code>操作是否会阻塞。从这个⽅⾯来说，它们是<code>read</code>和<code>write</code>的补充。<code>poll</code>和<code>select</code>的更重要的⽤途是它们可以使应⽤程序同时等待多个数据流，尽管在<code>scull</code>的例⼦⾥没有利⽤这个特点。</p>
+<p>为了使应⽤程序正常⼯作，正确实现这三个调⽤是⾮常重要的。所以尽管下⾯的规则多多少少已经在前⾯提过了，但我们还是要在这⾥总结⼀下。</p>
+<h6 id="📌从设备读取数据"><a href="#📌从设备读取数据" class="headerlink" title="📌从设备读取数据"></a>📌从设备读取数据</h6><ul>
+<li><p>如果输⼈缓冲区有数据，那么即使就绪的数据⽐程序所请求的少，并且驱动程序保证剩下的数据马上就能到达，<code>read</code>调⽤仍然应该以难以察觉的延迟⽴即返回。如果为了某种⽅便（⽐如我们的<code>scull</code>），<code>read</code>甚⾄可以⼀直返回⽐所请求数⽬少的数据，当然，前提是⾄少得返回⼀个字节。</p>
+</li>
+<li><p>如果输⼈缓冲区中没有数据，那么默认情况下<code>read</code>必须阻塞等待，直到⾄少有⼀个字节到达。另⼀⽅⾯，如果设置了<code>O_NONBLOCK</code>标志，<code>read</code>应⽴即返回，返回值是<code>-EAGAIN</code>（有些<code>System V</code>的⽼版本返回<code>0</code>）。在这种情况下<code>poll</code>必须报告设备不可读，直到⾄少有⼀个字节到达。⼀旦缓冲区中有了数据，我们就回到了前⼀种情况。</p>
+</li>
+<li><p>如果已经到达⽂件尾，<code>read</code>应该⽴即返回<code>0</code>，⽆论<code>O_NONBLOCK</code>是否设置。此时<code>poll</code>应该报告<code>POLLHUP</code>。</p>
+</li>
+</ul>
+<h6 id="📌向设备写数据"><a href="#📌向设备写数据" class="headerlink" title="📌向设备写数据"></a>📌向设备写数据</h6><ul>
+<li><p>如果输出缓冲区中有空间，则<code>write</code>应该⽆延迟地⽴即返回。它可以接收⽐请求少的数据，但⾄少要接收⼀个字节。在这种情况下，<code>poll</code>报告设备可写。</p>
+</li>
+<li><p>如果输出缓冲区已满，那么默认情况下<code>write</code>被阻塞直到有空间释放。如果设置了<code>O_NONBLOCK</code>标志，<code>write</code>应⽴即返回，返回值是<code>-EAGAIN</code>（⽼版本的<code>System V</code>系统返回<code>0</code>）。这时<code>poll</code>应该报告⽂件不可写。另⼀⽅⾯，如果设备不能再接受任何数据，则<code>write</code>返回<code>-ENOSPC</code>（“<code>No space left on device</code>，设备⽆可⽤空间”），⽽不管<code>O_NONBLOCK</code>标志是否设置。</p>
+</li>
+<li><p>永远不要让<code>write</code>调⽤在返回前等待数据的传输结束，即使<code>O_NONBLOCK</code>标志被清除。这是因为，许多应⽤程序⽤<code>select</code>来检查<code>write</code>是否会阻塞。如果报告设备可以写入，调⽤就不能被阻塞。如果使⽤设备的程序需要保证输出缓冲区中的数据确实已经被传送出去，驱动程序就必须提供⼀个<code>fsync</code>⽅法。例如，可移除设备就应该有⼀个<code>fsync</code>的入⼜点。</p>
+</li>
+</ul>
+<p>尽管这些已经是⼀个很好的通⽤规则，但是每个设备都有其独特之处，所以有时候需要改变⼀下规则。例如，⾯向记录的设备（如磁带机）不能执行部分写入（必须以记录为单位）。</p>
+<h5 id="🔗刷新待处理输出"><a href="#🔗刷新待处理输出" class="headerlink" title="🔗刷新待处理输出"></a>🔗刷新待处理输出</h5><p>我们已经看到了为什么<code>write</code>⽅法不能满⾜所有数据输出的需求，<code>fsync</code>函数可以弥补这⼀空隙，它通过同名系统调⽤来调⽤。该⽅法的原型是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> (*fsync)(<span class="keyword">struct</span> file *file, <span class="keyword">struct</span> dentry *dentry, <span class="type">int</span> datasync):</span><br></pre></td></tr></table></figure>
+
+<p>如果应⽤程序需要确保数据被传送到设备上，就必须实现<code>fsync</code>⽅法。⼀个<code>fsync</code>调⽤只有在设备被完全刷新（输出缓冲区全空）时才会返回，即使这要花⼀些时间。是否设置了<code>O_NONBLOCK</code>标志对此没有影响。参数<code>datasync</code>⽤于区分<code>fsync</code>和<code>fdatasync</code>这两个系统调⽤。它只和⽂件系统的代码有关，驱动程序可以忽略它。</p>
+<p><code>fsync</code>⽅法没有什么特别的地⽅。这个调⽤对时间没有严格要求，所以每个驱动程序都可以按照作者的喜好实现它。⼤多数时候，字符设备驱动程序在它们的<code>fops</code>只有⼀个<code>NULL</code>指针，⽽块设备总是⽤通⽤的<code>block_fsync</code>来实现这个⽅法，<code>block_fsync</code>会依次刷新设备的所有缓冲块，并等待所有<code>I/O</code>结束。</p>
+<h5 id="🔗底层的数据结构"><a href="#🔗底层的数据结构" class="headerlink" title="🔗底层的数据结构"></a>🔗底层的数据结构</h5><p><code>poll</code>和<code>select</code>系统调⽤的实现是相当简单的；<code>epoll</code>略微复杂些，但仍基于相同的原理。当⽤户应⽤程序调⽤了<code>poll</code>、<code>selec</code>：或<code>epoll_ctl</code>函数时，内核会调⽤由该系统调⽤引⽤的全部⽂件的<code>poll</code>⽅法，并向它们传递同⼀个<code>poll_table</code>。<code>poll_table</code>结构是构成实际数据结构的⼀个简单封装。对poll和select系统调⽤，后⾯这个结构是包含</p>
+<p><code>poll_table_entry</code>结构的内存页链表。每个<code>poll_table_entry</code>结构包括⼀个指向被打开设备的<code>struct file</code>类型的指针、⼀个<code>wait_queue_head_t</code>指针以及⼀个关联的等待队列入口。对<code>poll_wait</code>的调⽤有时也会将进程添加到这个给定的等待队列。整个结构必须由内核维护，因⽽在<code>poll</code>或<code>select</code>返回前，进程可从所有这些队列中移除。</p>
+<p>如果轮询（<code>poll</code>）时没有⼀个驱动程序指明可以进⾏⾮限塞<code>I/O</code>，这个<code>poll</code>调⽤就进入休眠，直到休眠在其上的某个（或多个）等待队列唤醒它为⽌。</p>
+<p><code>poll</code>实现中的⼀个有趣之处是，驱动程序的<code>poll</code>⽅法在被调⽤时为<code>poll_table</code>参数传递<code>NULL</code>指针。这种情形的出现基于两个原因。如果应⽤程序调⽤<code>poll</code>时提供的超时值为<code>0</code>（表明不应等待），则没有任何原因需要处理等待队列，⽽系统也不必为此做任何⼯作。在任何被轮询的驱动程序指明可进⾏<code>I/O</code>之后，<code>poll_table</code>指针也会⽴即被设置为<code>NULL</code>。因为内核知道此时不会发⽣任何等待，因此也不需要构造等待队列。</p>
+<p>在<code>poll</code>调⽤结束时，<code>poll_table</code>结构被重新分配，所有的先前添加到<code>poll</code>表中的等待队列入口都会从这个表以及等待队列中移除。</p>
+<p>在图<code>6-1</code>中显⽰了与轮询相关的数据结构：该图是实际数据结构的简化表⽰，其中忽略了轮询表的多页特性，也省略了每个<code>poll_table_entry</code>中的⽂件指针。推荐对真正的实现感兴趣的读者阅读<code>&lt;linux/poll.h&gt;</code>和<code>fs/select.c</code>的相关代码。</p>
+<p>此时，读者应该能够理解出现新的<code>epoll</code>系统调⽤的原因了。在典型情况下，对<code>poll</code>或者<code>select</code>的调⽤只涉及到⼏个⽂件描述符，因此构造相关数据结构的成本相对较⼩。但是有⼀些应⽤程序却会同时处理⼏千个⽂件描述符。对这种情况，在每个<code>I/O</code>操作之间构造及销毁该数据结构将变得极其浪费。⽽<code>epoll</code>系统调⽤族可帮助这类应⽤程序只需构造⼀次内部内核数据结构，然后多次使⽤。</p>
+<h4 id="🐛异步通知"><a href="#🐛异步通知" class="headerlink" title="🐛异步通知"></a>🐛异步通知</h4><p>尽管⼤多数时候阻塞型和⾮阻塞型操作的组合以及<code>select</code>⽅法可以有效地查询设备，但某些时候⽤这种技术处理就效率不⾼了。</p>
+<p>例如，我们可以想像这种情况：⼀个进程在低优先级执⾏长的循环计算，但又需要尽可能快地处理输入数据。如果该进程正在响应来⾃数据收集外设的新的观测数据，则应该在新数据可⽤时⽴即知晓并处理。我们可以让这个应⽤程序周期性地调⽤<code>poll</code>来检查数据，但是对许多情况来讲还有更好的办法。通过使⽤异步通知，应⽤程序可以在数据可⽤时收到⼀个信号，⽽不需要不停地使⽤轮询来关注数据。</p>
+<p>为了启⽤⽂件的异步通知机制，⽤户程序必须执⾏两个步骤。⾸先，它们指定⼀个进程作为⽂件的“属主（<code>owner</code>）”。当进程使⽤<code>fcntl</code>系统调⽤执⾏<code>F_SETOWN</code>命令时，属主进程的进程<code>ID</code>号就被保存在<code>filp-&gt;f_owner</code>中。这⼀步是必需的，⽬的是为了让内核知道应该通知哪个进程。然后，为了真正启⽤异步通知机制，⽤户程序还必须在设备中设置<code>FASYNC</code>标志，这通过<code>fcntl</code>的<code>F_SETFL</code>命令完成的。</p>
+<p>执⾏完这两个步骤之后，输入⽂件就可以在新数据到达时请求发送⼀个<code>SIGIO</code>信号。该信号被发送到存放在<code>filp-&gt;f_owner</code>中的进程（如果是负值就是进程组）。</p>
+<p>例如，⽤户程序中的如下代码段启⽤了<code>stdin</code>输⼊⽂件到当前进程的异步通知机制：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">signal(SIGIO, &amp;input_handler）；<span class="comment">/*最好使⽤sigaction()*/</span></span><br><span class="line">fcntl(STDIN_FILENO, F_SETOWN, getpid());</span><br><span class="line">oflags = fcntl(STDIN_FILENO, F_GETFL):</span><br><span class="line">fentl(STDIN_FILENO, F_SETFL, oflags|FASYNC);</span><br></pre></td></tr></table></figure>
+
+<p>⽰例源代码中名为<code>asynctest</code>的程序就是这样⼀个读取<code>stdin</code>的例⼦。它可以⽤来测试<code>scullpipe</code>的异步功能。该程序类似于<code>cat</code>，但不会在⽂件尾终⽌。它只响应输入，没有输⼊时就没有响应。</p>
+<p>需要注意的是，不是所有的设备都⽀持异步通知，我们也可以选择不提供异步通知功能。应⽤程序通常假设只有套接字和终端才有异步通知能⼒。</p>
+<p>还有⼀个问题。当进程收到<code>SIGIO</code>信号时，它并不知道是哪个输⼊⽂件有了新的输⼊。如果有多于⼀个⽂件可以异步通知输⼊的进程，则应⽤程序仍然必须借助于<code>poll</code>或<code>select</code>来确定输入的来源。</p>
+<h5 id="🔗从驱动程序的⾓度考虑"><a href="#🔗从驱动程序的⾓度考虑" class="headerlink" title="🔗从驱动程序的⾓度考虑"></a>🔗从驱动程序的⾓度考虑</h5><p>对我们来讲，⼀个更重要的话题是驱动程序怎样实现异步信号。下⾯列出的是从内核⾓度来看的详细操作过程。</p>
+<ul>
+<li><p><code>F_SETOWN</code>被调⽤时对<code>filp-&gt;f_owner</code>赋值，此外什么也不做。</p>
+</li>
+<li><p>在执⾏<code>F_SETFL</code>启⽤<code>FASYNC</code>时，调⽤驱动程序的<code>fasync</code>⽅法。只要<code>filp-&gt;f_flags</code>中的<code>FASYNC</code>标志发⽣了变化，就会调⽤该⽅法，以便把这个变化通知驱动程序，使其能正确晌应。⽂件打开时，<code>FASYNC</code>标志被默认为是清除的。我们⼀会再来看看这个驱动程序⽅法的标准实现。</p>
+</li>
+<li><p>当数据到达时，所有注册为异步通知的进程都会被发送⼀个<code>SIGIO</code>信号。</p>
+</li>
+</ul>
+<p>第⼀步的实现很简单，在驱动程序部分没什么可做的。其他步骤则要涉及维护一个动态数据结构，以跟踪不同的异步读取进程，这种进程可能会有好⼏个。不过，这个动态数据结构并不依赖于特定的设备，内核已经提供了⼀套合适的通⽤实现⽅法，无需为每个驱动程序重写同一代码。</p>
+<p><code>Linux</code>的这种通⽤⽅法基于⼀个数据结构和两个函数（它们要在前⾯提到的第⼆步和第三步中调⽤）。相关头⽂件是<code>&lt;linux/fs.h&gt;</code>，数据结构称为<code>struct fasync_struct</code>。和处理等待队列的⽅式类似，我们需要把⼀个该类型的指针插入设备特定的数据结构中去。</p>
+<p>驱动程序要调⽤的两个函数的原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fasync_helper</span><span class="params">(<span class="type">int</span> fd, <span class="keyword">struct</span> file *filp,</span></span><br><span class="line"><span class="params">                  <span class="type">int</span> mode, <span class="keyword">struct</span> fasync_struct **fa)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">kill_fasync</span><span class="params">(<span class="keyword">struct</span> fasync_struct **fa, <span class="type">int</span> sig, <span class="type">int</span> band)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>当⼀个打开的⽂件的<code>FASYNC</code>标志被修改时，调⽤<code>fasync_helper</code>以便从相关的进程列表中增加或删除⽂件。除了最后⼀个参数外，它的其他所有参数都是提供给<code>fasync</code>⽅法的相同参数，因此可以直接传递。在数据到达时，可使⽤<code>kill_fasync</code>通知所有的相关进程。它的参数包括要发送的信号（通常是<code>SIGIO</code>）和带宽（<code>band</code>），后者⼏乎总是<code>POLL_IN</code>（但在⽹络代码中，可⽤来发送“紧急”或<code>out-of-band</code>的数据）。</p>
+<p>在<code>scullpipe</code>中是这样实现<code>fasync</code>⽅法的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">scull_p_fasync</span><span class="params">(<span class="type">int</span> fd, <span class="keyword">struct</span> file *filp, <span class="type">int</span> mode)</span> &#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">scull_pipe</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line">	</span><br><span class="line">  <span class="keyword">return</span> fasync_helper(fd, filp, mode, &amp;dev-&gt;async_queue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很显然，所有⼯作都由<code>fasync_hefper</code>完成。不过，如果没有驱动程序中提供的⽅法，它是不可能实现这⼀功能的。因为辅助函数需要访问正确的<code>struct fasync_struct*</code>类型（这⾥是<code>&amp;dev-&gt;async_queue</code>）的指针，⽽只有驱动程序才能提供这⼀信息。</p>
+<p>接着，当数据到达时，必须执⾏下⾯的语句来通知异步读取进程。由于供给<code>scullpipe</code>的读取进程的新数据是由某个进程调⽤<code>write</code>产⽣的，所以这条语句是在<code>scullpipe</code>的<code>write</code>⽅法中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (dev-&gt;async_queue)</span><br><span class="line">	kill_fasync(&amp;dev-›async_queue, SIGIO, POLL_IN):</span><br></pre></td></tr></table></figure>
+
+<p>注意，某些设备也针对设备可写入⽽实现了异步通知。在这种情况下，<code>kill_fasync</code>必须以<code>POLL_OUT</code>为模式调⽤。</p>
+<p>看起来差不多都讨论完了，不过还漏了⼀件事。当⽂件关闭时必须调⽤<code>fasync</code>⽅法，以便从活动的异步读取进程列表中删除该⽂件。尽管这个调⽤只在<code>filp-&gt;f_flags</code>设置了<code>FASYNC</code>标志时才是必需的，但不管什么情况，调⽤它不会有什么坏处，并且这也是普遍的实现⽅法。例如，下⾯的代码是<code>scullpipe</code>的<code>close</code>⽅法中的⼀段：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*从异步通知列表中删除该filp*/</span></span><br><span class="line">scull_p_fasync(<span class="number">-1</span>, filp, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>异步通知所使⽤的数据结构和<code>struct wait_queue</code>使⽤的⼏乎是相同的，因为两种情况都涉及等待事件。不同之处在于前者⽤<code>struct file</code>替换了<code>struct task_struct</code>。队列中的<code>file</code>结构⽤来获取<code>f_owner</code>，以便给进程发送信号。</p>
+<h4 id="🛠️定位设备"><a href="#🛠️定位设备" class="headerlink" title="🛠️定位设备"></a>🛠️定位设备</h4><p>本章最后要讨论的是<code>llseek</code>⽅法、对某些设备来讲，该⽅法很有⽤⽽且易于实现。</p>
+<h5 id="🔗llseek实现"><a href="#🔗llseek实现" class="headerlink" title="🔗llseek实现"></a>🔗<code>llseek</code>实现</h5><p><code>llseek</code>⽅法实现了<code>lseek</code>和<code>llseek</code>系统调⽤。前⾯经提到过，如果设备操作未定义<code>llseek</code>⽅法，内核默认通过修改<code>filp-&gt;f_pos</code>⽽执⾏定位，<code>filp-&gt;f_pos</code>是⽂件的当前读取&#x2F;写⼊位置。请注意，为了使<code>lseek</code>系统调⽤能正确⼯作，<code>read</code>和<code>write</code>⽅法必须通过更新它们收到的偏移量参数来配合。</p>
+<p>如果定位操作对应于设备的⼀个物理操作，可能就需要提供⾃⼰的<code>llseek</code>⽅法。在<code>scull</code>的驱动程序中可以看到⼀个简单的例⼦：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">loff_t</span> <span class="title function_">scull_llseek</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="type">loff_t</span> off, <span class="type">int</span> whence)</span> &#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">scull_dev</span> *<span class="title">dev</span> =</span> filp-&gt;private_data;</span><br><span class="line">	<span class="type">loff_t</span> newpos;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">switch</span>(whence) &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">0</span>:<span class="comment">/*SEEK_SBT*/</span></span><br><span class="line">		newpos=off;</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> <span class="number">1</span>:<span class="comment">/*SEEK_CUR*/</span></span><br><span class="line">		newpos = filp-&gt;f_pos + off;</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">      </span><br><span class="line">	<span class="keyword">case</span> <span class="number">2</span>:<span class="comment">/*SEEK_END*/</span></span><br><span class="line">		newpos = dev-&gt;size + off;</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">default</span>:<span class="comment">/*不应该发⽣*/</span></span><br><span class="line">		<span class="keyword">return</span> -EINVAL;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (newpos &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> -EINVAL;</span><br><span class="line"></span><br><span class="line">	filp-&gt;f_pos = newpos;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> newpos;</span><br><span class="line">｝</span><br></pre></td></tr></table></figure>
+
+<p>这⾥唯⼀与设备相关的操作就是从设备中获得⽂件长度。在<code>scull</code>中，<code>read</code>和<code>write</code>⽅法需要相互配合，就像第三章中介绍的那样。</p>
+<p>上⾯的实现对<code>scull</code>是有意义的，因为它处理⼀个明确定义的数据区。然⽽⼤多数设备只提供了数据流（就像串⼜和键盘），⽽不是数据区，定位这些设备是没有意义的。在这种情况下，不能简单地不声明<code>lseek</code>操作，因为默认⽅法是允许定位的。相反，我们应该在我们的<code>open</code>⽅法中调⽤<code>nonseekable_open</code>，以便通知内核设备不⽀持<code>llseek</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">nonseekable_open</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *filp)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>上述调⽤将会把给定的<code>filp</code>标记为不可定位；这样，内核就不会让这种⽂件上的<code>lseek</code>调⽤成功。通过这种⽅式标记⽂件，我们还可以确保通过<code>pread</code>和<code>pwrite</code>系统调⽤也不能定位⽂件。</p>
+<p>为了完整起见，我们还应该将<code>file_operations</code>结构中的<code>llseek</code>⽅法设置为特殊的辅助函数<code>no_llseek</code>，该函数定义在<code>&lt;linux/fs.h&gt;</code>中。</p>
+<h4 id="设备⽂件的访问控制"><a href="#设备⽂件的访问控制" class="headerlink" title="设备⽂件的访问控制"></a>设备⽂件的访问控制</h4><p>提供访问控制对于设备节点的可靠性有时是⾄关重要的。⽐如，不允许未授权的⽤户使⽤设备（这可以通过设置⽂件系统的许可位实现），⽽且在某些情况下⼀次只能允许⼀个授权⽤户打开设备。使⽤终端的问题与此类似。每当⼀个⽤户登录系统，<code>login</code>进程就修改设备节点的属主，以防⽌其他⽤户⼲扰或侦听这个终端的数据流。然⽽如果仅仅为了保证对设备的唯⼀访</p>
+<p>问，⽽在每次打开它时都⽤特权程序修改设备的属主，是不现实的。</p>
+<p>到现在为⽌，我们还没有看到能超越⽂件系统权限位⽽实现任意访问控制的代码。如果</p>
+<p>open系统调⽤将请求转给驱动程序，open就成功了。现在来介绍⼀些实现某些附加检查</p>
+<p>的技术。</p>
+<p>本节的每个设备都和“裸的”sCul设备（它实现了⼀个持久的内存区）具有相同的功能，</p>
+<p>但具有不同的访问控制，这是在open和release操作中实现的。</p>
+<p>独享设备</p>
+<p>最⽣硬的访问控制⽅法是⼀次只允许⼀个进程打开设备（独享）。最好避免使⽤这种技</p>
+<p>术，因为它制约了⽤户的灵活性。⽤户可能会希望在同⼀设备上运⾏不同的进程，</p>
+<p>⼀个</p>
+<p>⽤来读取状态信息，⽽另⼀个进程写⼈数据。有时候，⽤户通过⼀个shell脚本同时运⾏</p>
+<p>多个可以同时访问设备的简单程序就能够完成很多⼯作。换句话说，独享这种⽅式其实</p>
+<p>建⽴了⼀种策略，⽽这种策略妨碍了⽤户完成他的⼯作。</p>
+<p>⼀次只允许⼀个进程打开设备有很多令⼈不快的特性，不过这也是设备驱动程序中最容</p>
+<p>易实现的访问控制⽅法。下⾯给出了代码，这些代码摘⾃scullsingle设备。</p>
+<p>scullsingle设备维护⼀个atomic_t变量，称为scu11_s_available。该变量的值初</p>
+<p>始化为1，表明该设备真正可⽤。open调⽤会减⼩并测试scul1_s_availabe，并在其</p>
+<p>他进程已经打开该设备时拒绝访问：</p>
+<p>174第六章</p>
+<p>staticatomic_tscull_s_available&#x3D;ATOMIC_INIT(1);</p>
+<p>staticintseulsopenstructanode”inode,structfile*ELlp)</p>
+<p>structscu11_dev*dev&#x3D;&amp;scu11_s_device:&#x2F;<em>设备信息</em>&#x2F;</p>
+<p>if(!atomic_dec_and_test(&amp;scull_s_available))&#x2F;</p>
+<p>atomic_inc(&amp;scull_s_available);</p>
+<p>return-EBUSY；&#x2F;<em>已打开</em>&#x2F;</p>
+<p>&#x2F;<em>然后，从裸的sGu11设备中复制所有其他数据</em>&#x2F;</p>
+<p>iE（1Eilp-&gt;f</p>
+<p>_flags&amp;O.ACCMODE）&#x3D;&#x3D;O_WRONLY）</p>
+<p>scull_trim(dev);</p>
+<p>filp-&gt;private_data&#x3D;dev；</p>
+<p>return0;&#x2F;<em>成功</em>&#x2F;</p>
+<p>另⼀⽅⾯，release调⽤则标记设备为不再忙。</p>
+<p>staticintscull_s_release(structinode<em>inode,structfile</em>{ilp)</p>
+<p>atomic_inc（&amp;scu11_s_available）；&#x2F;<em>释放该设备</em>&#x2F;</p>
+<p>return0;</p>
+<p>通常，建议把打开标志scu11</p>
+<p>_S_available放在设备结构（这⾥是Scu11_Dev）中，</p>
+<p>因为从概念上来讲它本⾝属于设备。不过，scul！驱动程序使⽤了单独的变量保存这个标</p>
+<p>志，这是为了保持与裸scu.ll设备使⽤同样的设备结构和⽅法，从⽽最⼩化代码的重复。</p>
+<p>限制每次只由⼀个⽤户访问</p>
+<p>在构造独享设备之后，我们要建⽴允许单个⽤户在多个进程中打开的设备，但是每次只</p>
+<p>允许⼀个⽤户打开该设备。这种⽅案便于测试该设备，因为⽤户每次可从多个进程读取</p>
+<p>和写⼈，前提是由⽤户负责在多进程访问中维护数据的完整性。这通过在open⽅法中加</p>
+<p>⼈检查来完成，这种检查在正常的权限检查之后进⾏，提供了⽐⽂件属主和属组权限位</p>
+<p>更严格的访问控制。这种策略和终端使⽤的访问策略相同，不过它⽆需借助于⼀个外部</p>
+<p>的特权程序。</p>
+<p>与独享策略相⽐，实现这些访问策略需要更多的技巧。此时需要两个数据项：⼀个打开</p>
+<p>计数和设备属主的UID。同样的，这些数据项最好是保存在设备结构内部：不过，我们</p>
+<p>的例⼦使⽤的是全局变量，其原因在前⾯介绍scullsingle时已解释过了。设备名是</p>
+<p>sculluid.</p>
+<p>open调⽤在第⼀次打开时授权，但它记录下设备的属主。这意味着⼀个⽤户可以多次打</p>
+<p>开设备，允许⼏个互相协作的进程并发地在设备上操作。同时，其他⽤户不能打开这个</p>
+<p>⾼级字符驱动程序操作175</p>
+<p>设备，这就避免了外部⼲扰。因为这个函数版本和上⼀个基本相同，所以只列出相关部</p>
+<p>分：</p>
+<p>spin_lock(&amp;scull_u_lock);</p>
+<p>if(scull_u_count&amp;</p>
+<p>(scull_u_owner!&#x3D;current-&gt;uid)&amp;&amp;&#x2F;<em>允许⽤户</em>&#x2F;</p>
+<p>（scul1_u_ownerI&#x3D;current-&gt;euid）&amp;&amp;&#x2F;<em>允许执⾏su命令的⽤户</em>&#x2F;</p>
+<p>！capable（CAP_DAC_OVERRIDE））｛&#x2F;<em>也允许root⽤户</em>&#x2F;</p>
+<p>spin_unlock(&amp;scull_u_lock);</p>
+<p>return-EBUSY：&#x2F;<em>返回-EPERM会让⽤户混淆</em>&#x2F;</p>
+<p>if(scull_u_count&#x3D;&#x3D;0）</p>
+<p>scu11_u_owner&#x3D;current-&gt;uid;&#x2F;<em>获得所有者</em>&#x2F;</p>
+<p>scull_u_count++;</p>
+<p>spin_unlock(&amp;scull_u_lock);</p>
+<p>注意，sculluid代码有两个变量（scu11_u_owner和scu11_u_count），这两个变量控</p>
+<p>制对设备的访问，并且可由多个进程并发地访问。为了让这些变量安全，我们通过⼀个</p>
+<p>⾃旋锁（scu11_u_1ock）来保护对这些变量的访问。没有这个锁，两个（或更多）的</p>
+<p>进程可能在同⼀时刻测试scu11_u_count，⽽它们均可能做出可获得设备所有权的结</p>
+<p>论。这⾥采⽤⾃旋锁的原因在于，锁的拥有时间将⾮常短，⽽在拥有锁的时间内，驱动</p>
+<p>程序不会做任何可能休眠的⼯作。</p>
+<p>即使代码执⾏的是权限检查，但我们还是选择返回-EBUSY⽽不是-EPERM，以便给被</p>
+<p>拒绝访问的⽤户提⽰正确的信息。返回“权限拒绝（Permissiondenied）”通常是檢查</p>
+<p>Idev⽂件的模式和属主的结果，⽽“设备忙（Devicebusy）”提⽰⽤户设备已经被进程</p>
+<p>使⽤。</p>
+<p>代码还检查了试图打开设备的进程是否有越过⽂件访问权限的能⼒；如果是这样，允许</p>
+<p>它进⾏打开操作，即使这个进程不是设备属主。在这种情况下，CAP_DAC_OVERRIDE正</p>
+<p>适合于完成这项任务。</p>
+<p>release⽅法如下实现：</p>
+<p>staticintscull_u_release(structinode<em>inode,structfile</em>filp)</p>
+<p>spin_lock(&amp;scull_u_lock);</p>
+<p>scul1_u_count–；&#x2F;<em>除此之外不做任何事情</em>&#x2F;</p>
+<p>spin_unlock(&amp;scull_u_lock);</p>
+<p>return0;</p>
+<p>再次看到，在修改计数之前，我们必须获取⾃旋锁，这样就不会和其他进程发⽣竞</p>
+<p>我们争。</p>
+<p>176第六章</p>
+<p>替代EBUSY的阻塞型open</p>
+<p>当设备不能访问时返回⼀个错误，通常这是最合理的⽅式，但有些情况下可能需要让进</p>
+<p>程等待设备。</p>
+<p>例如，如果⼀个以周期性的、预的需要⽽临时使⽤，那么在通道定的正忙⽅式的时发送候，定定时报告时报的数告最好能据通道，同够稍时也能微延迟⼀根据⼈们</p>
+<p>会⼉，⽽不</p>
+<p>是因为通道忙就返回失败。</p>
+<p>这是在设计设备驱动程序时程序员必须作出的选择，所解决的问题不同，答案也就不⼀</p>
+<p>样。</p>
+<p>读者可能已经想到，代替EBUSY的另⼀个⽅法是实现阻塞型open。scullwuid设备和</p>
+<p>sculluid的不同是，open时会等待设备⽽不是返回-EBUSY。它和sculluid只在open操</p>
+<p>作的下列部分不同：</p>
+<p>spin_lock(&amp;scull_w_lock);</p>
+<p>while(1scull_w_available))(</p>
+<p>spin_unlock(&amp;scull_w_lock);</p>
+<p>if(filp-&gt;f_flags&amp;O_NONBLOCK)return-EAGAIN;</p>
+<p>iflwait_event_interruptible（scu11_w_wait.scull_w_available（）））</p>
+<p>return-ERESTARTSYS；&#x2F;<em>告诉fs层做进⼀步处理</em>&#x2F;</p>
+<p>spin_lock(&amp;scull_w_lock);</p>
+<p>if(scull_w_count&#x3D;&#x3D;0）</p>
+<p>sCu11_w_owner&#x3D;current-&gt;uid;&#x2F;<em>获取所有者</em>&#x2F;</p>
+<p>scull_w_count++;</p>
+<p>spin_unlock(&amp;scull_w_lock);</p>
+<p>这⾥的实现又是基于等待队列。创建等待队列是为了维护⼀个因等待事件⽽休眠的进程</p>
+<p>的列表，所以在这⾥使⽤⾮常合适。</p>
+<p>接下来，release⽅法唤醒所有等待的进程：</p>
+<p>staticintscullwrelease(structinode<em>inode,structfile</em>Elp)</p>
+<p>inttemp;</p>
+<p>spin_lock(&amp;scull_w_lock);</p>
+<p>scull_w_count–;</p>
+<p>temp&#x3D;scull_w_count;</p>
+<p>spin_unlock(&amp;scull_w_lock);</p>
+<p>if(temp&#x3D;&#x3D;0)</p>
+<p>wake-up-interruptible_sync（&amp;scul1_w_wait）；&#x2F;<em>喚醒其他的uia进程</em>&#x2F;</p>
+<p>return0;</p>
+<p>⾼级宇符驱动程序操作177</p>
+<p>上⾯恰好给出了调⽤wake_up_interruprible_sync函数的⼀个例⼦。在执⾏这个唤醒时，</p>
+<p>我们正打算返回到⽤户空间，⽽这恰好就是系统的调度点。因此，在执⾏这个唤醒时，</p>
+<p>我们没有必要引发潜在的重新调度，⽽只需要调⽤“sync”版本并结束我们的⼯作。</p>
+<p>阻塞型open实现中的问题是，对于交互式⽤户来说它是令⼈很不愉快的，⽤户可能会在</p>
+<p>等待中猜测设备出了什么问题。交互式⽤户通常使⽤诸如cp和rar这样的预先编译好的</p>
+<p>命令，它们都没有在open调⽤中加⼈O_NONBLOCK选项。隔壁正使⽤磁带机做备份的</p>
+<p>同事可能更愿意得到⼀条清晰的消息“设备或资源忙”，⽽不是在Ear命令扫描磁盘的时</p>
+<p>候坐在⼀边猜想为什么今天的硬盘这么安静。</p>
+<p>这类问题（对同⼀设备的不同的、不兼容的策略）最好通过为每⼀种访问策略实现⼀个</p>
+<p>设备节点的⽅法来解决。这种实现的⼀个例⼦是Linux的磁带设备驱动程序，它为同⼀</p>
+<p>个设备提供了多个设备⽂件。不同的设备⽂件会使设备以不同的⽅式⼯作，例如是否以</p>
+<p>压缩⽅式记录、在设备关闭时是否⾃动回卷磁带，等等。</p>
+<p>在打开时复制设备</p>
+<p>另⼀个实现访问控制的⽅法是，在进程打开设备时创建设备的不同私有副本。</p>
+<p>显然这种⽅法只有在设备没有绑定到某个硬件对象时才能实现。scul就是这样⼀个“软</p>
+<p>设备”的例⼦。Idevltty内部也使⽤了类似的技术，以提供给它的进程⼀个不同于ldev⼊</p>
+<p>1点所表现出的“情景”。如果复制的设备是由软件驱动程序创建的，我们称它们为“虚</p>
+<p>拟设备”—就像所有的虚拟终端都使⽤同⼀个物理终端设备⼀样。</p>
+<p>虽然这种访问控制并不常见，但它的实现展⽰了内核代码可以轻松地改变应⽤程序看到</p>
+<p>的外部环境（如计算机）。</p>
+<p>scull包中的Idev&#x2F;scullpriv设备节点实现了虚拟设备。在sucllpriv的实现中，使⽤当前</p>
+<p>进程控制终端的次设备号作为访问虚拟设备的键值。不过这个来源可以很容易地修改成</p>
+<p>⽤任意整数值作为键值，不同的键值将导致不同的策略。例如，使⽤u⽴d会导致给每个</p>
+<p>⽤户复制不同的虚拟设备，使⽤pid则会导致为每个访问该设备的进程复制⼀个新设</p>
+<p>备。</p>
+<p>使⽤控制终端意味着可以通过输⼈&#x2F;输出重定向来简化测试设备：运⾏在某⼀个虚拟终</p>
+<p>端的所有命令共享设备，这个设备与在另⼀个终端上运⾏的命令所看到的设备互相独⽴。</p>
+<p>open⽅法的代码如下。它必须找到正确的虚拟终端，也许还需要新创建⼀个。函数的最</p>
+<p>后⼀部分没有列出，因为它是从裸scu中复制过来的，⽽这些代码我们已经看到过了。</p>
+<p>178第六章</p>
+<p>&#x2F;<em>和复制相关的数据结构包括⼀个key成员</em>！</p>
+<p>structscull_listitem(</p>
+<p>structscull_devdevice;</p>
+<p>dev_tkey:structlist_headlist;</p>
+<p>｝；</p>
+<p>&#x2F;<em>设备的链表，以及保护它的锁</em>&#x2F;</p>
+<p>staticLIST_HEAD(scull_c_list);</p>
+<p>staticspinlock_tscull_c_lock&#x3D;SPIN_LOCK_UNLOCKED;</p>
+<p>&#x2F;<em>查找设备，如果没有就创建⼀个</em>1</p>
+<p>staticstructscull_dev*scull_c_lookfor_device(dev_tkey)</p>
+<p>structscull_listitem*Iptr;</p>
+<p>list_for_each_entry(Iptr,&amp;scull_c_list,list)i</p>
+<p>if(Iptr-&gt;key&#x3D;&#x3D;key)</p>
+<p>return&amp;(lptr-&gt;device);</p>
+<p>&#x2F;<em>没有找到</em>&#x2F;</p>
+<p>1ptr&#x3D;kmalloc(sizeof(structscull_listitem),GFP_KERNEL);</p>
+<p>i£（！lptr）</p>
+<p>returnNULL;</p>
+<p>&#x2F;<em>初始化该设备</em>&#x2F;</p>
+<p>memset(lptr,0,sizeof(structscull_listitem));</p>
+<p>1ptr-&gt;key&#x3D;key:</p>
+<p>scu11_trim（&amp;（lptr-&gt;device））；&#x2F;<em>初始化</em>&#x2F;</p>
+<p>init_MUTEX(&amp;(lptr-&gt;device.sem));</p>
+<p>&#x2F;<em>将其放到链表中</em>&#x2F;</p>
+<p>list_add(&amp;lptr-›list,&amp;scull_c_list);</p>
+<p>return&amp;(lptr-&gt;device);</p>
+<p>staticintscull_c_open(structinode<em>inode,structfile</em>filp)</p>
+<p>structscull_dev*dev;</p>
+<p>dev_tkey;</p>
+<p>if(!current-»signal-›tty)(</p>
+<p>PDEBUG(“Process(“&amp;s|”hasnoctlttyln”,current-&gt;comm);</p>
+<p>return-EINVAL;</p>
+<p>key&#x3D;tty_devnum(current-›signal-›tty);</p>
+<p>&#x2F;<em>在链表中查找scul1c设备</em>&#x2F;</p>
+<p>spin_lock(&amp;scull_c_lock):</p>
+<p>dev&#x3D;scull_c_lookfor_device(key):</p>
+<p>spin_unlock(&amp;scull_c_lock);</p>
+<p>⾼级字符驱动程序操作179</p>
+<p>if(!dev)</p>
+<p>return-ENOMEM;</p>
+<p>&#x2F;<em>然后，从裸的scu11设备中复制所有其他数据</em>&#x2F;</p>
+<p>release⽅法没有做什么特殊处理。它通常在最后⼀次关闭时释放设备，但是为了简化测</p>
+<p>试，这⾥没有维护⼀个打开设备的计数器。如果设备在最后⼀次关闭时被释放了，则在</p>
+<p>写⼈设备后将不能再从中读出同样的数据，除⾮有⼀个后台进程保持打开它。我们的⽰</p>
+<p>例驱动程序使⽤了⽐较简单的⽅法来保存数据，所以在下⼀次打开设备时还能找到那些</p>
+<p>数据。设备在scull_cleanup被调⽤时释放。</p>
+<p>上述代码使⽤了Linux的通⽤链表机制，⽽不是⾃⾏编写完成相同功能的代码。Linux</p>
+<p>链表在第⼀章中讨论。</p>
+<p>这⾥是&#x2F;dev&#x2F;scullpriv的release的实现。对于设备⽅法的讨论也到此结束。</p>
+<p>statieintsculerelease(etzutinode”inde,structfile”11p)</p>
+<p>*因为设备是持久的，所以不需要做任何⼯作。</p>
+<p>*⼀个“真正”的克隆设备应该在最后⼀次关闭时被释放</p>
+<p>*&#x2F;</p>
+<p>return0;</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F/" rel="tag"># 驱动程序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/21/linux/driver/%E5%B9%B6%E5%8F%91%E5%92%8C%E7%AB%9E%E6%80%81/" rel="prev" title="并发和竞态">
+                  <i class="fa fa-angle-left"></i> 并发和竞态
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/24/linux/misc/kobject/" rel="next" title="kobject">
+                  kobject <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

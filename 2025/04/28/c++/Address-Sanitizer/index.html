@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="转载：Understanding AddressSanitizer: Better memory safety for your code ​	本文将带你了解如何使用AddressSanitizer（简称ASan）——一种编译器插件，专门用于帮助开发者检测代码中的内存问题，这类问题可能导致远程代码执行攻击（如WannaCry勒索病毒或某些WebP实现中的漏洞）。ASan在编译阶段会在内存访问操作周">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Address Sanitizer">
+<meta property="og:url" content="https://huangpiao.tech/2025/04/28/c++/Address-Sanitizer/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="转载：Understanding AddressSanitizer: Better memory safety for your code ​	本文将带你了解如何使用AddressSanitizer（简称ASan）——一种编译器插件，专门用于帮助开发者检测代码中的内存问题，这类问题可能导致远程代码执行攻击（如WannaCry勒索病毒或某些WebP实现中的漏洞）。ASan在编译阶段会在内存访问操作周">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.trailofbits.com/img/wpdump/640da9481d3cc39141f0fae6c6034ee6.png">
+<meta property="article:published_time" content="2025-04-28T09:52:37.624Z">
+<meta property="article:modified_time" content="2025-04-30T09:13:04.197Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="c++">
+<meta property="article:tag" content="内存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.trailofbits.com/img/wpdump/640da9481d3cc39141f0fae6c6034ee6.png">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/04/28/c++/Address-Sanitizer/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/04/28/c++/Address-Sanitizer/","path":"2025/04/28/c++/Address-Sanitizer/","title":"Address Sanitizer"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Address Sanitizer | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8ASan"><span class="nav-number">1.</span> <span class="nav-text">开始使用ASan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B%EF%BC%9A%E6%A3%80%E6%B5%8B%E8%B6%8A%E7%95%8C%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE"><span class="nav-number">2.</span> <span class="nav-text">简单示例：检测越界内存访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ASan%E7%9A%84%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9D%97"><span class="nav-number">3.</span> <span class="nav-text">ASan的构建模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%B1%E5%83%8F%E5%86%85%E5%AD%98"><span class="nav-number">4.</span> <span class="nav-text">影像内存</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/04/28/c++/Address-Sanitizer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Address Sanitizer | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Address Sanitizer
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-04-28 17:52:37" itemprop="dateCreated datePublished" datetime="2025-04-28T17:52:37+08:00">2025-04-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-30 17:13:04" itemprop="dateModified" datetime="2025-04-30T17:13:04+08:00">2025-04-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>转载：<a href="https://blog.trailofbits.com/2024/05/16/understanding-addresssanitizer-better-memory-safety-for-your-code/">Understanding AddressSanitizer: Better memory safety for your code</a></p>
+<p>​	本文将带你了解如何使用<code>AddressSanitizer</code>（简称<code>ASan</code>）——一种编译器插件，专门用于帮助开发者检测代码中的内存问题，这类问题可能导致远程代码执行攻击（如<code>WannaCry</code>勒索病毒或某些<code>WebP</code>实现中的漏洞）。<code>ASan</code>在编译阶段会在内存访问操作周围插入检查代码，一旦发现非法内存访问，程序将立即崩溃。由于<code>ASan</code>能发现单元测试难以覆盖的漏洞，并且在性能上优于其他同类工具，因此在模糊测试（<code>fuzzing</code>）过程中被广泛采用。</p>
+<span id="more"></span>
+
+<p><code>ASan</code>最初是为<code>C</code>和<code>C++</code>设计的，但它同样可以用于<code>Objective-C</code>、<code>Rust</code>、<code>Go</code>和<code>Swift</code>等语言。本文将以<code>C++</code>为重点，讲解如何使用<code>ASan</code>，解析其错误输出，介绍其实现原理，并探讨<code>ASan</code>的局限性与常见误区，帮助你掌握那些以往难以发现的漏洞。</p>
+<p>最后，我们还将分享一个实际案例：在一次审计过程中，我们遇到了一个<code>ASan</code>未能检测出的真实漏洞，并展示了通过改进后能够成功发现该漏洞的方法。正是这个案例促使我们深入研究了<code>ASan</code>的漏洞检测能力，并向<code>LLVM</code>项目贡献了数十个上游提交。相关改动包括：</p>
+<ul>
+<li>在<code>LLVM</code> 16中扩展了容器检测功能的<code>ASan API</code>，新增了对非对齐内存缓冲区的支持，并添加了适用于双端连续容器的检测函数。得益于这些改进，从<code>LLVM</code> 17开始，<code>std::vector</code>的注解默认支持所有分配器（<code>allocator</code>）。</li>
+<li>在<code>LLVM</code> 17中添加了<code>std::deque</code>的注解。详细信息请参考<code>libc++</code> 17的发布说明。</li>
+<li>在<code>LLVM</code> 18中为<code>std::string</code>的长字符串（<code>long string</code>）情况添加了注解（默认支持所有分配器）。更多细节见<code>libc++</code> 18的发布说明。</li>
+<li>最近还在上游合入了短字符串（<code>short string</code>）相关的注解（可以参考“短字符串优化（<code>short string optimization</code>）”），如果一切顺利，这部分内容预计将包含在<code>libc++</code> 19中。</li>
+</ul>
+<h4 id="开始使用ASan"><a href="#开始使用ASan" class="headerlink" title="开始使用ASan"></a>开始使用<code>ASan</code></h4><p>​	<code>ASan</code>可以在<code>LLVM</code>的<code>Clang</code>编译器和<code>GNU GCC</code>编译器中通过使用<code>-fsanitize=address</code>编译和链接标志启用。<code>Microsoft Visual C++（MSVC）</code>编译器则通过<code>/fsanitize=address</code>选项支持它。在底层，程序的内存访问会被插桩以执行<code>ASan</code>检查，并且程序将与<code>ASan</code>运行时库链接。这样，当检测到内存错误时，程序会停止运行，并提供有助于诊断内存损坏原因的信息。</p>
+<p>与<code>Valgrind</code>等其他工具不同，<code>AddressSanitizer</code>的方法需要重新编译程序，但它的性能开销较小（约为2倍，而<code>Valgrind</code> 大约是20倍），且能检测到更多的内存错误。</p>
+<h4 id="简单示例：检测越界内存访问"><a href="#简单示例：检测越界内存访问" class="headerlink" title="简单示例：检测越界内存访问"></a>简单示例：检测越界内存访问</h4><p>​	让我们通过一个简单的<code>C++</code>程序来看<code>ASan</code>的实际应用，该程序会从数组中读取越界的数据。图1显示了这个程序的代码，图2展示了程序的编译、链接过程以及运行时的输出，包括<code>ASan</code>检测到的错误。请注意，程序是使用调试符号并且未启用优化（使用<code>-g3</code>和<code>-O0</code>标志）进行编译的，这样做是为了让<code>ASan</code>的输出更具可读性。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line">   </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">out_of_bounds</span><span class="params">(<span class="type">char</span> <span class="type">const</span> *buf)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">4</span>; ++i)</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;buf[&quot;</span> &lt;&lt; i &lt;&lt; <span class="string">&quot;] = &quot;</span> &lt;&lt; buf[i] &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="type">char</span>* buf = <span class="keyword">new</span> <span class="type">char</span>[<span class="number">4</span>]&#123;<span class="string">&quot;Hey&quot;</span>&#125;;</span><br><span class="line">  <span class="built_in">out_of_bounds</span>(buf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>图1：示例程序，存在堆栈越界错误，因为它尝试读取<code>buf</code>数组中的第五个元素，而该数组只有4个元素（<code>example.cpp</code>）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ clang++ -fsanitize=address -O0 -g3 ./example.cpp</span><br><span class="line">$ ./a.out</span><br><span class="line">buf[0] = H</span><br><span class="line">buf[1] = e</span><br><span class="line">buf[2] = y</span><br><span class="line">buf[3] =</span><br><span class="line">Program stderr</span><br><span class="line">=================================================================</span><br><span class="line">==1==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x502000000014 at pc</span><br><span class="line">0x5591ad37f523 bp 0x7ffe6acc8e70 sp 0x7ffe6acc8e68</span><br><span class="line">READ of size 1 at 0x502000000014 thread T0</span><br><span class="line">    <span class="comment">#0 0x5591ad37f522 in out_of_bounds(char const*) /app/example.cpp:5:45</span></span><br><span class="line">    <span class="comment">#1 0x5591ad37f59a in main /app/example.cpp:10:4</span></span><br><span class="line">    <span class="comment">#2 0x7f8882a29d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId:</span></span><br><span class="line">c289da5071a3399de893d2af81d6a30c62646e1e)</span><br><span class="line">    <span class="comment">#3 0x7f8882a29e3f in __libc_start_main</span></span><br><span class="line">(/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId:</span><br><span class="line">c289da5071a3399de893d2af81d6a30c62646e1e)</span><br><span class="line">    <span class="comment">#4 0x5591ad2a4324 in _start (/app/output.s+0x2c324)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>图2：使用<code>ASan</code>运行图1中的程序</strong></p>
+<p>当<code>ASan</code>检测到错误时，它会输出一个对错误类型的最佳猜测，发生错误的位置的调用栈信息，以及其他位置信息（例如，相关内存的分配或释放位置）。</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x502000000014</span> is located <span class="number">0</span> bytes after <span class="number">4</span>-byte region [<span class="number">0x502000000010</span>,<span class="number">0x502000000014</span>)</span><br><span class="line">allocated by thread T0 here:</span><br><span class="line">    #<span class="number">0</span> <span class="number">0x555e42ab02bd</span> in <span class="keyword">operator</span> <span class="keyword">new</span>[](<span class="type">unsigned</span> <span class="type">long</span>) </span><br><span class="line">/root/llvm-project/compiler-rt/lib/asan/asan_new_delete.cpp:<span class="number">98</span>:<span class="number">3</span></span><br><span class="line">    #<span class="number">1</span> <span class="number">0x555e42ab2571</span> in main /app/example.cpp:<span class="number">9</span>:<span class="number">16</span></span><br><span class="line">    #<span class="number">2</span> <span class="number">0x7fd18d029d8f</span>  (/lib/x86_64-linux-gnu/libc.so<span class="number">.6</span><span class="number">+0x29d8f</span>) (BuildId: </span><br><span class="line">c289da5071a3399de893d2af81d6a30c<span class="number">62646e1</span>e)</span><br></pre></td></tr></table></figure>
+
+<p><strong>图 3：<code>ASan</code>错误信息的一部分，包含相关内存分配位置的代码</strong></p>
+<p>​	在这个例子中，<code>ASan</code>检测到在<code>example.cpp</code>文件的第六行发生了堆缓冲区溢出（越界读取）。问题出在通过<code>buf[i]</code>代码访问<code>buf</code>变量的内存时，当循环计数器变量（<code>i</code>）为4时，越界读取了内存。</p>
+<p>值得注意的是，<code>ASan</code>能够检测到许多不同类型的错误，例如堆栈缓冲区溢出、堆内存使用后释放、双重释放、分配-释放不匹配、容器溢出等。图4和图5展示了另一个例子，其中<code>ASan</code>检测到一个堆内存使用后释放错误，并显示了相关堆内存的精确分配和释放位置。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line">      </span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">allocate_buffer</span><span class="params">(std::<span class="type">size_t</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">int</span>[n];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">increment_value</span><span class="params">(<span class="type">int</span>* ptr)</span> </span>&#123;</span><br><span class="line">  *ptr += <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"> <span class="type">int</span>* buffer = <span class="built_in">allocate_buffer</span>(<span class="number">8</span>);</span><br><span class="line"> <span class="keyword">delete</span> [] buffer;</span><br><span class="line"> <span class="built_in">increment_value</span>(&amp;buffer[<span class="number">0</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>图4：示例程序，使用已释放的缓冲区（使用<code>-fsanitize=address -O0 -g3</code>编译）</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">READ of size <span class="number">4</span> at <span class="number">0x603000000040</span> thread T0</span><br><span class="line">    #<span class="number">0</span> <span class="number">0x401201</span> <span class="function">in <span class="title">increment_value</span><span class="params">(<span class="type">int</span>*)</span> /app/example.cpp:<span class="number">8</span></span></span><br><span class="line"><span class="function">    #<span class="number">1</span> <span class="number">0x401248</span> in main /app/example.cpp:<span class="number">14</span></span></span><br><span class="line"><span class="function">    #<span class="number">2</span> <span class="number">0x7fa090a29d8f</span>  (/lib/x86_64-linux-gnu/libc.so<span class="number">.6</span><span class="number">+0x29d8f</span>) (BuildId: </span></span><br><span class="line"><span class="function">c289da5071a3399de893d2af81d6a30c<span class="number">62646e1</span>e)</span></span><br><span class="line"><span class="function">    #<span class="number">3</span> <span class="number">0x7fa090a29e3f</span> in __libc_start_main (/lib/x86_64-linux-gnu/libc.so<span class="number">.6</span><span class="number">+0x29e3f</span>) </span></span><br><span class="line"><span class="function">(BuildId: c289da5071a3399de893d2af81d6a30c<span class="number">62646e1</span>e)</span></span><br><span class="line"><span class="function">    #<span class="number">4</span> <span class="number">0x4010c4</span> in _start (/app/output.s<span class="number">+0x4010c4</span>) (BuildId: </span></span><br><span class="line"><span class="function"><span class="number">66</span>da66c1949dd7dbdd05b93a0dddc29539db8671)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="number">0x603000000040</span> is located <span class="number">0</span> bytes inside of <span class="number">32</span>-byte region</span></span><br><span class="line"><span class="function">[<span class="number">0x603000000040</span>,<span class="number">0x603000000060</span>)</span></span><br><span class="line"><span class="function">freed by thread T0 here:</span></span><br><span class="line"><span class="function">    #<span class="number">0</span> <span class="number">0x7fa0911e36e8</span> in operator delete[](void*) </span></span><br><span class="line"><span class="function">(/opt/compiler-explorer/gcc<span class="number">-13.2</span><span class="number">.0</span>/lib64/libasan.so<span class="number">.8</span><span class="number">+0xdd6e8</span>) (BuildId: </span></span><br><span class="line"><span class="function"><span class="number">53</span>df075b42b<span class="number">04e0f</span>d573977feeb6ac<span class="number">6e330</span>cfaaa)</span></span><br><span class="line"><span class="function">    #<span class="number">1</span> <span class="number">0x40123c</span> in main /app/example.cpp:<span class="number">13</span></span></span><br><span class="line"><span class="function">    #<span class="number">2</span> <span class="number">0x7fa090a29d8f</span>  (/lib/x86_64-linux-gnu/libc.so<span class="number">.6</span><span class="number">+0x29d8f</span>) (BuildId: </span></span><br><span class="line"><span class="function">c289da5071a3399de893d2af81d6a30c<span class="number">62646e1</span>e)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">previously allocated by thread T0 here:</span></span><br><span class="line"><span class="function">    #<span class="number">0</span> <span class="number">0x7fa0911e2cd8</span> in operator new[](unsigned long) </span></span><br><span class="line"><span class="function">(/opt/compiler-explorer/gcc<span class="number">-13.2</span><span class="number">.0</span>/lib64/libasan.so<span class="number">.8</span><span class="number">+0xdccd8</span>) (BuildId: </span></span><br><span class="line"><span class="function"><span class="number">53</span>df075b42b<span class="number">04e0f</span>d573977feeb6ac<span class="number">6e330</span>cfaaa)</span></span><br><span class="line"><span class="function">    #<span class="number">1</span> <span class="number">0x4011bc</span> in allocate_buffer(unsigned long) /app/example.cpp:<span class="number">4</span></span></span><br><span class="line"><span class="function">    #<span class="number">2</span> <span class="number">0x401225</span> in main /app/example.cpp:<span class="number">12</span></span></span><br><span class="line"><span class="function">    #<span class="number">3</span> <span class="number">0x7fa090a29d8f</span>  (/lib/x86_64-linux-gnu/libc.so<span class="number">.6</span><span class="number">+0x29d8f</span>) (BuildId: </span></span><br><span class="line"><span class="function">c289da5071a3399de893d2af81d6a30c<span class="number">62646e1</span>e)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>图5：运行图4中程序后的<code>ASan</code>报告摘录</strong></p>
+<p>查看更多<code>ASan</code>示例，请参考<code>LLVM</code>测试代码或微软的文档。</p>
+<h4 id="ASan的构建模块"><a href="#ASan的构建模块" class="headerlink" title="ASan的构建模块"></a><code>ASan</code>的构建模块</h4><p>​	<code>ASan</code>基于两个关键概念：影像内存和红区。影像内存是一个专用的内存区域，用于存储应用程序内存的元数据。红区则是放置在内存对象之间的特殊内存区域（例如栈上的变量或堆分配的内存），目的是让<code>ASan</code>能够检测到访问超出预期边界的内存操作。</p>
+<h4 id="影像内存"><a href="#影像内存" class="headerlink" title="影像内存"></a>影像内存</h4><p>​	影像内存被分配在程序的高地址区域，<code>ASan</code>会在整个进程生命周期内修改其中的数据。影像内存中的每个字节描述了对应内存块的可访问性状态，这些内存块通常被称为“粒度”（<code>granules</code>），它们通常为 8 字节，并且按照其大小进行对齐（粒度大小在<code>GCC/LLVM</code>代码中设置）。图6展示了粒度与进程内存之间的映射关系。</p>
+<p><img src="https://blog.trailofbits.com/img/wpdump/640da9481d3cc39141f0fae6c6034ee6.png" alt="img"></p>
+<p><strong>图6：进程内存的逻辑划分与对应的影像内存字节</strong></p>
+<p>影像内存的值详细描述了某个粒度是否可以被进程完全或部分访问，或者该内存不可以被进程读写。在后一种情况下，我们称该内存为“中毒”内存，且相应的影像内存字节值会说明<code>ASan</code>为什么这么认为。影像内存值的图例会随着<code>ASan</code>的报告一起输出。图 7 展示了这个图例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Shadow byte legend (one shadow byte represents 8 application bytes):</span><br><span class="line"> Addressable:           00</span><br><span class="line"> Partially addressable: 01 02 03 04 05 06 07  </span><br><span class="line"> Heap left redzone:       fa</span><br><span class="line"> Freed heap region:       fd</span><br><span class="line"> Stack left redzone:      f1</span><br><span class="line"> Stack mid redzone:       f2</span><br><span class="line"> Stack right redzone:     f3</span><br><span class="line"> Stack after <span class="built_in">return</span>:      f5</span><br><span class="line"> Stack use after scope:   f8</span><br><span class="line"> Global redzone:          f9</span><br><span class="line"> Global init order:       f6</span><br><span class="line"> Poisoned by user:        f7</span><br><span class="line"> Container overflow:      <span class="built_in">fc</span></span><br><span class="line"> Array cookie:            ac</span><br><span class="line"> Intra object redzone:    bb</span><br><span class="line"> ASan internal:           fe</span><br><span class="line"> Left alloca redzone:     ca</span><br><span class="line"> Right alloca redzone:    cb</span><br></pre></td></tr></table></figure>
+
+<p><strong>图7：影像内存图例（值以十六进制格式显示）</strong></p>
+<p>这些影像内存字节的值代表了不同的内存访问状态和内存区域类型。以下是它们的含义：</p>
+<ul>
+<li><code>Addressable (00)</code>：表示该内存区域是完全可访问的。</li>
+<li><code>Partially addressable (01 02 03 04 05 06 07)</code>：表示该内存区域部分可访问，具体的字节值指示了不同的部分可访问性。</li>
+<li><code>Heap left redzone (fa)</code>：堆内存的左侧红区（内存分配前的一块保护区域）。</li>
+<li><strong>Freed heap region (fd)</strong>: 已释放的堆内存区域。</li>
+<li><strong>Stack left redzone (f1)</strong>: 栈内存的左侧红区（栈帧开始前的一块保护区域）。</li>
+<li><strong>Stack mid redzone (f2)</strong>: 栈内存的中间红区（用于检测栈溢出中间部分）。</li>
+<li><strong>Stack right redzone (f3)</strong>: 栈内存的右侧红区（栈帧结束后的保护区域）。</li>
+<li><strong>Stack after return (f5)</strong>: 栈返回后的区域，通常是栈帧销毁后的内存。</li>
+<li><strong>Stack use after scope (f8)</strong>: 栈内存超出作用域的使用（例如，使用已经销毁的局部变量）。</li>
+<li><strong>Global redzone (f9)</strong>: 全局内存区域的红区。</li>
+<li><strong>Global init order (f6)</strong>: 全局变量的初始化顺序。</li>
+<li><strong>Poisoned by user (f7)</strong>: 用户标记为“中毒”的内存区域（不可访问）。</li>
+<li><strong>Container overflow (fc)</strong>: 容器溢出（例如，访问超出容器范围的内存）。</li>
+<li><strong>Array cookie (ac)</strong>: 数组的特殊标记区域，用于保护数组边界。</li>
+<li><strong>Intra object redzone (bb)</strong>: 对象内部的红区，用于防止对象成员溢出。</li>
+<li><strong>ASan internal (fe)</strong>: ASan 内部使用的特殊内存区域。</li>
+<li><strong>Left alloca redzone (ca)</strong>: 分配的内存（alloca）的左侧红区。</li>
+<li><strong>Right alloca redzone (cb)</strong>: 分配的内存（alloca）的右侧红区。</li>
+</ul>
+<p>通过在进程执行过程中更新影像内存的状态，ASan 可以通过检查粒度的值（从而确认其可访问性状态）来验证内存访问的有效性。如果一个内存粒度完全可访问，相应的影像字节值被设置为零。相反，如果整个粒度被标记为“中毒”，其值将为负数。如果粒度部分可访问——即，只有前 N 个字节可以访问，其他字节不能——则影像内存中会存储可访问字节的数量 N。例如，堆上的已释放内存使用值 fd 来表示，直到该内存重新分配之前，不应由进程使用。这种机制有助于检测“使用后释放”错误，这类错误往往会导致严重的安全漏洞。</p>
+<p>部分可访问的粒度非常常见。一个例子是堆上的缓冲区，其大小未按 8 字节对齐；另一个例子是栈上的变量，其大小小于 8 字节。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/c/" rel="tag"># c++</a>
+              <a href="/tags/%E5%86%85%E5%AD%98/" rel="tag"># 内存</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/04/22/linux/mm/%E7%94%A8%E6%88%B7%E5%A0%86%E6%A0%88%E9%81%93%E6%89%A9%E5%B1%95/" rel="prev" title="用户堆栈的扩展">
+                  <i class="fa fa-angle-left"></i> 用户堆栈的扩展
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/11/assembly/x86-64%E6%8C%87%E4%BB%A4/" rel="next" title="x86-64指令">
+                  x86-64指令 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

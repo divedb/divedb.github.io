@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在C++中，pack（参数包）是一种可接受多个元素的语言实体，包含以下几类：  参数包（parameter pack）  模板参数包（template parameter pack） 函数参数包（function parameter pack）   Lambda初始化捕获包（lambda init-capture pack）(C++20起)  结构化绑定包（structured binding p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="参数包">
+<meta property="og:url" content="https://huangpiao.tech/2025/07/04/c++/%E5%8F%82%E6%95%B0%E5%8C%85/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="在C++中，pack（参数包）是一种可接受多个元素的语言实体，包含以下几类：  参数包（parameter pack）  模板参数包（template parameter pack） 函数参数包（function parameter pack）   Lambda初始化捕获包（lambda init-capture pack）(C++20起)  结构化绑定包（structured binding p">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-07-03T16:26:34.134Z">
+<meta property="article:modified_time" content="2025-07-03T16:54:02.612Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="C++语法">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/07/04/c++/%E5%8F%82%E6%95%B0%E5%8C%85/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/07/04/c++/%E5%8F%82%E6%95%B0%E5%8C%85/","path":"2025/07/04/c++/参数包/","title":"参数包"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>参数包 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">示例1：基础用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2%EF%BC%9A%E7%9B%B4%E6%8E%A5%E6%8D%95%E8%8E%B7%E5%A4%9A%E4%B8%AA%E5%8F%98%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">示例2：直接捕获多个变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B3%EF%BC%9A%E5%B8%A6%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%9D%E5%A7%8B%E5%8C%96%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E6%8D%95%E8%8E%B7"><span class="nav-number">3.</span> <span class="nav-text">示例3：带自定义初始化表达式的捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B4%EF%BC%9A%E4%B8%8E%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%BB%93%E5%90%88"><span class="nav-number">4.</span> <span class="nav-text">示例4：与可变参数模板结合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">4.1.</span> <span class="nav-text">语法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95%EF%BC%88%E7%BA%A6%E6%9D%9F%E4%B8%BA%E5%90%8C%E4%B8%80%E7%B1%BB%E5%9E%8B%E6%97%8F%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">示例1：基础用法（约束为同一类型族）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2%EF%BC%9A%E6%B7%B7%E5%90%88%E7%BA%A6%E6%9D%9F%E7%B1%BB%E5%9E%8B"><span class="nav-number">6.</span> <span class="nav-text">示例2：混合约束类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B3%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A6%82%E5%BF%B5%E7%BA%A6%E6%9D%9F"><span class="nav-number">7.</span> <span class="nav-text">示例3：自定义概念约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B4%EF%BC%9A%E5%8C%BF%E5%90%8D%E5%8F%82%E6%95%B0%E5%8C%85"><span class="nav-number">8.</span> <span class="nav-text">示例4：匿名参数包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B5%EF%BC%9A%E4%B8%8E%E5%85%B6%E4%BB%96%E5%8F%82%E6%95%B0%E6%B7%B7%E5%90%88%E4%BD%BF%E7%94%A8"><span class="nav-number">9.</span> <span class="nav-text">示例5：与其他参数混合使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E4%BC%A0%E7%BB%9F%E6%A8%A1%E6%9D%BF%E5%8F%82%E6%95%B0%E5%8C%85"><span class="nav-number">10.</span> <span class="nav-text">对比传统模板参数包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">11.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pack-C-11-%E8%B5%B7"><span class="nav-number"></span> <span class="nav-text">Pack (C++11 起)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95-1"><span class="nav-number">1.</span> <span class="nav-text">语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="nav-number">2.</span> <span class="nav-text">可变函数模板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E5%8C%85%E4%BD%8D%E7%BD%AE%E9%99%90%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">参数包位置限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E5%8C%85%E5%B1%95%E5%BC%80%EF%BC%88Pack-Expansion%EF%BC%89"><span class="nav-number"></span> <span class="nav-text">参数包展开（Pack Expansion）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%95%E5%BC%80%E7%9A%84%E4%BD%8D%E7%BD%AE%EF%BC%88Expansion-Loci%EF%BC%89"><span class="nav-number"></span> <span class="nav-text">展开的位置（Expansion Loci）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A%E7%AE%80%E6%98%93-printf-%E5%AE%9E%E7%8E%B0"><span class="nav-number"></span> <span class="nav-text">示例：简易 printf 实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E9%99%B7%E4%BF%AE%E6%AD%A3"><span class="nav-number"></span> <span class="nav-text">缺陷修正</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="nav-number"></span> <span class="nav-text">相关概念</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/07/04/c++/%E5%8F%82%E6%95%B0%E5%8C%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="参数包 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          参数包
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-07-04 00:26:34 / 修改时间：00:54:02" itemprop="dateCreated datePublished" datetime="2025-07-04T00:26:34+08:00">2025-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>在<code>C++</code>中，<code>pack</code>（参数包）是一种可接受多个元素的语言实体，包含以下几类：</p>
+<ul>
+<li><p>参数包（<code>parameter pack</code>）</p>
+<ul>
+<li>模板参数包（<code>template parameter pack</code>）</li>
+<li>函数参数包（<code>function parameter pack</code>）</li>
+</ul>
+</li>
+<li><p><code>Lambda</code>初始化捕获包（<code>lambda init-capture pack</code>）(<code>C++20</code>起)</p>
+</li>
+<li><p>结构化绑定包（<code>structured binding pack</code>）(<code>C++26</code>起)</p>
+</li>
+</ul>
+<p>模板参数包是一种模板参数，它接受零个或多个模板实参（可以是常量、类型或模板）。函数参数包是一种函数参数，它接受零个或多个函数实参。</p>
+<p><code>Lambda</code>初始化捕获包是一种<code>Lambda</code>捕获，它为其初始化器中包展开的每个元素引入一个初始化捕获。(<code>C++20</code>起)</p>
+<h3 id="示例1：基础用法"><a href="#示例1：基础用法" class="headerlink" title="示例1：基础用法"></a>示例1：基础用法</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int x = <span class="number">10</span>, y = <span class="number">20</span>, z = <span class="number">30</span>;</span><br><span class="line"></span><br><span class="line">    // 使用包展开为参数包中的每个元素生成初始化捕获</span><br><span class="line">    auto <span class="built_in">lambda</span> = [...<span class="built_in">args</span> = <span class="built_in">std</span>::make_tuple(x, y, z)] &#123;</span><br><span class="line">        <span class="built_in">std</span>::cout &lt;&lt; <span class="built_in">std</span>::<span class="built_in">get</span>&lt;<span class="number">0</span>&gt;(<span class="built_in">args</span>) &lt;&lt; <span class="string">&quot;, &quot;</span> </span><br><span class="line">                  &lt;&lt; <span class="built_in">std</span>::<span class="built_in">get</span>&lt;<span class="number">1</span>&gt;(<span class="built_in">args</span>) &lt;&lt; <span class="string">&quot;, &quot;</span></span><br><span class="line">                  &lt;&lt; <span class="built_in">std</span>::<span class="built_in">get</span>&lt;<span class="number">2</span>&gt;(<span class="built_in">args</span>) &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lambda</span>(); // 输出: <span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>...args = std::make_tuple(x, y, z)</code> 是一个Lambda初始化捕获包</li>
+<li>包展开会将右侧的初始化表达式（此处为<code>std::make_tuple</code>）展开为多个捕获变量</li>
+<li>实际捕获的是整个元组，但演示了包展开的基本形式</li>
+</ul>
+<hr>
+<h3 id="示例2：直接捕获多个变量"><a href="#示例2：直接捕获多个变量" class="headerlink" title="示例2：直接捕获多个变量"></a>示例2：直接捕获多个变量</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Args&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">run_lambda</span><span class="params">(Args... args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 为每个args参数生成独立的捕获变量（名称分别为a、b、c等）</span></span><br><span class="line">    <span class="keyword">auto</span> lambda = [args...] &#123;  <span class="comment">// 直接捕获参数包中的所有值</span></span><br><span class="line">        ((std::cout &lt;&lt; args &lt;&lt; <span class="string">&quot; &quot;</span>), ...); <span class="comment">// 使用折叠表达式打印</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">lambda</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">run_lambda</span>(<span class="number">1</span>, <span class="number">2.5</span>, <span class="string">&quot;hello&quot;</span>); <span class="comment">// 输出: 1 2.5 hello</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>[args...]</code> 展开后等价于 <code>[a=1, b=2.5, c=&quot;hello&quot;]</code>（假设参数为1, 2.5, “hello”）</li>
+<li>每个参数按值捕获，生成独立的变量</li>
+</ul>
+<hr>
+<h3 id="示例3：带自定义初始化表达式的捕获"><a href="#示例3：带自定义初始化表达式的捕获" class="headerlink" title="示例3：带自定义初始化表达式的捕获"></a>示例3：带自定义初始化表达式的捕获</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::string s1 = <span class="string">&quot;Hello&quot;</span>, s2 = <span class="string">&quot;World&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为每个元素生成捕获变量并附加&quot;_captured&quot;</span></span><br><span class="line">    <span class="keyword">auto</span> lambda = [...strs = &#123;s1, s2&#125;] &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span>&amp; s : strs) &#123;</span><br><span class="line">            std::cout &lt;&lt; s &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lambda</span>(); <span class="comment">// 输出: Hello World</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>...strs = &#123;s1, s2&#125;</code> 初始化一个<code>std::initializer_list</code>并捕获</li>
+<li>每个元素（<code>s1</code>, <code>s2</code>）被组合到<code>strs</code>中</li>
+</ul>
+<hr>
+<h3 id="示例4：与可变参数模板结合"><a href="#示例4：与可变参数模板结合" class="headerlink" title="示例4：与可变参数模板结合"></a>示例4：与可变参数模板结合</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Args&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">make_lambda</span><span class="params">(Args... args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 为每个参数生成引用捕获（名称分别为arg1、arg2等）</span></span><br><span class="line">    <span class="keyword">return</span> [...args = std::forward_as_tuple(args...)] &#123;</span><br><span class="line">        std::<span class="built_in">apply</span>([](<span class="keyword">auto</span>&amp;&amp;... xs) &#123;</span><br><span class="line">            ((std::cout &lt;&lt; xs &lt;&lt; <span class="string">&quot; &quot;</span>), ...);</span><br><span class="line">        &#125;, args);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> lambda = <span class="built_in">make_lambda</span>(<span class="number">42</span>, <span class="number">3.14</span>, <span class="string">&quot;C++20&quot;</span>);</span><br><span class="line">    <span class="built_in">lambda</span>(); <span class="comment">// 输出: 42 3.14 C++20</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><code>std::forward_as_tuple</code>保持参数的原始值类别（左值&#x2F;右值）</li>
+<li>包展开后实际捕获的是一个元组，但展示了如何将参数包与Lambda捕获结合</li>
+</ul>
+<p>结构化绑定包是结构化绑定声明中的一个标识符，它引入零个或多个结构化绑定。(<code>C++26</code>起)</p>
+<p>一个包的元素数量等于：</p>
+<ul>
+<li>如果包是模板或函数参数包，则等于为其提供的实参数量。</li>
+<li>如果包是<code>Lambda</code>初始化捕获包，则等于其初始化器中包展开的元素数量。(<code>C++20</code>起)</li>
+<li>如果包是结构化绑定包，则等于初始化器的结构化绑定大小减去结构化绑定声明中非包元素的数量。(<code>C++26</code>起)</li>
+</ul>
+<p>至少包含一个参数包的模板被称为可变参数模板（<code>variadic template</code>）。</p>
+<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><p>模板参数包（出现在别名模板、类模板、变量模板（<code>C++14</code>起）、概念（<code>C++20</code>起）和函数模板的参数列表中）：</p>
+<ol>
+<li><code>type ... pack-name(可选)</code>：一个带有可选名称的常量模板参数包。</li>
+<li><code>typename|class ... pack-name(可选)</code>：一个带有可选名称的类型模板参数包。</li>
+<li><code>type-constraint ... pack-name(可选)</code>：一个带有可选名称的受限类型模板参数包。(<code>C++20</code>起)</li>
+<li><code>template &lt; parameter-list &gt; class ... pack-name(可选)</code> (<code>C++17</code>前)或<code>template &lt; parameter-list &gt; typename|class ... pack-name(可选)</code>(<code>C++17</code>起)：一个带有可选名称的模板模板参数包。</li>
+</ol>
+<p><strong>函数参数包</strong>（一种声明符形式，出现在可变参数函数模板的函数参数列表中）：</p>
+<ol start="5">
+<li><code>pack-name ... pack-param-name(可选)</code>：一个带有可选名称的函数参数包。</li>
+</ol>
+<p>对于非参数包的语法，请参见<code>Lambda</code>初始化捕获包和结构化绑定包(<code>C++26 起</code>)。(<code>C++20</code>起)</p>
+<h3 id="示例1：基础用法（约束为同一类型族）"><a href="#示例1：基础用法（约束为同一类型族）" class="headerlink" title="示例1：基础用法（约束为同一类型族）"></a>示例1：基础用法（约束为同一类型族）</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;concepts&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 只接受整数类型的可变参数包</span></span><br><span class="line"><span class="keyword">template</span> &lt;std::integral... Ts&gt;  <span class="comment">// Ts必须全部满足std::integral</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_integers</span><span class="params">(Ts... args)</span> </span>&#123;</span><br><span class="line">    ((std::cout &lt;&lt; args &lt;&lt; <span class="string">&quot; &quot;</span>), ...); <span class="comment">// 折叠表达式打印所有参数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">print_integers</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);      <span class="comment">// 正确：所有参数都是整数</span></span><br><span class="line">    <span class="comment">// print_integers(1, 2.5);     // 错误：2.5不满足std::integral</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>std::integral... Ts</code> 表示<code>Ts</code>包中的所有类型必须满足<code>std::integral</code>概念</li>
+<li>参数包名称<code>Ts</code>是可选的（可写成<code>std::integral...</code>）</li>
+</ul>
+<hr>
+<h3 id="示例2：混合约束类型"><a href="#示例2：混合约束类型" class="headerlink" title="示例2：混合约束类型"></a>示例2：混合约束类型</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;concepts&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 接受任意数量的可拷贝构造类型</span></span><br><span class="line"><span class="keyword">template</span> &lt;std::copy_constructible... Ts&gt;</span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">make_vectors</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::tuple&lt;std::vector&lt;Ts&gt;...&gt;&#123;&#125;; <span class="comment">// 生成多个vector的元组</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> vecs = <span class="built_in">make_vectors</span>&lt;<span class="type">int</span>, std::string&gt;(); <span class="comment">// OK: 生成tuple&lt;vector&lt;int&gt;, vector&lt;string&gt;&gt;</span></span><br><span class="line">    <span class="comment">// auto err = make_vectors&lt;std::unique_ptr&lt;int&gt;&gt;(); // 错误：unique_ptr不可拷贝</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><code>std::copy_constructible...</code>确保所有类型可拷贝构造</li>
+<li>返回的元组中每个<code>vector</code>的元素类型对应参数包中的类型</li>
+</ul>
+<hr>
+<h3 id="示例3：自定义概念约束"><a href="#示例3：自定义概念约束" class="headerlink" title="示例3：自定义概念约束"></a>示例3：自定义概念约束</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义概念：要求类型有名为`value_type`的成员</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">concept</span> has_value_type = <span class="keyword">requires</span> &#123;</span><br><span class="line">    <span class="keyword">typename</span> T::value_type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用自定义概念约束参数包</span></span><br><span class="line"><span class="keyword">template</span> &lt;has_value_type... Containers&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">check_value_types</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">static_assert</span>((... &amp;&amp; std::is_same_v&lt;     <span class="comment">// 折叠表达式检查所有value_type相同</span></span><br><span class="line">        <span class="keyword">typename</span> Containers::value_type, </span><br><span class="line">        <span class="type">int</span></span><br><span class="line">    &gt;));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span> &#123; <span class="keyword">using</span> value_type = <span class="type">int</span>; &#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">B</span> &#123; <span class="keyword">using</span> value_type = <span class="type">int</span>; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">check_value_types</span>&lt;A, B&gt;();  <span class="comment">// 通过：所有value_type都是int</span></span><br><span class="line">    <span class="comment">// check_value_types&lt;A, std::string&gt;(); // 错误：std::string无value_type</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="示例4：匿名参数包"><a href="#示例4：匿名参数包" class="headerlink" title="示例4：匿名参数包"></a>示例4：匿名参数包</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;concepts&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 匿名参数包：只约束但不使用具体类型</span></span><br><span class="line"><span class="keyword">template</span> &lt;std::floating_point...&gt;  <span class="comment">// 省略名称</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FloatProcessor</span> &#123; </span><br><span class="line">    <span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">log</span><span class="params">()</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;All floats\n&quot;</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    FloatProcessor&lt;<span class="type">float</span>, <span class="type">double</span>&gt;::<span class="built_in">log</span>();  <span class="comment">// OK</span></span><br><span class="line">    <span class="comment">// FloatProcessor&lt;int&gt;::log();         // 错误：int不是浮点类型</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>用途</strong>：</p>
+<ul>
+<li>当只需要约束而不需要操作具体类型时，可省略参数包名称</li>
+</ul>
+<hr>
+<h3 id="示例5：与其他参数混合使用"><a href="#示例5：与其他参数混合使用" class="headerlink" title="示例5：与其他参数混合使用"></a>示例5：与其他参数混合使用</h3><p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;concepts&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::movable... Us&gt;  <span class="comment">// 固定类型T + 可移动类型包Us</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Container</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Container</span>(T, Us... args) &#123; <span class="comment">/*...*/</span> &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Container <span class="title">c</span><span class="params">(<span class="number">42</span>, std::string(<span class="string">&quot;hello&quot;</span>))</span></span>; <span class="comment">// T=int, Us=&#123;std::string&#125;</span></span><br><span class="line">    <span class="comment">// Container c(42, 3.14);              // 错误：double不满足std::movable</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>规则</strong>：</p>
+<ul>
+<li>参数包不必在模板参数列表末尾（但需确保后续参数可推导）</li>
+</ul>
+<hr>
+<h3 id="对比传统模板参数包"><a href="#对比传统模板参数包" class="headerlink" title="对比传统模板参数包"></a>对比传统模板参数包</h3><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">传统模板参数包</th>
+<th align="left">带约束的参数包</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">语法</td>
+<td align="left"><code>typename... Ts</code></td>
+<td align="left"><code>std::integral... Ts</code></td>
+</tr>
+<tr>
+<td align="left">类型检查时机</td>
+<td align="left">实例化时</td>
+<td align="left">声明时</td>
+</tr>
+<tr>
+<td align="left">典型用途</td>
+<td align="left">接受任意类型</td>
+<td align="left">确保类型满足特定语义要求</td>
+</tr>
+<tr>
+<td align="left">代码可读性</td>
+<td align="left">低（需文档说明约束）</td>
+<td align="left">高（约束显式声明）</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ol>
+<li><p><strong>约束传播</strong>：约束会应用于参数包中的每个类型</p>
+<p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;std::unsigned_integral... Ts&gt; <span class="comment">// 所有Ts必须是无符号整数</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(Ts... args)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>嵌套约束</strong>：可组合多个概念</p>
+<p>cpp</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;std::integral... Ts&gt;          <span class="comment">// 先满足integral</span></span><br><span class="line"><span class="built_in">requires</span> (<span class="keyword">sizeof</span>...(Ts) &gt; <span class="number">1</span>             <span class="comment">// 再满足参数数量&gt;1</span></span><br><span class="line"><span class="type">void</span> <span class="built_in">bar</span>(Ts... args);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>兼容性</strong>：需C++20编译标志（如<code>-std=c++20</code>）</p>
+</li>
+</ol>
+<p>这种机制大幅提升了模板代码的类型安全性，尤其在需要明确语义约束的泛型编程场景中。</p>
+<hr>
+
+<p>包展开（出现在模板体内）：</p>
+<p><code>pattern ...</code>：展开为零个或多个模式的实例化。该模式必须至少包含一个包。</p>
+<p>This content describes “packs” in C++, a feature introduced in C++11 that enables <strong>variadic templates</strong> and other forms of parameterization. It covers various types of packs, their syntax, how they expand, and where they can be used.</p>
+<p>Here’s a refined translation and explanation:</p>
+<hr>
+<h2 id="Pack-C-11-起"><a href="#Pack-C-11-起" class="headerlink" title="Pack (C++11 起)"></a>Pack (C++11 起)</h2><p><strong>C++ 语言 | 声明 | 表达式 | 模板</strong></p>
+<p>在 C++ 中，<strong>包（pack）</strong> 是一种实体，它定义了以下之一：</p>
+<ul>
+<li><strong>参数包（parameter pack）</strong><ul>
+<li>模板参数包（template parameter pack）</li>
+<li>函数参数包（function parameter pack）</li>
+</ul>
+</li>
+<li><strong>Lambda 初始化捕获包（lambda init-capture pack）</strong> (C++20 起)</li>
+<li><strong>结构化绑定包（structured binding pack）</strong> (C++26 起)</li>
+</ul>
+<p><strong>模板参数包</strong>是一种模板参数，它接受零个或多个模板实参（可以是常量、类型或模板）。<strong>函数参数包</strong>是一种函数参数，它接受零个或多个函数实参。</p>
+<p><strong>Lambda 初始化捕获包</strong>是一种 Lambda 捕获，它为其初始化器中包展开的每个元素引入一个初始化捕获。(C++20 起)</p>
+<p><strong>结构化绑定包</strong>是结构化绑定声明中的一个标识符，它引入零个或多个结构化绑定。(C++26 起)</p>
+<p>一个包的元素数量等于：</p>
+<ul>
+<li>如果包是模板或函数参数包，则等于为其提供的实参数量。</li>
+<li>如果包是 Lambda 初始化捕获包，则等于其初始化器中包展开的元素数量。(C++20 起)</li>
+<li>如果包是结构化绑定包，则等于初始化器的结构化绑定大小减去结构化绑定声明中非包元素的数量。(C++26 起)</li>
+</ul>
+<p>至少包含一个参数包的模板被称为<strong>可变参数模板（variadic template）</strong>。</p>
+<hr>
+<h3 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h3><p><strong>模板参数包</strong>（出现在别名模板、类模板、变量模板 (C++14 起)、概念 (C++20 起) 和函数模板的参数列表中）：</p>
+<ol>
+<li><code>type ... pack-name (可选)</code>：一个带有可选名称的<strong>常量模板参数包</strong>。</li>
+<li><code>typename|class ... pack-name (可选)</code>：一个带有可选名称的<strong>类型模板参数包</strong>。</li>
+<li><code>type-constraint ... pack-name (可选)</code>：一个带有可选名称的<strong>受限类型模板参数包</strong>。(C++20 起)</li>
+<li><code>template &lt; parameter-list &gt; class ... pack-name (可选)</code> (C++17 前) 或 <code>template &lt; parameter-list &gt; typename|class ... pack-name (可选)</code> (C++17 起)：一个带有可选名称的<strong>模板模板参数包</strong>。</li>
+</ol>
+<p><strong>函数参数包</strong>（一种声明符形式，出现在可变参数函数模板的函数参数列表中）：</p>
+<ol>
+<li><code>pack-name ... pack-param-name (可选)</code>：一个带有可选名称的<strong>函数参数包</strong>。</li>
+</ol>
+<p>对于非参数包的语法，请参见 <strong>Lambda 初始化捕获包</strong> 和 <strong>结构化绑定包</strong> (C++26 起)。(C++20 起)</p>
+<p><strong>包展开</strong>（出现在模板体内）：</p>
+<p><code>pattern ...</code>：展开为零个或多个模式的实例化。该模式必须至少包含一个包。</p>
+<p>可变参数类模板可以使用任意数量的模板实参进行实例化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Types&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Tuple</span> &#123;&#125;;</span><br><span class="line"> </span><br><span class="line">Tuple&lt;&gt; t0;           <span class="comment">// Types不包含任何实参</span></span><br><span class="line">Tuple&lt;<span class="type">int</span>&gt; t1;        <span class="comment">// Types包含一个实参: int</span></span><br><span class="line">Tuple&lt;<span class="type">int</span>, <span class="type">float</span>&gt; t2; <span class="comment">// Types包含两个实参: int和float</span></span><br><span class="line">Tuple&lt;<span class="number">0</span>&gt; t3;          <span class="comment">// 错误: 0不是一个类型</span></span><br></pre></td></tr></table></figure>
+
+<p>可变参数函数模板可以使用任意数量的函数实参进行调用（模板实参通过模板实参推导进行推导）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Types&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(Types... args)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">f</span>();       <span class="comment">// OK: args 不包含任何实参</span></span><br><span class="line"><span class="built_in">f</span>(<span class="number">1</span>);      <span class="comment">// OK: args 包含一个实参: int</span></span><br><span class="line"><span class="built_in">f</span>(<span class="number">2</span>, <span class="number">1.0</span>); <span class="comment">// OK: args 包含两个实参: int 和 double</span></span><br></pre></td></tr></table></figure>
+
+<p>在主类模板中，模板参数包必须是模板参数列表中的最后一个参数。在函数模板中，模板参数包可以出现在列表中的较早位置，前提是所有后续参数都可以从函数实参中推导出来，或者具有默认实参：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> U, <span class="keyword">typename</span>... Ts&gt;    <span class="comment">// OK: 可以推导 U</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">valid</span>;</span><br><span class="line"><span class="comment">// template&lt;typename... Ts, typename U&gt; // 错误: Ts... 不在末尾</span></span><br><span class="line"><span class="comment">// struct Invalid;</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Ts, <span class="keyword">typename</span> U, <span class="keyword">typename</span></span>=<span class="type">void</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">valid</span><span class="params">(U, Ts...)</span></span>;    <span class="comment">// OK: 可以推导 U</span></span><br><span class="line"><span class="comment">// void valid(Ts..., U); // 不能使用: Ts...在此位置是一个非推导上下文</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">valid</span>(<span class="number">1.0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);     <span class="comment">// OK: 推导出 U为double, Ts 为 &#123;int, int, int&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果可变参数模板的每个有效特化都需要一个空的模板参数包，则程序是<strong>非良构的（ill-formed）</strong>，无需诊断。</p>
+<hr>
+<h4 id><a href="#" class="headerlink" title></a></h4><h3 id="可变函数模板"><a href="#可变函数模板" class="headerlink" title="可变函数模板"></a>可变函数模板</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">template&lt;class... Types&gt;</span><br><span class="line">void <span class="built_in">f</span>(Types... args);</span><br><span class="line"></span><br><span class="line"><span class="built_in">f</span>();           <span class="comment">// OK，无参数</span></span><br><span class="line"><span class="built_in">f</span>(<span class="number">1</span>);          <span class="comment">// OK，一个 int</span></span><br><span class="line"><span class="built_in">f</span>(<span class="number">2</span>, <span class="number">1.0</span>);     <span class="comment">// OK，int 和 double</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数包位置限制"><a href="#参数包位置限制" class="headerlink" title="参数包位置限制"></a>参数包位置限制</h3><p>在类模板中，参数包必须在参数列表末尾；在函数模板中，可以提前出现，但要求后续参数能够推导或有默认值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> U, <span class="keyword">typename</span>... Ts&gt; <span class="keyword">struct</span> <span class="title class_">Valid</span>;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Ts, <span class="keyword">typename</span> U, <span class="keyword">typename</span> </span>= <span class="type">void</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">valid</span><span class="params">(U, Ts...)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">valid</span>(<span class="number">1.0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// U 推导为 double，Ts 为 &#123;int, int, int&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="参数包展开（Pack-Expansion）"><a href="#参数包展开（Pack-Expansion）" class="headerlink" title="参数包展开（Pack Expansion）"></a>参数包展开（Pack Expansion）</h2><p>参数包展开是用 <code>...</code> 将一个模式重复展开为多个实例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Us&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(Us... pargs)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Ts&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">g</span><span class="params">(Ts... args)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">f</span>(&amp;args...); <span class="comment">// 展开为 f(&amp;E1, &amp;E2, &amp;E3)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">g</span>(<span class="number">1</span>, <span class="number">0.2</span>, <span class="string">&quot;a&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>当同一模式中出现多个参数包时，它们必须具有相同长度，且同步展开：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span>...&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Tuple</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T1, <span class="keyword">typename</span> T2&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Pair</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Args1&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">zip</span> &#123;</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">class</span>... Args2&gt;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">with</span> &#123;</span><br><span class="line">        <span class="keyword">using</span> type = Tuple&lt;Pair&lt;Args1, Args2&gt;...&gt;;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> T1 = zip&lt;<span class="type">short</span>, <span class="type">int</span>&gt;::with&lt;<span class="type">unsigned</span> <span class="type">short</span>, <span class="type">unsigned</span>&gt;::type;</span><br><span class="line"><span class="comment">// 展开为 Tuple&lt;Pair&lt;short, unsigned short&gt;, Pair&lt;int, unsigned&gt;&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>嵌套展开时，最内层包先展开：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">template&lt;<span class="keyword">class</span>... <span class="keyword">Args</span>&gt;</span><br><span class="line">void <span class="keyword">g</span>(<span class="keyword">Args</span>... <span class="keyword">args</span>) &#123;</span><br><span class="line">    <span class="built_in">f</span>(const_cast&lt;<span class="keyword">const</span> <span class="keyword">Args</span>*&gt;(&amp;<span class="keyword">args</span>)...);</span><br><span class="line">    <span class="built_in">f</span>(<span class="built_in">h</span>(<span class="keyword">args</span>...) + <span class="keyword">args</span>...); <span class="comment">// h(args...) 展开后，再与 args 逐个加法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>若包为空，展开结果为空，不影响语法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Bases&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">X</span> : Bases... &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Args&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(Args... args)</span> </span>&#123;</span><br><span class="line">    <span class="function">X&lt;Args...&gt; <span class="title">x</span><span class="params">(args...)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> <span class="type">void</span> f&lt;&gt;(); <span class="comment">// OK，X&lt;&gt; 没有基类</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="展开的位置（Expansion-Loci）"><a href="#展开的位置（Expansion-Loci）" class="headerlink" title="展开的位置（Expansion Loci）"></a>展开的位置（Expansion Loci）</h2><p>参数包可用于多种语境：</p>
+<ul>
+<li>函数实参列表：<code>f(args...)</code></li>
+<li>直接初始化：<code>Class c(args...)</code></li>
+<li>花括号初始化：<code>int a[] = &#123;1, args..., 2&#125;;</code></li>
+<li>模板实参列表：<code>container&lt;A, B, C...&gt;</code></li>
+<li>函数参数列表：<code>void f(Ts... args)</code></li>
+<li>模板参数列表：<code>template&lt;T... Values&gt;</code></li>
+<li>基类列表和成员初始化：<code>class X : public Mixins... &#123; X(const Mixins&amp;... mixins) : Mixins(mixins)... &#123;&#125; &#125;;</code></li>
+<li>Lambda 捕获：<code>[args...]</code></li>
+<li>动态异常规范（C++17 前）：<code>throw(X...)</code></li>
+<li>alignas 对齐说明符：<code>alignas(T...)</code></li>
+<li>属性列表：<code>[[attr(args)...]]</code></li>
+<li>using 声明：<code>using bases::f...;</code></li>
+<li>折叠表达式（Fold expression）</li>
+<li>包索引（自 C++26）：<code>args...[0] + args...[sizeof...(args) - 1]</code></li>
+<li>friend 声明：<code>friend Ts...;</code></li>
+</ul>
+<hr>
+<h2 id="示例：简易-printf-实现"><a href="#示例：简易-printf-实现" class="headerlink" title="示例：简易 printf 实现"></a>示例：简易 printf 实现</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">cpp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">tprintf</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* format)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; format;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Targs&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">tprintf</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* format, T value, Targs... Fargs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (; *format != <span class="string">&#x27;\0&#x27;</span>; format++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*format == <span class="string">&#x27;%&#x27;</span>) &#123;</span><br><span class="line">            std::cout &lt;&lt; value;</span><br><span class="line">            <span class="built_in">tprintf</span>(format + <span class="number">1</span>, Fargs...);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        std::cout &lt;&lt; *format;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">tprintf</span>(<span class="string">&quot;% world% %\n&quot;</span>, <span class="string">&quot;Hello&quot;</span>, <span class="string">&#x27;!&#x27;</span>, <span class="number">123</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nginx</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">Hello world! <span class="number">123</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="缺陷修正"><a href="#缺陷修正" class="headerlink" title="缺陷修正"></a>缺陷修正</h2><table>
+<thead>
+<tr>
+<th>缺陷编号</th>
+<th>标准</th>
+<th>原行为</th>
+<th>修正后行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CWG 1533</td>
+<td>C++11</td>
+<td>允许成员初始化器中展开包</td>
+<td>不允许</td>
+</tr>
+<tr>
+<td>CWG 2717</td>
+<td>C++11</td>
+<td>alignas 实例间用逗号分隔</td>
+<td>改为用空格分隔</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h2><ul>
+<li><strong>函数模板</strong>：定义一类函数</li>
+<li><strong>类模板</strong>：定义一类类</li>
+<li>**sizeof…**：获取包的元素数量</li>
+<li><strong>C 风格可变参数函数</strong>：接受不定数量参数</li>
+<li><strong>预处理器宏</strong>：也可为可变参数</li>
+<li><strong>折叠表达式</strong>：使用二元运算符对包进行归约</li>
+<li><strong>包索引</strong>：按索引访问包元素（C++26 起）</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/C-%E8%AF%AD%E6%B3%95/" rel="tag"># C++语法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/07/04/RFC1945/" rel="prev" title="RFC1945">
+                  <i class="fa fa-angle-left"></i> RFC1945
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

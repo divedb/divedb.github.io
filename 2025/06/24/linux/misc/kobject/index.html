@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="📝概述Sysfs是Linux内核中的一个关键组成部分，提供了一个动态、直观的接口来访问和操作内核数据结构。本文将带你逐步了解如何利用sysfs实现与内核模块的深度交互。无论你是希望实时监控设备属性，还是动态修改内核设置，这份指南都将帮助你掌握必要的技能，在内核开发中高效地集成sysfs。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kobject">
+<meta property="og:url" content="https://huangpiao.tech/2025/06/24/linux/misc/kobject/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="📝概述Sysfs是Linux内核中的一个关键组成部分，提供了一个动态、直观的接口来访问和操作内核数据结构。本文将带你逐步了解如何利用sysfs实现与内核模块的深度交互。无论你是希望实时监控设备属性，还是动态修改内核设置，这份指南都将帮助你掌握必要的技能，在内核开发中高效地集成sysfs。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-24T04:03:58.361Z">
+<meta property="article:modified_time" content="2025-06-25T05:29:35.245Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="kobject">
+<meta property="article:tag" content="miscellaneous">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/06/24/linux/misc/kobject/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/06/24/linux/misc/kobject/","path":"2025/06/24/linux/misc/kobject/","title":"kobject"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>kobject | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%93%9D%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">📝概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8E%AF%E4%BB%80%E4%B9%88%E6%98%AFSysfs%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">🎯什么是Sysfs？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97kobject%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">2.1.</span> <span class="nav-text">🔗kobject结构体</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97Sysfs%E6%93%8D%E4%BD%9C%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%88sysfs-ops%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">🔗Sysfs操作结构体（sysfs_ops）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%92%A1Sysfs%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">💡Sysfs示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%F0%9F%94%97%E6%A8%A1%E5%9D%97%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">🔗模块初始化</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/06/24/linux/misc/kobject/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="kobject | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kobject
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-24 12:03:58" itemprop="dateCreated datePublished" datetime="2025-06-24T12:03:58+08:00">2025-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-25 13:29:35" itemprop="dateModified" datetime="2025-06-25T13:29:35+08:00">2025-06-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="📝概述"><a href="#📝概述" class="headerlink" title="📝概述"></a>📝概述</h4><p><code>Sysfs</code>是<code>Linux</code>内核中的一个关键组成部分，提供了一个动态、直观的接口来访问和操作内核数据结构。本文将带你逐步了解如何利用<code>sysfs</code>实现与内核模块的深度交互。无论你是希望实时监控设备属性，还是动态修改内核设置，这份指南都将帮助你掌握必要的技能，在内核开发中高效地集成<code>sysfs</code>。</p>
+<span id="more"></span>
+
+<h4 id="🎯什么是Sysfs？"><a href="#🎯什么是Sysfs？" class="headerlink" title="🎯什么是Sysfs？"></a>🎯什么是<code>Sysfs</code>？</h4><p><code>Sysfs</code>是一个基于内存（<code>RAM-based</code>）的虚拟文件系统，它将内核的数据结构暴露给用户空间。它不仅允许用户查看设备属性，还支持对某些参数进行修改，从而实现用户空间与内核之间的动态交互。正因如此，<code>sysfs</code>成为了系统管理与故障诊断中不可或缺的工具之一。</p>
+<h5 id="🔗kobject结构体"><a href="#🔗kobject结构体" class="headerlink" title="🔗kobject结构体"></a><code>🔗kobject</code>结构体</h5><p><code>kobject</code>是<code>sysfs</code>层级结构中的基本单位。每个<code>kobject</code>包含以下几个核心属性：</p>
+<ul>
+<li><code>parent</code>：父对象，对应其<code>sysfs</code>目录的上级目录；</li>
+<li><code>name</code>：对象名称，决定了在<code>sysfs</code>中目录的名字；</li>
+<li><code>type</code>（<code>kobj_type</code>）：对象类型，定义了该对象在<code>sysfs</code>中可见的属性列表和支持的操作。</li>
+</ul>
+<p>其中，<code>kobj_type</code>结构体包含属性数组和<code>sysfs</code>操作函数的指针。而<code>kref</code>字段则用于实现引用计数机制，管理对象生命周期。至于<code>kset</code>（一组相关的<code>kobject</code>），我们将在本系列文章的第3部分中进一步讨论。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> &#123;</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *name;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">entry</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> *<span class="title">parent</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kset</span> *<span class="title">kset</span>;</span></span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">kobj_type</span> *<span class="title">ktype</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kernfs_node</span> *<span class="title">sd</span>;</span> <span class="comment">/* sysfs directory entry */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">kref</span> <span class="title">kref</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_initialized : <span class="number">1</span>;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_in_sysfs : <span class="number">1</span>;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_add_uevent_sent : <span class="number">1</span>;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> state_remove_uevent_sent : <span class="number">1</span>;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> uevent_suppress : <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_DEBUG_KOBJECT_RELEASE</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">delayed_work</span> <span class="title">release</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>kobj_type</code>用于定义你所实现的<code>kobject</code>的行为。它包含一组属性（<code>attributes</code>），本质上是<code>sysfs</code>中可被用户空间交互的文件，以及一个操作结构体<code>sysfs_ops</code>，用于定义<code>show</code>和<code>store</code>方法。此外，它还包括一个<code>release</code>函数（第一个参数），该函数会在使用<code>kobject_put()</code>释放对象时被调用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobj_type</span> &#123;</span></span><br><span class="line">  <span class="type">void</span> (*release)(<span class="keyword">struct</span> kobject *kobj);</span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">sysfs_ops</span> *<span class="title">sysfs_ops</span>;</span></span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> **<span class="title">default_groups</span>;</span></span><br><span class="line">  <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">kobj_ns_type_operations</span> *(*<span class="title">child_ns_type</span>)(</span></span><br><span class="line"><span class="class">      <span class="title">const</span> <span class="keyword">struct</span> <span class="title">kobject</span> *<span class="title">kobj</span>);</span></span><br><span class="line">  <span class="type">const</span> <span class="type">void</span> *(*namespace)(<span class="type">const</span> <span class="keyword">struct</span> kobject *kobj);</span><br><span class="line">  <span class="type">void</span> (*get_ownership)(<span class="type">const</span> <span class="keyword">struct</span> kobject *kobj, <span class="type">kuid_t</span> *uid, <span class="type">kgid_t</span> *gid);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>属性用于将内核信息暴露给用户空间，并允许对其进行操作。它们以常规文件的形式存在，每个属性都有唯一的名称作为文件名，并可以绑定特定的文件操作结构体。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> &#123;</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *name;</span><br><span class="line">  <span class="type">umode_t</span> mode;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_DEBUG_LOCK_ALLOC</span></span><br><span class="line">  <span class="type">bool</span> ignore_lockdep : <span class="number">1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">lock_class_key</span> *<span class="title">key</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">lock_class_key</span> <span class="title">skey</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="🔗Sysfs操作结构体（sysfs-ops）"><a href="#🔗Sysfs操作结构体（sysfs-ops）" class="headerlink" title="🔗Sysfs操作结构体（sysfs_ops）"></a>🔗<code>Sysfs</code>操作结构体（<code>sysfs_ops</code>）</h5><p><code>sysfs_ops</code>结构体定义在<code>kobj_type</code>中，提供两个方法用于<code>sysfs</code>文件的<code>IO</code>操作：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sysfs_ops</span> &#123;</span></span><br><span class="line">  <span class="type">ssize_t</span> (*show)(<span class="keyword">struct</span> kobject *, <span class="keyword">struct</span> attribute *, <span class="type">char</span> *);</span><br><span class="line">  <span class="type">ssize_t</span> (*store)(<span class="keyword">struct</span> kobject *, <span class="keyword">struct</span> attribute *, <span class="type">const</span> <span class="type">char</span> *, <span class="type">size_t</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>属性还可以绑定特定的<code>IO</code>操作，通过<code>kobj_attribute</code>实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobj_attribute</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> <span class="title">attr</span>;</span></span><br><span class="line">  <span class="type">ssize_t</span> (*show)(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> kobj_attribute *attr, <span class="type">char</span> *buf);</span><br><span class="line">  <span class="type">ssize_t</span> (*store)(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> kobj_attribute *attr,</span><br><span class="line">                   <span class="type">const</span> <span class="type">char</span> *buf, <span class="type">size_t</span> count);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>每当对<code>sysfs</code>文件执行读取（<code>show</code>）或写入（<code>store</code>）操作时，都会调用<code>kobj_type</code>中定义的<code>sysfs_ops</code>方法。通过对传入的<code>struct attribute</code>使用<code>container_of()</code>宏，可以获取<code>kobj_attribute</code>指针，从而执行具体属性的读写方法（详见本文第二部分）。</p>
+<p>属性通过<code>struct attribute_group</code>数组组织并绑定到<code>kobject</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">attribute_group</span> &#123;</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *name;</span><br><span class="line">  <span class="type">umode_t</span> (*is_visible)(<span class="keyword">struct</span> kobject *, <span class="keyword">struct</span> attribute *, <span class="type">int</span>);</span><br><span class="line">  <span class="type">umode_t</span> (*is_bin_visible)(<span class="keyword">struct</span> kobject *, <span class="keyword">struct</span> bin_attribute *, <span class="type">int</span>);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> **<span class="title">attrs</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">bin_attribute</span> **<span class="title">bin_attrs</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>当前我们只关注<code>attrs</code>字段，它指向该组中所有属性的数组。</p>
+<h4 id="💡Sysfs示例"><a href="#💡Sysfs示例" class="headerlink" title="💡Sysfs示例"></a>💡<code>Sysfs</code>示例</h4><p>我们将实现一个内核模块，在<code>/sys/kernel/</code>下创建一个子目录，并在其中生成两个文件：<code>my_int</code>和<code>my_second_int</code>。这两个文件将分别读写两个在模块中定义的静态整数。</p>
+<h5 id="🔗模块初始化"><a href="#🔗模块初始化" class="headerlink" title="🔗模块初始化"></a>🔗模块初始化</h5><p>初始化并添加<code>kobject</code>到<code>sysfs</code>层级结构的函数为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">retval = kobject_init_and_add(&amp;example_kobj, &amp;my_ktype, kernel_kobj, <span class="string">&quot;%s&quot;</span>, <span class="string">&quot;kobject_example&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<ul>
+<li><code>kobj</code>：初始化为全0的<code>struct kobject</code>实例；</li>
+<li><code>ktype</code>：指向定义的<code>kobj_type</code>；</li>
+<li><code>parent</code>：指向父级<code>kobject</code>（本例为<code>kernel_kobj</code>，即<code>/sys/kernel</code>）；</li>
+<li><code>fmt</code>：格式化的名称字符串。</li>
+</ul>
+<p>父目录说明：</p>
+<ul>
+<li><code>kernel_kobj</code>：包含与内核本身相关的信息与配置；</li>
+<li><code>mm_kobj</code>：提供内存分配、页面管理等信息；</li>
+<li><code>mm_hypervisor</code>：提供当前运行的<code>hypervisor</code>信息。</li>
+</ul>
+<p>其他父级<code>kobject</code>可参考源码文件：<code>linux/kobject.h</code></p>
+<p>销毁<code>kobject</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kobject_put(<span class="keyword">struct</span> kobject *kobj);</span><br></pre></td></tr></table></figure>
+
+<p>该函数会减少<code>kobj</code>的引用计数，当计数为0时，调用<code>kobject_cleanup()</code>并触发<code>release</code>函数，释放资源。</p>
+<p><code>Show/Store/Release</code>函数实现</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">my_file_show</span><span class="params">(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> attribute *attr,</span></span><br><span class="line"><span class="params">                            <span class="type">char</span> *buf)</span> &#123;</span><br><span class="line">  <span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">strncmp</span>(attr-&gt;name, <span class="string">&quot;my_int&quot;</span>, <span class="number">6</span>))</span><br><span class="line">    ret = sysfs_emit(buf, <span class="string">&quot;%d\n&quot;</span>, my_int);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    ret = sysfs_emit(buf, <span class="string">&quot;%d\n&quot;</span>, my_second_int);</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sysfs_emit</code>与<code>scnprintf</code>类似，用于将数据写入临时缓冲区（内核页）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">my_file_store</span><span class="params">(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> attribute *attr,</span></span><br><span class="line"><span class="params">                             <span class="type">const</span> <span class="type">char</span> *buf, <span class="type">size_t</span> count)</span> &#123;</span><br><span class="line">  <span class="type">int</span> ret;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">strncmp</span>(attr-&gt;name, <span class="string">&quot;my_int&quot;</span>, <span class="number">6</span>))</span><br><span class="line">    ret = kstrtoint(buf, <span class="number">10</span>, &amp;my_int);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    ret = kstrtoint(buf, <span class="number">10</span>, &amp;my_second_int);</span><br><span class="line">  <span class="keyword">return</span> ret &lt; <span class="number">0</span> ? ret : count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">my_file_release</span><span class="params">(<span class="keyword">struct</span> kobject *kobj)</span> &#123;</span><br><span class="line">  printk(<span class="string">&quot;Anything to do!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>属性与绑定</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> <span class="title">my_file_attribute</span> =</span> &#123;</span><br><span class="line">  .name = <span class="string">&quot;my_int&quot;</span>,</span><br><span class="line">  .mode = <span class="number">0664</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> <span class="title">my_second_file_attribute</span> =</span> &#123;</span><br><span class="line">  .name = <span class="string">&quot;my_second_int&quot;</span>,</span><br><span class="line">  .mode = <span class="number">0664</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> *<span class="title">my_file_attrs</span>[] =</span> &#123;</span><br><span class="line">  &amp;my_file_attribute,</span><br><span class="line">  &amp;my_second_file_attribute,</span><br><span class="line">  <span class="literal">NULL</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ATTRIBUTE_GROUPS(my_file);</span><br></pre></td></tr></table></figure>
+
+<p>设置<code>kobj_type</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sysfs_ops</span> <span class="title">my_sysfs_ops</span> =</span> &#123;</span><br><span class="line">  .show = my_file_show,</span><br><span class="line">  .store = my_file_store,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">kobj_type</span> <span class="title">my_ktype</span> =</span> &#123;</span><br><span class="line">  .sysfs_ops = &amp;my_sysfs_ops,</span><br><span class="line">  .release = my_file_release,</span><br><span class="line">  .default_groups = my_file_groups,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>模块加载后，即可使用如下命令操作属性：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /sys/kernel/kobject_example</span><br><span class="line"><span class="built_in">echo</span> 2 &gt; my_int</span><br><span class="line"><span class="built_in">echo</span> 3 &gt; my_second_int</span><br><span class="line"><span class="built_in">cat</span> my_int         <span class="comment"># 输出: 2</span></span><br><span class="line"><span class="built_in">cat</span> my_second_int  <span class="comment"># 输出: 3</span></span><br></pre></td></tr></table></figure>
+
+<p>完整代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SPDX-License-Identifier: GPL-2.0</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Copyright (C) 2023 - 2024 Emanuele Santini &lt;emanuele.santini.88@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/kobject.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;linux/sysfs.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * This module shows how to create a simple subdirectory in sysfs called</span></span><br><span class="line"><span class="comment"> * /sys/kernel/kobject-example. In that directory, 2 files are created:</span></span><br><span class="line"><span class="comment"> * &quot;my_int&quot; and &quot;my_second_int&quot;. If an integer is written to these files, it can</span></span><br><span class="line"><span class="comment"> * be later read out of it.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> <span class="title">example_kobj</span>;</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> my_int = <span class="number">0</span>;</span><br><span class="line"><span class="type">static</span> <span class="type">int</span> my_second_int = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * &quot;my_file_show&quot; file perform the file read.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">my_file_show</span><span class="params">(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> attribute *attr,</span></span><br><span class="line"><span class="params">                            <span class="type">char</span> *buf)</span> &#123;</span><br><span class="line">  <span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// attr-&gt;name is the name of the attribute where the read operation is</span></span><br><span class="line">  <span class="comment">// performed</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">strncmp</span>(attr-&gt;name, <span class="string">&quot;my_int&quot;</span>, <span class="number">6</span>))</span><br><span class="line">    ret = sysfs_emit(buf, <span class="string">&quot;%d\n&quot;</span>, my_int);</span><br><span class="line">  <span class="keyword">else</span>  <span class="comment">// if(strcmp(attr-&gt;name, &quot;my_second_int&quot;))</span></span><br><span class="line">    ret = sysfs_emit(buf, <span class="string">&quot;%d\n&quot;</span>, my_second_int);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * &quot;my_file_store&quot; file perform the file write.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">my_file_store</span><span class="params">(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> attribute *attr,</span></span><br><span class="line"><span class="params">                             <span class="type">const</span> <span class="type">char</span> *buf, <span class="type">size_t</span> count)</span> &#123;</span><br><span class="line">  <span class="type">int</span> ret;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// attr-&gt;name is the name of the attribute where the read operation is</span></span><br><span class="line">  <span class="comment">// performed</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">strncmp</span>(attr-&gt;name, <span class="string">&quot;my_int&quot;</span>, <span class="number">6</span>))</span><br><span class="line">    ret = kstrtoint(buf, <span class="number">10</span>, &amp;my_int);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    ret = kstrtoint(buf, <span class="number">10</span>, &amp;my_second_int);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Converts the string type to an integer</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) <span class="keyword">return</span> ret;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">my_file_release</span><span class="params">(<span class="keyword">struct</span> kobject *kobj)</span> &#123;</span><br><span class="line">  <span class="comment">// Invoked when kobject_put is called to destroy this kobject</span></span><br><span class="line">  printk(<span class="string">&quot;Anything to do!\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Defines the sysfs operation methods (read and write).</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sysfs_ops</span> <span class="title">my_sysfs_ops</span> =</span> &#123;</span><br><span class="line">    .show = my_file_show,</span><br><span class="line">    .store = my_file_store,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Defines my_int attribute */</span></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> <span class="title">my_file_attribute</span> =</span> &#123;</span><br><span class="line">    .name = <span class="string">&quot;my_int&quot;</span>,  <span class="comment">// The regular file name</span></span><br><span class="line">    .mode = <span class="number">0664</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Defines my_second_int attribute */</span></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> <span class="title">my_second_file_attribute</span> =</span> &#123;</span><br><span class="line">    .name = <span class="string">&quot;my_second_int&quot;</span>,  <span class="comment">// The regular file name</span></span><br><span class="line">    .mode = <span class="number">0664</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The attributes array to bind to the kobject</span></span><br><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">attribute</span> *<span class="title">my_file_attrs</span>[] =</span> &#123;</span><br><span class="line">    &amp;my_file_attribute,</span><br><span class="line">    &amp;my_second_file_attribute,</span><br><span class="line">    <span class="literal">NULL</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* This is the same of:</span></span><br><span class="line"><span class="comment"> *  struct attribute_group the my_file_groups = &#123;</span></span><br><span class="line"><span class="comment"> *  .attrs = my_file_attrs,</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> * That contains the attribute_group</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">ATTRIBUTE_GROUPS(my_file);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Our own ktype for our kobjects.  Here we specify our sysfs ops, the</span></span><br><span class="line"><span class="comment"> * release function, and the set of attributes we want created</span></span><br><span class="line"><span class="comment"> * whenever a kobject of this type is registered with the kernel.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">kobj_type</span> <span class="title">my_ktype</span> =</span> &#123;</span><br><span class="line">    .sysfs_ops = &amp;my_sysfs_ops,</span><br><span class="line">    .release = my_file_release,</span><br><span class="line">    .default_groups = my_file_groups,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> __init <span class="title function_">example_init</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="type">int</span> retval;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * Create a simple kobject with the name of &quot;kobject_example&quot;,</span></span><br><span class="line"><span class="comment">   * located under /sys/kernel/</span></span><br><span class="line"><span class="comment">   * The kobject path will be: /sys/kernel/kobject_example</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  retval = kobject_init_and_add(&amp;example_kobj, &amp;my_ktype, kernel_kobj, <span class="string">&quot;%s&quot;</span>,</span><br><span class="line">                                <span class="string">&quot;kobject_example&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (retval) <span class="keyword">return</span> -ENOMEM;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __exit <span class="title function_">example_exit</span><span class="params">(<span class="type">void</span>)</span> &#123; kobject_put(&amp;example_kobj); &#125;</span><br><span class="line"></span><br><span class="line">module_init(example_init);</span><br><span class="line">module_exit(example_exit);</span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br><span class="line">MODULE_AUTHOR(<span class="string">&quot;Emanuele Santini &lt;emanuele.santini.88@gmail.com&gt;&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/kobject/" rel="tag"># kobject</a>
+              <a href="/tags/miscellaneous/" rel="tag"># miscellaneous</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/22/linux/driver/%E9%AB%98%E7%BA%A7%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E6%93%8D%E4%BD%9C/" rel="prev" title="高级字符驱动程序操作">
+                  <i class="fa fa-angle-left"></i> 高级字符驱动程序操作
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/24/linux/misc/kobject%E5%AF%B9%E8%B1%A1/" rel="next" title="kobject对象">
+                  kobject对象 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

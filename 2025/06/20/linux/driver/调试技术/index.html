@@ -28,7 +28,7 @@
 <meta property="og:description" content="🧩 概要​	内核编程有其⾃⾝独特的调试难题。由于内核是⼀个不与特定进程相关的功能集合，所以内核代码⽆法轻易地放在调试器中执⾏，⽽且也很难跟踪。同样，要想重现内核代码中的错误也是相当困难的，因为这种错误可能导致整个系统崩溃，这样也就破坏了可以⽤来跟踪它们的现场。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-20T06:27:56.265Z">
-<meta property="article:modified_time" content="2025-06-20T06:59:20.920Z">
+<meta property="article:modified_time" content="2025-06-21T02:53:07.764Z">
 <meta property="article:author" content="Rocky">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="驱动程序">
@@ -128,17 +128,17 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-count">100</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-count">51</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -193,9 +193,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-06-20 14:27:56 / 修改时间：14:59:20" itemprop="dateCreated datePublished" datetime="2025-06-20T14:27:56+08:00">2025-06-20</time>
+      <time title="创建时间：2025-06-20 14:27:56" itemprop="dateCreated datePublished" datetime="2025-06-20T14:27:56+08:00">2025-06-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-21 10:53:07" itemprop="dateModified" datetime="2025-06-21T10:53:07+08:00">2025-06-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,32 +281,42 @@
 </li>
 </ul>
 <h4 id="🎯-通过打印调试"><a href="#🎯-通过打印调试" class="headerlink" title="🎯 通过打印调试"></a>🎯 通过打印调试</h4><p>​	最普通的调试技术就是监视，即在应⽤程序编程中，在⼀些适当的地点调⽤<code>printf</code>显示监视信息。调试内核代码的时候，可以⽤<code>printk</code>来完成相同的⼯作。</p>
-<h4 id="printk"><a href="#printk" class="headerlink" title="printk"></a>printk</h4><p>在前⾯的章节中，我们只是简单假设prink⼯作起来和printf很类似。接下来将介绍它</p>
-<p>们之间的⼀些不同点。</p>
-<p>差别之⼀就是，通过附加不同⽇志级别（loglevel），或者说消息优先级，可让printk根</p>
-<p>据这些级别所表⽰的严重程度对消息进⾏分类。我们通常采⽤宏来指⽰⽇志级别，例如，</p>
-<p>KERN_</p>
-<p>INFO，我们在前⾯已经看到它被添加在⼀些打印语句的前⾯，它就是⼀个可以</p>
-<p>使⽤的消息⽇志级别。表⽰⽇志级别的宏会展开为⼀个字符串，在编译时由预处理器将</p>
-<p>它和消息⽂本拼接在⼀起；这也就是为什么下⾯的例⼦中优先级和格式字串间没有逗号</p>
-<p>的原因。下⾯有两个printk的例⼦，</p>
-<p>⼀个是调试信息，</p>
-<p>⼀个是临界信息：</p>
-<p>printk(KERN_DEBUG”HereIam:8s:8i\n”,<em>FILE___LINE</em>-):</p>
-<p>printk(KERN_CRIT”I’mtrashed;givingupon8p\n”,ptr);</p>
-<p>在头⽂件&lt;linux&#x2F;kernel.h&gt;中定义了⼋种可⽤的⽇志级别字符串，下⾯以严重程度的降序</p>
-<p>来列出这些级别：</p>
-<p>KERN_EMERG</p>
-<p>⽤于紧急事件消息，它们⼀般KERN_ALERT</p>
+<h4 id="printk"><a href="#printk" class="headerlink" title="printk"></a>printk</h4><p>​	在前⾯的章节中，我们只是简单假设<code>prink</code>⼯作起来和<code>printf</code>很类似。接下来将介绍它们之间的⼀些不同点。差别之⼀就是，通过附加不同⽇志级别（<code>log level</code>），或者说消息优先级，可让<code>printk</code>根据这些级别所表⽰的严重程度对消息进⾏分类。我们通常采⽤宏来指⽰⽇志级别，例如，<code>KERN_INFO</code>，我们在前⾯已经看到它被添加在⼀些打印语句的前⾯，它就是⼀个可以使⽤的消息⽇志级别。表⽰⽇志级别的宏会展开为⼀个字符串，在编译时由预处理器将它和消息⽂本拼接在⼀起；这也就是为什么下⾯的例⼦中优先级和格式字串间没有逗号的原因。下⾯有两个<code>printk</code>的例⼦，⼀个是调试信息，⼀个是临界信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">printk(KERN_DEBUG <span class="string">&quot;Here I am: %s:%i\n&quot;</span>,__FILE__, __LINE__):</span><br><span class="line">printk(KERN_CRIT <span class="string">&quot;I&#x27;m trashed; giving up on %p\n&quot;</span>, ptr);</span><br></pre></td></tr></table></figure>
+
+<p>在头⽂件<code>&lt;linux/kernel.h&gt;</code>中定义了⼋种可⽤的⽇志级别字符串，下⾯以严重程度的降序来列出这些级别：</p>
+<ul>
+<li><p><code>KERN_EMERG</code></p>
+<p>⽤于紧急事件消息，它们⼀般是系统崩溃之前提示的消息。</p>
+</li>
+<li><p><code>KERN_ALERT</code></p>
 <p>⽤于需要⽴即采取动作的情况。</p>
-<p>KERN_CRIT</p>
-<p>临界状态，通常涉及严重的硬KERN_ERR</p>
-<p>⽤于报告错误状态。设备驱动程KERN_WARNING</p>
-<p>KERN_NOTICE</p>
-<p>有必要进⾏提⽰的正常情形。许KERN_INFO</p>
-<p>提⽰性信息。很多驱动程序在息。</p>
-<p>KERN_DEBUG</p>
+</li>
+<li><p><code>KERN_CRIT</code></p>
+<p>临界状态，通常涉及严重的硬件或软件操作失败。</p>
+</li>
+<li><p><code>KERN_ERR</code></p>
+<p>⽤于报告错误状态。设备驱动程序会经常使用<code>KERN_ERR</code>来报告来自硬件的问题。</p>
+</li>
+<li><p><code>KERN_WARNING</code></p>
+<p>对可能出现问题的情况进行警告，但这类情况通常不会对系统造成严重问题。</p>
+</li>
+<li><p><code>KERN_NOTICE</code></p>
+<p>有必要进⾏提⽰的正常情形。许多与安全相关的状况用这个级别进行汇报。</p>
+</li>
+<li><p><code>KERN_INFO</code></p>
+<p>提⽰性信息。很多驱动程序在启动的时候以这个级别来打印出它们找到的硬件信息。</p>
+</li>
+<li><p><code>KERN_DEBUG</code></p>
 <p>⽤于调试信息。</p>
+</li>
+</ul>
+<p>​	每个字符串（以宏的形式展开）表⽰⼀个尖括号中的整数。整数值的范围<code>0-7</code>，数值越⼩，优先级就越⾼。未指定优先级的<code>printk</code>语句采⽤的默认级别是<code>DEFAULT_MESSAGE_LOGLEVEL</code>，这个宏在<code>kernel/printk.c</code>中被指定为⼀个整数。在2.6.10内核中，<code>DEFAULT_MESSAGE_LOGLEVEL</code>就是<code>KERN_WARNING</code>，但以前的版本取过不同的值。</p>
+<p>​	根据⽇志级别，内核可能会把消息打印到当前控制台上，这个控制台可以是⼀个字符模式的终端、⼀个串⼜打印机或是⼀个并⼜打印机。当优先级⼩于<code>console_loglevel</code>这个整数变量的值，消息才能显⽰出来，⽽且每次输出⼀⾏（如果不以<code>newline</code>字符结尾，则不会输出）。如果系统同时运⾏了<code>klogd</code>和<code>syslogd</code>，则⽆论<code>console_loglevel</code>为何值，内核消息都将追加到<code>/var/log/messages</code>中（否则按照<code>syslogd</code>的配置进⾏处理）。如果<code>klogd</code>没有运⾏，这些消息就不会传递到⽤户空间，这种情况下，只能查看<code>/proc/kmsg</code>⽂件（使⽤<code>dmesg</code>命令可以轻松做到）。如果使⽤<code>klogd</code>，则应该了解它不会保存连续相同的信息⾏；它只会保存连续相同的第⼀⾏，并在最后打印这⼀⾏的重复次数。</p>
+<p>​	变量<code>console_loglevel</code>的初始值是<code>DEFAULT_CONSOLE_LOGLEVBL</code>，⽽且还可以通过<code>sys_syslog</code>系统调⽤进⾏修改。调⽤<code>klogd</code>时可以指定<code>-c</code>开关项来修改这个变量，<code>klogd</code>的⼿册页对此有详细说明。注意，要修改其当前值，必须先杀掉<code>klogd</code>，然后再⽤新的<code>-c</code>选项重新启动它。此外，还可以编写程序来改变控制台的⽇志级别。读者可以在<code>O&#39;Reilly</code>的<code>FTP</code>站点提供的源⽂件<code>misc-progs/setlevel.c</code>⾥找到这样的⼀段程序。新优先级被指定为⼀个<code>1-8</code>之间的整数值。如果值被设为<code>1</code>，则只级别为<code>0</code>（<code>KERN_EMERG</code>）的消息才能到达控制台；如果被设为<code>8</code>，则包括调试信息在内的所有消息都能显⽰出来。</p>
+<p>​	我们也可以通过对⽂本⽂件<code>/proc/sys/kernel/printk</code>的访问来读取和修改控制台的⽇志级别。这个⽂件包含了<code>4</code>个整数值，分别是：当前的⽇志级别、未明确指定⽇志级别时的默认消息级别、最⼩允许的⽇志级别以及引导时的默认⽇志级别。向该⽂件中写⼊单个整数值，将会把当前⽇志级别修改为这个值。例如，可以简单地输⼊下⾯的命令使所有的内核消息显⽰到控制台上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> 8 | <span class="built_in">sudo</span> <span class="built_in">tee</span> /proc/sys/kernel/printk</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -323,6 +339,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2025/06/20/c++/asio/asio-timer/" rel="next" title="asio timer">
+                  asio timer <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>

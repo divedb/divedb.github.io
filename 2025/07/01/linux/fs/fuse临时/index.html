@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"huangpiao.tech","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="挂载 1234567891011121314151617181920212223242526static struct fuse_chan *fuse_mount_common(const char *mountpoint,                                            struct fuse_args *args)&#123;	struct fuse_ch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fuse临时">
+<meta property="og:url" content="https://huangpiao.tech/2025/07/01/linux/fs/fuse%E4%B8%B4%E6%97%B6/index.html">
+<meta property="og:site_name" content="Rockyの博客">
+<meta property="og:description" content="挂载 1234567891011121314151617181920212223242526static struct fuse_chan *fuse_mount_common(const char *mountpoint,                                            struct fuse_args *args)&#123;	struct fuse_ch">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-07-01T15:41:42.471Z">
+<meta property="article:modified_time" content="2025-07-01T15:41:43.180Z">
+<meta property="article:author" content="Rocky">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="fuse">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://huangpiao.tech/2025/07/01/linux/fs/fuse%E4%B8%B4%E6%97%B6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://huangpiao.tech/2025/07/01/linux/fs/fuse%E4%B8%B4%E6%97%B6/","path":"2025/07/01/linux/fs/fuse临时/","title":"fuse临时"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>fuse临时 | Rockyの博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Rockyの博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Rockyの博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Hungry. Stay Foolish.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-MS-RDONLY"><span class="nav-number">1.</span> <span class="nav-text">✅ MS_RDONLY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-MS-NOSUID"><span class="nav-number">2.</span> <span class="nav-text">✅ MS_NOSUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-MS-NODEV"><span class="nav-number">3.</span> <span class="nav-text">✅ MS_NODEV</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E5%90%AB%E4%B9%89%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="nav-number">3.1.</span> <span class="nav-text">字段含义及作用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6"><span class="nav-number">3.1.1.</span> <span class="nav-text">1. 权限控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%8C%82%E8%BD%BD%E8%A1%8C%E4%B8%BA%E6%8E%A7%E5%88%B6"><span class="nav-number">3.1.2.</span> <span class="nav-text">2. 挂载行为控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E8%BE%85%E5%8A%A9%E6%A0%87%E5%BF%97"><span class="nav-number">3.1.3.</span> <span class="nav-text">3. 辅助标志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%A0%87%E8%AF%86%E4%B8%8E%E5%88%86%E7%B1%BB"><span class="nav-number">3.1.4.</span> <span class="nav-text">4. 标识与分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E9%80%89%E9%A1%B9%E4%BC%A0%E9%80%92"><span class="nav-number">3.1.5.</span> <span class="nav-text">5. 选项传递</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">3.2.</span> <span class="nav-text">典型使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%85%81%E8%AE%B8%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E8%AE%BF%E9%97%AE"><span class="nav-number">3.2.1.</span> <span class="nav-text">1. 允许所有用户访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%8C%82%E8%BD%BD%E5%88%B0%E9%9D%9E%E7%A9%BA%E7%9B%AE%E5%BD%95"><span class="nav-number">3.2.2.</span> <span class="nav-text">2. 挂载到非空目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%90%8D%E7%A7%B0"><span class="nav-number">3.2.3.</span> <span class="nav-text">3. 自定义文件系统名称</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E4%B8%8E%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E4%BA%A4%E4%BA%92"><span class="nav-number">3.3.</span> <span class="nav-text">内核与用户空间交互</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E9%80%BB%E8%BE%91%EF%BC%88libfuse-%E7%AE%80%E5%8C%96%E7%89%88%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">关键代码逻辑（libfuse 简化版）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E9%94%99%E8%AF%AF%E5%90%AB%E4%B9%89"><span class="nav-number">4.</span> <span class="nav-text">✅ 错误含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9B%A0%EF%B8%8F-%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">🛠️ 解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%B8%8F%E2%83%A3-%E9%A6%96%E9%80%89%EF%BC%9A%E5%8D%B8%E8%BD%BD%E6%8C%82%E8%BD%BD%E7%82%B9"><span class="nav-number">5.1.</span> <span class="nav-text">1️⃣ 首选：卸载挂载点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%B8%8F%E2%83%A3-%E8%8B%A5-umount-%E6%8A%A5%E9%94%99%EF%BC%88%E5%A6%82-target-busy%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">2️⃣ 若 umount 报错（如 target busy）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-%E5%BC%BA%E5%88%B6%E7%A7%BB%E9%99%A4%E7%9B%AE%E5%BD%95%EF%BC%88%E8%8B%A5%E5%8F%AA%E6%98%AF%E6%AE%8B%E7%95%99%EF%BC%89"><span class="nav-number">5.3.</span> <span class="nav-text">3️⃣ 强制移除目录（若只是残留）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%81-%E6%80%BB%E7%BB%93%E5%91%BD%E4%BB%A4%E6%B8%85%E5%8D%95"><span class="nav-number">6.</span> <span class="nav-text">🔁 总结命令清单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%AD-%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9A%E7%90%86%E8%A7%A3%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%EF%BC%88%E4%BD%A0%E7%A8%8B%E5%BA%8F%E8%B0%83%E7%94%A8%E7%9A%84%E6%98%AF%E5%93%AA%E9%83%A8%E5%88%86%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">🧭 第一阶段：理解外部接口（你程序调用的是哪部分）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-%E6%8E%A8%E8%8D%90%E5%85%88%E7%9C%8B%EF%BC%9A"><span class="nav-number">7.1.</span> <span class="nav-text">✅ 推荐先看：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%AD-%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9A%E7%90%86%E8%A7%A3%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">🧭 第二阶段：理解事件循环与会话管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB%EF%BC%9A"><span class="nav-number">8.1.</span> <span class="nav-text">✅ 推荐阅读：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%AD-%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E4%B8%8E%E5%86%85%E6%A0%B8%E9%80%9A%E4%BF%A1%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">9.</span> <span class="nav-text">🧭 第三阶段：深入理解与内核通信的细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB%EF%BC%9A-1"><span class="nav-number">9.1.</span> <span class="nav-text">✅ 推荐阅读：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%8E-%E8%A1%A5%E5%85%85%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="nav-number">10.</span> <span class="nav-text">🔎 补充（可选）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E9%98%85%E8%AF%BB%E5%BB%BA%E8%AE%AE%E9%A1%BA%E5%BA%8F%E6%80%BB%E7%BB%93"><span class="nav-number">11.</span> <span class="nav-text">✅ 阅读建议顺序总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%98-%E6%8E%A8%E8%8D%90%E9%85%8D%E5%90%88%E6%96%87%E6%A1%A3"><span class="nav-number">12.</span> <span class="nav-text">📘 推荐配合文档</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rocky</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://huangpiao.tech/2025/07/01/linux/fs/fuse%E4%B8%B4%E6%97%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rocky">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rockyの博客">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="fuse临时 | Rockyの博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          fuse临时
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-07-01 23:41:42 / 修改时间：23:41:43" itemprop="dateCreated datePublished" datetime="2025-07-01T23:41:42+08:00">2025-07-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>挂载</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">struct</span> fuse_chan *<span class="title function_">fuse_mount_common</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *mountpoint, </span></span><br><span class="line"><span class="params">                                           <span class="keyword">struct</span> fuse_args *args)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fuse_chan</span> *<span class="title">ch</span>;</span></span><br><span class="line">	<span class="type">int</span> fd;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Make sure file descriptors 0, 1 and 2 are open, otherwise chaos</span></span><br><span class="line"><span class="comment">	 * would ensue.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">do</span> &#123;</span><br><span class="line">		fd = open(<span class="string">&quot;/dev/null&quot;</span>, O_RDWR);</span><br><span class="line">		<span class="keyword">if</span> (fd &gt; <span class="number">2</span>)</span><br><span class="line">			close(fd);</span><br><span class="line">	&#125; <span class="keyword">while</span> (fd &gt;= <span class="number">0</span> &amp;&amp; fd &lt;= <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">	fd = fuse_mount_compat25(mountpoint, args);</span><br><span class="line">	<span class="keyword">if</span> (fd == <span class="number">-1</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	ch = fuse_kern_chan_new(fd);</span><br><span class="line">	<span class="keyword">if</span> (!ch)</span><br><span class="line">		fuse_kern_unmount(mountpoint, fd);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fuse_kern_mount</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *mountpoint, <span class="keyword">struct</span> fuse_args *args)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mount_opts</span> <span class="title">mo</span>;</span></span><br><span class="line">	<span class="type">int</span> res = <span class="number">-1</span>;</span><br><span class="line">	<span class="type">char</span> *mnt_opts = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(&amp;mo, <span class="number">0</span>, <span class="keyword">sizeof</span>(mo));</span><br><span class="line">	mo.flags = MS_NOSUID | MS_NODEV;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (args &amp;&amp;</span><br><span class="line">	    fuse_opt_parse(args, &amp;mo, fuse_mount_opts, fuse_mount_opt_proc) == <span class="number">-1</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (mo.allow_other &amp;&amp; mo.allow_root) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;fuse: &#x27;allow_other&#x27; and &#x27;allow_root&#x27; options are mutually exclusive\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line">	res = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">if</span> (mo.ishelp)</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line"></span><br><span class="line">	res = <span class="number">-1</span>;</span><br><span class="line">	<span class="keyword">if</span> (get_mnt_flag_opts(&amp;mnt_opts, mo.flags) == <span class="number">-1</span>)</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	<span class="keyword">if</span> (mo.kernel_opts &amp;&amp; fuse_opt_add_opt(&amp;mnt_opts, mo.kernel_opts) == <span class="number">-1</span>)</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	<span class="keyword">if</span> (mo.mtab_opts &amp;&amp;  fuse_opt_add_opt(&amp;mnt_opts, mo.mtab_opts) == <span class="number">-1</span>)</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line"></span><br><span class="line">	res = fuse_mount_sys(mountpoint, &amp;mo, mnt_opts);</span><br><span class="line">	<span class="keyword">if</span> (res == <span class="number">-2</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (mo.fusermount_opts &amp;&amp;</span><br><span class="line">		    fuse_opt_add_opt(&amp;mnt_opts, mo.fusermount_opts) == <span class="number">-1</span>)</span><br><span class="line">			<span class="keyword">goto</span> out;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (mo.subtype) &#123;</span><br><span class="line">			<span class="type">char</span> *tmp_opts = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">			res = <span class="number">-1</span>;</span><br><span class="line">			<span class="keyword">if</span> (fuse_opt_add_opt(&amp;tmp_opts, mnt_opts) == <span class="number">-1</span> ||</span><br><span class="line">			    fuse_opt_add_opt(&amp;tmp_opts, mo.subtype_opt) == <span class="number">-1</span>) &#123;</span><br><span class="line">				<span class="built_in">free</span>(tmp_opts);</span><br><span class="line">				<span class="keyword">goto</span> out;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			res = fuse_mount_fusermount(mountpoint, tmp_opts, <span class="number">1</span>);</span><br><span class="line">			<span class="built_in">free</span>(tmp_opts);</span><br><span class="line">			<span class="keyword">if</span> (res == <span class="number">-1</span>)</span><br><span class="line">				res = fuse_mount_fusermount(mountpoint,</span><br><span class="line">							    mnt_opts, <span class="number">0</span>);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			res = fuse_mount_fusermount(mountpoint, mnt_opts, <span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">out:</span><br><span class="line">	<span class="built_in">free</span>(mnt_opts);</span><br><span class="line">	<span class="built_in">free</span>(mo.fsname);</span><br><span class="line">	<span class="built_in">free</span>(mo.subtype);</span><br><span class="line">	<span class="built_in">free</span>(mo.fusermount_opts);</span><br><span class="line">	<span class="built_in">free</span>(mo.subtype_opt);</span><br><span class="line">	<span class="built_in">free</span>(mo.kernel_opts);</span><br><span class="line">	<span class="built_in">free</span>(mo.mtab_opts);</span><br><span class="line">	<span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>真正的挂载函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">fuse_mount_sys</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *mnt, <span class="keyword">struct</span> mount_opts *mo,</span></span><br><span class="line"><span class="params">                          <span class="type">const</span> <span class="type">char</span> *mnt_opts)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">char</span> tmp[<span class="number">128</span>];</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span> *devname = <span class="string">&quot;/dev/fuse&quot;</span>;</span><br><span class="line">	<span class="type">char</span> *source = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="type">char</span> *type = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">stbuf</span>;</span></span><br><span class="line">	<span class="type">int</span> fd;</span><br><span class="line">	<span class="type">int</span> res;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	res = stat(mnt, &amp;stbuf);</span><br><span class="line">	<span class="keyword">if</span> (res == <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span> ,<span class="string">&quot;fuse: failed to access mountpoint %s: %s\n&quot;</span>, </span><br><span class="line">            mnt, strerror(errno));</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!mo-&gt;nonempty) &#123;</span><br><span class="line">		res = fuse_mnt_check_empty(<span class="string">&quot;fuse&quot;</span>, mnt, stbuf.st_mode, stbuf.st_size);</span><br><span class="line">		<span class="keyword">if</span> (res == <span class="number">-1</span>)</span><br><span class="line">			<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 打开/dev/fuse</span></span><br><span class="line">	fd = open(devname, O_RDWR);</span><br><span class="line">	<span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (errno == ENODEV || errno == ENOENT)</span><br><span class="line">			<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;fuse: device not found, try &#x27;modprobe fuse&#x27; first\n&quot;</span>);</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;fuse: failed to open %s: %s\n&quot;</span>, devname, strerror(errno));</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">snprintf</span>(tmp, <span class="keyword">sizeof</span>(tmp),  <span class="string">&quot;fd=%i,rootmode=%o,user_id=%i,group_id=%i&quot;</span>, </span><br><span class="line">           fd, stbuf.st_mode &amp; S_IFMT, getuid(), getgid());</span><br><span class="line"></span><br><span class="line">	res = fuse_opt_add_opt(&amp;mo-&gt;kernel_opts, tmp);</span><br><span class="line">	<span class="keyword">if</span> (res == <span class="number">-1</span>)</span><br><span class="line">		<span class="keyword">goto</span> out_close;</span><br><span class="line"></span><br><span class="line">	source = <span class="built_in">malloc</span>((mo-&gt;fsname ? <span class="built_in">strlen</span>(mo-&gt;fsname) : <span class="number">0</span>) +</span><br><span class="line">			(mo-&gt;subtype ? <span class="built_in">strlen</span>(mo-&gt;subtype) : <span class="number">0</span>) +</span><br><span class="line">			<span class="built_in">strlen</span>(devname) + <span class="number">32</span>);</span><br><span class="line"></span><br><span class="line">	type = <span class="built_in">malloc</span>((mo-&gt;subtype ? <span class="built_in">strlen</span>(mo-&gt;subtype) : <span class="number">0</span>) + <span class="number">32</span>);</span><br><span class="line">	<span class="keyword">if</span> (!type || !source) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;fuse: failed to allocate memory\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_close;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">strcpy</span>(type, mo-&gt;blkdev ? <span class="string">&quot;fuseblk&quot;</span> : <span class="string">&quot;fuse&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (mo-&gt;subtype) &#123;</span><br><span class="line">		<span class="built_in">strcat</span>(type, <span class="string">&quot;.&quot;</span>);</span><br><span class="line">		<span class="built_in">strcat</span>(type, mo-&gt;subtype);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">strcpy</span>(source,</span><br><span class="line">	       mo-&gt;fsname ? mo-&gt;fsname : (mo-&gt;subtype ? mo-&gt;subtype : devname));</span><br><span class="line"></span><br><span class="line">	res = mount(source, mnt, type, mo-&gt;flags, mo-&gt;kernel_opts);</span><br><span class="line">	<span class="keyword">if</span> (res == <span class="number">-1</span> &amp;&amp; errno == ENODEV &amp;&amp; mo-&gt;subtype) &#123;</span><br><span class="line">		<span class="comment">/* Probably missing subtype support */</span></span><br><span class="line">		<span class="built_in">strcpy</span>(type, mo-&gt;blkdev ? <span class="string">&quot;fuseblk&quot;</span> : <span class="string">&quot;fuse&quot;</span>);</span><br><span class="line">		<span class="keyword">if</span> (mo-&gt;fsname) &#123;</span><br><span class="line">			<span class="keyword">if</span> (!mo-&gt;blkdev)</span><br><span class="line">				<span class="built_in">sprintf</span>(source, <span class="string">&quot;%s#%s&quot;</span>, mo-&gt;subtype,</span><br><span class="line">					mo-&gt;fsname);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="built_in">strcpy</span>(source, type);</span><br><span class="line">		&#125;</span><br><span class="line">		res = mount(source, mnt, type, mo-&gt;flags, mo-&gt;kernel_opts);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="keyword">if</span> (res == <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * Maybe kernel doesn&#x27;t support unprivileged mounts, in this</span></span><br><span class="line"><span class="comment">		 * case try falling back to fusermount</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">if</span> (errno == EPERM) &#123;</span><br><span class="line">			res = <span class="number">-2</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="type">int</span> errno_save = errno;</span><br><span class="line">			<span class="keyword">if</span> (mo-&gt;blkdev &amp;&amp; errno == ENODEV &amp;&amp;</span><br><span class="line">			    !fuse_mnt_check_fuseblk())</span><br><span class="line">				<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,</span><br><span class="line">					<span class="string">&quot;fuse: &#x27;fuseblk&#x27; support missing\n&quot;</span>);</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;fuse: mount failed: %s\n&quot;</span>,</span><br><span class="line">					strerror(errno_save));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">goto</span> out_close;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (geteuid() == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="type">char</span> *newmnt = fuse_mnt_resolve_path(<span class="string">&quot;fuse&quot;</span>, mnt);</span><br><span class="line">		res = <span class="number">-1</span>;</span><br><span class="line">		<span class="keyword">if</span> (!newmnt)</span><br><span class="line">			<span class="keyword">goto</span> out_umount;</span><br><span class="line"></span><br><span class="line">		res = fuse_mnt_add_mount(<span class="string">&quot;fuse&quot;</span>, source, newmnt, type,</span><br><span class="line">					 mnt_opts);</span><br><span class="line">		<span class="built_in">free</span>(newmnt);</span><br><span class="line">		<span class="keyword">if</span> (res == <span class="number">-1</span>)</span><br><span class="line">			<span class="keyword">goto</span> out_umount;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">free</span>(type);</span><br><span class="line">	<span class="built_in">free</span>(source);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> fd;</span><br><span class="line"></span><br><span class="line">out_umount:</span><br><span class="line">	umount2(mnt, <span class="number">2</span>); <span class="comment">/* lazy umount */</span></span><br><span class="line">out_close:</span><br><span class="line">	<span class="built_in">free</span>(type);</span><br><span class="line">	<span class="built_in">free</span>(source);</span><br><span class="line">	close(fd);</span><br><span class="line">	<span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line"><span class="comment">#0  fuse_mount_sys (mnt=0x601060 &quot;/tmp/mnt&quot;, mo=0x7fffffffe390, mnt_opts=0x601010 &quot;rw,nosuid,nodev&quot;)</span></span><br><span class="line">    at mount.c:392</span><br><span class="line"><span class="comment">#1  0x00007ffff7dd2e29 in fuse_kern_mount (mountpoint=0x601060 &quot;/tmp/mnt&quot;, args=0x7fffffffe490)</span></span><br><span class="line">    at mount.c:557</span><br><span class="line"><span class="comment">#2  0x00007ffff7dceedf in fuse_mount_compat25 (mountpoint=0x601060 &quot;/tmp/mnt&quot;, args=0x7fffffffe490)</span></span><br><span class="line">    at helper.c:447</span><br><span class="line"><span class="comment">#3  0x00007ffff7dce7ab in fuse_mount_common (mountpoint=0x601060 &quot;/tmp/mnt&quot;, args=0x7fffffffe490)</span></span><br><span class="line">    at helper.c:210</span><br><span class="line"><span class="comment">#4  0x00007ffff7dce8f6 in fuse_setup_common (argc=2, argv=0x7fffffffe6c8, op=0x600da0, op_size=328, </span></span><br><span class="line">    mountpoint=0x7fffffffe538, multithreaded=0x7fffffffe534, fd=0x0, user_data=0x0, compat=0)</span><br><span class="line">    at helper.c:257</span><br><span class="line"><span class="comment">#5  0x00007ffff7dceb44 in fuse_main_common (argc=2, argv=0x7fffffffe6c8, op=0x600da0, op_size=328, </span></span><br><span class="line">    user_data=0x0, compat=0) at helper.c:322</span><br><span class="line"><span class="comment">#6  0x00007ffff7dcebeb in fuse_main_real (argc=2, argv=0x7fffffffe6c8, op=0x600da0, op_size=328, </span></span><br><span class="line">    user_data=0x0) at helper.c:342</span><br><span class="line"><span class="comment">#7  0x00000000004008d3 in main (argc=2, argv=0x7fffffffe6c8) at hello.c:95</span></span><br><span class="line">(gdb) b mount.c:453</span><br><span class="line">Breakpoint 2 at 0x7ffff7dd2933: file mount.c, line 453.</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line"></span><br><span class="line">Breakpoint 2, fuse_mount_sys (mnt=0x601060 <span class="string">&quot;/tmp/mnt&quot;</span>, mo=0x7fffffffe390, </span><br><span class="line">    mnt_opts=0x601010 <span class="string">&quot;rw,nosuid,nodev&quot;</span>) at mount.c:453</span><br><span class="line">453		res = mount(<span class="built_in">source</span>, mnt, <span class="built_in">type</span>, mo-&gt;flags, mo-&gt;kernel_opts);</span><br><span class="line">(gdb) p <span class="built_in">source</span></span><br><span class="line"><span class="variable">$1</span> = 0x6011b0 <span class="string">&quot;hello&quot;</span></span><br><span class="line">(gdb) p mo-&gt;fsname</span><br><span class="line"><span class="variable">$2</span> = 0x0</span><br><span class="line">(gdb) p mo-&gt;subtype</span><br><span class="line"><span class="variable">$3</span> = 0x601160 <span class="string">&quot;hello&quot;</span></span><br><span class="line">(gdb) p devname</span><br><span class="line"><span class="variable">$4</span> = 0x7ffff7dd6188 <span class="string">&quot;/dev/fuse&quot;</span></span><br><span class="line">(gdb) p <span class="built_in">type</span></span><br><span class="line"><span class="variable">$5</span> = 0x601030 <span class="string">&quot;fuse.hello&quot;</span></span><br><span class="line">(gdb) p mo-&gt;kernel_opts</span><br><span class="line"><span class="variable">$6</span> = 0x601080 <span class="string">&quot;fd=7,rootmode=40000,user_id=0,group_id=0&quot;</span></span><br><span class="line">(gdb) p mo-&gt;flags</span><br><span class="line"><span class="variable">$7</span> = 6</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>mount</code>的时候将<code>fd</code>和挂载点的信息传递给内核。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fuse_fs</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fuse_operations</span> <span class="title">op</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fuse_module</span> *<span class="title">m</span>;</span></span><br><span class="line">	<span class="type">void</span> *user_data;</span><br><span class="line">	<span class="type">int</span> compat;</span><br><span class="line">	<span class="type">int</span> debug;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="✅-MS-RDONLY"><a href="#✅-MS-RDONLY" class="headerlink" title="✅ MS_RDONLY"></a>✅ <code>MS_RDONLY</code></h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MS_RDONLY 1        <span class="comment">// 挂载为只读</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>含义</strong>：将文件系统挂载为只读。</li>
+<li><strong>影响</strong>：你不能对该文件系统写入文件或更改元数据。</li>
+<li><strong>常用于</strong>：挂载 CD-ROM、ISO 镜像、或者只读模式修复文件系统。</li>
+</ul>
+<hr>
+<h2 id="✅-MS-NOSUID"><a href="#✅-MS-NOSUID" class="headerlink" title="✅ MS_NOSUID"></a>✅ <code>MS_NOSUID</code></h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MS_NOSUID 2        <span class="comment">// 忽略 SUID 和 SGID 位</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>含义</strong>：挂载后该文件系统内的所有文件即使有 <code>setuid</code>（SUID）或 <code>setgid</code>（SGID）位，也会被忽略。</li>
+<li><strong>影响</strong>：<ul>
+<li>即使程序文件设置了 SUID（比如 <code>/usr/bin/passwd</code>），执行时也不会提升权限。</li>
+</ul>
+</li>
+<li><strong>用途</strong>：<ul>
+<li>挂载 USB、SD 卡、网络文件系统时，防止恶意程序借助 SUID&#x2F;SGID 提权。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="✅-MS-NODEV"><a href="#✅-MS-NODEV" class="headerlink" title="✅ MS_NODEV"></a>✅ <code>MS_NODEV</code></h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MS_NODEV 4        <span class="comment">// 禁止访问设备文件（如 /dev/null）</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>含义</strong>：挂载后该文件系统中的<strong>设备 special 文件</strong>（即字符设备文件和块设备文件）无法使用。</li>
+<li><strong>影响</strong>：即使你创建了 <code>/dev/sda</code> 这样的设备文件，程序也不能通过它访问设备。</li>
+<li><strong>用途</strong>：<ul>
+<li>安全限制：挂载某些不可信来源的文件系统（如 U 盘、loop 文件），防止通过 fake device file 做非法操作。</li>
+</ul>
+</li>
+</ul>
+<p>在 FUSE（Filesystem in Userspace）中，<code>struct mount_opts</code> 用于传递挂载参数，控制文件系统的行为。以下是各字段的详细说明：</p>
+<hr>
+<h3 id="字段含义及作用"><a href="#字段含义及作用" class="headerlink" title="字段含义及作用"></a><strong>字段含义及作用</strong></h3><h4 id="1-权限控制"><a href="#1-权限控制" class="headerlink" title="1. 权限控制"></a><strong>1. 权限控制</strong></h4><table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>allow_other</code></td>
+<td align="left"><code>int</code></td>
+<td align="left">是否允许<strong>非挂载用户</strong>访问文件系统（默认仅挂载用户可访问）。 需配合 <code>/etc/fuse.conf</code> 中的 <code>user_allow_other</code> 选项使用。</td>
+</tr>
+<tr>
+<td align="left"><code>allow_root</code></td>
+<td align="left"><code>int</code></td>
+<td align="left">是否允许 <strong>root 用户</strong>访问文件系统（默认允许）。 若禁用，root 用户将无法访问。</td>
+</tr>
+</tbody></table>
+<h4 id="2-挂载行为控制"><a href="#2-挂载行为控制" class="headerlink" title="2. 挂载行为控制"></a><strong>2. 挂载行为控制</strong></h4><table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>nonempty</code></td>
+<td align="left"><code>int</code></td>
+<td align="left">是否允许挂载到<strong>非空目录</strong>（默认禁止）。 启用后，原有目录内容会被隐藏，直到卸载。</td>
+</tr>
+<tr>
+<td align="left"><code>blkdev</code></td>
+<td align="left"><code>int</code></td>
+<td align="left">是否挂载的是<strong>块设备</strong>（而非普通文件系统）。 用于特殊场景（如直接挂载磁盘镜像）。</td>
+</tr>
+</tbody></table>
+<h4 id="3-辅助标志"><a href="#3-辅助标志" class="headerlink" title="3. 辅助标志"></a><strong>3. 辅助标志</strong></h4><table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>ishelp</code></td>
+<td align="left"><code>int</code></td>
+<td align="left">是否显示帮助信息（由 <code>-h/--help</code> 触发）。</td>
+</tr>
+<tr>
+<td align="left"><code>flags</code></td>
+<td align="left"><code>int</code></td>
+<td align="left">挂载的<strong>全局标志位</strong>，例如： - <code>MS_RDONLY</code>（只读挂载） - <code>MS_NOSUID</code>（忽略 SUID 权限）。</td>
+</tr>
+</tbody></table>
+<h4 id="4-标识与分类"><a href="#4-标识与分类" class="headerlink" title="4. 标识与分类"></a><strong>4. 标识与分类</strong></h4><table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>fsname</code></td>
+<td align="left"><code>char*</code></td>
+<td align="left">文件系统的<strong>名称标识</strong>（通过 <code>-o fsname=NAME</code> 指定）。 用于 <code>df</code> 或 <code>/proc/mounts</code> 中显示。</td>
+</tr>
+<tr>
+<td align="left"><code>subtype</code></td>
+<td align="left"><code>char*</code></td>
+<td align="left">文件系统的<strong>子类型</strong>（如 <code>fuse.sshfs</code>）。 影响 <code>/proc/mounts</code> 中的显示格式（<code>type.subtype</code>）。</td>
+</tr>
+<tr>
+<td align="left"><code>subtype_opt</code></td>
+<td align="left"><code>char*</code></td>
+<td align="left">子类型的<strong>挂载选项</strong>（内部使用）。</td>
+</tr>
+</tbody></table>
+<h4 id="5-选项传递"><a href="#5-选项传递" class="headerlink" title="5. 选项传递"></a><strong>5. 选项传递</strong></h4><table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>mtab_opts</code></td>
+<td align="left"><code>char*</code></td>
+<td align="left">写入 <code>/etc/mtab</code> 的选项字符串。</td>
+</tr>
+<tr>
+<td align="left"><code>fusermount_opts</code></td>
+<td align="left"><code>char*</code></td>
+<td align="left">传递给 <code>fusermount</code> 工具的选项。</td>
+</tr>
+<tr>
+<td align="left"><code>kernel_opts</code></td>
+<td align="left"><code>char*</code></td>
+<td align="left">传递给内核的<strong>原始挂载选项</strong>（未解析的 <code>-o</code> 参数）。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="典型使用场景"><a href="#典型使用场景" class="headerlink" title="典型使用场景"></a><strong>典型使用场景</strong></h3><h4 id="1-允许所有用户访问"><a href="#1-允许所有用户访问" class="headerlink" title="1. 允许所有用户访问"></a><strong>1. 允许所有用户访问</strong></h4><p>bash</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 挂载时启用 allow_other</span></span><br><span class="line">mount -t fuse.sshfs -o allow_other user<span class="variable">@host</span><span class="symbol">:/path</span> /mnt</span><br></pre></td></tr></table></figure>
+
+<p>对应 <code>struct mount_opts</code> 字段：</p>
+<p>c</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">.allow_other</span> = 1,</span><br><span class="line"><span class="string">.allow_root</span> = 1,  <span class="string">//</span> 默认允许 root</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-挂载到非空目录"><a href="#2-挂载到非空目录" class="headerlink" title="2. 挂载到非空目录"></a><strong>2. 挂载到非空目录</strong></h4><p>bash</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 强制挂载到非空目录</span></span><br><span class="line">mount -t fuse -o nonempty /dev/fuse /mnt</span><br></pre></td></tr></table></figure>
+
+<p>对应字段：</p>
+<p>c</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">.nonempty = 1,</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-自定义文件系统名称"><a href="#3-自定义文件系统名称" class="headerlink" title="3. 自定义文件系统名称"></a><strong>3. 自定义文件系统名称</strong></h4><p>bash</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 指定 fsname 和 sub<span class="keyword">type</span></span><br><span class="line"><span class="title">mount</span> -t fuse -o fsname=myfs,sub<span class="keyword">type</span>=mytype /dev/fuse /mnt</span><br></pre></td></tr></table></figure>
+
+<p>对应字段：</p>
+<p>c</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.fsname = <span class="string">&quot;myfs&quot;</span>,</span><br><span class="line">.<span class="keyword">subtype</span> <span class="type">= </span><span class="string">&quot;mytype&quot;</span>,</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="内核与用户空间交互"><a href="#内核与用户空间交互" class="headerlink" title="内核与用户空间交互"></a><strong>内核与用户空间交互</strong></h3><p>这些参数通过以下方式传递：</p>
+<ol>
+<li><p><strong>用户空间</strong>：由 <code>libfuse</code> 解析命令行参数（<code>-o</code>）填充 <code>struct mount_opts</code>。</p>
+</li>
+<li><p><strong>内核</strong>：通过 <code>fusermount</code> 工具和 <code>/dev/fuse</code> 设备传递选项到内核模块。</p>
+</li>
+<li><p><strong>挂载结果</strong>：最终体现在 <code>/proc/mounts</code> 中，例如：</p>
+<p>plaintext</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dev/fuse /mnt fuse.mytype rw,allow_other,fsname=myfs 0 0</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h3 id="关键代码逻辑（libfuse-简化版）"><a href="#关键代码逻辑（libfuse-简化版）" class="headerlink" title="关键代码逻辑（libfuse 简化版）"></a><strong>关键代码逻辑（libfuse 简化版）</strong></h3><p>c</p>
+<p>复制</p>
+<p>下载</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 解析挂载选项的示例函数</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">parse_mount_opts</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *opts, <span class="keyword">struct</span> mount_opts *mo)</span> </span>&#123;</span><br><span class="line">    <span class="type">char</span> *opt, *tmp;</span><br><span class="line">    tmp = <span class="built_in">strdup</span>(opts);</span><br><span class="line">    <span class="keyword">for</span> (opt = <span class="built_in">strtok</span>(tmp, <span class="string">&quot;,&quot;</span>); opt; opt = <span class="built_in">strtok</span>(<span class="literal">NULL</span>, <span class="string">&quot;,&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">strcmp</span>(opt, <span class="string">&quot;allow_other&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            mo-&gt;allow_other = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(opt, <span class="string">&quot;nonempty&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            mo-&gt;nonempty = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// ... 其他选项解析</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(tmp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 挂载时调用</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">fuse_mount</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *mountpoint, <span class="keyword">struct</span> mount_opts *mo)</span> </span>&#123;</span><br><span class="line">    <span class="type">char</span> cmd[<span class="number">256</span>];</span><br><span class="line">    <span class="built_in">snprintf</span>(cmd, <span class="built_in">sizeof</span>(cmd), <span class="string">&quot;fusermount -o %s,%s %s&quot;</span>,</span><br><span class="line">             mo-&gt;allow_other ? <span class="string">&quot;allow_other&quot;</span> : <span class="string">&quot;&quot;</span>,</span><br><span class="line">             mo-&gt;kernel_opts, mountpoint);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">system</span>(cmd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><ul>
+<li><strong>权限控制</strong>：<code>allow_other</code> 和 <code>allow_root</code> 决定谁可以访问文件系统。</li>
+<li><strong>挂载行为</strong>：<code>nonempty</code> 和 <code>blkdev</code> 影响挂载的灵活性。</li>
+<li><strong>标识与分类</strong>：<code>fsname</code> 和 <code>subtype</code> 用于显示和管理。</li>
+<li><strong>选项传递</strong>：通过 <code>mtab_opts</code> 等字段将参数分发给不同组件。</li>
+</ul>
+<p>你遇到这个错误：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vbnet</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">ls: cannot <span class="keyword">access</span> <span class="string">&#x27;/tmp/mnt&#x27;</span>: Transport endpoint <span class="keyword">is</span> <span class="keyword">not</span> connected</span><br></pre></td></tr></table></figure>
+
+<p>这是 Linux 中常见的错误，说明你挂载在 <code>/tmp/mnt</code> 上的文件系统（可能是 FUSE 文件系统，比如 <code>sshfs</code>、<code>rclone</code>、你自己写的 <code>libfuse</code> 项目等）<strong>已经失联或崩溃了</strong>，但<strong>挂载点还存在</strong>。</p>
+<hr>
+<h2 id="✅-错误含义"><a href="#✅-错误含义" class="headerlink" title="✅ 错误含义"></a>✅ 错误含义</h2><ul>
+<li>“<strong>Transport endpoint is not connected</strong>“ 指的是内核认为挂载的文件系统（通常是 FUSE 类型）底层连接已断开。</li>
+<li>比如 <code>sshfs</code> 中 ssh 链接断了；<code>libfuse</code> 中 mount 的服务端进程崩溃了或退出了。</li>
+</ul>
+<hr>
+<h2 id="🛠️-解决办法"><a href="#🛠️-解决办法" class="headerlink" title="🛠️ 解决办法"></a>🛠️ 解决办法</h2><h3 id="1️⃣-首选：卸载挂载点"><a href="#1️⃣-首选：卸载挂载点" class="headerlink" title="1️⃣ 首选：卸载挂载点"></a>1️⃣ 首选：卸载挂载点</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="built_in">sudo</span> umount -l /tmp/mnt</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>-l</code> 表示 <strong>lazy umount</strong>，即立即断开 <code>/tmp/mnt</code>，底层等进程释放后再完全清理。</li>
+<li>这是处理 FUSE 挂载挂死问题最推荐的方式。</li>
+</ul>
+<hr>
+<h3 id="2️⃣-若-umount-报错（如-target-busy）"><a href="#2️⃣-若-umount-报错（如-target-busy）" class="headerlink" title="2️⃣ 若 umount 报错（如 target busy）"></a>2️⃣ 若 <code>umount</code> 报错（如 target busy）</h3><p>你可以先确认有没有进程在使用该目录：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">lsof +D <span class="regexp">/tmp/m</span>nt</span><br></pre></td></tr></table></figure>
+
+<p>如果有结果，说明有进程正在使用 <code>/tmp/mnt</code>，你可以尝试关闭这些进程或干脆：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line">fuser -km <span class="regexp">/tmp/m</span>nt</span><br></pre></td></tr></table></figure>
+
+<p>再尝试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="built_in">sudo</span> umount -l /tmp/mnt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3️⃣-强制移除目录（若只是残留）"><a href="#3️⃣-强制移除目录（若只是残留）" class="headerlink" title="3️⃣ 强制移除目录（若只是残留）"></a>3️⃣ 强制移除目录（若只是残留）</h3><p>如果你只是用 <code>ls</code> 报错，并且已经 <code>umount</code> 成功，可以手动删除挂载目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="built_in">rm</span> -rf /tmp/mnt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🔁-总结命令清单"><a href="#🔁-总结命令清单" class="headerlink" title="🔁 总结命令清单"></a>🔁 总结命令清单</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="built_in">sudo</span> umount -l /tmp/mnt           <span class="comment"># 懒卸载</span></span><br><span class="line">lsof +D /tmp/mnt                  <span class="comment"># 查看占用进程</span></span><br><span class="line">fuser -km /tmp/mnt                <span class="comment"># 杀掉使用者</span></span><br><span class="line"><span class="built_in">rm</span> -rf /tmp/mnt                   <span class="comment"># 卸载后清理目录</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>要看懂 <code>libfuse</code> 的源码（尤其是 FUSE 2.x，例如你用的 2.8.0），建议<strong>从使用者的视角出发，再深入实现层</strong>。以下是阅读建议路径，分阶段推荐关键文件和内容：</p>
+<hr>
+<h2 id="🧭-第一阶段：理解外部接口（你程序调用的是哪部分）"><a href="#🧭-第一阶段：理解外部接口（你程序调用的是哪部分）" class="headerlink" title="🧭 第一阶段：理解外部接口（你程序调用的是哪部分）"></a>🧭 第一阶段：理解外部接口（你程序调用的是哪部分）</h2><h3 id="✅-推荐先看："><a href="#✅-推荐先看：" class="headerlink" title="✅ 推荐先看："></a>✅ 推荐先看：</h3><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>include/fuse.h</code></td>
+<td>最主要的用户 API，定义了你实现的 <code>fuse_operations</code> 结构体</td>
+</tr>
+<tr>
+<td><code>example/hello.c</code></td>
+<td>官方示例，说明 FUSE 程序如何初始化和运行</td>
+</tr>
+<tr>
+<td><code>lib/fuse.c</code></td>
+<td>实现了 <code>fuse_main</code> 和核心绑定逻辑，连接用户提供的操作函数和内核交互</td>
+</tr>
+</tbody></table>
+<p>你可以先画一张“调用图”：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">scss</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">复制编辑</span><br><span class="line"><span class="selector-tag">main</span>() → <span class="built_in">fuse_main</span>() → <span class="built_in">fuse_new</span>() + <span class="built_in">fuse_loop</span>()</span><br><span class="line">         ↑                      ↑           ↑</span><br><span class="line">      (你定义的操作)     初始化 FUSE 会话    主循环调度请求</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🧭-第二阶段：理解事件循环与会话管理"><a href="#🧭-第二阶段：理解事件循环与会话管理" class="headerlink" title="🧭 第二阶段：理解事件循环与会话管理"></a>🧭 第二阶段：理解事件循环与会话管理</h2><h3 id="✅-推荐阅读："><a href="#✅-推荐阅读：" class="headerlink" title="✅ 推荐阅读："></a>✅ 推荐阅读：</h3><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lib/fuse_loop.c</code></td>
+<td><code>fuse_loop()</code> 的实现，主事件循环：收请求 &#x2F; 调操作 &#x2F; 回响应</td>
+</tr>
+<tr>
+<td><code>lib/fuse_session.c</code></td>
+<td><code>fuse_session_new()</code>、<code>fuse_session_process()</code>，封装一个“挂载会话”</td>
+</tr>
+<tr>
+<td><code>lib/fuse_signals.c</code></td>
+<td>处理 <code>SIGINT</code>&#x2F;<code>SIGTERM</code> 等退出信号</td>
+</tr>
+<tr>
+<td><code>lib/fuse_opt.c</code></td>
+<td>参数解析，例如 <code>fuse_main()</code> 中传入的 <code>argv</code> 如何转为配置</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧭-第三阶段：深入理解与内核通信的细节"><a href="#🧭-第三阶段：深入理解与内核通信的细节" class="headerlink" title="🧭 第三阶段：深入理解与内核通信的细节"></a>🧭 第三阶段：深入理解与内核通信的细节</h2><h3 id="✅-推荐阅读：-1"><a href="#✅-推荐阅读：-1" class="headerlink" title="✅ 推荐阅读："></a>✅ 推荐阅读：</h3><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lib/fuse_kern_chan.c</code></td>
+<td>管理 <code>/dev/fuse</code> 的读写，对应 FUSE 内核接口</td>
+</tr>
+<tr>
+<td><code>lib/fuse_lowlevel.c</code></td>
+<td>“底层接口”，直接处理 FUSE 协议请求（用于实现 CUSE、精细控制）</td>
+</tr>
+<tr>
+<td><code>include/fuse_kernel.h</code></td>
+<td>FUSE 协议结构体定义（例如 <code>fuse_in_header</code>），与内核通信的数据结构</td>
+</tr>
+<tr>
+<td><code>lib/mount.c</code> + <code>lib/mount_util.c</code></td>
+<td>挂载相关逻辑，底层执行 <code>fusermount</code> 命令或直接 syscall</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🔎-补充（可选）"><a href="#🔎-补充（可选）" class="headerlink" title="🔎 补充（可选）"></a>🔎 补充（可选）</h2><ul>
+<li><code>lib/helper.c</code>：一些小工具辅助函数</li>
+<li><code>lib/cuse_lowlevel.c</code>：字符设备 in userspace（如果你要研究 CUSE）</li>
+<li><code>lib/ulockmgr.c</code>：用户态锁管理器（较少用）</li>
+</ul>
+<hr>
+<h2 id="✅-阅读建议顺序总结"><a href="#✅-阅读建议顺序总结" class="headerlink" title="✅ 阅读建议顺序总结"></a>✅ 阅读建议顺序总结</h2><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>目标</th>
+<th>文件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🟩 1. 外部接口</td>
+<td>搞清楚你代码调用了什么</td>
+<td><code>include/fuse.h</code>, <code>example/hello.c</code>, <code>lib/fuse.c</code></td>
+</tr>
+<tr>
+<td>🟨 2. 会话和循环</td>
+<td>理解 FUSE 是如何调你提供的函数的</td>
+<td><code>lib/fuse_loop.c</code>, <code>lib/fuse_session.c</code>, <code>lib/fuse_opt.c</code></td>
+</tr>
+<tr>
+<td>🟥 3. 内核交互</td>
+<td>真正和 <code>/dev/fuse</code> 通信细节</td>
+<td><code>lib/fuse_kern_chan.c</code>, <code>include/fuse_kernel.h</code></td>
+</tr>
+<tr>
+<td>🧩 4. 其他</td>
+<td>mount 辅助工具、低层处理</td>
+<td><code>lib/mount.c</code>, <code>lib/fuse_lowlevel.c</code> 等</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📘-推荐配合文档"><a href="#📘-推荐配合文档" class="headerlink" title="📘 推荐配合文档"></a>📘 推荐配合文档</h2><ul>
+<li>FUSE 协议文档（官方 Linux 文档）</li>
+<li><code>README</code> 和 <code>doc/</code> 目录下的说明</li>
+<li>使用 <code>strace ./hello /tmp/mnt</code> 可辅助理解系统调用</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/fuse/" rel="tag"># fuse</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/07/01/linux/fs/fuse%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="prev" title="fuse数据结构">
+                  <i class="fa fa-angle-left"></i> fuse数据结构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/07/04/RFC1945/" rel="next" title="RFC1945">
+                  RFC1945 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Rocky</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"divedb/divedb.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
