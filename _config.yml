@@ -26,7 +26,7 @@ description: >- # used by seo meta and the atom feed
 url: ""
 
 github:
-  username: github_username # change to your GitHub username
+  username: divedb # change to your GitHub username
 
 twitter:
   username: twitter_username # change to your Twitter username
@@ -224,3 +224,5 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
+
+markdown: kramdown
