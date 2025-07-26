@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 基本Raft算法【第3章】
+date: 2025-07-25
 categories: 分布式
 tags: [分布式, 共识算法, Raft]
 ---
