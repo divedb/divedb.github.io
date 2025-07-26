@@ -6,11 +6,7 @@ categories: 分布式
 tags: [分布式, 共识算法, Raft]
 ---
 
-#### 🧩 概述
-
 本章介绍`Raft`算法。设计`Raft`的首要目标就是容易理解。本章的第一节讲述在实现“可理解性”方面的设计理念；接下来的几节将详细说明算法本身，并通过一些具体示例说明如何围绕“易理解”做出关键设计决策。
-
-<!--more-->
 
 ##### 🌲 为可理解性而设计
 
@@ -55,7 +51,7 @@ tags: [分布式, 共识算法, Raft]
     >   如果某个服务器已将某条日志应用到其状态机中，则不允许其他服务器在相同的日志索引位置应用不同的指令。
     >   第3.6节将详细介绍`Raft`是如何实现这一关键安全性的。
 
-![](images/raft/figure3-1.png)
+![](/assets/img/raft/figure3-1.png)
 
 此图展示了`Raft`共识算法的整体结构（不包括成员变更、日志压缩以及与客户端的交互部分）。图中右下角的服务器行为被描述为一组彼此独立、可重复触发的规则。图中标注的章节号（如§3.4）对应了各功能在正文中具体讨论的位置。
 
@@ -97,13 +93,13 @@ tags: [分布式, 共识算法, Raft]
 
 `Raft`将时间划分为若干任期（`term`），每个任期的长度是任意的，如图3.4所示。任期编号是单调递增的整数。每个任期以一次选举开始，期间一个或多个候选者尝试当选为新领导者。如果某个候选者赢得了选举，它将在该任期剩余时间内担任领导者。如果选举出现了投票平局（`split vote`），则可能无法选出领导者，这种情况将在后文详细讨论。
 
-![](images/raft/figure3-3.png)
+![](/assets/img/raft/figure3-3.png)
 
 图3.3：服务器状态
 
 跟随者（`Follower`）仅响应来自其他服务器的请求。如果一段时间内未收到任何通信，它将转变为候选者（`Candidate`）并发起选举。候选者若获得超过半数服务器的投票，即成为新的领导者（`Leader`）。领导者通常会持续工作，直到发生故障为止。
 
-![](images/raft/figure3-4.png)
+![](/assets/img/raft/figure3-4.png)
 
 图3.4：时间被划分为多个任期（`Term`），每个任期以一次选举开始。
 
@@ -150,53 +146,53 @@ tags: [分布式, 共识算法, Raft]
 
 💡 示例：
 
-![](images/raft/example1-1.png)
+![](/assets/img/raft/example1-1.png)
 
 $S_4$，$S_5$几乎同时选举超时（$S_4$稍快）。
 
-![](images/raft/example1-2.png)
+![](/assets/img/raft/example1-2.png)
 
 $S_4$，$S_5$首先给自己投票，然后并行的向其他服务器发送`RequestVote RPC`。
 
-![](images/raft/example1-3.png)
+![](/assets/img/raft/example1-3.png)
 
 $S_4$的请求比$S_5$的请求先到达$S_1$服务器，$S_1$同意给$S_4$服务器投票同时重置了选举定时器。
 
-![](images/raft/example1-4.png)
+![](/assets/img/raft/example1-4.png)
 
 $S_4$收到半数以上的票成为了领导者。
 
-![](images/raft/example1-5.png)
+![](/assets/img/raft/example1-5.png)
 
 $S_4$发送`AppendEntries RPC`给其他服务器。
 
-![](images/raft/example1-6.png)
+![](/assets/img/raft/example1-6.png)
 
 $S_5$收到了`AppendEntry RPC`回退到跟随者状态。
 
-![](images/raft/example1-7.png)
+![](/assets/img/raft/example1-7.png)
 
 发送`AppendEntry RPC`给其他服务器同时丢弃掉$S_1$，$S_2$的响应。
 
-![](images/raft/example1-8.png)
+![](/assets/img/raft/example1-8.png)
 
 收到$S_3$和$S_5$的回复，更新了`commitIndex`。
 
-![](images/raft/example1-9.png)
+![](/assets/img/raft/example1-9.png)
 
-![](images/raft/example1-10.png)
+![](/assets/img/raft/example1-10.png)
 
 为什么领导者再次发送给$S_3$和$S_5$的`commitIndex`不同？
 
-![](images/raft/example1-11.png)
+![](/assets/img/raft/example1-11.png)
 
 手动让$S_1$，$S_2$，$S_5$服务器选举超时，$S_1$拥有最大的任期号。
 
-![](images/raft/example1-12.png)
+![](/assets/img/raft/example1-12.png)
 
 可以看到$S_5$拒绝了$S_2$的`RequestVote`请求，但是任期号更新了。
 
-![](images/raft/example1-13.png)
+![](/assets/img/raft/example1-13.png)
 
 可以看到$S_1$，$S_2$其实是没有机会当选领导者的即使它们先发出了`RequestVote`请求。
 
@@ -206,7 +202,7 @@ $S_5$收到了`AppendEntry RPC`回退到跟随者状态。
 
 当该条目被安全复制后（下文将解释“安全”的定义），领导者会将该日志条目应用到自己的状态机，并将执行结果返回给客户端。如果某些跟随者宕机、响应缓慢，或者网络包丢失，领导者会不断重试发送`AppendEntries RPC`，即使它已经向客户端返回了响应，也会持续尝试，直到所有跟随者都成功存储了所有日志条目。
 
-![](images/raft/figure3-5.png)
+![](/assets/img/raft/figure3-5.png)
 
 图3.5：日志由多个条目组成，条目按顺序编号。每个条目包含其创建时的任期号（见每个方框中的数字）以及一个供状态机执行的命令。当某个条目已被确认可以安全地应用到状态机时，它就被视为已提交（`committed`）。
 
@@ -251,7 +247,7 @@ $S_5$收到了`AppendEntry RPC`回退到跟随者状态。
 
 此外，领导者为每个跟随者维护一个名为`nextIndex`的变量，它表示领导者下一次要发送给该跟随者的日志条目的索引。当领导者首次当选时，会将所有`nextIndex`初始化为自己最后一个日志条目的下一个索引值。
 
-![](images/raft/figure3-6.png)
+![](/assets/img/raft/figure3-6.png)
 
 图 3.6：当最上方的领导者上任时，跟随者的日志中可能出现（a）至（f）中的任意一种情况。每个方框代表一个日志条目，框内数字表示该条目的任期号。跟随者可能存在缺失的条目（情况`a`和`b`），也可能包含未提交的额外条目（情况`c`和`d`），或者同时存在这两种情况（情况`e`和`f`）。例如，情况（f）可能发生在该服务器曾在第2任期担任领导者，向日志中添加了若干条目，但在提交任何条目前崩溃；该服务器快速重启，成为第3任期的领导者，又在日志中追加了几个条目；随后在第2和第3任期的条目都尚未提交时，该服务器再次崩溃，并在接下来的几个任期内一直处于宕机状态。
 
@@ -281,7 +277,7 @@ $S_5$收到了`AppendEntry RPC`回退到跟随者状态。
 
 `Raft`判断两个日志哪个更新，依据是比较日志末尾条目的任期号和索引。如果两日志末尾条目的任期号不同，则任期号更大的日志更新；如果任期号相同，则日志长的那个更新。
 
-![](images/raft/figure3-7.png)
+![](/assets/img/raft/figure3-7.png)
 
 图3.7：时间序列示意图，展示了为什么领导者不能仅凭旧任期的日志条目来判断提交情况。
 
@@ -317,7 +313,7 @@ $S_5$收到了`AppendEntry RPC`回退到跟随者状态。
 8.  由此得出矛盾，所有大于`T`任期的领导者必定包含任期`T`内提交的所有条目。
 9.  日志匹配性质保证后续领导者也包含间接提交的条目，比如图3.7(d2)中的索引2。
 
-![](images/raft/figure3-8.png)
+![](/assets/img/raft/figure3-8.png)
 
 鉴于领导者完整性属性，我们可以证明状态机安全性属性（图3.2），即：如果某服务器已将某条日志条目应用到状态机，则不会有其他服务器在同一索引应用不同条目。因为服务器应用日志条目时，其日志必与领导者日志在该条目之前完全一致，且该条目已提交。考虑任期最低的服务器应用某索引条目，领导者完整性属性保证所有后续任期领导者都存储该条目，后续服务器应用时必是同一条目，保证状态机安全性。
 
